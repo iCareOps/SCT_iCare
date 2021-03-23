@@ -1,0 +1,84 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<br />
+<br />
+
+
+<div class="container">
+    <div class="row">
+        <button type="button" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal">Crear Nueva Cita</button>
+        <button type="button" class="btn btn-outline-warning boton-transparente botonesGral">Ventas Pendientes de Pagar</button>
+        <button type="button" class="btn btn-outline-warning boton-transparente botonesGral">Historial de Ventas</button>
+    </div>
+</div>
+
+<!-- Modal de Registro-->
+<div class="modal fade" id="registrerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content ventanaModal">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel">Nueva Cita</h4>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Registrer" asp-controller="CallCenter" id="Registrer">
+                    <div class="form-group col-md-12">
+                        <label><h5>Nombre Completo:</h5></label>
+                        <input type="text" asp-for="Nombre" class="form-control" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label><h5>Correo Electrónico:</h5></label>
+                        <input type="text" asp-for="eMail" class="form-control" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label><h5>Fecha de Nacimiento:</h5></label>
+                        <input type="text" asp-for="fechaNacimiento" class="form-control" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <div class="col-md-6">
+                            <label><h5>Sexo:</h5></label>
+                            <br />
+                            <input type="radio" />
+                            <label><h5>Masculino</h5></label>
+                            <input type="radio" />
+                            <label><h5>Femenino</h5></label>
+                        </div>
+                        <div class="col-md-6">
+                            <label><h5>Tipo de Licencia:</h5></label>
+                            <br />
+                            <input type="radio" />
+                            <label><h5>Camión</h5></label>
+                            <input type="radio" />
+                            <label><h5>Avión</h5></label>
+                            <input type="radio" />
+                            <label><h5>Aeromosas</h5></label>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="form-group">
+                        <label><h5>Preguntas básicas:</h5></label>
+                        <br />
+                        <input type="checkbox" />
+                        <label><h5>Diabetes</h5></label>
+                        <input type="checkbox" />
+                        <label><h5>Hiper</h5></label>
+                        <input type="checkbox" />
+                        <label><h5>Hepa</h5></label>
+                        <input type="checkbox" />
+                        <label><h5>Alteraciones de la Vista</h5></label>
+                        <input type="checkbox" />
+                        <label><h5>Alteraciones de la Audición</h5></label>
+                        <input type="checkbox" />
+                        <label><h5>Embarazo</h5></label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal">Tipificar Cliente</button>
+                <button type="button" class="btn btn-primary">Realizar Venta</button>
+            </div>
+        </div>
+    </div>
+</div>
