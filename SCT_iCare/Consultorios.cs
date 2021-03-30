@@ -20,9 +20,11 @@ namespace SCT_iCare
         public string CURP { get; set; }
         public string Cedula { get; set; }
         public string Direccion { get; set; }
-        public string Ciudad { get; set; }
+        public string Colonia { get; set; }
+        public string CP { get; set; }
         public string Estado { get; set; }
+        public string Ciudad { get; set; }
         public string Consultorio { get; set; }
-        public int NoConsultorios { get; set; }
+        public Nullable<int> NoConsultorio { get; set; }
     }
 }

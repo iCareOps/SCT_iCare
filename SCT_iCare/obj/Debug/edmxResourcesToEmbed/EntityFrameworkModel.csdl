@@ -1,20 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="SCTiCareModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-  <EntityType Name="Consultorios">
-    <Key>
-      <PropertyRef Name="id" />
-    </Key>
-    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="NombreDoctor" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-    <Property Name="RFC" Type="String" MaxLength="13" FixedLength="false" Unicode="true" Nullable="false" />
-    <Property Name="CURP" Type="String" MaxLength="18" FixedLength="false" Unicode="true" Nullable="false" />
-    <Property Name="Cedula" Type="String" MaxLength="15" FixedLength="false" Unicode="true" Nullable="false" />
-    <Property Name="Direccion" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-    <Property Name="Ciudad" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-    <Property Name="Estado" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-    <Property Name="Consultorio" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-    <Property Name="NoConsultorios" Type="Int32" Nullable="false" />
-  </EntityType>
   <EntityType Name="Menu">
     <Key>
       <PropertyRef Name="idMenu" />
@@ -92,7 +77,6 @@
     </ReferentialConstraint>
   </Association>
   <EntityContainer Name="SCTiCareEntities1" annotation:LazyLoadingEnabled="true">
-    <EntitySet Name="Consultorios" EntityType="Self.Consultorios" />
     <EntitySet Name="Menu" EntityType="Self.Menu" />
     <EntitySet Name="Roles" EntityType="Self.Roles" />
     <EntitySet Name="RolMenu" EntityType="Self.RolMenu" />
@@ -109,5 +93,23 @@
       <End Role="Roles" EntitySet="Roles" />
       <End Role="Usuarios" EntitySet="Usuarios" />
     </AssociationSet>
+    <EntitySet Name="Consultorios" EntityType="SCTiCareModel.Consultorios" />
   </EntityContainer>
+  <EntityType Name="Consultorios">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="NombreDoctor" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="RFC" Type="String" MaxLength="13" FixedLength="false" Unicode="false" />
+    <Property Name="CURP" Type="String" MaxLength="18" FixedLength="false" Unicode="false" />
+    <Property Name="Cedula" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+    <Property Name="Direccion" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Colonia" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="CP" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="Estado" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Ciudad" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Consultorio" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="NoConsultorio" Type="Int32" />
+  </EntityType>
 </Schema>

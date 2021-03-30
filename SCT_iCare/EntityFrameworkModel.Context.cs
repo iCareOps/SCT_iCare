@@ -25,10 +25,10 @@ namespace SCT_iCare
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Consultorios> Consultorios { get; set; }
         public virtual DbSet<Menu> Menu { get; set; }
         public virtual DbSet<Roles> Roles { get; set; }
         public virtual DbSet<RolMenu> RolMenu { get; set; }
         public virtual DbSet<Usuarios> Usuarios { get; set; }
+        public virtual DbSet<Consultorios> Consultorios { get; set; }
     }
 }

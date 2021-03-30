@@ -1,0 +1,102 @@
+﻿@model IEnumerable<SCT_iCare.Consultorios>
+
+<br />
+<br />
+<a href="~/Consultorios/Create"><button type="button" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal">Nuevo Consultorio</button></a>
+
+<br />
+
+<hr />
+
+<table class="table tablas">
+    <tr class="bg-info">
+        <th>
+            @Html.DisplayNameFor(model => model.NombreDoctor)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RFC)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CURP)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Cedula)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Direccion)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Colonia)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CP)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Estado)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Ciudad)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Consultorio)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NoConsultorio)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <h6>@Html.DisplayFor(modelItem => item.NombreDoctor)</h6>
+            </td>
+            <td>
+                <h6>@Html.DisplayFor(modelItem => item.RFC)</h6>
+            </td>
+            <td>
+                <h6>@Html.DisplayFor(modelItem => item.CURP)</h6>
+            </td>
+            <td>
+                <h6>@Html.DisplayFor(modelItem => item.Cedula)</h6>
+            </td>
+            <td>
+                <h6>@Html.DisplayFor(modelItem => item.Direccion)</h6>
+            </td>
+            <td>
+                <h6>@Html.DisplayFor(modelItem => item.Colonia)</h6>
+            </td>
+            <td>
+                <h6>@Html.DisplayFor(modelItem => item.CP)</h6>
+            </td>
+            <td>
+                <h6>@Html.DisplayFor(modelItem => item.Estado)</h6>
+            </td>
+            <td>
+                <h6>@Html.DisplayFor(modelItem => item.Ciudad)</h6>
+            </td>
+            <td>
+                <h6>@Html.DisplayFor(modelItem => item.Consultorio)</h6>
+            </td>
+            <td>
+                <h6>@Html.DisplayFor(modelItem => item.NoConsultorio)</h6>
+            </td>
+            <td>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Action
+                    </button>
+                    <div class="dropdown-menu">
+                        <h5>@Html.ActionLink("Editar", "Edit", new { id = item.id })</h5>
+                        <div class="dropdown-divider"></div>
+                        <h5>@Html.ActionLink("Detalles", "Details", new { id = item.id })</h5>
+                        <div class="dropdown-divider"></div>
+                        <h5>@Html.ActionLink("Eliminar", "Delete", new { id = item.id })</h5>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    }
+
+</table>
