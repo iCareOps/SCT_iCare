@@ -21,7 +21,14 @@ namespace SCT_iCare.Filters
                 {
                     if (filterContext.Controller is LoginController == false)
                     {
-                        filterContext.HttpContext.Response.Redirect("/Login/Login");
+                        filterContext.HttpContext.Response.Redirect("/Login/Login", false);
+                    }
+                }
+                else
+                {
+                    if(filterContext.Controller is LoginController == true)
+                    {
+                        filterContext.HttpContext.Response.Redirect("~/Login/Login");
                     }
                 }
             }

@@ -1,0 +1,106 @@
+﻿@model IEnumerable<SCT_iCare.Solicitudes>
+
+@{
+    ViewBag.Title = "Index";
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+    int idUser = oUser.idUsuario;
+
+    SCTiCareEntities1 db = new SCTiCareEntities1();
+
+    var Doctor = (from r in db.Consultorios where r.idUsuario == idUser select r.NombreDoctor).FirstOrDefault();
+    var Consultorio = (from r in db.Consultorios where r.idUsuario == idUser select r.Consultorio).FirstOrDefault();
+
+    string doctor = Doctor;
+    string consultorio = Consultorio;
+}
+
+<br />
+
+<h3 style="color:#AC9070">Recepción <span style="color:white">@consultorio</span> </h3>
+<h4 style="color:#AC9070">Doctor: <span style="color:white">@doctor</span> </h4>
+<br />
+<a href="#"><button type="button" class="btn btn-outline-warning boton-transparente botonesGral">Venta en Sitio</button></a>
+<a href="#"><button type="button" class="btn btn-outline-warning boton-transparente botonesGral">Órdenes asignadas</button></a>
+<a href="#"><button type="button" class="btn btn-outline-warning boton-transparente botonesGral">Órdenes para asignación</button></a>
+<a href="#"><button type="button" class="btn btn-outline-warning boton-transparenteExcel botonesGral">Subir excel</button></a>
+
+<hr />
+
+<table class="table tablas">
+    <tr class="bg-info">
+        <th>
+            @Html.DisplayNameFor(model => model.idSolicitud)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Nombre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Productos.NombreProducto)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Telefono)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Consultorios.Consultorio)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FechaSolicitud)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Total)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EstatusSolicitud.Estatus)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Usuarios.Nombre)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.idSolicitud)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Productos.NombreProducto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Telefono)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Consultorios.Consultorio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaSolicitud)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Total)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EstatusSolicitud.Estatus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Usuarios.Nombre)
+            </td>
+            <td>
+                @*@Html.ActionLink("Edit", "Edit", new { id = item.idSolicitud }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.idSolicitud }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.idSolicitud })*@
+            </td>
+        </tr>
+    }
+
+</table>

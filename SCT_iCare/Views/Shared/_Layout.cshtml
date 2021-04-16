@@ -7,28 +7,49 @@
     <title>@ViewBag.Title - Mi aplicación ASP.NET</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @{  
+        var oUsuario = (Usuarios) HttpContext.Current.Session["User"];
+        string Usuario = oUsuario.Nombre;
+     }
+
 </head>
 <body>
-    <div class="navbar navbar-default navbar-fixed-top">
+    <div class="navbar navbar-default navbar-fixed-top bg-light">
         <div class="container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
+                <div>
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
                 <img src="~/Images/SCTlogo.png" style="width:150px; padding-top:12px; padding-bottom:10px; padding-right:20px; padding-left:20px;" />
                 <img src="~/Images/iCare-01.png" style="width:150px; padding-top:8px; padding-bottom:10px; padding-right:20px;" />
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
+            <div>
+                <div>
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav cerrarSesion">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default dropdown-toggle cerrarSesion " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    @Usuario
+                                </button>
+                                <div class="dropdown-menu">
+                                    <h5>
+                                        @Html.ActionLink("Cerrar Sesión", "Logoff", "Logoff")
+                                    </h5>
+                                </div>
+                            </div>
+                        </ul>
+                    </div>
                     @*<li><img src="~/Imagenes/iCare-01.png" style="width:100px"/></li>
-                        <li>@Html.ActionLink("Acerca de", "About", "Home")</li>
-                        <li>@Html.ActionLink("Contacto", "Contact", "Home")</li>*@
-                </ul>
+                          <li>@Html.ActionLink("Acerca de", "About", "Home")</li>
+            <li>@Html.ActionLink("Contacto", "Contact", "Home")</li>*@
+                    
+                </div>
             </div>
-        </div>
-    </div>
+    </div></div>
     <div class="container body-content">
         @RenderBody()
         <hr />

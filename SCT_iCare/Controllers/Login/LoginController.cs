@@ -21,71 +21,6 @@ namespace SCT_iCare.Controllers.Login
         public ActionResult Login(string User, string Pass)
         {
 
-            //string msj = "El usuario o la contraseña son incorrectos";
-
-            //try
-            //{
-            //    Usuarios oUsuario = new Usuarios();
-
-            //    if (oUsuario != null)
-            //    {
-            //        Session["Usuario"] = oUsuario;
-            //        switch (5)
-            //        {
-            //            case 5:
-            //                return RedirectToAction("Index", "Usuarios");
-            //            //case CatalogosUtil.EntCatRoles.SupervisorCallCenter:
-            //            //    return Redirect("~/Supervisor/Index");
-            //            //case CatalogosUtil.EntCatRoles.Enfermero:
-            //            //    return Redirect("~/Enfermero/Index");
-            //            //case CatalogosUtil.EntCatRoles.Helpdesk:
-            //            //    return Redirect("~/HelpdeskSupervisor/Index");
-            //            //case CatalogosUtil.EntCatRoles.Corporativo:
-            //            //    return Redirect("~/Convenios/Index");
-            //            //case CatalogosUtil.EntCatRoles.AdminAgentes:
-            //            //    return Redirect("~/AdminAgentes/Index");
-            //            //case CatalogosUtil.EntCatRoles.KioscoBack:
-            //            //    return Redirect("~/KioscoBack/Index");
-            //            //case CatalogosUtil.EntCatRoles.KioscoBackHD:
-            //            //    return Redirect("~/KioscoBackHD/Index");
-
-            //            default:
-            //                return Redirect("~/AdminUsuarios/Index");
-            //        }
-            //    }
-            //    else
-            //    {
-            //        ViewBag.Error = msj;
-            //        return View("~/Views/Pages/Authentication/LoginV2.cshtml");
-            //    }
-
-            //}
-            //catch (System.Exception ex)
-            //{
-            //    ViewBag.Error = "Ocurrio un error al ";
-            //    return View("~/Views/Pages/Authentication/LoginV2.cshtml");
-            //}
-
-            //var Email = form["email"];
-            //var Password = form["email"];
-
-            //Usuarios usuario = new Usuarios();
-            //var rol = usuario.idRol;
-
-            //if (Email != null)
-            //{
-            //    if (rol == 5)
-            //    {
-            //        return RedirectToAction("Index", "Usuarios");
-            //    }
-
-            //}
-            //else
-            //{
-            //    return RedirectToAction("Login", "Login");
-            //}
-            //return RedirectToAction("Login", "Login");
-
             try
             {
                 Pass = Encrypt.GetSHA256(Pass.Trim());
@@ -110,7 +45,7 @@ namespace SCT_iCare.Controllers.Login
                         return Redirect("~/CallCenter/Index");
                     case 3:
                         ViewBag.Nombre = oUser.Nombre.ToString();
-                        return Redirect("~/Recepcion/Index");
+                        return Redirect("~/Recepcionista/Index");
                     case 4:
                         ViewBag.Nombre = oUser.Nombre.ToString();
                         return Redirect("~/Contabilidad/Index");

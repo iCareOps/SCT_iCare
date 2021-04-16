@@ -38,6 +38,8 @@ namespace SCT_iCare.Controllers.Admin
         // GET: Admin/Create
         public ActionResult Create()
         {
+            var Recepcionistas = from r in db.Usuarios where r.idRol == 3 select r;
+            ViewBag.idUsuario = new SelectList(Recepcionistas/*db.Usuarios*/, "idUsuario", "Nombre");
             return View();
         }
 
@@ -46,7 +48,7 @@ namespace SCT_iCare.Controllers.Admin
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "id,NombreDoctor,RFC,CURP,Cedula,Direccion,Colonia,CP,Estado,Ciudad,Consultorio,NoConsultorio")] Consultorios consultorios)
+        public ActionResult Create([Bind(Include = "id,NombreDoctor,RFC,CURP,Cedula,Direccion,Colonia,CP,Estado,Ciudad,Consultorio,NoConsultorio,idUsuario")] Consultorios consultorios)
         {
             if (ModelState.IsValid)
             {
@@ -54,7 +56,7 @@ namespace SCT_iCare.Controllers.Admin
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
+            ViewBag.idUsuario = new SelectList(db.Usuarios, "idUsuario", "Nombre", consultorios.idUsuario);
             return View(consultorios);
         }
 
@@ -70,6 +72,8 @@ namespace SCT_iCare.Controllers.Admin
             {
                 return HttpNotFound();
             }
+            var Recepcionistas = from r in db.Usuarios where r.idRol == 3 select r;
+            ViewBag.idUsuario = new SelectList(Recepcionistas/*db.Usuarios*/, "idUsuario", "Nombre");
             return View(consultorios);
         }
 
@@ -78,7 +82,7 @@ namespace SCT_iCare.Controllers.Admin
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "id,NombreDoctor,RFC,CURP,Cedula,Direccion,Colonia,CP,Estado,Ciudad,Consultorio,NoConsultorio")] Consultorios consultorios)
+        public ActionResult Edit([Bind(Include = "id,NombreDoctor,RFC,CURP,Cedula,Direccion,Colonia,CP,Estado,Ciudad,Consultorio,NoConsultorio, idUsuario")] Consultorios consultorios)
         {
             if (ModelState.IsValid)
             {
@@ -86,6 +90,8 @@ namespace SCT_iCare.Controllers.Admin
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            var Recepcionistas = from r in db.Usuarios where r.idRol == 3 select r;
+            ViewBag.idUsuario = new SelectList(Recepcionistas/*db.Usuarios*/, "idUsuario", "Nombre");
             return View(consultorios);
         }
 

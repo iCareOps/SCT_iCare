@@ -5,6 +5,13 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="SCTiCareModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Comision">
+          <Key>
+            <PropertyRef Name="idComision" />
+          </Key>
+          <Property Name="idComision" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Comision" Type="int" />
+        </EntityType>
         <EntityType Name="Consultorios">
           <Key>
             <PropertyRef Name="id" />
@@ -21,6 +28,14 @@
           <Property Name="Ciudad" Type="varchar" MaxLength="100" />
           <Property Name="Consultorio" Type="varchar" MaxLength="200" />
           <Property Name="NoConsultorio" Type="int" />
+          <Property Name="idUsuario" Type="int" />
+        </EntityType>
+        <EntityType Name="EstatusSolicitud">
+          <Key>
+            <PropertyRef Name="idEstatusSolicitud" />
+          </Key>
+          <Property Name="idEstatusSolicitud" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Estatus" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Menu">
           <Key>
@@ -30,6 +45,21 @@
           <Property Name="Nombre" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Controlador" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Action" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MetodoPago">
+          <Key>
+            <PropertyRef Name="idMetodoPago" />
+          </Key>
+          <Property Name="idMetodoPago" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="idComision" Type="int" />
+          <Property Name="MetodoPago" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="Productos">
+          <Key>
+            <PropertyRef Name="idProducto" />
+          </Key>
+          <Property Name="idProducto" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NombreProducto" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="Roles">
           <Key>
@@ -46,6 +76,37 @@
           <Property Name="idMenu" Type="int" Nullable="false" />
           <Property Name="idRol" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="Solicitudes">
+          <Key>
+            <PropertyRef Name="idSolicitud" />
+          </Key>
+          <Property Name="idSolicitud" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="200" />
+          <Property Name="idProducto" Type="int" />
+          <Property Name="Email" Type="varchar" MaxLength="200" />
+          <Property Name="Telefono" Type="varchar" MaxLength="20" />
+          <Property Name="idConsultorio" Type="int" />
+          <Property Name="FechaSolicitud" Type="datetime" />
+          <Property Name="idMetodoPago" Type="int" />
+          <Property Name="ReferenciaOXXO" Type="varchar" MaxLength="100" />
+          <Property Name="ReferenciaSPEI" Type="varchar" MaxLength="100" />
+          <Property Name="NoOrden" Type="varchar" MaxLength="100" />
+          <Property Name="idEstatusSolicitud" Type="int" />
+          <Property Name="TerminacionTarjeta" Type="varchar" MaxLength="20" />
+          <Property Name="idTipoTarjeta" Type="int" />
+          <Property Name="CodigoAutorizacion" Type="varchar" MaxLength="100" />
+          <Property Name="Subtotal" Type="int" />
+          <Property Name="idComision" Type="int" />
+          <Property Name="Total" Type="int" />
+          <Property Name="idUsuario" Type="int" />
+        </EntityType>
+        <EntityType Name="TipoTarjeta">
+          <Key>
+            <PropertyRef Name="idTipoTarjeta" />
+          </Key>
+          <Property Name="idTipoTarjeta" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TipoTarjeta" Type="varchar" MaxLength="20" />
+        </EntityType>
         <EntityType Name="Usuarios">
           <Key>
             <PropertyRef Name="idUsuario" />
@@ -56,6 +117,30 @@
           <Property Name="Password" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="idRol" Type="int" />
         </EntityType>
+        <Association Name="FK_Consultorios_Usuarios">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+          <End Role="Consultorios" Type="Self.Consultorios" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="idUsuario" />
+            </Principal>
+            <Dependent Role="Consultorios">
+              <PropertyRef Name="idUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MetodoPago_Comision">
+          <End Role="Comision" Type="Self.Comision" Multiplicity="0..1" />
+          <End Role="MetodoPago" Type="Self.MetodoPago" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Comision">
+              <PropertyRef Name="idComision" />
+            </Principal>
+            <Dependent Role="MetodoPago">
+              <PropertyRef Name="idComision" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_RolMenu_Menu">
           <End Role="Menu" Type="Self.Menu" Multiplicity="1" />
           <End Role="RolMenu" Type="Self.RolMenu" Multiplicity="*" />
@@ -80,6 +165,78 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Solicitudes_Comision">
+          <End Role="Comision" Type="Self.Comision" Multiplicity="0..1" />
+          <End Role="Solicitudes" Type="Self.Solicitudes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Comision">
+              <PropertyRef Name="idComision" />
+            </Principal>
+            <Dependent Role="Solicitudes">
+              <PropertyRef Name="idComision" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Solicitudes_Consultorios1">
+          <End Role="Consultorios" Type="Self.Consultorios" Multiplicity="0..1" />
+          <End Role="Solicitudes" Type="Self.Solicitudes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Consultorios">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Solicitudes">
+              <PropertyRef Name="idConsultorio" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Solicitudes_EstatusSolicitud">
+          <End Role="EstatusSolicitud" Type="Self.EstatusSolicitud" Multiplicity="0..1" />
+          <End Role="Solicitudes" Type="Self.Solicitudes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EstatusSolicitud">
+              <PropertyRef Name="idEstatusSolicitud" />
+            </Principal>
+            <Dependent Role="Solicitudes">
+              <PropertyRef Name="idEstatusSolicitud" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Solicitudes_MetodoPago">
+          <End Role="MetodoPago" Type="Self.MetodoPago" Multiplicity="0..1" />
+          <End Role="Solicitudes" Type="Self.Solicitudes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MetodoPago">
+              <PropertyRef Name="idMetodoPago" />
+            </Principal>
+            <Dependent Role="Solicitudes">
+              <PropertyRef Name="idMetodoPago" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Solicitudes_Productos">
+          <End Role="Productos" Type="Self.Productos" Multiplicity="0..1" />
+          <End Role="Solicitudes" Type="Self.Solicitudes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Productos">
+              <PropertyRef Name="idProducto" />
+            </Principal>
+            <Dependent Role="Solicitudes">
+              <PropertyRef Name="idProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Solicitudes_TipoTarjeta">
+          <End Role="TipoTarjeta" Type="Self.TipoTarjeta" Multiplicity="0..1" />
+          <End Role="Solicitudes" Type="Self.Solicitudes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TipoTarjeta">
+              <PropertyRef Name="idTipoTarjeta" />
+            </Principal>
+            <Dependent Role="Solicitudes">
+              <PropertyRef Name="idTipoTarjeta" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Usuarios_Roles">
           <End Role="Roles" Type="Self.Roles" Multiplicity="0..1" />
           <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="*" />
@@ -93,11 +250,25 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="SCTiCareModelStoreContainer">
+          <EntitySet Name="Comision" EntityType="Self.Comision" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Consultorios" EntityType="Self.Consultorios" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EstatusSolicitud" EntityType="Self.EstatusSolicitud" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Menu" EntityType="Self.Menu" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MetodoPago" EntityType="Self.MetodoPago" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Productos" EntityType="Self.Productos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RolMenu" EntityType="Self.RolMenu" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Solicitudes" EntityType="Self.Solicitudes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TipoTarjeta" EntityType="Self.TipoTarjeta" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Consultorios_Usuarios" Association="Self.FK_Consultorios_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="Consultorios" EntitySet="Consultorios" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MetodoPago_Comision" Association="Self.FK_MetodoPago_Comision">
+            <End Role="Comision" EntitySet="Comision" />
+            <End Role="MetodoPago" EntitySet="MetodoPago" />
+          </AssociationSet>
           <AssociationSet Name="FK_RolMenu_Menu" Association="Self.FK_RolMenu_Menu">
             <End Role="Menu" EntitySet="Menu" />
             <End Role="RolMenu" EntitySet="RolMenu" />
@@ -105,6 +276,30 @@
           <AssociationSet Name="FK_RolMenu_Roles" Association="Self.FK_RolMenu_Roles">
             <End Role="Roles" EntitySet="Roles" />
             <End Role="RolMenu" EntitySet="RolMenu" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Solicitudes_Comision" Association="Self.FK_Solicitudes_Comision">
+            <End Role="Comision" EntitySet="Comision" />
+            <End Role="Solicitudes" EntitySet="Solicitudes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Solicitudes_Consultorios1" Association="Self.FK_Solicitudes_Consultorios1">
+            <End Role="Consultorios" EntitySet="Consultorios" />
+            <End Role="Solicitudes" EntitySet="Solicitudes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Solicitudes_EstatusSolicitud" Association="Self.FK_Solicitudes_EstatusSolicitud">
+            <End Role="EstatusSolicitud" EntitySet="EstatusSolicitud" />
+            <End Role="Solicitudes" EntitySet="Solicitudes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Solicitudes_MetodoPago" Association="Self.FK_Solicitudes_MetodoPago">
+            <End Role="MetodoPago" EntitySet="MetodoPago" />
+            <End Role="Solicitudes" EntitySet="Solicitudes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Solicitudes_Productos" Association="Self.FK_Solicitudes_Productos">
+            <End Role="Productos" EntitySet="Productos" />
+            <End Role="Solicitudes" EntitySet="Solicitudes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Solicitudes_TipoTarjeta" Association="Self.FK_Solicitudes_TipoTarjeta">
+            <End Role="TipoTarjeta" EntitySet="TipoTarjeta" />
+            <End Role="Solicitudes" EntitySet="Solicitudes" />
           </AssociationSet>
           <AssociationSet Name="FK_Usuarios_Roles" Association="Self.FK_Usuarios_Roles">
             <End Role="Roles" EntitySet="Roles" />
@@ -154,6 +349,8 @@
           <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="idRol" Type="Int32" />
           <NavigationProperty Name="Roles" Relationship="Self.FK_Usuarios_Roles" FromRole="Usuarios" ToRole="Roles" />
+          <NavigationProperty Name="Solicitudes" Relationship="SCTiCareModel.FK_Solicitudes_Usuarios" FromRole="Usuarios" ToRole="Solicitudes" />
+          <NavigationProperty Name="Consultorios" Relationship="SCTiCareModel.FK_Consultorios_Usuarios" FromRole="Usuarios" ToRole="Consultorios" />
         </EntityType>
         <Association Name="FK_RolMenu_Menu">
           <End Role="Menu" Type="Self.Menu" Multiplicity="1" />
@@ -208,8 +405,208 @@
             <End Role="Roles" EntitySet="Roles" />
             <End Role="Usuarios" EntitySet="Usuarios" />
           </AssociationSet>
+          <EntitySet Name="Productos" EntityType="SCTiCareModel.Productos" />
+          <EntitySet Name="Comision" EntityType="SCTiCareModel.Comision" />
+          <EntitySet Name="EstatusSolicitud" EntityType="SCTiCareModel.EstatusSolicitud" />
+          <EntitySet Name="MetodoPago" EntityType="SCTiCareModel.MetodoPago" />
+          <EntitySet Name="Solicitudes" EntityType="SCTiCareModel.Solicitudes" />
+          <EntitySet Name="TipoTarjeta" EntityType="SCTiCareModel.TipoTarjeta" />
+          <AssociationSet Name="FK_MetodoPago_Comision" Association="SCTiCareModel.FK_MetodoPago_Comision">
+            <End Role="Comision" EntitySet="Comision" />
+            <End Role="MetodoPago" EntitySet="MetodoPago" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Solicitudes_Comision" Association="SCTiCareModel.FK_Solicitudes_Comision">
+            <End Role="Comision" EntitySet="Comision" />
+            <End Role="Solicitudes" EntitySet="Solicitudes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Solicitudes_EstatusSolicitud" Association="SCTiCareModel.FK_Solicitudes_EstatusSolicitud">
+            <End Role="EstatusSolicitud" EntitySet="EstatusSolicitud" />
+            <End Role="Solicitudes" EntitySet="Solicitudes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Solicitudes_MetodoPago" Association="SCTiCareModel.FK_Solicitudes_MetodoPago">
+            <End Role="MetodoPago" EntitySet="MetodoPago" />
+            <End Role="Solicitudes" EntitySet="Solicitudes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Solicitudes_Productos" Association="SCTiCareModel.FK_Solicitudes_Productos">
+            <End Role="Productos" EntitySet="Productos" />
+            <End Role="Solicitudes" EntitySet="Solicitudes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Solicitudes_TipoTarjeta" Association="SCTiCareModel.FK_Solicitudes_TipoTarjeta">
+            <End Role="TipoTarjeta" EntitySet="TipoTarjeta" />
+            <End Role="Solicitudes" EntitySet="Solicitudes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Solicitudes_Usuarios" Association="SCTiCareModel.FK_Solicitudes_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="Solicitudes" EntitySet="Solicitudes" />
+          </AssociationSet>
           <EntitySet Name="Consultorios" EntityType="SCTiCareModel.Consultorios" />
-        </EntityContainer>
+          <AssociationSet Name="FK_Consultorios_Usuarios" Association="SCTiCareModel.FK_Consultorios_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="Consultorios" EntitySet="Consultorios" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Solicitudes_Consultorios1" Association="SCTiCareModel.FK_Solicitudes_Consultorios1">
+            <End Role="Consultorios" EntitySet="Consultorios" />
+            <End Role="Solicitudes" EntitySet="Solicitudes" />
+          </AssociationSet>
+          </EntityContainer>
+        <EntityType Name="Productos">
+          <Key>
+            <PropertyRef Name="idProducto" />
+          </Key>
+          <Property Name="idProducto" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NombreProducto" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Solicitudes" Relationship="SCTiCareModel.FK_Solicitudes_Productos" FromRole="Productos" ToRole="Solicitudes" />
+        </EntityType>
+        <EntityType Name="Comision">
+          <Key>
+            <PropertyRef Name="idComision" />
+          </Key>
+          <Property Name="idComision" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Comision1" Type="Int32" />
+          <NavigationProperty Name="MetodoPago" Relationship="SCTiCareModel.FK_MetodoPago_Comision" FromRole="Comision" ToRole="MetodoPago" />
+          <NavigationProperty Name="Solicitudes" Relationship="SCTiCareModel.FK_Solicitudes_Comision" FromRole="Comision" ToRole="Solicitudes" />
+        </EntityType>
+        <EntityType Name="EstatusSolicitud">
+          <Key>
+            <PropertyRef Name="idEstatusSolicitud" />
+          </Key>
+          <Property Name="idEstatusSolicitud" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Estatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Solicitudes" Relationship="SCTiCareModel.FK_Solicitudes_EstatusSolicitud" FromRole="EstatusSolicitud" ToRole="Solicitudes" />
+        </EntityType>
+        <EntityType Name="MetodoPago">
+          <Key>
+            <PropertyRef Name="idMetodoPago" />
+          </Key>
+          <Property Name="idMetodoPago" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idComision" Type="Int32" />
+          <Property Name="MetodoPago1" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Comision" Relationship="SCTiCareModel.FK_MetodoPago_Comision" FromRole="MetodoPago" ToRole="Comision" />
+          <NavigationProperty Name="Solicitudes" Relationship="SCTiCareModel.FK_Solicitudes_MetodoPago" FromRole="MetodoPago" ToRole="Solicitudes" />
+        </EntityType>
+        <EntityType Name="Solicitudes">
+          <Key>
+            <PropertyRef Name="idSolicitud" />
+          </Key>
+          <Property Name="idSolicitud" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="idProducto" Type="Int32" />
+          <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Telefono" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="idConsultorio" Type="Int32" />
+          <Property Name="FechaSolicitud" Type="DateTime" Precision="3" />
+          <Property Name="idMetodoPago" Type="Int32" />
+          <Property Name="ReferenciaOXXO" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ReferenciaSPEI" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="NoOrden" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="idEstatusSolicitud" Type="Int32" />
+          <Property Name="TerminacionTarjeta" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="idTipoTarjeta" Type="Int32" />
+          <Property Name="CodigoAutorizacion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Subtotal" Type="Int32" />
+          <Property Name="idComision" Type="Int32" />
+          <Property Name="Total" Type="Int32" />
+          <Property Name="idUsuario" Type="Int32" />
+          <NavigationProperty Name="Comision" Relationship="SCTiCareModel.FK_Solicitudes_Comision" FromRole="Solicitudes" ToRole="Comision" />
+          <NavigationProperty Name="EstatusSolicitud" Relationship="SCTiCareModel.FK_Solicitudes_EstatusSolicitud" FromRole="Solicitudes" ToRole="EstatusSolicitud" />
+          <NavigationProperty Name="MetodoPago" Relationship="SCTiCareModel.FK_Solicitudes_MetodoPago" FromRole="Solicitudes" ToRole="MetodoPago" />
+          <NavigationProperty Name="Productos" Relationship="SCTiCareModel.FK_Solicitudes_Productos" FromRole="Solicitudes" ToRole="Productos" />
+          <NavigationProperty Name="TipoTarjeta" Relationship="SCTiCareModel.FK_Solicitudes_TipoTarjeta" FromRole="Solicitudes" ToRole="TipoTarjeta" />
+          <NavigationProperty Name="Usuarios" Relationship="SCTiCareModel.FK_Solicitudes_Usuarios" FromRole="Solicitudes" ToRole="Usuarios" />
+          <NavigationProperty Name="Consultorios" Relationship="SCTiCareModel.FK_Solicitudes_Consultorios1" FromRole="Solicitudes" ToRole="Consultorios" />
+        </EntityType>
+        <EntityType Name="TipoTarjeta">
+          <Key>
+            <PropertyRef Name="idTipoTarjeta" />
+          </Key>
+          <Property Name="idTipoTarjeta" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TipoTarjeta1" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Solicitudes" Relationship="SCTiCareModel.FK_Solicitudes_TipoTarjeta" FromRole="TipoTarjeta" ToRole="Solicitudes" />
+        </EntityType>
+        <Association Name="FK_MetodoPago_Comision">
+          <End Type="SCTiCareModel.Comision" Role="Comision" Multiplicity="0..1" />
+          <End Type="SCTiCareModel.MetodoPago" Role="MetodoPago" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Comision">
+              <PropertyRef Name="idComision" />
+            </Principal>
+            <Dependent Role="MetodoPago">
+              <PropertyRef Name="idComision" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Solicitudes_Comision">
+          <End Type="SCTiCareModel.Comision" Role="Comision" Multiplicity="0..1" />
+          <End Type="SCTiCareModel.Solicitudes" Role="Solicitudes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Comision">
+              <PropertyRef Name="idComision" />
+            </Principal>
+            <Dependent Role="Solicitudes">
+              <PropertyRef Name="idComision" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Solicitudes_EstatusSolicitud">
+          <End Type="SCTiCareModel.EstatusSolicitud" Role="EstatusSolicitud" Multiplicity="0..1" />
+          <End Type="SCTiCareModel.Solicitudes" Role="Solicitudes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EstatusSolicitud">
+              <PropertyRef Name="idEstatusSolicitud" />
+            </Principal>
+            <Dependent Role="Solicitudes">
+              <PropertyRef Name="idEstatusSolicitud" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Solicitudes_MetodoPago">
+          <End Type="SCTiCareModel.MetodoPago" Role="MetodoPago" Multiplicity="0..1" />
+          <End Type="SCTiCareModel.Solicitudes" Role="Solicitudes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MetodoPago">
+              <PropertyRef Name="idMetodoPago" />
+            </Principal>
+            <Dependent Role="Solicitudes">
+              <PropertyRef Name="idMetodoPago" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Solicitudes_Productos">
+          <End Type="SCTiCareModel.Productos" Role="Productos" Multiplicity="0..1" />
+          <End Type="SCTiCareModel.Solicitudes" Role="Solicitudes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Productos">
+              <PropertyRef Name="idProducto" />
+            </Principal>
+            <Dependent Role="Solicitudes">
+              <PropertyRef Name="idProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Solicitudes_TipoTarjeta">
+          <End Type="SCTiCareModel.TipoTarjeta" Role="TipoTarjeta" Multiplicity="0..1" />
+          <End Type="SCTiCareModel.Solicitudes" Role="Solicitudes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TipoTarjeta">
+              <PropertyRef Name="idTipoTarjeta" />
+            </Principal>
+            <Dependent Role="Solicitudes">
+              <PropertyRef Name="idTipoTarjeta" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Solicitudes_Usuarios">
+          <End Type="SCTiCareModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+          <End Type="SCTiCareModel.Solicitudes" Role="Solicitudes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="idUsuario" />
+            </Principal>
+            <Dependent Role="Solicitudes">
+              <PropertyRef Name="idUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityType Name="Consultorios">
           <Key>
             <PropertyRef Name="id" />
@@ -226,8 +623,35 @@
           <Property Name="Ciudad" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Consultorio" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="NoConsultorio" Type="Int32" />
+          <Property Name="idUsuario" Type="Int32" />
+          <NavigationProperty Name="Usuarios" Relationship="SCTiCareModel.FK_Consultorios_Usuarios" FromRole="Consultorios" ToRole="Usuarios" />
+          <NavigationProperty Name="Solicitudes" Relationship="SCTiCareModel.FK_Solicitudes_Consultorios1" FromRole="Consultorios" ToRole="Solicitudes" />
         </EntityType>
-      </Schema>
+        <Association Name="FK_Consultorios_Usuarios">
+          <End Type="SCTiCareModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+          <End Type="SCTiCareModel.Consultorios" Role="Consultorios" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="idUsuario" />
+            </Principal>
+            <Dependent Role="Consultorios">
+              <PropertyRef Name="idUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Solicitudes_Consultorios1">
+          <End Type="SCTiCareModel.Consultorios" Role="Consultorios" Multiplicity="0..1" />
+          <End Type="SCTiCareModel.Solicitudes" Role="Solicitudes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Consultorios">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Solicitudes">
+              <PropertyRef Name="idConsultorio" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -271,9 +695,76 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Productos">
+            <EntityTypeMapping TypeName="SCTiCareModel.Productos">
+              <MappingFragment StoreEntitySet="Productos">
+                <ScalarProperty Name="NombreProducto" ColumnName="NombreProducto" />
+                <ScalarProperty Name="idProducto" ColumnName="idProducto" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Comision">
+            <EntityTypeMapping TypeName="SCTiCareModel.Comision">
+              <MappingFragment StoreEntitySet="Comision">
+                <ScalarProperty Name="Comision1" ColumnName="Comision" />
+                <ScalarProperty Name="idComision" ColumnName="idComision" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EstatusSolicitud">
+            <EntityTypeMapping TypeName="SCTiCareModel.EstatusSolicitud">
+              <MappingFragment StoreEntitySet="EstatusSolicitud">
+                <ScalarProperty Name="Estatus" ColumnName="Estatus" />
+                <ScalarProperty Name="idEstatusSolicitud" ColumnName="idEstatusSolicitud" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MetodoPago">
+            <EntityTypeMapping TypeName="SCTiCareModel.MetodoPago">
+              <MappingFragment StoreEntitySet="MetodoPago">
+                <ScalarProperty Name="MetodoPago1" ColumnName="MetodoPago" />
+                <ScalarProperty Name="idComision" ColumnName="idComision" />
+                <ScalarProperty Name="idMetodoPago" ColumnName="idMetodoPago" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Solicitudes">
+            <EntityTypeMapping TypeName="SCTiCareModel.Solicitudes">
+              <MappingFragment StoreEntitySet="Solicitudes">
+                <ScalarProperty Name="idUsuario" ColumnName="idUsuario" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="idComision" ColumnName="idComision" />
+                <ScalarProperty Name="Subtotal" ColumnName="Subtotal" />
+                <ScalarProperty Name="CodigoAutorizacion" ColumnName="CodigoAutorizacion" />
+                <ScalarProperty Name="idTipoTarjeta" ColumnName="idTipoTarjeta" />
+                <ScalarProperty Name="TerminacionTarjeta" ColumnName="TerminacionTarjeta" />
+                <ScalarProperty Name="idEstatusSolicitud" ColumnName="idEstatusSolicitud" />
+                <ScalarProperty Name="NoOrden" ColumnName="NoOrden" />
+                <ScalarProperty Name="ReferenciaSPEI" ColumnName="ReferenciaSPEI" />
+                <ScalarProperty Name="ReferenciaOXXO" ColumnName="ReferenciaOXXO" />
+                <ScalarProperty Name="idMetodoPago" ColumnName="idMetodoPago" />
+                <ScalarProperty Name="FechaSolicitud" ColumnName="FechaSolicitud" />
+                <ScalarProperty Name="idConsultorio" ColumnName="idConsultorio" />
+                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="idProducto" ColumnName="idProducto" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="idSolicitud" ColumnName="idSolicitud" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TipoTarjeta">
+            <EntityTypeMapping TypeName="SCTiCareModel.TipoTarjeta">
+              <MappingFragment StoreEntitySet="TipoTarjeta">
+                <ScalarProperty Name="TipoTarjeta1" ColumnName="TipoTarjeta" />
+                <ScalarProperty Name="idTipoTarjeta" ColumnName="idTipoTarjeta" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Consultorios">
             <EntityTypeMapping TypeName="SCTiCareModel.Consultorios">
               <MappingFragment StoreEntitySet="Consultorios">
+                <ScalarProperty Name="idUsuario" ColumnName="idUsuario" />
                 <ScalarProperty Name="NoConsultorio" ColumnName="NoConsultorio" />
                 <ScalarProperty Name="Consultorio" ColumnName="Consultorio" />
                 <ScalarProperty Name="Ciudad" ColumnName="Ciudad" />

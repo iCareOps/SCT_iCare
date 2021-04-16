@@ -14,6 +14,13 @@ namespace SCT_iCare
     
     public partial class Usuarios
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Usuarios()
+        {
+            this.Solicitudes = new HashSet<Solicitudes>();
+            this.Consultorios = new HashSet<Consultorios>();
+        }
+    
         public int idUsuario { get; set; }
         public string Nombre { get; set; }
         public string Email { get; set; }
@@ -21,5 +28,9 @@ namespace SCT_iCare
         public Nullable<int> idRol { get; set; }
     
         public virtual Roles Roles { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Solicitudes> Solicitudes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Consultorios> Consultorios { get; set; }
     }
 }
