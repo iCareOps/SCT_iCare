@@ -1,12 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="SCTiCareModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-  <EntityType Name="Comision">
-    <Key>
-      <PropertyRef Name="idComision" />
-    </Key>
-    <Property Name="idComision" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Comision" Type="int" />
-  </EntityType>
   <EntityType Name="Consultorios">
     <Key>
       <PropertyRef Name="id" />
@@ -25,13 +18,6 @@
     <Property Name="NoConsultorio" Type="int" />
     <Property Name="idUsuario" Type="int" />
   </EntityType>
-  <EntityType Name="EstatusSolicitud">
-    <Key>
-      <PropertyRef Name="idEstatusSolicitud" />
-    </Key>
-    <Property Name="idEstatusSolicitud" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Estatus" Type="varchar" MaxLength="50" />
-  </EntityType>
   <EntityType Name="Menu">
     <Key>
       <PropertyRef Name="idMenu" />
@@ -41,20 +27,52 @@
     <Property Name="Controlador" Type="varchar" MaxLength="50" Nullable="false" />
     <Property Name="Action" Type="varchar" MaxLength="50" Nullable="false" />
   </EntityType>
-  <EntityType Name="MetodoPago">
+  <EntityType Name="Orden">
     <Key>
-      <PropertyRef Name="idMetodoPago" />
+      <PropertyRef Name="idOrden" />
     </Key>
-    <Property Name="idMetodoPago" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="idComision" Type="int" />
-    <Property Name="MetodoPago" Type="varchar" MaxLength="20" />
+    <Property Name="idOrden" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre" Type="varchar" MaxLength="200" />
+    <Property Name="Email" Type="varchar" MaxLength="200" />
+    <Property Name="Producto" Type="varchar" MaxLength="100" />
+    <Property Name="FechaCreacion" Type="datetime" />
+    <Property Name="Descripcion" Type="varchar" MaxLength="100" />
+    <Property Name="Concepto" Type="varchar" MaxLength="200" />
+    <Property Name="FechaCita" Type="datetime" />
+    <Property Name="MetodoPago" Type="varchar" MaxLength="100" />
+    <Property Name="idCargo" Type="varchar" MaxLength="100" />
+    <Property Name="Estatus" Type="varchar" MaxLength="100" />
+    <Property Name="FechaActualizacion" Type="datetime" />
+    <Property Name="Total" Type="int" />
+    <Property Name="idOrdenConekta" Type="int" />
+    <Property Name="ReferenciaOxxo" Type="varchar" MaxLength="200" />
+    <Property Name="LinkPago" Type="varchar" MaxLength="200" />
+    <Property Name="CheckoutRequestName" Type="varchar" MaxLength="100" />
+    <Property Name="idConsultorio" Type="int" />
   </EntityType>
-  <EntityType Name="Productos">
+  <EntityType Name="OrdenConekta">
     <Key>
-      <PropertyRef Name="idProducto" />
+      <PropertyRef Name="idOrden" />
     </Key>
-    <Property Name="idProducto" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="NombreProducto" Type="varchar" MaxLength="100" />
+    <Property Name="idOrden" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre" Type="varchar" MaxLength="200" />
+    <Property Name="Email" Type="varchar" MaxLength="200" />
+    <Property Name="Producto" Type="varchar" MaxLength="100" />
+    <Property Name="FechaCreacion" Type="datetime" />
+    <Property Name="Descripcion" Type="varchar" MaxLength="100" />
+    <Property Name="Concepto" Type="varchar" MaxLength="200" />
+    <Property Name="FechaCita" Type="datetime" />
+    <Property Name="MetodoPago" Type="varchar" MaxLength="100" />
+    <Property Name="idCargo" Type="varchar" MaxLength="100" />
+    <Property Name="Estatus" Type="varchar" MaxLength="100" />
+    <Property Name="FechaActualizacion" Type="datetime" />
+    <Property Name="Total" Type="int" />
+    <Property Name="idOrdenConekta" Type="varchar" MaxLength="100" />
+    <Property Name="ReferenciaOxxo" Type="varchar" MaxLength="200" />
+    <Property Name="LinkPago" Type="varchar" MaxLength="200" />
+    <Property Name="CheckoutRequestName" Type="varchar" MaxLength="100" />
+    <Property Name="idConsultorio" Type="int" />
+    <Property Name="Asignacion" Type="varchar" MaxLength="10" />
   </EntityType>
   <EntityType Name="Roles">
     <Key>
@@ -70,37 +88,6 @@
     <Property Name="idRolMenu" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="idMenu" Type="int" Nullable="false" />
     <Property Name="idRol" Type="int" Nullable="false" />
-  </EntityType>
-  <EntityType Name="Solicitudes">
-    <Key>
-      <PropertyRef Name="idSolicitud" />
-    </Key>
-    <Property Name="idSolicitud" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Nombre" Type="varchar" MaxLength="200" />
-    <Property Name="idProducto" Type="int" />
-    <Property Name="Email" Type="varchar" MaxLength="200" />
-    <Property Name="Telefono" Type="varchar" MaxLength="20" />
-    <Property Name="idConsultorio" Type="int" />
-    <Property Name="FechaSolicitud" Type="datetime" />
-    <Property Name="idMetodoPago" Type="int" />
-    <Property Name="ReferenciaOXXO" Type="varchar" MaxLength="100" />
-    <Property Name="ReferenciaSPEI" Type="varchar" MaxLength="100" />
-    <Property Name="NoOrden" Type="varchar" MaxLength="100" />
-    <Property Name="idEstatusSolicitud" Type="int" />
-    <Property Name="TerminacionTarjeta" Type="varchar" MaxLength="20" />
-    <Property Name="idTipoTarjeta" Type="int" />
-    <Property Name="CodigoAutorizacion" Type="varchar" MaxLength="100" />
-    <Property Name="Subtotal" Type="int" />
-    <Property Name="idComision" Type="int" />
-    <Property Name="Total" Type="int" />
-    <Property Name="idUsuario" Type="int" />
-  </EntityType>
-  <EntityType Name="TipoTarjeta">
-    <Key>
-      <PropertyRef Name="idTipoTarjeta" />
-    </Key>
-    <Property Name="idTipoTarjeta" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="TipoTarjeta" Type="varchar" MaxLength="20" />
   </EntityType>
   <EntityType Name="Usuarios">
     <Key>
@@ -121,18 +108,6 @@
       </Principal>
       <Dependent Role="Consultorios">
         <PropertyRef Name="idUsuario" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_MetodoPago_Comision">
-    <End Role="Comision" Type="Self.Comision" Multiplicity="0..1" />
-    <End Role="MetodoPago" Type="Self.MetodoPago" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Comision">
-        <PropertyRef Name="idComision" />
-      </Principal>
-      <Dependent Role="MetodoPago">
-        <PropertyRef Name="idComision" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -160,78 +135,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_Solicitudes_Comision">
-    <End Role="Comision" Type="Self.Comision" Multiplicity="0..1" />
-    <End Role="Solicitudes" Type="Self.Solicitudes" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Comision">
-        <PropertyRef Name="idComision" />
-      </Principal>
-      <Dependent Role="Solicitudes">
-        <PropertyRef Name="idComision" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_Solicitudes_Consultorios1">
-    <End Role="Consultorios" Type="Self.Consultorios" Multiplicity="0..1" />
-    <End Role="Solicitudes" Type="Self.Solicitudes" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Consultorios">
-        <PropertyRef Name="id" />
-      </Principal>
-      <Dependent Role="Solicitudes">
-        <PropertyRef Name="idConsultorio" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_Solicitudes_EstatusSolicitud">
-    <End Role="EstatusSolicitud" Type="Self.EstatusSolicitud" Multiplicity="0..1" />
-    <End Role="Solicitudes" Type="Self.Solicitudes" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="EstatusSolicitud">
-        <PropertyRef Name="idEstatusSolicitud" />
-      </Principal>
-      <Dependent Role="Solicitudes">
-        <PropertyRef Name="idEstatusSolicitud" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_Solicitudes_MetodoPago">
-    <End Role="MetodoPago" Type="Self.MetodoPago" Multiplicity="0..1" />
-    <End Role="Solicitudes" Type="Self.Solicitudes" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="MetodoPago">
-        <PropertyRef Name="idMetodoPago" />
-      </Principal>
-      <Dependent Role="Solicitudes">
-        <PropertyRef Name="idMetodoPago" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_Solicitudes_Productos">
-    <End Role="Productos" Type="Self.Productos" Multiplicity="0..1" />
-    <End Role="Solicitudes" Type="Self.Solicitudes" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Productos">
-        <PropertyRef Name="idProducto" />
-      </Principal>
-      <Dependent Role="Solicitudes">
-        <PropertyRef Name="idProducto" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_Solicitudes_TipoTarjeta">
-    <End Role="TipoTarjeta" Type="Self.TipoTarjeta" Multiplicity="0..1" />
-    <End Role="Solicitudes" Type="Self.Solicitudes" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="TipoTarjeta">
-        <PropertyRef Name="idTipoTarjeta" />
-      </Principal>
-      <Dependent Role="Solicitudes">
-        <PropertyRef Name="idTipoTarjeta" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="FK_Usuarios_Roles">
     <End Role="Roles" Type="Self.Roles" Multiplicity="0..1" />
     <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="*" />
@@ -245,24 +148,16 @@
     </ReferentialConstraint>
   </Association>
   <EntityContainer Name="SCTiCareModelStoreContainer">
-    <EntitySet Name="Comision" EntityType="Self.Comision" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Consultorios" EntityType="Self.Consultorios" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="EstatusSolicitud" EntityType="Self.EstatusSolicitud" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Menu" EntityType="Self.Menu" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="MetodoPago" EntityType="Self.MetodoPago" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="Productos" EntityType="Self.Productos" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Orden" EntityType="Self.Orden" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="OrdenConekta" EntityType="Self.OrdenConekta" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="RolMenu" EntityType="Self.RolMenu" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="Solicitudes" EntityType="Self.Solicitudes" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="TipoTarjeta" EntityType="Self.TipoTarjeta" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
     <AssociationSet Name="FK_Consultorios_Usuarios" Association="Self.FK_Consultorios_Usuarios">
       <End Role="Usuarios" EntitySet="Usuarios" />
       <End Role="Consultorios" EntitySet="Consultorios" />
-    </AssociationSet>
-    <AssociationSet Name="FK_MetodoPago_Comision" Association="Self.FK_MetodoPago_Comision">
-      <End Role="Comision" EntitySet="Comision" />
-      <End Role="MetodoPago" EntitySet="MetodoPago" />
     </AssociationSet>
     <AssociationSet Name="FK_RolMenu_Menu" Association="Self.FK_RolMenu_Menu">
       <End Role="Menu" EntitySet="Menu" />
@@ -271,30 +166,6 @@
     <AssociationSet Name="FK_RolMenu_Roles" Association="Self.FK_RolMenu_Roles">
       <End Role="Roles" EntitySet="Roles" />
       <End Role="RolMenu" EntitySet="RolMenu" />
-    </AssociationSet>
-    <AssociationSet Name="FK_Solicitudes_Comision" Association="Self.FK_Solicitudes_Comision">
-      <End Role="Comision" EntitySet="Comision" />
-      <End Role="Solicitudes" EntitySet="Solicitudes" />
-    </AssociationSet>
-    <AssociationSet Name="FK_Solicitudes_Consultorios1" Association="Self.FK_Solicitudes_Consultorios1">
-      <End Role="Consultorios" EntitySet="Consultorios" />
-      <End Role="Solicitudes" EntitySet="Solicitudes" />
-    </AssociationSet>
-    <AssociationSet Name="FK_Solicitudes_EstatusSolicitud" Association="Self.FK_Solicitudes_EstatusSolicitud">
-      <End Role="EstatusSolicitud" EntitySet="EstatusSolicitud" />
-      <End Role="Solicitudes" EntitySet="Solicitudes" />
-    </AssociationSet>
-    <AssociationSet Name="FK_Solicitudes_MetodoPago" Association="Self.FK_Solicitudes_MetodoPago">
-      <End Role="MetodoPago" EntitySet="MetodoPago" />
-      <End Role="Solicitudes" EntitySet="Solicitudes" />
-    </AssociationSet>
-    <AssociationSet Name="FK_Solicitudes_Productos" Association="Self.FK_Solicitudes_Productos">
-      <End Role="Productos" EntitySet="Productos" />
-      <End Role="Solicitudes" EntitySet="Solicitudes" />
-    </AssociationSet>
-    <AssociationSet Name="FK_Solicitudes_TipoTarjeta" Association="Self.FK_Solicitudes_TipoTarjeta">
-      <End Role="TipoTarjeta" EntitySet="TipoTarjeta" />
-      <End Role="Solicitudes" EntitySet="Solicitudes" />
     </AssociationSet>
     <AssociationSet Name="FK_Usuarios_Roles" Association="Self.FK_Usuarios_Roles">
       <End Role="Roles" EntitySet="Roles" />

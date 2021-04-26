@@ -1,9 +1,12 @@
 ﻿@model IEnumerable<SCT_iCare.Consultorios>
 
+@{
+    ViewBag.Title = "Index";
+}
+
 <br />
 <br />
 <a href="~/Consultorios/Create"><button type="button" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal">Nuevo Consultorio</button></a>
-
 
 <br />
 
@@ -46,7 +49,7 @@
                 @Html.DisplayNameFor(model => model.NoConsultorio)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.idUsuario)
+                @Html.DisplayNameFor(model => model.Usuarios.Nombre)
             </th>
             <th></th>
         </tr>
@@ -88,7 +91,7 @@
                     @Html.DisplayFor(modelItem => item.NoConsultorio)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.idUsuario)
+                    @Html.DisplayFor(modelItem => item.Usuarios.Nombre)
                 </td>
                 <td>
                     <div class="btn-group">
@@ -96,7 +99,7 @@
                             Acción
                         </button>
                         <div class="dropdown-menu">
-                            @Html.ActionLink("Editar", "Edit", new { id = item.id })
+                            <h5>@Html.ActionLink("Editar", "Edit", new { id = item.id })</h5>
                             <div class="dropdown-divider"></div>
                             <h5>@Html.ActionLink("Detalles", "Details", new { id = item.id })</h5>
                             <div class="dropdown-divider"></div>
@@ -109,3 +112,5 @@
 
     </table>
 </div>
+
+

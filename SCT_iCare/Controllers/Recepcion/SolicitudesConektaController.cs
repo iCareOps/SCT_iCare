@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using conekta;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace SCT_iCare.Controllers.Recepcion
 {
@@ -22,16 +26,9 @@ namespace SCT_iCare.Controllers.Recepcion
         {
             GetApiKey();
 
-            string ordenReal = "ord_2pYTnMjcr6XeqMQYX";
-            string ordenReal2 = "ord_2paV4oQ4sw68AFADV";
-            //Intento de traer datos de conekta
-            Order ordenes = new Order().find(ordenReal2);
-            var nombre = ordenes.customer_info.name;
-            string nom = nombre;
-            var status = ordenes.payment_status;
-            string ps = status;
-            //return View(solicitudes);
-            return View(ordenes);
+            var ordenes2 = new Order().where(new JObject());            
+
+            return View(ordenes2);
         }
     }
 }

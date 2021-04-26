@@ -1,0 +1,105 @@
+﻿@model IEnumerable<conekta.Order>
+
+@{
+    ViewBag.Title = "Index";
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+    int idUser = oUser.idUsuario;
+
+    SCTiCareEntities1 db = new SCTiCareEntities1();
+
+    conekta.Charge ch = new conekta.Charge();
+    System.Web.Script.Serialization.JavaScriptSerializer js = new System.Web.Script.Serialization.JavaScriptSerializer();
+
+    var Doctor = (from r in db.Consultorios where r.idUsuario == idUser select r.NombreDoctor).FirstOrDefault();
+    var Consultorio = (from r in db.Consultorios where r.idUsuario == idUser select r.Consultorio).FirstOrDefault();
+
+    string doctor = Doctor;
+    string consultorio = Consultorio;
+}
+
+<br />
+
+<h4 style="color:#AC9070">Recepción <span style="color:white">@consultorio</span> </h4>
+<h5 style="color:#AC9070">Doctor: <span style="color:white">@doctor</span> </h5>
+<br />
+<a href="#"><button type="button" class="btn btn-outline-warning boton-transparente botonesGral"><span class="glyphicon glyphicon-plus"></span> Venta en Sitio</button></a>
+<a href="~/OrdenConekta/Asignadas"><button type="button" class="btn btn-outline-warning boton-transparente botonesGral"><span class="glyphicon glyphicon-ok"></span> Órdenes asignadas</button></a>
+<a href="~/OrdenConekta/Pendiente"><button type="button" class="btn btn-outline-warning boton-transparente botonesGral"><span class="glyphicon glyphicon-time"></span> Órdenes para asignación</button></a>
+<a href="~/OrdenConekta/Terminado"><button type="button" class="btn btn-outline-warning boton-transparente botonesGral"><span class="glyphicon glyphicon-ok-sign"></span> Órdenes finalizadas</button></a>
+<a href="#"><button type="button" class="btn btn-outline-warning boton-transparenteExcel botonesGral "><span class="glyphicon glyphicon-circle-arrow-up"></span> Subir excel</button></a>
+
+
+<hr />
+
+<div class="enlaceSinBoton">
+    @Html.ActionLink("Volver a Recepción", "Index")
+</div>
+
+<div class="tablaScroll">
+    <table class="table tablas">
+        <tr class="bg-info">
+            <th>
+                Nombre
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Orden
+            </th>
+            <th>
+                Estatus de pago
+            </th>
+            <th>
+                Fecha de creación
+            </th>
+            <th>
+                Total
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.customer_info.name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.customer_info.email)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.payment_status)
+        </td>
+        @{
+            double ticks = double.Parse(item.created_at);
+            TimeSpan time = TimeSpan.FromSeconds(ticks);
+            DateTime startdate = new DateTime(1969, 12, 31, 19, 00, 000) + time;
+
+            dynamic datosCargo = js.Deserialize<dynamic>(item.charges.data[0].ToString());
+            string id = datosCargo["id"];
+        }
+        <td>
+            @Html.DisplayFor(modelItem => startdate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.amount)
+        </td>
+        <td>
+            @{ 
+                if(item.payment_status == "paid")
+                {
+                    <button class="btn btn-info">Asignar</button>
+                }
+            }
+        </td>
+
+    </tr>
+                    }
+
+    </table>
+</div>

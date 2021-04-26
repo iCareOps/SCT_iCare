@@ -45,7 +45,7 @@ namespace SCT_iCare.Controllers.Login
                         return Redirect("~/CallCenter/Index");
                     case 3:
                         ViewBag.Nombre = oUser.Nombre.ToString();
-                        return Redirect("~/Recepcionista/Index");
+                        return Redirect("~/SolicitudesConekta/Index");
                     case 4:
                         ViewBag.Nombre = oUser.Nombre.ToString();
                         return Redirect("~/Contabilidad/Index");

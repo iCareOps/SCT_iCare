@@ -29,12 +29,8 @@ namespace SCT_iCare
         public virtual DbSet<Roles> Roles { get; set; }
         public virtual DbSet<RolMenu> RolMenu { get; set; }
         public virtual DbSet<Usuarios> Usuarios { get; set; }
-        public virtual DbSet<Productos> Productos { get; set; }
-        public virtual DbSet<Comision> Comision { get; set; }
-        public virtual DbSet<EstatusSolicitud> EstatusSolicitud { get; set; }
-        public virtual DbSet<MetodoPago> MetodoPago { get; set; }
-        public virtual DbSet<Solicitudes> Solicitudes { get; set; }
-        public virtual DbSet<TipoTarjeta> TipoTarjeta { get; set; }
         public virtual DbSet<Consultorios> Consultorios { get; set; }
+        public virtual DbSet<Orden> Orden { get; set; }
+        public virtual DbSet<OrdenConekta> OrdenConekta { get; set; }
     }
 }

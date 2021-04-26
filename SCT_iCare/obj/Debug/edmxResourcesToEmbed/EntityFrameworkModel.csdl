@@ -39,7 +39,6 @@
     <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
     <Property Name="idRol" Type="Int32" />
     <NavigationProperty Name="Roles" Relationship="Self.FK_Usuarios_Roles" FromRole="Usuarios" ToRole="Roles" />
-    <NavigationProperty Name="Solicitudes" Relationship="SCTiCareModel.FK_Solicitudes_Usuarios" FromRole="Usuarios" ToRole="Solicitudes" />
     <NavigationProperty Name="Consultorios" Relationship="SCTiCareModel.FK_Consultorios_Usuarios" FromRole="Usuarios" ToRole="Consultorios" />
   </EntityType>
   <Association Name="FK_RolMenu_Menu">
@@ -95,208 +94,14 @@
       <End Role="Roles" EntitySet="Roles" />
       <End Role="Usuarios" EntitySet="Usuarios" />
     </AssociationSet>
-    <EntitySet Name="Productos" EntityType="SCTiCareModel.Productos" />
-    <EntitySet Name="Comision" EntityType="SCTiCareModel.Comision" />
-    <EntitySet Name="EstatusSolicitud" EntityType="SCTiCareModel.EstatusSolicitud" />
-    <EntitySet Name="MetodoPago" EntityType="SCTiCareModel.MetodoPago" />
-    <EntitySet Name="Solicitudes" EntityType="SCTiCareModel.Solicitudes" />
-    <EntitySet Name="TipoTarjeta" EntityType="SCTiCareModel.TipoTarjeta" />
-    <AssociationSet Name="FK_MetodoPago_Comision" Association="SCTiCareModel.FK_MetodoPago_Comision">
-      <End Role="Comision" EntitySet="Comision" />
-      <End Role="MetodoPago" EntitySet="MetodoPago" />
-    </AssociationSet>
-    <AssociationSet Name="FK_Solicitudes_Comision" Association="SCTiCareModel.FK_Solicitudes_Comision">
-      <End Role="Comision" EntitySet="Comision" />
-      <End Role="Solicitudes" EntitySet="Solicitudes" />
-    </AssociationSet>
-    <AssociationSet Name="FK_Solicitudes_EstatusSolicitud" Association="SCTiCareModel.FK_Solicitudes_EstatusSolicitud">
-      <End Role="EstatusSolicitud" EntitySet="EstatusSolicitud" />
-      <End Role="Solicitudes" EntitySet="Solicitudes" />
-    </AssociationSet>
-    <AssociationSet Name="FK_Solicitudes_MetodoPago" Association="SCTiCareModel.FK_Solicitudes_MetodoPago">
-      <End Role="MetodoPago" EntitySet="MetodoPago" />
-      <End Role="Solicitudes" EntitySet="Solicitudes" />
-    </AssociationSet>
-    <AssociationSet Name="FK_Solicitudes_Productos" Association="SCTiCareModel.FK_Solicitudes_Productos">
-      <End Role="Productos" EntitySet="Productos" />
-      <End Role="Solicitudes" EntitySet="Solicitudes" />
-    </AssociationSet>
-    <AssociationSet Name="FK_Solicitudes_TipoTarjeta" Association="SCTiCareModel.FK_Solicitudes_TipoTarjeta">
-      <End Role="TipoTarjeta" EntitySet="TipoTarjeta" />
-      <End Role="Solicitudes" EntitySet="Solicitudes" />
-    </AssociationSet>
-    <AssociationSet Name="FK_Solicitudes_Usuarios" Association="SCTiCareModel.FK_Solicitudes_Usuarios">
-      <End Role="Usuarios" EntitySet="Usuarios" />
-      <End Role="Solicitudes" EntitySet="Solicitudes" />
-    </AssociationSet>
     <EntitySet Name="Consultorios" EntityType="SCTiCareModel.Consultorios" />
     <AssociationSet Name="FK_Consultorios_Usuarios" Association="SCTiCareModel.FK_Consultorios_Usuarios">
       <End Role="Usuarios" EntitySet="Usuarios" />
       <End Role="Consultorios" EntitySet="Consultorios" />
     </AssociationSet>
-    <AssociationSet Name="FK_Solicitudes_Consultorios1" Association="SCTiCareModel.FK_Solicitudes_Consultorios1">
-      <End Role="Consultorios" EntitySet="Consultorios" />
-      <End Role="Solicitudes" EntitySet="Solicitudes" />
-    </AssociationSet>
+    <EntitySet Name="Orden" EntityType="SCTiCareModel.Orden" />
+    <EntitySet Name="OrdenConekta" EntityType="SCTiCareModel.OrdenConekta" />
   </EntityContainer>
-  <EntityType Name="Productos">
-    <Key>
-      <PropertyRef Name="idProducto" />
-    </Key>
-    <Property Name="idProducto" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="NombreProducto" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <NavigationProperty Name="Solicitudes" Relationship="SCTiCareModel.FK_Solicitudes_Productos" FromRole="Productos" ToRole="Solicitudes" />
-  </EntityType>
-  <EntityType Name="Comision">
-    <Key>
-      <PropertyRef Name="idComision" />
-    </Key>
-    <Property Name="idComision" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="Comision1" Type="Int32" />
-    <NavigationProperty Name="MetodoPago" Relationship="SCTiCareModel.FK_MetodoPago_Comision" FromRole="Comision" ToRole="MetodoPago" />
-    <NavigationProperty Name="Solicitudes" Relationship="SCTiCareModel.FK_Solicitudes_Comision" FromRole="Comision" ToRole="Solicitudes" />
-  </EntityType>
-  <EntityType Name="EstatusSolicitud">
-    <Key>
-      <PropertyRef Name="idEstatusSolicitud" />
-    </Key>
-    <Property Name="idEstatusSolicitud" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="Estatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <NavigationProperty Name="Solicitudes" Relationship="SCTiCareModel.FK_Solicitudes_EstatusSolicitud" FromRole="EstatusSolicitud" ToRole="Solicitudes" />
-  </EntityType>
-  <EntityType Name="MetodoPago">
-    <Key>
-      <PropertyRef Name="idMetodoPago" />
-    </Key>
-    <Property Name="idMetodoPago" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="idComision" Type="Int32" />
-    <Property Name="MetodoPago1" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-    <NavigationProperty Name="Comision" Relationship="SCTiCareModel.FK_MetodoPago_Comision" FromRole="MetodoPago" ToRole="Comision" />
-    <NavigationProperty Name="Solicitudes" Relationship="SCTiCareModel.FK_Solicitudes_MetodoPago" FromRole="MetodoPago" ToRole="Solicitudes" />
-  </EntityType>
-  <EntityType Name="Solicitudes">
-    <Key>
-      <PropertyRef Name="idSolicitud" />
-    </Key>
-    <Property Name="idSolicitud" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-    <Property Name="idProducto" Type="Int32" />
-    <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-    <Property Name="Telefono" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-    <Property Name="idConsultorio" Type="Int32" />
-    <Property Name="FechaSolicitud" Type="DateTime" Precision="3" />
-    <Property Name="idMetodoPago" Type="Int32" />
-    <Property Name="ReferenciaOXXO" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="ReferenciaSPEI" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="NoOrden" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="idEstatusSolicitud" Type="Int32" />
-    <Property Name="TerminacionTarjeta" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-    <Property Name="idTipoTarjeta" Type="Int32" />
-    <Property Name="CodigoAutorizacion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="Subtotal" Type="Int32" />
-    <Property Name="idComision" Type="Int32" />
-    <Property Name="Total" Type="Int32" />
-    <Property Name="idUsuario" Type="Int32" />
-    <NavigationProperty Name="Comision" Relationship="SCTiCareModel.FK_Solicitudes_Comision" FromRole="Solicitudes" ToRole="Comision" />
-    <NavigationProperty Name="EstatusSolicitud" Relationship="SCTiCareModel.FK_Solicitudes_EstatusSolicitud" FromRole="Solicitudes" ToRole="EstatusSolicitud" />
-    <NavigationProperty Name="MetodoPago" Relationship="SCTiCareModel.FK_Solicitudes_MetodoPago" FromRole="Solicitudes" ToRole="MetodoPago" />
-    <NavigationProperty Name="Productos" Relationship="SCTiCareModel.FK_Solicitudes_Productos" FromRole="Solicitudes" ToRole="Productos" />
-    <NavigationProperty Name="TipoTarjeta" Relationship="SCTiCareModel.FK_Solicitudes_TipoTarjeta" FromRole="Solicitudes" ToRole="TipoTarjeta" />
-    <NavigationProperty Name="Usuarios" Relationship="SCTiCareModel.FK_Solicitudes_Usuarios" FromRole="Solicitudes" ToRole="Usuarios" />
-    <NavigationProperty Name="Consultorios" Relationship="SCTiCareModel.FK_Solicitudes_Consultorios1" FromRole="Solicitudes" ToRole="Consultorios" />
-  </EntityType>
-  <EntityType Name="TipoTarjeta">
-    <Key>
-      <PropertyRef Name="idTipoTarjeta" />
-    </Key>
-    <Property Name="idTipoTarjeta" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="TipoTarjeta1" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-    <NavigationProperty Name="Solicitudes" Relationship="SCTiCareModel.FK_Solicitudes_TipoTarjeta" FromRole="TipoTarjeta" ToRole="Solicitudes" />
-  </EntityType>
-  <Association Name="FK_MetodoPago_Comision">
-    <End Type="SCTiCareModel.Comision" Role="Comision" Multiplicity="0..1" />
-    <End Type="SCTiCareModel.MetodoPago" Role="MetodoPago" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Comision">
-        <PropertyRef Name="idComision" />
-      </Principal>
-      <Dependent Role="MetodoPago">
-        <PropertyRef Name="idComision" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_Solicitudes_Comision">
-    <End Type="SCTiCareModel.Comision" Role="Comision" Multiplicity="0..1" />
-    <End Type="SCTiCareModel.Solicitudes" Role="Solicitudes" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Comision">
-        <PropertyRef Name="idComision" />
-      </Principal>
-      <Dependent Role="Solicitudes">
-        <PropertyRef Name="idComision" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_Solicitudes_EstatusSolicitud">
-    <End Type="SCTiCareModel.EstatusSolicitud" Role="EstatusSolicitud" Multiplicity="0..1" />
-    <End Type="SCTiCareModel.Solicitudes" Role="Solicitudes" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="EstatusSolicitud">
-        <PropertyRef Name="idEstatusSolicitud" />
-      </Principal>
-      <Dependent Role="Solicitudes">
-        <PropertyRef Name="idEstatusSolicitud" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_Solicitudes_MetodoPago">
-    <End Type="SCTiCareModel.MetodoPago" Role="MetodoPago" Multiplicity="0..1" />
-    <End Type="SCTiCareModel.Solicitudes" Role="Solicitudes" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="MetodoPago">
-        <PropertyRef Name="idMetodoPago" />
-      </Principal>
-      <Dependent Role="Solicitudes">
-        <PropertyRef Name="idMetodoPago" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_Solicitudes_Productos">
-    <End Type="SCTiCareModel.Productos" Role="Productos" Multiplicity="0..1" />
-    <End Type="SCTiCareModel.Solicitudes" Role="Solicitudes" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Productos">
-        <PropertyRef Name="idProducto" />
-      </Principal>
-      <Dependent Role="Solicitudes">
-        <PropertyRef Name="idProducto" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_Solicitudes_TipoTarjeta">
-    <End Type="SCTiCareModel.TipoTarjeta" Role="TipoTarjeta" Multiplicity="0..1" />
-    <End Type="SCTiCareModel.Solicitudes" Role="Solicitudes" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="TipoTarjeta">
-        <PropertyRef Name="idTipoTarjeta" />
-      </Principal>
-      <Dependent Role="Solicitudes">
-        <PropertyRef Name="idTipoTarjeta" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_Solicitudes_Usuarios">
-    <End Type="SCTiCareModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
-    <End Type="SCTiCareModel.Solicitudes" Role="Solicitudes" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Usuarios">
-        <PropertyRef Name="idUsuario" />
-      </Principal>
-      <Dependent Role="Solicitudes">
-        <PropertyRef Name="idUsuario" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <EntityType Name="Consultorios">
     <Key>
       <PropertyRef Name="id" />
@@ -315,7 +120,6 @@
     <Property Name="NoConsultorio" Type="Int32" />
     <Property Name="idUsuario" Type="Int32" />
     <NavigationProperty Name="Usuarios" Relationship="SCTiCareModel.FK_Consultorios_Usuarios" FromRole="Consultorios" ToRole="Usuarios" />
-    <NavigationProperty Name="Solicitudes" Relationship="SCTiCareModel.FK_Solicitudes_Consultorios1" FromRole="Consultorios" ToRole="Solicitudes" />
   </EntityType>
   <Association Name="FK_Consultorios_Usuarios">
     <End Type="SCTiCareModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
@@ -329,16 +133,51 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_Solicitudes_Consultorios1">
-    <End Type="SCTiCareModel.Consultorios" Role="Consultorios" Multiplicity="0..1" />
-    <End Type="SCTiCareModel.Solicitudes" Role="Solicitudes" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Consultorios">
-        <PropertyRef Name="id" />
-      </Principal>
-      <Dependent Role="Solicitudes">
-        <PropertyRef Name="idConsultorio" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
+  <EntityType Name="Orden">
+    <Key>
+      <PropertyRef Name="idOrden" />
+    </Key>
+    <Property Name="idOrden" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Producto" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
+    <Property Name="Descripcion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Concepto" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="FechaCita" Type="DateTime" Precision="3" />
+    <Property Name="MetodoPago" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idCargo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Estatus" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FechaActualizacion" Type="DateTime" Precision="3" />
+    <Property Name="Total" Type="Int32" />
+    <Property Name="idOrdenConekta" Type="Int32" />
+    <Property Name="ReferenciaOxxo" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="LinkPago" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="CheckoutRequestName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idConsultorio" Type="Int32" />
+  </EntityType>
+  <EntityType Name="OrdenConekta">
+    <Key>
+      <PropertyRef Name="idOrden" />
+    </Key>
+    <Property Name="idOrden" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Producto" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
+    <Property Name="Descripcion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Concepto" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="FechaCita" Type="DateTime" Precision="3" />
+    <Property Name="MetodoPago" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idCargo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Estatus" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FechaActualizacion" Type="DateTime" Precision="3" />
+    <Property Name="Total" Type="Int32" />
+    <Property Name="idOrdenConekta" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="ReferenciaOxxo" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="LinkPago" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="CheckoutRequestName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idConsultorio" Type="Int32" />
+    <Property Name="Asignacion" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+  </EntityType>
 </Schema>
