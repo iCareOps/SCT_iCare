@@ -1,0 +1,56 @@
+﻿@model IEnumerable<SCT_iCare.Usuarios>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<br />
+<br />
+<a href="~/Usuarios/Create"><button type="button" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal">Nuevo Usuario</button></a>
+
+<br />
+
+<table class="table tablas">
+    <hr />
+    <tr class="bg-info">
+        <th>
+            <h4>@Html.DisplayNameFor(model => model.Nombre)</h4>
+        </th>
+        <th>
+            <h4>@Html.DisplayNameFor(model => model.Email)</h4>
+        </th>
+        <th>
+            <h4>@Html.DisplayNameFor(model => model.Roles.Nombre)</h4>
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Nombre)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Email)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Roles.Nombre)
+        </td>
+        <td>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Acción
+                </button>
+                <div class="dropdown-menu">
+                    <h5>@Html.ActionLink("Editar", "Edit", new { id = item.idUsuario })</h5>
+                    <div class="dropdown-divider"></div>
+                    <h5>@Html.ActionLink("Detalles", "Details", new { id = item.idUsuario })</h5>
+                    <div class="dropdown-divider"></div>
+                    <h5>@Html.ActionLink("Eliminar", "Delete", new { id = item.idUsuario })</h5>
+                </div>
+            </div>
+        </td>
+    </tr>
+}
+
+</table>

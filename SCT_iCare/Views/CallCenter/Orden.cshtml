@@ -1,0 +1,96 @@
+﻿@model conekta.Order
+
+@{
+    ViewBag.Title = "Details";
+
+    conekta.Order orden = new conekta.Order().find(ViewBag.Orden);
+
+    System.Web.Script.Serialization.JavaScriptSerializer js = new System.Web.Script.Serialization.JavaScriptSerializer();
+
+}
+<br />
+
+<h3 style="color:white">Detalles de la Solicitud</h3>
+Fecha de Orden
+Consultorio
+Precio
+Ir a Orden
+Referencia OXXO
+
+
+<div>
+    <hr />
+    <dl class="dl-horizontal labelGral">
+        <dt>
+            <h4>Nombre:</h4>
+        </dt>
+
+        <dd class="labelInfo">
+            <h4>@orden.customer_info.name</h4>
+        </dd>
+
+        <dt>
+            <h4>Email:</h4>
+        </dt>
+
+        <dd class="labelInfo">
+            <h4>@orden.customer_info.email</h4>
+        </dd>
+
+        <dt>
+            <h4>Teléfono:</h4>
+        </dt>
+
+        <dd class="labelInfo">
+            <h4>@orden.customer_info.phone</h4>
+        </dd>
+
+        <dt>
+            <h4>Fecha de Solicitud:</h4>
+        </dt>
+        @{
+            double ticks = double.Parse(orden.created_at);
+            TimeSpan time = TimeSpan.FromSeconds(ticks);
+            DateTime startdate = new DateTime(1969, 12, 31, 19, 00, 000) + time;
+        }
+        <dd class="labelInfo">
+            <h4>@startdate</h4>
+        </dd>
+
+        <dt>
+            <h4>Consultorio asignado:</h4>
+        </dt>
+
+        <dd class="labelInfo">
+            @{
+                dynamic datosCargo1 = js.Deserialize<dynamic>(orden.line_items.data[0].ToString());
+                string producto = datosCargo1["name"];
+            }
+            <h4>@producto</h4>
+        </dd>
+
+        <dt>
+            <h4>Precio:</h4>
+        </dt>
+
+        <dd class="labelInfo">
+            @{
+                int precio = Convert.ToInt32(orden.amount) / 100;
+            }
+            <h4>$ @precio .00</h4>
+        </dd>
+
+        <dt>
+            <h4>Ir a Orden</h4>
+        </dt>
+
+        <dd class="labelInfo">
+            <h4><a href="https://admin.conekta.com/orders/@orden.id" target="_blank">https://admin.conekta.com/orders/@orden.id</a></h4>
+        </dd>
+    </dl>
+</div>
+<p class="enlaceSinBoton" style="color:white">
+    @Html.ActionLink("Editar Usuario", "Edit", new { id = Model.id }) |
+    @Html.ActionLink("Volver a Usuarios", "Index")
+</p>
+

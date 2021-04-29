@@ -26,7 +26,15 @@ namespace SCT_iCare.Controllers.Recepcion
         {
             GetApiKey();
 
-            var ordenes2 = new Order().where(new JObject());            
+            var ordenes2 = new Order().where(new JObject());
+
+            var che = new conekta.Models.Checkout().where(new JObject());
+
+            var link = from c in che select c;
+            foreach(var item in link)
+            {
+                string url = item.url;
+            }
 
             return View(ordenes2);
         }
