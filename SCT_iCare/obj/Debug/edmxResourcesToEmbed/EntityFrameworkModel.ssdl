@@ -1,0 +1,283 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="SCTiCareModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Ciudades">
+    <Key>
+      <PropertyRef Name="idCiudad" />
+    </Key>
+    <Property Name="idCiudad" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Ciudad" Type="varchar" MaxLength="100" />
+    <Property Name="Estado" Type="varchar" MaxLength="100" />
+  </EntityType>
+  <EntityType Name="Consultorios">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="NombreDoctor" Type="varchar" MaxLength="100" />
+    <Property Name="RFC" Type="varchar" MaxLength="13" />
+    <Property Name="CURP" Type="varchar" MaxLength="18" />
+    <Property Name="Cedula" Type="varchar" MaxLength="15" />
+    <Property Name="Direccion" Type="varchar" MaxLength="200" />
+    <Property Name="Colonia" Type="varchar" MaxLength="100" />
+    <Property Name="CP" Type="varchar" MaxLength="5" />
+    <Property Name="Estado" Type="varchar" MaxLength="100" />
+    <Property Name="Ciudad" Type="varchar" MaxLength="100" />
+    <Property Name="Consultorio" Type="varchar" MaxLength="200" />
+    <Property Name="NoConsultorio" Type="int" />
+    <Property Name="idUsuario" Type="int" />
+  </EntityType>
+  <EntityType Name="Doctores">
+    <Key>
+      <PropertyRef Name="idDoctor" />
+    </Key>
+    <Property Name="idDoctor" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre" Type="varchar" MaxLength="200" />
+    <Property Name="idSucursal" Type="int" />
+  </EntityType>
+  <EntityType Name="Menu">
+    <Key>
+      <PropertyRef Name="idMenu" />
+    </Key>
+    <Property Name="idMenu" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Controlador" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Action" Type="varchar" MaxLength="50" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Orden">
+    <Key>
+      <PropertyRef Name="idOrden" />
+    </Key>
+    <Property Name="idOrden" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre" Type="varchar" MaxLength="200" />
+    <Property Name="Email" Type="varchar" MaxLength="200" />
+    <Property Name="Producto" Type="varchar" MaxLength="100" />
+    <Property Name="FechaCreacion" Type="datetime" />
+    <Property Name="Descripcion" Type="varchar" MaxLength="100" />
+    <Property Name="Concepto" Type="varchar" MaxLength="200" />
+    <Property Name="FechaCita" Type="datetime" />
+    <Property Name="MetodoPago" Type="varchar" MaxLength="100" />
+    <Property Name="idCargo" Type="varchar" MaxLength="100" />
+    <Property Name="Estatus" Type="varchar" MaxLength="100" />
+    <Property Name="FechaActualizacion" Type="datetime" />
+    <Property Name="Total" Type="int" />
+    <Property Name="idOrdenConekta" Type="int" />
+    <Property Name="ReferenciaOxxo" Type="varchar" MaxLength="200" />
+    <Property Name="LinkPago" Type="varchar" MaxLength="200" />
+    <Property Name="CheckoutRequestName" Type="varchar" MaxLength="100" />
+    <Property Name="idConsultorio" Type="int" />
+  </EntityType>
+  <EntityType Name="OrdenConekta">
+    <Key>
+      <PropertyRef Name="idOrden" />
+    </Key>
+    <Property Name="idOrden" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre" Type="varchar" MaxLength="200" />
+    <Property Name="Email" Type="varchar" MaxLength="200" />
+    <Property Name="Producto" Type="varchar" MaxLength="100" />
+    <Property Name="FechaCreacion" Type="datetime" />
+    <Property Name="Descripcion" Type="varchar" MaxLength="100" />
+    <Property Name="Concepto" Type="varchar" MaxLength="200" />
+    <Property Name="FechaCita" Type="datetime" />
+    <Property Name="MetodoPago" Type="varchar" MaxLength="100" />
+    <Property Name="idCargo" Type="varchar" MaxLength="100" />
+    <Property Name="Estatus" Type="varchar" MaxLength="100" />
+    <Property Name="FechaActualizacion" Type="datetime" />
+    <Property Name="Total" Type="int" />
+    <Property Name="idOrdenConekta" Type="varchar" MaxLength="100" />
+    <Property Name="ReferenciaOxxo" Type="varchar" MaxLength="200" />
+    <Property Name="LinkPago" Type="varchar" MaxLength="200" />
+    <Property Name="CheckoutRequestName" Type="varchar" MaxLength="100" />
+    <Property Name="idConsultorio" Type="int" />
+    <Property Name="Asignacion" Type="varchar" MaxLength="10" />
+  </EntityType>
+  <EntityType Name="Roles">
+    <Key>
+      <PropertyRef Name="idRol" />
+    </Key>
+    <Property Name="idRol" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="RolMenu">
+    <Key>
+      <PropertyRef Name="idRolMenu" />
+    </Key>
+    <Property Name="idRolMenu" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="idMenu" Type="int" Nullable="false" />
+    <Property Name="idRol" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="SkeedaPK">
+    <Key>
+      <PropertyRef Name="idSkeeda" />
+    </Key>
+    <Property Name="idSkeeda" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Scheduled start" Type="datetime" />
+    <Property Name="End" Type="datetime" />
+    <Property Name="Duration (minutes)" Type="float" />
+    <Property Name="Spaces count" Type="float" />
+    <Property Name="Type" Type="nvarchar" MaxLength="255" />
+    <Property Name="Title" Type="nvarchar" MaxLength="255" />
+    <Property Name="Price" Type="float" />
+    <Property Name="Payment status" Type="nvarchar" MaxLength="255" />
+    <Property Name="Holder first name" Type="nvarchar" MaxLength="255" />
+    <Property Name="Holder last name" Type="nvarchar" MaxLength="255" />
+    <Property Name="Holder organization" Type="nvarchar" MaxLength="255" />
+    <Property Name="Holder telephone" Type="nvarchar" MaxLength="255" />
+    <Property Name="Holder email" Type="nvarchar" MaxLength="255" />
+    <Property Name="Holder tags" Type="nvarchar" MaxLength="255" />
+    <Property Name="Created" Type="datetime" />
+    <Property Name="Gateway charge reference" Type="nvarchar" MaxLength="255" />
+    <Property Name="Spaces" Type="nvarchar" MaxLength="255" />
+    <Property Name="Mail (Custom field 1)" Type="nvarchar" MaxLength="255" />
+    <Property Name="Tel (Custom field 2)" Type="nvarchar" MaxLength="255" />
+    <Property Name="TipoLicenc (Custom field 3)" Type="nvarchar" MaxLength="255" />
+    <Property Name="TipoTramit (Custom field 4)" Type="nvarchar" MaxLength="255" />
+    <Property Name="TipoPago (Custom field 5)" Type="nvarchar" MaxLength="255" />
+    <Property Name="RefPagoOxx (Custom field 6)" Type="nvarchar" MaxLength="255" />
+    <Property Name="Ord_Num (Custom field 7)" Type="nvarchar" MaxLength="255" />
+    <Property Name="FecNac (Custom field 8)" Type="nvarchar" MaxLength="255" />
+    <Property Name="Estado (Custom field 9)" Type="nvarchar" MaxLength="255" />
+    <Property Name="Ciudad (Custom field 10)" Type="nvarchar" MaxLength="255" />
+    <Property Name="Visión (Custom field 11)" Type="nvarchar" MaxLength="255" />
+    <Property Name="Tiroides (Custom field 12)" Type="nvarchar" MaxLength="255" />
+    <Property Name="Diabetes (Custom field 13)" Type="nvarchar" MaxLength="255" />
+    <Property Name="Hipertens (Custom field 14)" Type="nvarchar" MaxLength="255" />
+    <Property Name="Audicion (Custom field 15)" Type="nvarchar" MaxLength="255" />
+    <Property Name="EnfCronica (Custom field 16)" Type="nvarchar" MaxLength="255" />
+    <Property Name="Embarazo (Custom field 17)" Type="nvarchar" MaxLength="255" />
+    <Property Name="Referido (Custom field 18)" Type="nvarchar" MaxLength="255" />
+    <Property Name="Otro: (Custom field 19)" Type="nvarchar" MaxLength="255" />
+    <Property Name="CheckCita (Custom field 20)" Type="nvarchar" MaxLength="255" />
+    <Property Name="DrVeracruz (Custom field 21)" Type="nvarchar" MaxLength="255" />
+    <Property Name="DrSatelite (Custom field 22)" Type="nvarchar" MaxLength="255" />
+    <Property Name="DrLindavis (Custom field 23)" Type="nvarchar" MaxLength="255" />
+  </EntityType>
+  <EntityType Name="Sucursales">
+    <Key>
+      <PropertyRef Name="idSucursal" />
+    </Key>
+    <Property Name="idSucursal" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre" Type="varchar" MaxLength="200" />
+    <Property Name="Calle" Type="varchar" MaxLength="200" />
+    <Property Name="Colonia" Type="varchar" MaxLength="100" />
+    <Property Name="idCiudad" Type="int" />
+  </EntityType>
+  <EntityType Name="Usuarios">
+    <Key>
+      <PropertyRef Name="idUsuario" />
+    </Key>
+    <Property Name="idUsuario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre" Type="varchar" MaxLength="100" Nullable="false" />
+    <Property Name="Email" Type="varchar" MaxLength="100" Nullable="false" />
+    <Property Name="Password" Type="varchar" MaxLength="100" Nullable="false" />
+    <Property Name="idRol" Type="int" />
+  </EntityType>
+  <Association Name="FK_Consultorios_Usuarios">
+    <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+    <End Role="Consultorios" Type="Self.Consultorios" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Usuarios">
+        <PropertyRef Name="idUsuario" />
+      </Principal>
+      <Dependent Role="Consultorios">
+        <PropertyRef Name="idUsuario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Doctores_Sucursales">
+    <End Role="Sucursales" Type="Self.Sucursales" Multiplicity="0..1" />
+    <End Role="Doctores" Type="Self.Doctores" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Sucursales">
+        <PropertyRef Name="idSucursal" />
+      </Principal>
+      <Dependent Role="Doctores">
+        <PropertyRef Name="idSucursal" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_RolMenu_Menu">
+    <End Role="Menu" Type="Self.Menu" Multiplicity="1" />
+    <End Role="RolMenu" Type="Self.RolMenu" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Menu">
+        <PropertyRef Name="idMenu" />
+      </Principal>
+      <Dependent Role="RolMenu">
+        <PropertyRef Name="idMenu" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_RolMenu_Roles">
+    <End Role="Roles" Type="Self.Roles" Multiplicity="1" />
+    <End Role="RolMenu" Type="Self.RolMenu" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Roles">
+        <PropertyRef Name="idRol" />
+      </Principal>
+      <Dependent Role="RolMenu">
+        <PropertyRef Name="idRol" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Sucursales_Ciudades">
+    <End Role="Ciudades" Type="Self.Ciudades" Multiplicity="0..1" />
+    <End Role="Sucursales" Type="Self.Sucursales" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Ciudades">
+        <PropertyRef Name="idCiudad" />
+      </Principal>
+      <Dependent Role="Sucursales">
+        <PropertyRef Name="idCiudad" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Usuarios_Roles">
+    <End Role="Roles" Type="Self.Roles" Multiplicity="0..1" />
+    <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Roles">
+        <PropertyRef Name="idRol" />
+      </Principal>
+      <Dependent Role="Usuarios">
+        <PropertyRef Name="idRol" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="SCTiCareModelStoreContainer">
+    <EntitySet Name="Ciudades" EntityType="Self.Ciudades" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Consultorios" EntityType="Self.Consultorios" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Doctores" EntityType="Self.Doctores" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Menu" EntityType="Self.Menu" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Orden" EntityType="Self.Orden" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="OrdenConekta" EntityType="Self.OrdenConekta" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="RolMenu" EntityType="Self.RolMenu" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="SkeedaPK" EntityType="Self.SkeedaPK" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Sucursales" EntityType="Self.Sucursales" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_Consultorios_Usuarios" Association="Self.FK_Consultorios_Usuarios">
+      <End Role="Usuarios" EntitySet="Usuarios" />
+      <End Role="Consultorios" EntitySet="Consultorios" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Doctores_Sucursales" Association="Self.FK_Doctores_Sucursales">
+      <End Role="Sucursales" EntitySet="Sucursales" />
+      <End Role="Doctores" EntitySet="Doctores" />
+    </AssociationSet>
+    <AssociationSet Name="FK_RolMenu_Menu" Association="Self.FK_RolMenu_Menu">
+      <End Role="Menu" EntitySet="Menu" />
+      <End Role="RolMenu" EntitySet="RolMenu" />
+    </AssociationSet>
+    <AssociationSet Name="FK_RolMenu_Roles" Association="Self.FK_RolMenu_Roles">
+      <End Role="Roles" EntitySet="Roles" />
+      <End Role="RolMenu" EntitySet="RolMenu" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Sucursales_Ciudades" Association="Self.FK_Sucursales_Ciudades">
+      <End Role="Ciudades" EntitySet="Ciudades" />
+      <End Role="Sucursales" EntitySet="Sucursales" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Usuarios_Roles" Association="Self.FK_Usuarios_Roles">
+      <End Role="Roles" EntitySet="Roles" />
+      <End Role="Usuarios" EntitySet="Usuarios" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

@@ -9,6 +9,7 @@ using System.Web.Script.Serialization;
 using conekta;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace SCT_iCare.Controllers.Recepcion
 {
@@ -28,15 +29,22 @@ namespace SCT_iCare.Controllers.Recepcion
 
             var ordenes2 = new Order().where(new JObject());
 
-            var che = new conekta.Models.Checkout().where(new JObject());
+            var objeto = JObject.Parse(ConvertirOrden());
 
-            var link = from c in che select c;
-            foreach(var item in link)
-            {
-                string url = item.url;
-            }
+            var ordenes3 = new Order().where(new JObject(objeto));
 
             return View(ordenes2);
+        }
+
+        private string ConvertirOrden()
+        {
+            var orden = new ConektaList(typeof(conekta.ConektaList))
+            {
+                next_page_url = "https://admin.conekta.com/orders?"
+            };
+
+            string jsonOrdenes = JsonConvert.SerializeObject(orden, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            return jsonOrdenes;
         }
     }
 }

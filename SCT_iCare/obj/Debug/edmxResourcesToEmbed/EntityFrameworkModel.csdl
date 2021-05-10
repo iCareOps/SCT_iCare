@@ -1,0 +1,295 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="SCTiCareModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Menu">
+    <Key>
+      <PropertyRef Name="idMenu" />
+    </Key>
+    <Property Name="idMenu" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Controlador" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Action" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="RolMenu" Relationship="Self.FK_RolMenu_Menu" FromRole="Menu" ToRole="RolMenu" />
+  </EntityType>
+  <EntityType Name="Roles">
+    <Key>
+      <PropertyRef Name="idRol" />
+    </Key>
+    <Property Name="idRol" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="RolMenu" Relationship="Self.FK_RolMenu_Roles" FromRole="Roles" ToRole="RolMenu" />
+    <NavigationProperty Name="Usuarios" Relationship="Self.FK_Usuarios_Roles" FromRole="Roles" ToRole="Usuarios" />
+  </EntityType>
+  <EntityType Name="RolMenu">
+    <Key>
+      <PropertyRef Name="idRolMenu" />
+    </Key>
+    <Property Name="idRolMenu" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idMenu" Type="Int32" Nullable="false" />
+    <Property Name="idRol" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Menu" Relationship="Self.FK_RolMenu_Menu" FromRole="RolMenu" ToRole="Menu" />
+    <NavigationProperty Name="Roles" Relationship="Self.FK_RolMenu_Roles" FromRole="RolMenu" ToRole="Roles" />
+  </EntityType>
+  <EntityType Name="Usuarios">
+    <Key>
+      <PropertyRef Name="idUsuario" />
+    </Key>
+    <Property Name="idUsuario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="idRol" Type="Int32" />
+    <NavigationProperty Name="Roles" Relationship="Self.FK_Usuarios_Roles" FromRole="Usuarios" ToRole="Roles" />
+    <NavigationProperty Name="Consultorios" Relationship="SCTiCareModel.FK_Consultorios_Usuarios" FromRole="Usuarios" ToRole="Consultorios" />
+  </EntityType>
+  <Association Name="FK_RolMenu_Menu">
+    <End Role="Menu" Type="Self.Menu" Multiplicity="1" />
+    <End Role="RolMenu" Type="Self.RolMenu" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Menu">
+        <PropertyRef Name="idMenu" />
+      </Principal>
+      <Dependent Role="RolMenu">
+        <PropertyRef Name="idMenu" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_RolMenu_Roles">
+    <End Role="Roles" Type="Self.Roles" Multiplicity="1" />
+    <End Role="RolMenu" Type="Self.RolMenu" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Roles">
+        <PropertyRef Name="idRol" />
+      </Principal>
+      <Dependent Role="RolMenu">
+        <PropertyRef Name="idRol" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Usuarios_Roles">
+    <End Role="Roles" Type="Self.Roles" Multiplicity="0..1" />
+    <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Roles">
+        <PropertyRef Name="idRol" />
+      </Principal>
+      <Dependent Role="Usuarios">
+        <PropertyRef Name="idRol" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="SCTiCareEntities1" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Menu" EntityType="Self.Menu" />
+    <EntitySet Name="Roles" EntityType="Self.Roles" />
+    <EntitySet Name="RolMenu" EntityType="Self.RolMenu" />
+    <EntitySet Name="Usuarios" EntityType="Self.Usuarios" />
+    <AssociationSet Name="FK_RolMenu_Menu" Association="Self.FK_RolMenu_Menu">
+      <End Role="Menu" EntitySet="Menu" />
+      <End Role="RolMenu" EntitySet="RolMenu" />
+    </AssociationSet>
+    <AssociationSet Name="FK_RolMenu_Roles" Association="Self.FK_RolMenu_Roles">
+      <End Role="Roles" EntitySet="Roles" />
+      <End Role="RolMenu" EntitySet="RolMenu" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Usuarios_Roles" Association="Self.FK_Usuarios_Roles">
+      <End Role="Roles" EntitySet="Roles" />
+      <End Role="Usuarios" EntitySet="Usuarios" />
+    </AssociationSet>
+    <EntitySet Name="Consultorios" EntityType="SCTiCareModel.Consultorios" />
+    <AssociationSet Name="FK_Consultorios_Usuarios" Association="SCTiCareModel.FK_Consultorios_Usuarios">
+      <End Role="Usuarios" EntitySet="Usuarios" />
+      <End Role="Consultorios" EntitySet="Consultorios" />
+    </AssociationSet>
+    <EntitySet Name="Orden" EntityType="SCTiCareModel.Orden" />
+    <EntitySet Name="OrdenConekta" EntityType="SCTiCareModel.OrdenConekta" />
+    <EntitySet Name="Ciudades" EntityType="SCTiCareModel.Ciudades" />
+    <EntitySet Name="Doctores" EntityType="SCTiCareModel.Doctores" />
+    <EntitySet Name="Sucursales" EntityType="SCTiCareModel.Sucursales" />
+    <AssociationSet Name="FK_Sucursales_Ciudades" Association="SCTiCareModel.FK_Sucursales_Ciudades">
+      <End Role="Ciudades" EntitySet="Ciudades" />
+      <End Role="Sucursales" EntitySet="Sucursales" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Doctores_Sucursales" Association="SCTiCareModel.FK_Doctores_Sucursales">
+      <End Role="Sucursales" EntitySet="Sucursales" />
+      <End Role="Doctores" EntitySet="Doctores" />
+    </AssociationSet>
+    <EntitySet Name="SkeedaPK" EntityType="SCTiCareModel.SkeedaPK" />
+  </EntityContainer>
+  <EntityType Name="Consultorios">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="NombreDoctor" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="RFC" Type="String" MaxLength="13" FixedLength="false" Unicode="false" />
+    <Property Name="CURP" Type="String" MaxLength="18" FixedLength="false" Unicode="false" />
+    <Property Name="Cedula" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+    <Property Name="Direccion" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Colonia" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="CP" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="Estado" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Ciudad" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Consultorio" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="NoConsultorio" Type="Int32" />
+    <Property Name="idUsuario" Type="Int32" />
+    <NavigationProperty Name="Usuarios" Relationship="SCTiCareModel.FK_Consultorios_Usuarios" FromRole="Consultorios" ToRole="Usuarios" />
+  </EntityType>
+  <Association Name="FK_Consultorios_Usuarios">
+    <End Type="SCTiCareModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+    <End Type="SCTiCareModel.Consultorios" Role="Consultorios" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Usuarios">
+        <PropertyRef Name="idUsuario" />
+      </Principal>
+      <Dependent Role="Consultorios">
+        <PropertyRef Name="idUsuario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Orden">
+    <Key>
+      <PropertyRef Name="idOrden" />
+    </Key>
+    <Property Name="idOrden" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Producto" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
+    <Property Name="Descripcion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Concepto" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="FechaCita" Type="DateTime" Precision="3" />
+    <Property Name="MetodoPago" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idCargo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Estatus" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FechaActualizacion" Type="DateTime" Precision="3" />
+    <Property Name="Total" Type="Int32" />
+    <Property Name="idOrdenConekta" Type="Int32" />
+    <Property Name="ReferenciaOxxo" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="LinkPago" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="CheckoutRequestName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idConsultorio" Type="Int32" />
+  </EntityType>
+  <EntityType Name="OrdenConekta">
+    <Key>
+      <PropertyRef Name="idOrden" />
+    </Key>
+    <Property Name="idOrden" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Producto" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
+    <Property Name="Descripcion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Concepto" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="FechaCita" Type="DateTime" Precision="3" />
+    <Property Name="MetodoPago" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idCargo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Estatus" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FechaActualizacion" Type="DateTime" Precision="3" />
+    <Property Name="Total" Type="Int32" />
+    <Property Name="idOrdenConekta" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="ReferenciaOxxo" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="LinkPago" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="CheckoutRequestName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idConsultorio" Type="Int32" />
+    <Property Name="Asignacion" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="Ciudades">
+    <Key>
+      <PropertyRef Name="idCiudad" />
+    </Key>
+    <Property Name="idCiudad" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Ciudad" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Estado" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Sucursales" Relationship="SCTiCareModel.FK_Sucursales_Ciudades" FromRole="Ciudades" ToRole="Sucursales" />
+  </EntityType>
+  <EntityType Name="Doctores">
+    <Key>
+      <PropertyRef Name="idDoctor" />
+    </Key>
+    <Property Name="idDoctor" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="idSucursal" Type="Int32" />
+    <NavigationProperty Name="Sucursales" Relationship="SCTiCareModel.FK_Doctores_Sucursales" FromRole="Doctores" ToRole="Sucursales" />
+  </EntityType>
+  <EntityType Name="Sucursales">
+    <Key>
+      <PropertyRef Name="idSucursal" />
+    </Key>
+    <Property Name="idSucursal" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Calle" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Colonia" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idCiudad" Type="Int32" />
+    <NavigationProperty Name="Ciudades" Relationship="SCTiCareModel.FK_Sucursales_Ciudades" FromRole="Sucursales" ToRole="Ciudades" />
+    <NavigationProperty Name="Doctores" Relationship="SCTiCareModel.FK_Doctores_Sucursales" FromRole="Sucursales" ToRole="Doctores" />
+  </EntityType>
+  <Association Name="FK_Sucursales_Ciudades">
+    <End Type="SCTiCareModel.Ciudades" Role="Ciudades" Multiplicity="0..1" />
+    <End Type="SCTiCareModel.Sucursales" Role="Sucursales" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Ciudades">
+        <PropertyRef Name="idCiudad" />
+      </Principal>
+      <Dependent Role="Sucursales">
+        <PropertyRef Name="idCiudad" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Doctores_Sucursales">
+    <End Type="SCTiCareModel.Sucursales" Role="Sucursales" Multiplicity="0..1" />
+    <End Type="SCTiCareModel.Doctores" Role="Doctores" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Sucursales">
+        <PropertyRef Name="idSucursal" />
+      </Principal>
+      <Dependent Role="Doctores">
+        <PropertyRef Name="idSucursal" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="SkeedaPK">
+    <Key>
+      <PropertyRef Name="idSkeeda" />
+    </Key>
+    <Property Name="idSkeeda" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Scheduled_start" Type="DateTime" Precision="3" />
+    <Property Name="End" Type="DateTime" Precision="3" />
+    <Property Name="Duration__minutes_" Type="Double" />
+    <Property Name="Spaces_count" Type="Double" />
+    <Property Name="Type" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Title" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Price" Type="Double" />
+    <Property Name="Payment_status" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Holder_first_name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Holder_last_name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Holder_organization" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Holder_telephone" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Holder_email" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Holder_tags" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Created" Type="DateTime" Precision="3" />
+    <Property Name="Gateway_charge_reference" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Spaces" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Mail__Custom_field_1_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Tel__Custom_field_2_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="TipoLicenc__Custom_field_3_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="TipoTramit__Custom_field_4_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="TipoPago__Custom_field_5_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="RefPagoOxx__Custom_field_6_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Ord_Num__Custom_field_7_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="FecNac__Custom_field_8_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Estado__Custom_field_9_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Ciudad__Custom_field_10_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Visión__Custom_field_11_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Tiroides__Custom_field_12_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Diabetes__Custom_field_13_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Hipertens__Custom_field_14_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Audicion__Custom_field_15_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="EnfCronica__Custom_field_16_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Embarazo__Custom_field_17_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Referido__Custom_field_18_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Otro___Custom_field_19_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="CheckCita__Custom_field_20_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="DrVeracruz__Custom_field_21_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="DrSatelite__Custom_field_22_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="DrLindavis__Custom_field_23_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+  </EntityType>
+</Schema>

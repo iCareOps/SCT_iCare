@@ -101,6 +101,17 @@
     </AssociationSet>
     <EntitySet Name="Orden" EntityType="SCTiCareModel.Orden" />
     <EntitySet Name="OrdenConekta" EntityType="SCTiCareModel.OrdenConekta" />
+    <EntitySet Name="Ciudades" EntityType="SCTiCareModel.Ciudades" />
+    <EntitySet Name="Doctores" EntityType="SCTiCareModel.Doctores" />
+    <EntitySet Name="Sucursales" EntityType="SCTiCareModel.Sucursales" />
+    <AssociationSet Name="FK_Sucursales_Ciudades" Association="SCTiCareModel.FK_Sucursales_Ciudades">
+      <End Role="Ciudades" EntitySet="Ciudades" />
+      <End Role="Sucursales" EntitySet="Sucursales" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Doctores_Sucursales" Association="SCTiCareModel.FK_Doctores_Sucursales">
+      <End Role="Sucursales" EntitySet="Sucursales" />
+      <End Role="Doctores" EntitySet="Doctores" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="Consultorios">
     <Key>
@@ -180,4 +191,58 @@
     <Property Name="idConsultorio" Type="Int32" />
     <Property Name="Asignacion" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
   </EntityType>
+  <EntityType Name="Ciudades">
+    <Key>
+      <PropertyRef Name="idCiudad" />
+    </Key>
+    <Property Name="idCiudad" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Ciudad" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Estado" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Sucursales" Relationship="SCTiCareModel.FK_Sucursales_Ciudades" FromRole="Ciudades" ToRole="Sucursales" />
+  </EntityType>
+  <EntityType Name="Doctores">
+    <Key>
+      <PropertyRef Name="idDoctor" />
+    </Key>
+    <Property Name="idDoctor" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="idSucursal" Type="Int32" />
+    <NavigationProperty Name="Sucursales" Relationship="SCTiCareModel.FK_Doctores_Sucursales" FromRole="Doctores" ToRole="Sucursales" />
+  </EntityType>
+  <EntityType Name="Sucursales">
+    <Key>
+      <PropertyRef Name="idSucursal" />
+    </Key>
+    <Property Name="idSucursal" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Calle" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Colonia" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idCiudad" Type="Int32" />
+    <NavigationProperty Name="Ciudades" Relationship="SCTiCareModel.FK_Sucursales_Ciudades" FromRole="Sucursales" ToRole="Ciudades" />
+    <NavigationProperty Name="Doctores" Relationship="SCTiCareModel.FK_Doctores_Sucursales" FromRole="Sucursales" ToRole="Doctores" />
+  </EntityType>
+  <Association Name="FK_Sucursales_Ciudades">
+    <End Type="SCTiCareModel.Ciudades" Role="Ciudades" Multiplicity="0..1" />
+    <End Type="SCTiCareModel.Sucursales" Role="Sucursales" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Ciudades">
+        <PropertyRef Name="idCiudad" />
+      </Principal>
+      <Dependent Role="Sucursales">
+        <PropertyRef Name="idCiudad" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Doctores_Sucursales">
+    <End Type="SCTiCareModel.Sucursales" Role="Sucursales" Multiplicity="0..1" />
+    <End Type="SCTiCareModel.Doctores" Role="Doctores" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Sucursales">
+        <PropertyRef Name="idSucursal" />
+      </Principal>
+      <Dependent Role="Doctores">
+        <PropertyRef Name="idSucursal" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema>

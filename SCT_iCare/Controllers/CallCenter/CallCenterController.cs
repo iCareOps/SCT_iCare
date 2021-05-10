@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using conekta;
 using System.Configuration;
 using Newtonsoft.Json.Serialization;
+using BarcodeLib;
 
 namespace SCT_iCare.Controllers.CallCenter
 {
@@ -24,9 +25,9 @@ namespace SCT_iCare.Controllers.CallCenter
         // GET: CallCenter
         public ActionResult Index()
         {
-            var consultorios = from c in db.Consultorios select c;
+            var sucursales = from c in db.Sucursales select c;
 
-            return View(consultorios);
+            return View(sucursales);
         }
 
         public ActionResult GetRecepcion()
@@ -48,16 +49,25 @@ namespace SCT_iCare.Controllers.CallCenter
             return jsonClient;
         }
 
-        private string ConvertirProductos(string consultorio)
+        private string ConvertirProductos1(string consultorio)
         {
+            string producto = "Consulta EPI (" + consultorio+ ")";
             var product = new LineItem()
             {
-                name = "EPI SCT " + consultorio,
-                unit_price = 258800,
-                quantity = 1
+                name = "Consulta EPI" + consultorio,
+                //unit_price = 258800,
+                //quantity = 1
             };
 
-            string jsonProductos = JsonConvert.SerializeObject(product, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            string jsonProductos = JsonConvert.SerializeObject(producto, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            return jsonProductos;
+        }
+
+        private int ConvertirProductos2(string precio)
+        {
+            int producto = Convert.ToInt32(precio) * 100;
+
+            int jsonProductos = Convert.ToInt32(JsonConvert.SerializeObject(producto, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
             return jsonProductos;
         }
 
@@ -70,168 +80,201 @@ namespace SCT_iCare.Controllers.CallCenter
         }
 
 
-        public ActionResult Orden(string nombre, string email, string telefono, string consultorio)
+        public ActionResult Orden(string nombre, string email, string telefono, string consultorio, string precio)
         {
             GetApiKey();
 
-            //Por ahora se llena hace un switch para seleccionar el nombre del producto concatenado con el consultorio ya que se debe hacer un método para 
+            //Por ahora se llena hace un switch para seleccionar el nombre del producto concatenado con el consultorio ya que se debe hacer un método para
             //serializar el arreglo y así traer todo desde base de datos
 
-            switch (consultorio)
-            {
-                case "VERACRUZ":
-                    Order order = new conekta.Order().create(@"{
-                      ""currency"":""MXN"",
-                      ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
-                      ""line_items"": [{
-                      ""name"": ""Consulta EPI (VERACRUZ)"",
-                      ""unit_price"": 258800,
-                      ""quantity"": 1
-                      }]
-                      }");
-
-                    order.createCharge(@"{
-                    ""payment_method"": {
-                    ""type"": ""oxxo_cash""
-                    },
-                    ""amount"": 258800
-                    }");
-
-                    var orden = new Order().find(order.id);
-
-                    var detallesOrden = new Order()
-                    {
-                        id = orden.id,
-                        customer_info = orden.customer_info,
-                        line_items = orden.line_items,
-                        amount = orden.amount,
-                        charges = orden.charges
-                    };
-
-                    ViewBag.Orden = order.id;
-
-                    return View(detallesOrden);
-
-                case "LINDAVISTA":
-                    Order order1 = new conekta.Order().create(@"{
-                      ""currency"":""MXN"",
-                      ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
-                      ""line_items"": [{
-                      ""name"": ""Consulta EPI (HOSPITAL ANGELES LINDAVISTA)"",
-                      ""unit_price"": 258800,
-                      ""quantity"": 1
-                      }]
-                      }");
-
-                    order1.createCharge(@"{
-                    ""payment_method"": {
-                    ""type"": ""oxxo_cash""
-                    },
-                    ""amount"": 258800
-                    }");
-
-                    var orden1 = new Order().find(order1.id);
-
-                    var detallesOrden1 = new Order()
-                    {
-                        id = orden1.id,
-                        customer_info = orden1.customer_info,
-                        line_items = orden1.line_items,
-                        amount = orden1.amount,
-                        charges = orden1.charges
-                    };
-
-                    ViewBag.Orden = order1.id;
-
-                    return View(detallesOrden1);
-
-                case "UNIVERSIDAD":
-                    Order order2 = new conekta.Order().create(@"{
-                      ""currency"":""MXN"",
-                      ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
-                      ""line_items"": [{
-                      ""name"": ""Consulta EPI (CLINICA UNIVERSIDAD)"",
-                      ""unit_price"": 258800,
-                      ""quantity"": 1
-                      }]
-                      }");
-
-                    order2.createCharge(@"{
-                    ""payment_method"": {
-                    ""type"": ""oxxo_cash""
-                    },
-                    ""amount"": 258800
-                    }");
-
-                    var orden2 = new Order().find(order2.id);
-
-                    var detallesOrden2 = new Order()
-                    {
-                        id = orden2.id,
-                        customer_info = orden2.customer_info,
-                        line_items = orden2.line_items,
-                        amount = orden2.amount,
-                        charges = orden2.charges
-                    };
-
-                    ViewBag.Orden = order2.id;
-
-                    return View(detallesOrden2);
-
-                case "SATELITE":
-                    Order order3 = new conekta.Order().create(@"{
-                      ""currency"":""MXN"",
-                      ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
-                      ""line_items"": [{
-                      ""name"": ""Consulta EPI (CLINICA SATELITE)"",
-                      ""unit_price"": 258800,
-                      ""quantity"": 1
-                      }]
-                      }");
-
-                    order3.createCharge(@"{
-                    ""payment_method"": {
-                    ""type"": ""oxxo_cash""
-                    },
-                    ""amount"": 258800
-                    }");
-
-                    var orden3 = new Order().find(order3.id);
-
-                    var detallesOrden3 = new Order()
-                    {
-                        id = orden3.id,
-                        customer_info = orden3.customer_info,
-                        line_items = orden3.line_items,
-                        amount = orden3.amount,
-                        charges = orden3.charges
-                    };
-
-                    ViewBag.Orden = order3.id;
-
-                    return View(detallesOrden3);
-
-                default:
-                    return View();
-            }
-
-
-
-            //Order order = new conekta.Order().create(@"{
+            //switch (consultorio)
+            //{
+            //    case "Veracruz":
+            //        Order order = new conekta.Order().create(@"{
             //          ""currency"":""MXN"",
             //          ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
-            //          ""line_items"": ["+ ConvertirProductos(consultorio) + @"]
+            //          ""line_items"": [{
+            //          ""name"": "+ConvertirProductos(consultorio)+ @",
+            //          ""unit_price"": 258800,
+            //          ""quantity"": 1
+            //          }]
             //          }");
 
-            //order.createCharge(@"{
+            //        order.createCharge(@"{
             //        ""payment_method"": {
             //        ""type"": ""oxxo_cash""
             //        },
             //        ""amount"": 258800
             //        }");
 
-            //return View();
+            //        var orden = new Order().find(order.id);
+
+            //        var detallesOrden = new Order()
+            //        {
+            //            id = orden.id,
+            //            customer_info = orden.customer_info,
+            //            line_items = orden.line_items,
+            //            amount = orden.amount,
+            //            charges = orden.charges
+            //        };
+
+            //        ViewBag.Orden = order.id;
+
+            //        return View(detallesOrden);
+
+            //    case "LINDAVISTA":
+            //        Order order1 = new conekta.Order().create(@"{
+            //          ""currency"":""MXN"",
+            //          ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
+            //          ""line_items"": [{
+            //          ""name"": ""Consulta EPI (HOSPITAL ANGELES LINDAVISTA)"",
+            //          ""unit_price"": 258800,
+            //          ""quantity"": 1
+            //          }]
+            //          }");
+
+            //        order1.createCharge(@"{
+            //        ""payment_method"": {
+            //        ""type"": ""oxxo_cash""
+            //        },
+            //        ""amount"": 258800
+            //        }");
+
+            //        var orden1 = new Order().find(order1.id);
+
+            //        var detallesOrden1 = new Order()
+            //        {
+            //            id = orden1.id,
+            //            customer_info = orden1.customer_info,
+            //            line_items = orden1.line_items,
+            //            amount = orden1.amount,
+            //            charges = orden1.charges
+            //        };
+
+            //        ViewBag.Orden = order1.id;
+
+            //        return View(detallesOrden1);
+
+            //    case "UNIVERSIDAD":
+            //        Order order2 = new conekta.Order().create(@"{
+            //          ""currency"":""MXN"",
+            //          ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
+            //          ""line_items"": [{
+            //          ""name"": ""Consulta EPI (CLINICA UNIVERSIDAD)"",
+            //          ""unit_price"": 258800,
+            //          ""quantity"": 1
+            //          }]
+            //          }");
+
+            //        order2.createCharge(@"{
+            //        ""payment_method"": {
+            //        ""type"": ""oxxo_cash""
+            //        },
+            //        ""amount"": 258800
+            //        }");
+
+            //        var orden2 = new Order().find(order2.id);
+
+            //        var detallesOrden2 = new Order()
+            //        {
+            //            id = orden2.id,
+            //            customer_info = orden2.customer_info,
+            //            line_items = orden2.line_items,
+            //            amount = orden2.amount,
+            //            charges = orden2.charges
+            //        };
+
+            //        ViewBag.Orden = order2.id;
+
+            //        return View(detallesOrden2);
+
+            //    case "SATELITE":
+            //        Order order3 = new conekta.Order().create(@"{
+            //          ""currency"":""MXN"",
+            //          ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
+            //          ""line_items"": [{
+            //          ""name"": ""Consulta EPI (CLINICA SATELITE)"",
+            //          ""unit_price"": 258800,
+            //          ""quantity"": 1
+            //          }]
+            //          }");
+
+            //        order3.createCharge(@"{
+            //        ""payment_method"": {
+            //        ""type"": ""oxxo_cash"",
+            //        ""expires_at"": " + FechaExpira() + @"
+            //        },
+            //        ""amount"": 258800
+            //        }");
+
+            //        var orden3 = new Order().find(order3.id);
+
+            //        var detallesOrden3 = new Order()
+            //        {
+            //            id = orden3.id,
+            //            customer_info = orden3.customer_info,
+            //            line_items = orden3.line_items,
+            //            amount = orden3.amount,
+            //            charges = orden3.charges
+            //        };
+
+            //        ViewBag.Orden = order3.id;
+
+            //        return View(detallesOrden3);
+
+            //    default:
+            //        return View();
+
+            Order order = new conekta.Order().create(@"{
+                      ""currency"":""MXN"",
+                      ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
+                      ""line_items"": [{
+                      ""name"": " + ConvertirProductos1(consultorio) + @",
+                      ""unit_price"": "+ConvertirProductos2(precio)+@",
+                      ""quantity"": 1
+                      }]
+                      }");
+
+            order.createCharge(@"{
+                    ""payment_method"": {
+                    ""type"": ""oxxo_cash""
+                    },
+                    ""amount"": 258800
+                    }");
+
+            var orden = new Order().find(order.id);
+
+            var detallesOrden = new Order()
+            {
+                id = orden.id,
+                customer_info = orden.customer_info,
+                line_items = orden.line_items,
+                amount = orden.amount,
+                charges = orden.charges
+            };
+
+            ViewBag.Orden = order.id;
+
+            return View(detallesOrden);
         }
+
+
+
+        //Order order = new conekta.Order().create(@"{
+        //          ""currency"":""MXN"",
+        //          ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
+        //          ""line_items"": ["+ ConvertirProductos(consultorio) + @"]
+        //          }");
+
+        //order.createCharge(@"{
+        //        ""payment_method"": {
+        //        ""type"": ""oxxo_cash""
+        //        },
+        //        ""amount"": 258800
+        //        }");
+
+        //return View();
+    }
 
 
 //        public EntRespuestaConekta CrearOrdenOxxo(EntOrdenDetalle orden, string fecha, EntUsuarios usuario, int idHorario)
@@ -363,5 +406,5 @@ namespace SCT_iCare.Controllers.CallCenter
 //        }
 
 
-    }
+    
 }

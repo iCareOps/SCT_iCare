@@ -1,0 +1,58 @@
+﻿@model SCT_iCare.Sucursales
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<br />
+
+<h3 style="color:white" class="text-center">¿Quieres eliminar ésta Sucursal?</h3>
+<br />
+<br />
+
+<div>
+    <dl class="dl-horizontal labelGral">
+        <dt>
+            <h4>@Html.DisplayNameFor(model => model.Nombre)</h4>
+        </dt>
+
+        <dd class="labelInfo">
+            <h4>@Html.DisplayFor(model => model.Nombre)</h4>
+        </dd>
+
+        <dt>
+            <h4>@Html.DisplayNameFor(model => model.Calle)</h4>
+        </dt>
+
+        <dd class="labelInfo">
+            <h4>@Html.DisplayFor(model => model.Calle)</h4>
+        </dd>
+
+        <dt>
+            <h4>@Html.DisplayNameFor(model => model.Colonia)</h4>
+        </dt>
+
+        <dd class="labelInfo">
+            <h4>@Html.DisplayFor(model => model.Colonia)</h4>
+        </dd>
+
+        <dt>
+            <h4>@Html.DisplayNameFor(model => model.Ciudades.Ciudad)</h4>
+        </dt>
+
+        <dd class="labelInfo">
+            <h4>@Html.DisplayFor(model => model.Ciudades.Ciudad)</h4>
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color enlaceSinBoton">
+            <input type="submit" value="Eliminar" class="btn btn-outline-warning boton-transparente botonesGral" /> |
+            @Html.ActionLink("Volver a Sucursales", "Index")
+        </div>
+    }
+</div>

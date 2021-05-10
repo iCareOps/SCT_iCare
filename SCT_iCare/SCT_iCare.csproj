@@ -48,11 +48,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BarcodeStandard, Version=2.2.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BarcodeLib.2.2.10\lib\netstandard2.0\BarcodeStandard.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.13.1, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.13.1\lib\itextsharp.dll</HintPath>
     </Reference>
     <Reference Include="Json.Net, Version=1.0.25.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Json.Net.1.0.25\lib\netstandard2.0\Json.Net.dll</HintPath>
@@ -64,6 +70,9 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Drawing.Common.4.5.1\lib\net461\System.Drawing.Common.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
@@ -137,13 +146,19 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Ciudades.cs">
+      <DependentUpon>EntityFrameworkModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Consultorios.cs">
       <DependentUpon>EntityFrameworkModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Controllers\Admin\ConsultoriosController.cs" />
+    <Compile Include="Controllers\Admin\DoctoresController.cs" />
+    <Compile Include="Controllers\Admin\SucursalesController.cs" />
     <Compile Include="Controllers\Admin\UsuariosController.cs" />
     <Compile Include="Controllers\CallCenter\CallCenterController.cs" />
     <Compile Include="Controllers\Contabilidad\ContabilidadController.cs" />
+    <Compile Include="Controllers\Contabilidad\SkeedaPKController.cs" />
     <Compile Include="Controllers\Error\ErrorController.cs" />
     <Compile Include="Controllers\Login\LoginController.cs" />
     <Compile Include="Controllers\Logoff\LogoffController.cs" />
@@ -151,6 +166,9 @@
     <Compile Include="Controllers\Recepcion\RecepcionistaController.cs" />
     <Compile Include="Controllers\Recepcion\SolicitudesConektaController.cs" />
     <Compile Include="Controllers\SideBarController.cs" />
+    <Compile Include="Doctores.cs">
+      <DependentUpon>EntityFrameworkModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Encrypt.cs" />
     <Compile Include="EntityFrameworkModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -189,6 +207,12 @@
     <Compile Include="RolMenu.cs">
       <DependentUpon>EntityFrameworkModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="SkeedaPK.cs">
+      <DependentUpon>EntityFrameworkModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Sucursales.cs">
+      <DependentUpon>EntityFrameworkModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Usuarios.cs">
       <DependentUpon>EntityFrameworkModel.tt</DependentUpon>
     </Compile>
@@ -219,7 +243,9 @@
     <Content Include="Images\iCare-02.png" />
     <Content Include="Images\iCare-03.png" />
     <Content Include="Images\IcareLogo.png" />
-    <Content Include="Images\Inicio.png" />
+    <Content Include="Images\Inicio.jpeg" />
+    <Content Include="Images\Inicio.jpg" />
+    <Content Include="Images\oxxopay_brand.png" />
     <Content Include="Images\SCTlogo.png" />
     <EntityDeploy Include="EntityFrameworkModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
@@ -392,6 +418,21 @@
     <Content Include="Views\CallCenter\GetRecepcion.cshtml" />
     <Content Include="Views\CallCenter\Index.cshtml" />
     <Content Include="Views\CallCenter\Orden.cshtml" />
+    <Content Include="Views\Sucursales\Create.cshtml" />
+    <Content Include="Views\Sucursales\Delete.cshtml" />
+    <Content Include="Views\Sucursales\Details.cshtml" />
+    <Content Include="Views\Sucursales\Edit.cshtml" />
+    <Content Include="Views\Sucursales\Index.cshtml" />
+    <Content Include="Views\Doctores\Create.cshtml" />
+    <Content Include="Views\Doctores\Delete.cshtml" />
+    <Content Include="Views\Doctores\Details.cshtml" />
+    <Content Include="Views\Doctores\Edit.cshtml" />
+    <Content Include="Views\Doctores\Index.cshtml" />
+    <Content Include="Views\SkeedaPK\Create.cshtml" />
+    <Content Include="Views\SkeedaPK\Delete.cshtml" />
+    <Content Include="Views\SkeedaPK\Details.cshtml" />
+    <Content Include="Views\SkeedaPK\Edit.cshtml" />
+    <Content Include="Views\SkeedaPK\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

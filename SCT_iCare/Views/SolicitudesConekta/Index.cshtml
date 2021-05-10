@@ -58,9 +58,6 @@
             <td>
                 <b>Producto</b>
             </td>
-            <td>
-                <b>Concepto de cobro</b>
-            </td>
             <th>
                 id Orden
             </th>
@@ -72,9 +69,6 @@
             </th>
             <th>
                 Total
-            </th>
-            <th>
-                Link de pago
             </th>
             <th></th>
         </tr>
@@ -94,15 +88,6 @@
                 string producto = datosCargo1["name"];
             }
             @producto
-        </td>
-        <td>
-            @{
-                var conceptoPago = (from c in checkouts select c).ToArray();
-
-                string concepto = conceptoPago[i].name.ToString();
-                i++;
-            }
-            @concepto
         </td>
         <td>
             <a href="https://admin.conekta.com/orders/@item.id" target="_blank">@item.id</a>
@@ -130,15 +115,7 @@
             }
             $@total
         </td>
-        <td>
-            @{
-                var linkPago = (from c in checkouts select c).ToArray();
 
-                string link = conceptoPago[j].url.ToString();
-                j++;
-            }
-            <a href="@link" target="_blank"><button class="btn btn-warning">Click para link de pago</button> </a>
-        </td>
         <td>
             @{
                 if (item.payment_status == "paid")

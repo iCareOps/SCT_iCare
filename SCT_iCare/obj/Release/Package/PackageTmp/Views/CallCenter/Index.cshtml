@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SCT_iCare.Consultorios>
+﻿@model IEnumerable<SCT_iCare.Sucursales>
 @{
     ViewBag.Title = "Index";
 }
@@ -7,10 +7,9 @@
 
 <br />
 
-<h4 style="color:white">Venta por Call Center</h4>
+<h4 style="color:white" class="text-center">Crear referencia OXXO</h4>
 
-<hr />
-
+<br />
 
 <div class="container formularioLogin2">
     <div class="row">
@@ -22,33 +21,36 @@
                         <br />
                         <label class="col-md-12"><h5>Consultorio asignado:</h5></label>
                         <select name="consultorio" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select labelGral">
-                            <option value="value1" selected>--Estados, Consultorios y Doctores--</option>
-                            <option value="SATELITE">SATÉLITE -- EDOMEX</option>
-                            <option value="LINDAVISTA">LINDAVISTA -- CDMX</option>
-                            <option value="UNIVERSIDAD">UNIVERSIDAD -- CDMX</option>
-                            <option value="VERACRUZ">VERACRUZ -- VER</option>
-                            @*@{
-                                var consultorios = Model.OrderBy(i => i.Estado).ToList(); //from c in Model select c;
+                            @*<option value="value1" selected>--Estados, Consultorios y Doctores--</option>
+                            <option value="SATELITE">Clínica SATÉLITE, CDMX --- Cto. Novelistas 7 Cd. Satélite</option>
+                            <option value="LINDAVISTA">Hospital Ángeles LINDAVISTA, CDMX --- Cali 878 Lindavista</option>
+                            <option value="UNIVERSIDAD">Clínica UNIVERSIDAD, CDMX --- Gabriel Mancera 1802 Del Valle</option>
+                            <option value="VERACRUZ">Clínica VERACRUZ, VER --- Juan de Dios Peza 959 Ignacio Zaragoza</option>*@
+                            @{
+                                var sucursales = Model.OrderBy(i => i.idCiudad).ToList(); //from c in Model select c;
 
-                                foreach (var item in consultorios)
+                                foreach (var item in sucursales)
                                 {
-                                    <option value="@item.Consultorio">@item.Estado , @item.Consultorio</option>
+                                    SCTiCareEntities1 db = new SCTiCareEntities1();
+                                    string ciudad = (from c in db.Ciudades where item.idCiudad == c.idCiudad select c.Ciudad).FirstOrDefault().ToString();
+                                    string estado = (from c in db.Ciudades where item.idCiudad == c.idCiudad select c.Estado).FirstOrDefault().ToString();
+                                    <option value="@item.Nombre">@item.Nombre - - - @item.Calle, @item.Colonia, @ciudad, @estado</option>
                                 }
-                            }*@
+                            }
                         </select>
                     </div>
                     <br />
                     <div class="form-group col-md-12">
                         <label class="col-md-4"><h5>Nombre del Cliente:</h5></label>
-                        <input type="text" asp-for="nombre" class="form-control col-md-8" name="nombre" />
+                        <input type="text" asp-for="nombre" class="form-control col-md-8" name="nombre" required/>
                     </div>
                     <div class="form-group col-md-12">
                         <label class="col-md-4"><h5>Email:</h5></label>
-                        <input type="text" asp-for="email" class="form-control col-md-8" name="email" /> @*@Html.TextBox("Password")*@
+                        <input type="text" asp-for="email" class="form-control col-md-8" name="email" required/>
                     </div>
                     <div class="form-group col-md-12">
                         <label class="col-md-4"><h5>Teléfono:</h5></label>
-                        <input type="tel" asp-for="telefono" class="form-control col-md-8" name="telefono" /> @*@Html.TextBox("Password")*@
+                        <input type="tel" asp-for="telefono" class="form-control col-md-8" name="telefono" required/>
                     </div>
                     <br />
                     <div class="form-group col-md-12">

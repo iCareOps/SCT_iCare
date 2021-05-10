@@ -1,0 +1,193 @@
+﻿@model IEnumerable<SCT_iCare.SkeedaPK>
+
+@{
+    ViewBag.Title = "Index";
+
+    string doctor = "";
+    string statusConekta = "";
+    string statusSkeeda = "";
+
+    conekta.Order conekta = new conekta.Order();
+
+    string etiqueta = "";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<div class="tablaScroll">
+    <table class="table tablas" style="color: #2F2D6B">
+        <tr style="background-color:#62E3C9" class="tableSticky">
+            <th>
+                Fecha Consulta
+            </th>
+            <th>
+                Paciente
+            </th>
+            <th>
+                Precio
+            </th>
+            <th>
+                Estatus Skeeda
+            </th>
+            <th>
+                Estatus Conekta
+            </th>
+            <th>
+                Fecha de Orden OXXO
+            </th>
+            <th>
+                Concepto CheckUp
+            </th>
+            <th>
+                Referencia OXXO
+            </th>
+            <th>
+                No. Orden
+            </th>
+            <th>
+                Chequeo Realizado
+            </th>
+            <th>
+                Doctor
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Scheduled_start)
+                </td>
+                <td>
+                    <b>@Html.DisplayFor(modelItem => item.Title)</b>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+
+                @{ 
+                    if(item.Payment_status == "Paid")
+                    {
+                        statusSkeeda = "Pagado";
+                        etiqueta = "#41F51A";
+                    }
+                    else if(item.Payment_status == "Unpaid")
+                    {
+                        statusSkeeda = "NoPagado";
+                        etiqueta = "#FF5056";
+                    }
+                    else if (item.Payment_status == "NoStatus")
+                    {
+                        statusSkeeda = "Sin Estatus";
+                        etiqueta = "white";
+                    }
+                    else
+                    {
+                        statusSkeeda = "";
+                        etiqueta = "white";
+                    }
+                }
+
+                <td>
+                    <b><mark style="background-color:@etiqueta">@statusSkeeda</mark></b>
+                </td>
+
+                @{ 
+                    SCT_iCare.Controllers.Recepcion.SolicitudesConektaController apikey = new SCT_iCare.Controllers.Recepcion.SolicitudesConektaController();
+
+                    if(item.Ord_Num__Custom_field_7_ != null)
+                    {
+                        var orden = new conekta.Order().find(item.Ord_Num__Custom_field_7_);
+                        if (orden.id == null)
+                        {
+                            statusConekta = "No existe";
+                            etiqueta = "white";
+                        }
+                        else
+                        {
+                            if(orden.payment_status.ToString() == "pending_payment")
+                            {
+                                statusConekta = "Pendiente";
+                                etiqueta = "#FFFA4F";
+                            }
+                            else if(orden.payment_status.ToString() == "paid")
+                            {
+                                statusConekta = "Pagado";
+                                etiqueta = "#41F51A";
+                            }
+                            else if(orden.payment_status.ToString() == "expired")
+                            {
+                                statusConekta = "Expirado";
+                                etiqueta = "#41F51A";
+                            }
+                            else
+                            {
+                                statusConekta = "";
+                                etiqueta = "white";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        statusConekta = "";
+                        etiqueta = "white";
+                    }
+
+
+
+                }
+
+                <td>
+                    <b><mark style="background-color:@etiqueta">@statusConekta</mark></b>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Created)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Spaces)
+                </td>
+                <td>
+                    <b>@Html.DisplayFor(modelItem => item.RefPagoOxx__Custom_field_6_)</b>
+                </td>
+                <td>
+                    <b>@Html.DisplayFor(modelItem => item.Ord_Num__Custom_field_7_)</b>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CheckCita__Custom_field_20_)
+                </td>
+
+                @{ 
+                    if(item.DrVeracruz__Custom_field_21_ != null)
+                    {
+                        doctor = item.DrVeracruz__Custom_field_21_;
+                    }
+                    else if(item.DrSatelite__Custom_field_22_ != null)
+                    {
+                        doctor = item.DrSatelite__Custom_field_22_;
+                    }
+                    else if(item.DrLindavis__Custom_field_23_ != null)
+                    {
+                        doctor = item.DrLindavis__Custom_field_23_;
+                    }
+                }
+
+                <td>
+                    @doctor
+                </td>
+                @*<td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.idSkeeda }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.idSkeeda }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.idSkeeda })
+                </td>*@
+            </tr>
+        }
+        </table>
+</div>
+
+
+
+
