@@ -13,6 +13,70 @@
           <Property Name="Ciudad" Type="varchar" MaxLength="100" />
           <Property Name="Estado" Type="varchar" MaxLength="100" />
         </EntityType>
+        <EntityType Name="ConektaPK">
+          <Key>
+            <PropertyRef Name="idConekta" />
+          </Key>
+          <Property Name="idConekta" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="fecha_creacion" Type="datetime" />
+          <Property Name="fecha_pago" Type="datetime" />
+          <Property Name="id_cargo" Type="nvarchar" MaxLength="255" />
+          <Property Name="tipo_transaccion" Type="nvarchar" MaxLength="255" />
+          <Property Name="metodo_pago" Type="nvarchar" MaxLength="255" />
+          <Property Name="estatus" Type="nvarchar" MaxLength="255" />
+          <Property Name="mensaje_error" Type="nvarchar" MaxLength="255" />
+          <Property Name="codigo_falla" Type="nvarchar" MaxLength="255" />
+          <Property Name="codigo_antifraude" Type="nvarchar" MaxLength="255" />
+          <Property Name="monto_cargo" Type="float" />
+          <Property Name="comision" Type="float" />
+          <Property Name="monto_deposito" Type="float" />
+          <Property Name="moneda" Type="nvarchar" MaxLength="255" />
+          <Property Name="cantidad_original" Type="nvarchar" MaxLength="255" />
+          <Property Name="moneda_original" Type="nvarchar" MaxLength="255" />
+          <Property Name="tipo_cambio" Type="float" />
+          <Property Name="id_referencia" Type="nvarchar" MaxLength="255" />
+          <Property Name="descripcion" Type="nvarchar" MaxLength="255" />
+          <Property Name="nombre" Type="nvarchar" MaxLength="255" />
+          <Property Name="email" Type="nvarchar" MaxLength="255" />
+          <Property Name="telefono" Type="nvarchar" MaxLength="255" />
+          <Property Name="ip" Type="nvarchar" MaxLength="255" />
+          <Property Name="nombre_tarjetahabiente" Type="nvarchar" MaxLength="255" />
+          <Property Name="numero_tarjeta" Type="nvarchar" MaxLength="255" />
+          <Property Name="banco" Type="nvarchar" MaxLength="255" />
+          <Property Name="marca_tarjeta" Type="nvarchar" MaxLength="255" />
+          <Property Name="pais_tarjeta" Type="nvarchar" MaxLength="255" />
+          <Property Name="tipo" Type="nvarchar" MaxLength="255" />
+          <Property Name="tipo_tarjeta" Type="nvarchar" MaxLength="255" />
+          <Property Name="pago_efectivo" Type="nvarchar" MaxLength="255" />
+          <Property Name="sucursal" Type="nvarchar" MaxLength="255" />
+          <Property Name="ip_ciudad" Type="nvarchar" MaxLength="255" />
+          <Property Name="id_deposito" Type="nvarchar" MaxLength="255" />
+          <Property Name="referencia_deposito" Type="float" />
+          <Property Name="fecha_deposito" Type="nvarchar" MaxLength="255" />
+          <Property Name="meses_sin_intereses" Type="nvarchar" MaxLength="255" />
+          <Property Name="id_transaccion" Type="nvarchar" MaxLength="255" />
+          <Property Name="id_recibo" Type="nvarchar" MaxLength="255" />
+          <Property Name="livemode" Type="nvarchar" MaxLength="255" />
+          <Property Name="checkout_id" Type="nvarchar" MaxLength="255" />
+          <Property Name="decision_antifraude" Type="nvarchar" MaxLength="255" />
+          <Property Name="decision_bancaria" Type="nvarchar" MaxLength="255" />
+          <Property Name="reglas_antifraude_disparadas" Type="nvarchar" MaxLength="255" />
+          <Property Name="direccion_de_envio" Type="nvarchar" MaxLength="255" />
+          <Property Name="id_cliente" Type="nvarchar" MaxLength="255" />
+          <Property Name="id_subscripcion" Type="nvarchar" MaxLength="255" />
+          <Property Name="id_orden" Type="nvarchar" MaxLength="255" />
+          <Property Name="fecha_contracargo" Type="nvarchar" MaxLength="255" />
+          <Property Name="fecha_devolucion" Type="nvarchar" MaxLength="255" />
+          <Property Name="auth_code" Type="float" />
+          <Property Name="referencia_oxxo" Type="float" />
+          <Property Name="canal" Type="nvarchar" MaxLength="255" />
+          <Property Name="checkout_request_id" Type="nvarchar" MaxLength="255" />
+          <Property Name="checkout_request_type" Type="nvarchar" MaxLength="255" />
+          <Property Name="checkout_request_name" Type="nvarchar" MaxLength="255" />
+          <Property Name="customer_custom_reference" Type="nvarchar" MaxLength="255" />
+          <Property Name="item_name" Type="nvarchar" MaxLength="255" />
+          <Property Name="item_description" Type="nvarchar" MaxLength="255" />
+        </EntityType>
         <EntityType Name="Consultorios">
           <Key>
             <PropertyRef Name="id" />
@@ -250,6 +314,7 @@
         </Association>
         <EntityContainer Name="SCTiCareModelStoreContainer">
           <EntitySet Name="Ciudades" EntityType="Self.Ciudades" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ConektaPK" EntityType="Self.ConektaPK" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Consultorios" EntityType="Self.Consultorios" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Doctores" EntityType="Self.Doctores" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Menu" EntityType="Self.Menu" Schema="dbo" store:Type="Tables" />
@@ -402,6 +467,7 @@
             <End Role="Doctores" EntitySet="Doctores" />
           </AssociationSet>
           <EntitySet Name="SkeedaPK" EntityType="SCTiCareModel.SkeedaPK" />
+          <EntitySet Name="ConektaPK" EntityType="SCTiCareModel.ConektaPK" />
           </EntityContainer>
         <EntityType Name="Consultorios">
           <Key>
@@ -580,6 +646,70 @@
           <Property Name="DrVeracruz__Custom_field_21_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="DrSatelite__Custom_field_22_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="DrLindavis__Custom_field_23_" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ConektaPK">
+          <Key>
+            <PropertyRef Name="idConekta" />
+          </Key>
+          <Property Name="idConekta" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="fecha_creacion" Type="DateTime" Precision="3" />
+          <Property Name="fecha_pago" Type="DateTime" Precision="3" />
+          <Property Name="id_cargo" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="tipo_transaccion" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="metodo_pago" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="estatus" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="mensaje_error" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="codigo_falla" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="codigo_antifraude" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="monto_cargo" Type="Double" />
+          <Property Name="comision" Type="Double" />
+          <Property Name="monto_deposito" Type="Double" />
+          <Property Name="moneda" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="cantidad_original" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="moneda_original" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="tipo_cambio" Type="Double" />
+          <Property Name="id_referencia" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="descripcion" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="nombre" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="email" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="telefono" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ip" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="nombre_tarjetahabiente" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="numero_tarjeta" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="banco" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="marca_tarjeta" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="pais_tarjeta" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="tipo" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="tipo_tarjeta" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="pago_efectivo" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="sucursal" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ip_ciudad" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="id_deposito" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="referencia_deposito" Type="Double" />
+          <Property Name="fecha_deposito" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="meses_sin_intereses" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="id_transaccion" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="id_recibo" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="livemode" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="checkout_id" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="decision_antifraude" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="decision_bancaria" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="reglas_antifraude_disparadas" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="direccion_de_envio" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="id_cliente" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="id_subscripcion" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="id_orden" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="fecha_contracargo" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="fecha_devolucion" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="auth_code" Type="Double" />
+          <Property Name="referencia_oxxo" Type="Double" />
+          <Property Name="canal" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="checkout_request_id" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="checkout_request_type" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="checkout_request_name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="customer_custom_reference" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="item_name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="item_description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -766,6 +896,71 @@
                 <ScalarProperty Name="End" ColumnName="End" />
                 <ScalarProperty Name="Scheduled_start" ColumnName="Scheduled start" />
                 <ScalarProperty Name="idSkeeda" ColumnName="idSkeeda" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ConektaPK">
+            <EntityTypeMapping TypeName="SCTiCareModel.ConektaPK">
+              <MappingFragment StoreEntitySet="ConektaPK">
+                <ScalarProperty Name="item_description" ColumnName="item_description" />
+                <ScalarProperty Name="item_name" ColumnName="item_name" />
+                <ScalarProperty Name="customer_custom_reference" ColumnName="customer_custom_reference" />
+                <ScalarProperty Name="checkout_request_name" ColumnName="checkout_request_name" />
+                <ScalarProperty Name="checkout_request_type" ColumnName="checkout_request_type" />
+                <ScalarProperty Name="checkout_request_id" ColumnName="checkout_request_id" />
+                <ScalarProperty Name="canal" ColumnName="canal" />
+                <ScalarProperty Name="referencia_oxxo" ColumnName="referencia_oxxo" />
+                <ScalarProperty Name="auth_code" ColumnName="auth_code" />
+                <ScalarProperty Name="fecha_devolucion" ColumnName="fecha_devolucion" />
+                <ScalarProperty Name="fecha_contracargo" ColumnName="fecha_contracargo" />
+                <ScalarProperty Name="id_orden" ColumnName="id_orden" />
+                <ScalarProperty Name="id_subscripcion" ColumnName="id_subscripcion" />
+                <ScalarProperty Name="id_cliente" ColumnName="id_cliente" />
+                <ScalarProperty Name="direccion_de_envio" ColumnName="direccion_de_envio" />
+                <ScalarProperty Name="reglas_antifraude_disparadas" ColumnName="reglas_antifraude_disparadas" />
+                <ScalarProperty Name="decision_bancaria" ColumnName="decision_bancaria" />
+                <ScalarProperty Name="decision_antifraude" ColumnName="decision_antifraude" />
+                <ScalarProperty Name="checkout_id" ColumnName="checkout_id" />
+                <ScalarProperty Name="livemode" ColumnName="livemode" />
+                <ScalarProperty Name="id_recibo" ColumnName="id_recibo" />
+                <ScalarProperty Name="id_transaccion" ColumnName="id_transaccion" />
+                <ScalarProperty Name="meses_sin_intereses" ColumnName="meses_sin_intereses" />
+                <ScalarProperty Name="fecha_deposito" ColumnName="fecha_deposito" />
+                <ScalarProperty Name="referencia_deposito" ColumnName="referencia_deposito" />
+                <ScalarProperty Name="id_deposito" ColumnName="id_deposito" />
+                <ScalarProperty Name="ip_ciudad" ColumnName="ip_ciudad" />
+                <ScalarProperty Name="sucursal" ColumnName="sucursal" />
+                <ScalarProperty Name="pago_efectivo" ColumnName="pago_efectivo" />
+                <ScalarProperty Name="tipo_tarjeta" ColumnName="tipo_tarjeta" />
+                <ScalarProperty Name="tipo" ColumnName="tipo" />
+                <ScalarProperty Name="pais_tarjeta" ColumnName="pais_tarjeta" />
+                <ScalarProperty Name="marca_tarjeta" ColumnName="marca_tarjeta" />
+                <ScalarProperty Name="banco" ColumnName="banco" />
+                <ScalarProperty Name="numero_tarjeta" ColumnName="numero_tarjeta" />
+                <ScalarProperty Name="nombre_tarjetahabiente" ColumnName="nombre_tarjetahabiente" />
+                <ScalarProperty Name="ip" ColumnName="ip" />
+                <ScalarProperty Name="telefono" ColumnName="telefono" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="descripcion" ColumnName="descripcion" />
+                <ScalarProperty Name="id_referencia" ColumnName="id_referencia" />
+                <ScalarProperty Name="tipo_cambio" ColumnName="tipo_cambio" />
+                <ScalarProperty Name="moneda_original" ColumnName="moneda_original" />
+                <ScalarProperty Name="cantidad_original" ColumnName="cantidad_original" />
+                <ScalarProperty Name="moneda" ColumnName="moneda" />
+                <ScalarProperty Name="monto_deposito" ColumnName="monto_deposito" />
+                <ScalarProperty Name="comision" ColumnName="comision" />
+                <ScalarProperty Name="monto_cargo" ColumnName="monto_cargo" />
+                <ScalarProperty Name="codigo_antifraude" ColumnName="codigo_antifraude" />
+                <ScalarProperty Name="codigo_falla" ColumnName="codigo_falla" />
+                <ScalarProperty Name="mensaje_error" ColumnName="mensaje_error" />
+                <ScalarProperty Name="estatus" ColumnName="estatus" />
+                <ScalarProperty Name="metodo_pago" ColumnName="metodo_pago" />
+                <ScalarProperty Name="tipo_transaccion" ColumnName="tipo_transaccion" />
+                <ScalarProperty Name="id_cargo" ColumnName="id_cargo" />
+                <ScalarProperty Name="fecha_pago" ColumnName="fecha_pago" />
+                <ScalarProperty Name="fecha_creacion" ColumnName="fecha_creacion" />
+                <ScalarProperty Name="idConekta" ColumnName="idConekta" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -36,5 +36,6 @@ namespace SCT_iCare
         public virtual DbSet<Doctores> Doctores { get; set; }
         public virtual DbSet<Sucursales> Sucursales { get; set; }
         public virtual DbSet<SkeedaPK> SkeedaPK { get; set; }
+        public virtual DbSet<ConektaPK> ConektaPK { get; set; }
     }
 }

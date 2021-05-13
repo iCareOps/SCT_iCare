@@ -8,6 +8,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using SCT_iCare;
+using PagedList;
 
 namespace SCT_iCare.Controllers.Contabilidad
 {
@@ -23,11 +24,15 @@ namespace SCT_iCare.Controllers.Contabilidad
         }
 
         // GET: SkeedaPKs
-        public ActionResult Index()
+        public ActionResult Index(int? pageSize, int? page)
         {
             GetApiKey();
 
-            return View(db.SkeedaPK.ToList());
+            pageSize = (pageSize ?? 10);
+            page = (page ?? 1);
+            ViewBag.PageSize = pageSize;
+
+            return View(db.SkeedaPK.OrderByDescending(i => i.Created).ToPagedList(page.Value, pageSize.Value));
         }
 
         // GET: SkeedaPKs/Details/5

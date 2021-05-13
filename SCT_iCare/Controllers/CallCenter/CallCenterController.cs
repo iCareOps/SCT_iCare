@@ -30,6 +30,13 @@ namespace SCT_iCare.Controllers.CallCenter
             return View(sucursales);
         }
 
+        public ActionResult IndexSPEI()
+        {
+            var sucursales = from c in db.Sucursales select c;
+
+            return View(sucursales);
+        }
+
         public ActionResult GetRecepcion()
         {
             var consultorios = from c in db.Consultorios select c;
@@ -51,7 +58,7 @@ namespace SCT_iCare.Controllers.CallCenter
 
         private string ConvertirProductos1(string consultorio)
         {
-            string producto = "Consulta EPI (" + consultorio+ ")";
+            string producto = "Consulta EPI (" + consultorio + ")";
             var product = new LineItem()
             {
                 name = "Consulta EPI" + consultorio,
@@ -80,164 +87,101 @@ namespace SCT_iCare.Controllers.CallCenter
         }
 
 
-        public ActionResult Orden(string nombre, string email, string telefono, string consultorio, string precio)
+        public ActionResult Orden(string nombre, string email, string telefono, string consultorio, string precio, string tipoPago)
         {
             GetApiKey();
 
-            //Por ahora se llena hace un switch para seleccionar el nombre del producto concatenado con el consultorio ya que se debe hacer un método para
-            //serializar el arreglo y así traer todo desde base de datos
+            if(tipoPago == "OXXO")
+            {
+                Order order = new conekta.Order().create(@"{
+                      ""currency"":""MXN"",
+                      ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
+                      ""line_items"": [{
+                      ""name"": " + ConvertirProductos1(consultorio) + @",
+                      ""unit_price"": " + ConvertirProductos2(precio) + @",
+                      ""quantity"": 1
+                      }]
+                      }");
 
-            //switch (consultorio)
-            //{
-            //    case "Veracruz":
-            //        Order order = new conekta.Order().create(@"{
-            //          ""currency"":""MXN"",
-            //          ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
-            //          ""line_items"": [{
-            //          ""name"": "+ConvertirProductos(consultorio)+ @",
-            //          ""unit_price"": 258800,
-            //          ""quantity"": 1
-            //          }]
-            //          }");
+                order.createCharge(@"{
+                    ""payment_method"": {
+                    ""type"": ""oxxo_cash""
+                    },
+                    ""amount"": 258800
+                    }");
 
-            //        order.createCharge(@"{
-            //        ""payment_method"": {
-            //        ""type"": ""oxxo_cash""
-            //        },
-            //        ""amount"": 258800
-            //        }");
+                var orden = new Order().find(order.id);
 
-            //        var orden = new Order().find(order.id);
+                var detallesOrden = new Order()
+                {
+                    id = orden.id,
+                    customer_info = orden.customer_info,
+                    line_items = orden.line_items,
+                    amount = orden.amount,
+                    charges = orden.charges
+                };
 
-            //        var detallesOrden = new Order()
-            //        {
-            //            id = orden.id,
-            //            customer_info = orden.customer_info,
-            //            line_items = orden.line_items,
-            //            amount = orden.amount,
-            //            charges = orden.charges
-            //        };
+                ViewBag.Orden = order.id;
+                ViewBag.Metodo = "OXXO";
 
-            //        ViewBag.Orden = order.id;
+                return View(detallesOrden);
+            }
+            else
+            {
+                Order order = new conekta.Order().create(@"{
+                      ""currency"":""MXN"",
+                      ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
+                      ""line_items"": [{
+                      ""name"": " + ConvertirProductos1(consultorio) + @",
+                      ""unit_price"": " + ConvertirProductos2(precio) + @",
+                      ""quantity"": 1
+                      }]
+                      }");
 
-            //        return View(detallesOrden);
+                order.createCharge(@"{
+                    ""payment_method"": {
+                    ""type"": ""spei""
+                    },
+                    ""amount"": 258800
+                    }");
 
-            //    case "LINDAVISTA":
-            //        Order order1 = new conekta.Order().create(@"{
-            //          ""currency"":""MXN"",
-            //          ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
-            //          ""line_items"": [{
-            //          ""name"": ""Consulta EPI (HOSPITAL ANGELES LINDAVISTA)"",
-            //          ""unit_price"": 258800,
-            //          ""quantity"": 1
-            //          }]
-            //          }");
+                var orden = new Order().find(order.id);
 
-            //        order1.createCharge(@"{
-            //        ""payment_method"": {
-            //        ""type"": ""oxxo_cash""
-            //        },
-            //        ""amount"": 258800
-            //        }");
+                var detallesOrden = new Order()
+                {
+                    id = orden.id,
+                    customer_info = orden.customer_info,
+                    line_items = orden.line_items,
+                    amount = orden.amount,
+                    charges = orden.charges
+                };
 
-            //        var orden1 = new Order().find(order1.id);
+                ViewBag.Orden = order.id;
+                ViewBag.Metodo = "SPEI";
 
-            //        var detallesOrden1 = new Order()
-            //        {
-            //            id = orden1.id,
-            //            customer_info = orden1.customer_info,
-            //            line_items = orden1.line_items,
-            //            amount = orden1.amount,
-            //            charges = orden1.charges
-            //        };
+                return View(detallesOrden);
+            }
 
-            //        ViewBag.Orden = order1.id;
 
-            //        return View(detallesOrden1);
+        }
 
-            //    case "UNIVERSIDAD":
-            //        Order order2 = new conekta.Order().create(@"{
-            //          ""currency"":""MXN"",
-            //          ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
-            //          ""line_items"": [{
-            //          ""name"": ""Consulta EPI (CLINICA UNIVERSIDAD)"",
-            //          ""unit_price"": 258800,
-            //          ""quantity"": 1
-            //          }]
-            //          }");
-
-            //        order2.createCharge(@"{
-            //        ""payment_method"": {
-            //        ""type"": ""oxxo_cash""
-            //        },
-            //        ""amount"": 258800
-            //        }");
-
-            //        var orden2 = new Order().find(order2.id);
-
-            //        var detallesOrden2 = new Order()
-            //        {
-            //            id = orden2.id,
-            //            customer_info = orden2.customer_info,
-            //            line_items = orden2.line_items,
-            //            amount = orden2.amount,
-            //            charges = orden2.charges
-            //        };
-
-            //        ViewBag.Orden = order2.id;
-
-            //        return View(detallesOrden2);
-
-            //    case "SATELITE":
-            //        Order order3 = new conekta.Order().create(@"{
-            //          ""currency"":""MXN"",
-            //          ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
-            //          ""line_items"": [{
-            //          ""name"": ""Consulta EPI (CLINICA SATELITE)"",
-            //          ""unit_price"": 258800,
-            //          ""quantity"": 1
-            //          }]
-            //          }");
-
-            //        order3.createCharge(@"{
-            //        ""payment_method"": {
-            //        ""type"": ""oxxo_cash"",
-            //        ""expires_at"": " + FechaExpira() + @"
-            //        },
-            //        ""amount"": 258800
-            //        }");
-
-            //        var orden3 = new Order().find(order3.id);
-
-            //        var detallesOrden3 = new Order()
-            //        {
-            //            id = orden3.id,
-            //            customer_info = orden3.customer_info,
-            //            line_items = orden3.line_items,
-            //            amount = orden3.amount,
-            //            charges = orden3.charges
-            //        };
-
-            //        ViewBag.Orden = order3.id;
-
-            //        return View(detallesOrden3);
-
-            //    default:
-            //        return View();
+        public ActionResult OrdenSPEI(string nombre, string email, string telefono, string consultorio, string precio)
+        {
+            GetApiKey();
 
             Order order = new conekta.Order().create(@"{
                       ""currency"":""MXN"",
                       ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
                       ""line_items"": [{
                       ""name"": " + ConvertirProductos1(consultorio) + @",
-                      ""unit_price"": "+ConvertirProductos2(precio)+@",
+                      ""unit_price"": " + ConvertirProductos2(precio) + @",
                       ""quantity"": 1
                       }]
                       }");
 
             order.createCharge(@"{
                     ""payment_method"": {
-                    ""type"": ""oxxo_cash""
+                    ""type"": ""spei""
                     },
                     ""amount"": 258800
                     }");
@@ -257,154 +201,6 @@ namespace SCT_iCare.Controllers.CallCenter
 
             return View(detallesOrden);
         }
-
-
-
-        //Order order = new conekta.Order().create(@"{
-        //          ""currency"":""MXN"",
-        //          ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
-        //          ""line_items"": ["+ ConvertirProductos(consultorio) + @"]
-        //          }");
-
-        //order.createCharge(@"{
-        //        ""payment_method"": {
-        //        ""type"": ""oxxo_cash""
-        //        },
-        //        ""amount"": 258800
-        //        }");
-
-        //return View();
     }
-
-
-//        public EntRespuestaConekta CrearOrdenOxxo(EntOrdenDetalle orden, string fecha, EntUsuarios usuario, int idHorario)
-//        {
-//            GetApiKey();
-//            orden.Total = SumaTotal(orden.Productos).ToString();
-//            EntRespuestaConekta respuesta = new EntRespuestaConekta();
-//            try
-//            {
-//                if (orden != null)
-//                {
-//                    Order nOrder = new Order().create(@"{
-//""currency"":""MXN"",
-//""customer_info"": " + ConvertirCliente(orden.Cliente) + @",
-//""line_items"": " + ConvertirProductos(orden.Productos) + @",
-//""charges"": [{
-//""payment_method"": {
-//""type"": ""oxxo_cash"",
-//""expires_at"": " + FechaExpira() + @"
-//},
-//""amount"": " + orden.Total + @"
-//}]
-//}");
-//                    respuesta.IdOrden = nOrder.id;
-//                    respuesta.Total = nOrder.amount.ToString();
-//                    respuesta.Moneda = nOrder.currency;
-//                    foreach (JObject obj in nOrder.charges.data)
-//                    {
-//                        var data = JsonConvert.DeserializeObject<Referencia>(obj.GetValue("payment_method").ToString());
-//                        respuesta.MetodoPago = data.service_name;
-//                        respuesta.Referencia = data.reference;
-//                    }
-//                    respuesta = FormatoRespuestaConekta(respuesta);
-//                    //Todo Ok, se debe actualizar la orden con el idConekta en la tabla Orden
-//                    resultadoJson = clsFachada.ActualizarDatosConekta(orden, respuesta, fecha, idHorario);
-//                    respuesta.result = true;
-//                }
-//                else
-//                {
-//                    respuesta.result = false;
-//                    respuesta.ErrorMessage = "Ocurrio un problema interno al guardar la solicitud";
-//                }
-//                return respuesta;
-//            }
-//            catch (ConektaException e)
-//            {
-//                foreach (JObject obj in e.details)
-//                {
-//                    respuesta.ErrorMessage = obj.GetValue("message").ToString();
-//                }
-//                return respuesta;
-//            }
-//        }
-
-//        public EntRespuestaConekta CrearOrdenLink(EntOrdenDetalle orden, string fecha, EntUsuarios usuario, int idHorario)
-//        {
-
-//            GetApiKey();
-//            orden.Total = SumaTotal(orden.Productos).ToString();
-//            EntRespuestaConekta respuesta = new EntRespuestaConekta();
-//            try
-//            {
-
-//                if (orden != null)
-//                {
-
-
-
-//                    PaymentLink nOrder = new PaymentLink().create(@"{
-//                      ""name"":""Link de pago iCare"",
-//                      ""type"":""PaymentLink"",
-//                      ""recurrent"": false,
-//                      ""expired_at"": " + FechaExpira() + @",
-//                      ""allowed_payment_methods"": [""cash"", ""card"", ""bank_transfer""],
-//                      ""needs_shipping_contact"": true ,
-//                      ""monthly_installments_enabled"": false ,
-                       
-//                      ""order_template"": {
-//                      ""line_items"": " + ConvertirProductos(orden.Productos) + @",
-
-//                      ""currency"":""MXN"",
-//                      ""customer_info"": " + ConvertirCliente(orden.Cliente) + @"
-                             
-//                      }
-//                    }");
-
-
-//                    respuesta.IdOrden = nOrder.id;
-//                    respuesta.url = nOrder.url;
-
-//                    respuesta.expires_at = nOrder.expires_at;
-//                    respuesta.correo = orden.Cliente.Email;
-
-//                    //Todo Ok, se debe actualizar la orden con el idConekta en la tabla Orden
-//                    resultadoJson = clsFachada.ActualizarDatosConekta(orden, respuesta, fecha, idHorario);
-
-//                    //enviar correo 
-
-//                    // recupero el apikewy de sengrid para conectar y el id del template
-//                    var apiKey = ConfigurationManager.AppSettings["sengridApiKey"];
-//                    var templateIdConfirma = ConfigurationManager.AppSettings["templateIdConfirma"];
-
-
-
-
-
-
-
-
-
-//                    respuesta.result = true;
-//                }
-//                else
-//                {
-//                    respuesta.result = false;
-//                    respuesta.ErrorMessage = "Ocurrio un problema interno al guardar la solicitud";
-//                }
-//                return respuesta;
-
-//            }
-//            catch (ConektaException e)
-//            {
-//                foreach (JObject obj in e.details)
-//                {
-//                    respuesta.ErrorMessage = obj.GetValue("message").ToString();
-//                }
-//                return respuesta;
-//            }
-//        }
-
-
     
 }
