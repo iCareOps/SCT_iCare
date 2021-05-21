@@ -107,7 +107,7 @@ namespace SCT_iCare.Controllers.CallCenter
                     ""payment_method"": {
                     ""type"": ""oxxo_cash""
                     },
-                    ""amount"": 258800
+                    ""amount"": " + ConvertirProductos2(precio) + @"
                     }");
 
                 var orden = new Order().find(order.id);
@@ -142,7 +142,7 @@ namespace SCT_iCare.Controllers.CallCenter
                     ""payment_method"": {
                     ""type"": ""spei""
                     },
-                    ""amount"": 258800
+                    ""amount"": " + ConvertirProductos2(precio) + @"
                     }");
 
                 var orden = new Order().find(order.id);
@@ -162,44 +162,6 @@ namespace SCT_iCare.Controllers.CallCenter
                 return View(detallesOrden);
             }
 
-
-        }
-
-        public ActionResult OrdenSPEI(string nombre, string email, string telefono, string consultorio, string precio)
-        {
-            GetApiKey();
-
-            Order order = new conekta.Order().create(@"{
-                      ""currency"":""MXN"",
-                      ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
-                      ""line_items"": [{
-                      ""name"": " + ConvertirProductos1(consultorio) + @",
-                      ""unit_price"": " + ConvertirProductos2(precio) + @",
-                      ""quantity"": 1
-                      }]
-                      }");
-
-            order.createCharge(@"{
-                    ""payment_method"": {
-                    ""type"": ""spei""
-                    },
-                    ""amount"": 258800
-                    }");
-
-            var orden = new Order().find(order.id);
-
-            var detallesOrden = new Order()
-            {
-                id = orden.id,
-                customer_info = orden.customer_info,
-                line_items = orden.line_items,
-                amount = orden.amount,
-                charges = orden.charges
-            };
-
-            ViewBag.Orden = order.id;
-
-            return View(detallesOrden);
         }
     }
     
