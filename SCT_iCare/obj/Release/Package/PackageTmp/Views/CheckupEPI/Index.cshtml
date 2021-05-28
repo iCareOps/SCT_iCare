@@ -1,0 +1,81 @@
+﻿@model IEnumerable<SCT_iCare.CheckupEPI>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.NombreEPI)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NombreArchivo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NoFolio)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Tipo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Estatus)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Fecha)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Doctores.Nombre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Sucursales.Nombre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Usuarios.Nombre)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.NombreEPI)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NombreArchivo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NoFolio)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Tipo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Estatus)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Fecha)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Doctores.Nombre)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Sucursales.Nombre)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Usuarios.Nombre)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.idEPI }) |
+            @Html.ActionLink("Details", "Details", new { id=item.idEPI }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.idEPI })
+        </td>
+    </tr>
+}
+
+</table>

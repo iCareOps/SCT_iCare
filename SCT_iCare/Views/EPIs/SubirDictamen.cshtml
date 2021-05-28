@@ -1,0 +1,90 @@
+﻿@model SCT_iCare.EPI
+
+@{
+    ViewBag.Title = "SubirDictamen";
+}
+
+<br />
+<h2 style="color:white">Subir Dictamen</h2>
+
+<div>
+    <h4 style="color:white">Datos del Dictamen</h4>
+    <hr />
+    <dl class="dl-horizontal labelGral">
+        <dt>
+            <h4>Nombre del Paciente: </h4>
+        </dt>
+
+        <dd>
+            <h4 style="color:white">@Html.DisplayFor(model => model.NombrePaciente)</h4>
+        </dd>
+
+        <dt>
+            <h4>Número de Expediente:</h4>
+        </dt>
+
+        <dd>
+            <h4 style="color:white">@Html.DisplayFor(model => model.NoFolio)</h4>
+        </dd>
+
+        <dt>
+            <h4>Tipo de Epi:</h4>
+        </dt>
+
+        <dd>
+            <h4 style="color:white">@Html.DisplayFor(model => model.TipoEPI)</h4>
+        </dd>
+
+
+        <dt>
+            <h4>Doctor Asignado:</h4>
+        </dt>
+
+        <dd>
+            <h4 style="color:white">@Html.DisplayFor(model => model.Doctor)</h4>
+        </dd>
+
+        <dt>
+            <h4>Sucursal:</h4>
+        </dt>
+
+        <dd>
+            <h4 style="color:white">@Html.DisplayFor(model => model.Sucursal)</h4>
+        </dd>
+        <dt>
+            <h4></h4>
+        </dt>
+        <br />
+        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Dictaminar")">
+            @Html.AntiForgeryToken()
+            <dd>
+                <div class=" labelGral">
+                    <input type="file" name="file" asp-for="file" class="labelGral" required value="file" />
+                    <input type="hidden" name="id" asp-for="id" class="labelGral" required value=@ViewBag.ID />
+                </div>
+            </dd>
+
+            <br />
+            <br />
+            <dt>
+                <div class="enlaceSinBoton">
+                    @Html.ActionLink("Volver a la lista", "capturaSucursal", new { sucursal = ViewBag.Sucursal })
+                </div>
+            </dt>
+
+
+            <dd>
+                <input type="submit" value="Subir Dictamen" class="btn btn-outline-warning boton-transparente botonesGral" />
+            </dd>
+        </form>
+
+    </dl>
+    
+    
+</div>
+
+@*<br />
+
+<div class="enlaceSinBoton">
+    @Html.ActionLink("Volver a la lista", "capturaSucursal", new { sucursal = ViewBag.Sucursal } )
+</div>*@

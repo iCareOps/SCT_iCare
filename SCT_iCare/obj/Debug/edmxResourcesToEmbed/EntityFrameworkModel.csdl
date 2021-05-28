@@ -40,6 +40,9 @@
     <Property Name="idRol" Type="Int32" />
     <NavigationProperty Name="Roles" Relationship="Self.FK_Usuarios_Roles" FromRole="Usuarios" ToRole="Roles" />
     <NavigationProperty Name="Consultorios" Relationship="SCTiCareModel.FK_Consultorios_Usuarios" FromRole="Usuarios" ToRole="Consultorios" />
+    <NavigationProperty Name="Recepcionista" Relationship="SCTiCareModel.FK_Recepcionista_Usuarios" FromRole="Usuarios" ToRole="Recepcionista" />
+    <NavigationProperty Name="Dictamen" Relationship="SCTiCareModel.FK_Dictamen_Usuarios" FromRole="Usuarios" ToRole="Dictamen" />
+    <NavigationProperty Name="Expediente" Relationship="SCTiCareModel.FK_Expediente_Usuarios" FromRole="Usuarios" ToRole="Expediente" />
   </EntityType>
   <Association Name="FK_RolMenu_Menu">
     <End Role="Menu" Type="Self.Menu" Multiplicity="1" />
@@ -114,6 +117,39 @@
     </AssociationSet>
     <EntitySet Name="SkeedaPK" EntityType="SCTiCareModel.SkeedaPK" />
     <EntitySet Name="ConektaPK" EntityType="SCTiCareModel.ConektaPK" />
+    <EntitySet Name="Recepcionista" EntityType="SCTiCareModel.Recepcionista" />
+    <AssociationSet Name="FK_Recepcionista_Sucursales" Association="SCTiCareModel.FK_Recepcionista_Sucursales">
+      <End Role="Sucursales" EntitySet="Sucursales" />
+      <End Role="Recepcionista" EntitySet="Recepcionista" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Recepcionista_Usuarios" Association="SCTiCareModel.FK_Recepcionista_Usuarios">
+      <End Role="Usuarios" EntitySet="Usuarios" />
+      <End Role="Recepcionista" EntitySet="Recepcionista" />
+    </AssociationSet>
+    <EntitySet Name="Dictamen" EntityType="SCTiCareModel.Dictamen" />
+    <EntitySet Name="Expediente" EntityType="SCTiCareModel.Expediente" />
+    <AssociationSet Name="FK_Dictamen_Sucursales" Association="SCTiCareModel.FK_Dictamen_Sucursales">
+      <End Role="Sucursales" EntitySet="Sucursales" />
+      <End Role="Dictamen" EntitySet="Dictamen" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Dictamen_Usuarios" Association="SCTiCareModel.FK_Dictamen_Usuarios">
+      <End Role="Usuarios" EntitySet="Usuarios" />
+      <End Role="Dictamen" EntitySet="Dictamen" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Expediente_Doctores" Association="SCTiCareModel.FK_Expediente_Doctores">
+      <End Role="Doctores" EntitySet="Doctores" />
+      <End Role="Expediente" EntitySet="Expediente" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Expediente_Sucursales" Association="SCTiCareModel.FK_Expediente_Sucursales">
+      <End Role="Sucursales" EntitySet="Sucursales" />
+      <End Role="Expediente" EntitySet="Expediente" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Expediente_Usuarios" Association="SCTiCareModel.FK_Expediente_Usuarios">
+      <End Role="Usuarios" EntitySet="Usuarios" />
+      <End Role="Expediente" EntitySet="Expediente" />
+    </AssociationSet>
+    <EntitySet Name="Archivo" EntityType="SCTiCareModel.Archivo" />
+    <EntitySet Name="EPI" EntityType="SCTiCareModel.EPI" />
   </EntityContainer>
   <EntityType Name="Consultorios">
     <Key>
@@ -210,6 +246,7 @@
     <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
     <Property Name="idSucursal" Type="Int32" />
     <NavigationProperty Name="Sucursales" Relationship="SCTiCareModel.FK_Doctores_Sucursales" FromRole="Doctores" ToRole="Sucursales" />
+    <NavigationProperty Name="Expediente" Relationship="SCTiCareModel.FK_Expediente_Doctores" FromRole="Doctores" ToRole="Expediente" />
   </EntityType>
   <EntityType Name="Sucursales">
     <Key>
@@ -222,6 +259,9 @@
     <Property Name="idCiudad" Type="Int32" />
     <NavigationProperty Name="Ciudades" Relationship="SCTiCareModel.FK_Sucursales_Ciudades" FromRole="Sucursales" ToRole="Ciudades" />
     <NavigationProperty Name="Doctores" Relationship="SCTiCareModel.FK_Doctores_Sucursales" FromRole="Sucursales" ToRole="Doctores" />
+    <NavigationProperty Name="Recepcionista" Relationship="SCTiCareModel.FK_Recepcionista_Sucursales" FromRole="Sucursales" ToRole="Recepcionista" />
+    <NavigationProperty Name="Dictamen" Relationship="SCTiCareModel.FK_Dictamen_Sucursales" FromRole="Sucursales" ToRole="Dictamen" />
+    <NavigationProperty Name="Expediente" Relationship="SCTiCareModel.FK_Expediente_Sucursales" FromRole="Sucursales" ToRole="Expediente" />
   </EntityType>
   <Association Name="FK_Sucursales_Ciudades">
     <End Type="SCTiCareModel.Ciudades" Role="Ciudades" Multiplicity="0..1" />
@@ -356,5 +396,158 @@
     <Property Name="customer_custom_reference" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
     <Property Name="item_name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
     <Property Name="item_description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="Recepcionista">
+    <Key>
+      <PropertyRef Name="idRecepcionista" />
+    </Key>
+    <Property Name="idRecepcionista" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idUsuario" Type="Int32" />
+    <Property Name="idSucursal" Type="Int32" />
+    <NavigationProperty Name="Sucursales" Relationship="SCTiCareModel.FK_Recepcionista_Sucursales" FromRole="Recepcionista" ToRole="Sucursales" />
+    <NavigationProperty Name="Usuarios" Relationship="SCTiCareModel.FK_Recepcionista_Usuarios" FromRole="Recepcionista" ToRole="Usuarios" />
+  </EntityType>
+  <Association Name="FK_Recepcionista_Sucursales">
+    <End Type="SCTiCareModel.Sucursales" Role="Sucursales" Multiplicity="0..1" />
+    <End Type="SCTiCareModel.Recepcionista" Role="Recepcionista" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Sucursales">
+        <PropertyRef Name="idSucursal" />
+      </Principal>
+      <Dependent Role="Recepcionista">
+        <PropertyRef Name="idSucursal" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Recepcionista_Usuarios">
+    <End Type="SCTiCareModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+    <End Type="SCTiCareModel.Recepcionista" Role="Recepcionista" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Usuarios">
+        <PropertyRef Name="idUsuario" />
+      </Principal>
+      <Dependent Role="Recepcionista">
+        <PropertyRef Name="idUsuario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Dictamen">
+    <Key>
+      <PropertyRef Name="idDictamen" />
+    </Key>
+    <Property Name="idDictamen" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="NombreDictamen" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Archivo" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="FechaInicio" Type="DateTime" Precision="3" />
+    <Property Name="FechaFin" Type="DateTime" Precision="3" />
+    <Property Name="idSucursal" Type="Int32" />
+    <Property Name="idUsuario" Type="Int32" />
+    <NavigationProperty Name="Sucursales" Relationship="SCTiCareModel.FK_Dictamen_Sucursales" FromRole="Dictamen" ToRole="Sucursales" />
+    <NavigationProperty Name="Usuarios" Relationship="SCTiCareModel.FK_Dictamen_Usuarios" FromRole="Dictamen" ToRole="Usuarios" />
+  </EntityType>
+  <EntityType Name="Expediente">
+    <Key>
+      <PropertyRef Name="idEPI" />
+    </Key>
+    <Property Name="idEPI" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="NombreEPI" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Archivo" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="NoFolio" Type="Int32" />
+    <Property Name="Tipo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Estatus" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Fecha" Type="DateTime" Precision="3" />
+    <Property Name="idDoctor" Type="Int32" />
+    <Property Name="idSucursal" Type="Int32" />
+    <Property Name="idUsuario" Type="Int32" />
+    <NavigationProperty Name="Doctores" Relationship="SCTiCareModel.FK_Expediente_Doctores" FromRole="Expediente" ToRole="Doctores" />
+    <NavigationProperty Name="Sucursales" Relationship="SCTiCareModel.FK_Expediente_Sucursales" FromRole="Expediente" ToRole="Sucursales" />
+    <NavigationProperty Name="Usuarios" Relationship="SCTiCareModel.FK_Expediente_Usuarios" FromRole="Expediente" ToRole="Usuarios" />
+  </EntityType>
+  <Association Name="FK_Dictamen_Sucursales">
+    <End Type="SCTiCareModel.Sucursales" Role="Sucursales" Multiplicity="0..1" />
+    <End Type="SCTiCareModel.Dictamen" Role="Dictamen" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Sucursales">
+        <PropertyRef Name="idSucursal" />
+      </Principal>
+      <Dependent Role="Dictamen">
+        <PropertyRef Name="idSucursal" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Dictamen_Usuarios">
+    <End Type="SCTiCareModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+    <End Type="SCTiCareModel.Dictamen" Role="Dictamen" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Usuarios">
+        <PropertyRef Name="idUsuario" />
+      </Principal>
+      <Dependent Role="Dictamen">
+        <PropertyRef Name="idUsuario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Expediente_Doctores">
+    <End Type="SCTiCareModel.Doctores" Role="Doctores" Multiplicity="0..1" />
+    <End Type="SCTiCareModel.Expediente" Role="Expediente" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Doctores">
+        <PropertyRef Name="idDoctor" />
+      </Principal>
+      <Dependent Role="Expediente">
+        <PropertyRef Name="idDoctor" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Expediente_Sucursales">
+    <End Type="SCTiCareModel.Sucursales" Role="Sucursales" Multiplicity="0..1" />
+    <End Type="SCTiCareModel.Expediente" Role="Expediente" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Sucursales">
+        <PropertyRef Name="idSucursal" />
+      </Principal>
+      <Dependent Role="Expediente">
+        <PropertyRef Name="idSucursal" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Expediente_Usuarios">
+    <End Type="SCTiCareModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+    <End Type="SCTiCareModel.Expediente" Role="Expediente" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Usuarios">
+        <PropertyRef Name="idUsuario" />
+      </Principal>
+      <Dependent Role="Expediente">
+        <PropertyRef Name="idUsuario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Archivo">
+    <Key>
+      <PropertyRef Name="idArchivo" />
+    </Key>
+    <Property Name="idArchivo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Archivo1" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="NombreArchivo" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="EPI">
+    <Key>
+      <PropertyRef Name="idEPI" />
+    </Key>
+    <Property Name="idEPI" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="NombrePaciente" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="BytesArchivo" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="NoFolio" Type="Int32" />
+    <Property Name="TipoEPI" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Estatus" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FechaExpediente" Type="DateTime" Precision="3" />
+    <Property Name="InicioCaptura" Type="DateTime" Precision="3" />
+    <Property Name="FinalCaptura" Type="DateTime" Precision="3" />
+    <Property Name="Doctor" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Sucursal" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Usuario" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Dictamen" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="Capturista" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
   </EntityType>
 </Schema>

@@ -37,5 +37,10 @@ namespace SCT_iCare
         public virtual DbSet<Sucursales> Sucursales { get; set; }
         public virtual DbSet<SkeedaPK> SkeedaPK { get; set; }
         public virtual DbSet<ConektaPK> ConektaPK { get; set; }
+        public virtual DbSet<Recepcionista> Recepcionista { get; set; }
+        public virtual DbSet<Dictamen> Dictamen { get; set; }
+        public virtual DbSet<Expediente> Expediente { get; set; }
+        public virtual DbSet<Archivo> Archivo { get; set; }
+        public virtual DbSet<EPI> EPI { get; set; }
     }
 }

@@ -1,0 +1,65 @@
+﻿@model IEnumerable<SCT_iCare.Archivo>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal" >Open modal for</button>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Archivoes/Create")">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group labelGral">
+                        <input type="file" name="file" asp-for="file" class="" required />
+                        <br />
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input type="submit" value="Subir PDF" class="btn btn-primary" />
+            </div></form>
+        </div>
+    </div>
+</div>
+
+
+<table class="table tablas">
+    <tr>
+        @*<th>
+                @Html.DisplayNameFor(model => model.Archivo1)
+            </th>*@
+        <th>
+            <h4>@Html.DisplayNameFor(model => model.NombreArchivo)</h4>
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            @*<td>
+                    @Html.DisplayFor(modelItem => item.Archivo1)
+                </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.NombreArchivo)
+            </td>
+            <td>
+                @*@Html.ActionLink("Edit", "Edit", new { id=item.idArchivo }) |*@
+                @Html.ActionLink("Abrir", "Details", new { id = item.idArchivo }) |
+                @*@Html.ActionLink("Delete", "Delete", new { id=item.idArchivo })*@
+            </td>
+        </tr>
+    }
+
+</table>
