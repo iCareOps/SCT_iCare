@@ -1,0 +1,78 @@
+﻿@model IEnumerable<SCT_iCare.Facturacion>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<br />
+<br />
+<h3 style="color:white" class="text-center">Facturación</h3>
+<h4 style="color:#AC9070" class="text-center">Lista de personas pendientes de factura</h4>
+
+<br />
+
+<table class="table tablas" style="color: #2F2D6B">
+    <tr style="background-color:#62E3C9">
+        <th>
+            @Html.DisplayNameFor(model => model.RazonSocial)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RFC)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Fecha)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Nombre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FormaPago)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MontoPagado)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EstatusFactura.Estatus)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RazonSocial)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RFC)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fecha)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FormaPago)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MontoPagado)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EstatusFactura.Estatus)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.idFactura }) |
+                @Html.ActionLink("Details", "Details", new { id = item.idFactura }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.idFactura })
+            </td>
+        </tr>
+    }
+
+</table>

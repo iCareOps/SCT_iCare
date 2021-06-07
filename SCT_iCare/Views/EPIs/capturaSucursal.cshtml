@@ -27,13 +27,13 @@
 
     string fila = "";
 
-
 }
 
 <br />
 <br />
 <h3 style="color:white" class="text-center">EPI Center</h3>
 <h4 style="color:#AC9070" class="text-center">Captura de la sucursal: <span style="color:white">@ViewBag.Sucursal</span></h4>
+
 
 <br />
 @using (Html.BeginForm("EditExpediente", "EPIs"))
@@ -126,7 +126,7 @@
                         {
                             @*<input type="submit" value="Capturar" class="btn btn-outline-warning boton-transparente botonesGral" />*@
                             @*@Html.ActionLink("Capturar", "EditExpediente", new { id = item.idEPI })*@
-                            <a href=@Url.Action("EditExpediente", "EPIs", new { id = item.idEPI, usuario = nombreUsuario  })><button type="button" class="btn btn-info">Capturar</button></a>
+                            <a href=@Url.Action("EditExpediente", "EPIs", new { id = item.idEPI, usuario = nombreUsuario  }) target="_top" onload="~/EPIs/Captura" @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
                         }
                         else if (item.Estatus == "En captura...")
                         {
@@ -140,11 +140,11 @@
                     }
 
                     @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1" data-id="@item.idEPI">Open modal for @item.idEPI</button>
-        @Html.ActionLink("Editar", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#modalEdit" }) |
-        @Html.ActionLink("Detalles", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#YourModalId" })*@
+                        @Html.ActionLink("Editar", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#modalEdit" }) |
+                        @Html.ActionLink("Detalles", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#YourModalId" })*@
                     @*@Html.ActionLink("Edit", "Edit", new { id = item.idEPI }) |
-        @Html.ActionLink("Details", "Details", new { id = item.idEPI }) |
-        @Html.ActionLink("Delete", "Delete", new { id = item.idEPI })*@
+                        @Html.ActionLink("Details", "Details", new { id = item.idEPI }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.idEPI })*@
                 </td>
             </tr>
 
@@ -154,6 +154,12 @@
     </table>
 
 }
+
+<script>
+    function GetClientReport() {
+        window.open("~/{EPIs}/Captura", "_blank");
+    };
+</script>
 
 <div class="modal fade" id="Dictaminar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">

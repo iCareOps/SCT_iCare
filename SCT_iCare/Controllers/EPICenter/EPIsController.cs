@@ -28,7 +28,8 @@ namespace SCT_iCare.Controllers.EPICenter
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            EPI ePI = db.EPI.Find(id);
+            //EPI ePI = db.EPI.Find(id);
+            var ePI = (from e in db.EPI where e.idEPI == id select e).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).FirstOrDefault();
             if (ePI == null)
             {
                 return HttpNotFound();
@@ -132,22 +133,21 @@ namespace SCT_iCare.Controllers.EPICenter
 
                 ePI.Estatus = "En captura...";
                 ePI.InicioCaptura = DateTime.Now;
-            ePI.Capturista = usuario;
+                ePI.Capturista = usuario;
 
 
 
                 //if(true)
                 //{
                 var bytesBinary = (from b in db.EPI where b.idEPI == id select b.BytesArchivo).FirstOrDefault();
-                //    Response.ContentType = "application/pdf";
-                //    Response.AddHeader("content-disposition", "attachment;filename=" + ePI.NombrePaciente + ".pdf");
-                //    Response.BinaryWrite(bytesBinary);
-                //    //Response.End();
-                //HttpContext.ApplicationInstance.CompleteRequest();
+            //    Response.ContentType = "application/pdf";
+            //    Response.AddHeader("content-disposition", "attachment;filename=" + ePI.NombrePaciente + ".pdf");
+            //    Response.BinaryWrite(bytesBinary);
+            //    //Response.End();
+            //HttpContext.ApplicationInstance.CompleteRequest();
 
 
-                //}
-
+            //}
 
                 if (ModelState.IsValid)
                 {

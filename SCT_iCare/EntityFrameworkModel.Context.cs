@@ -42,5 +42,8 @@ namespace SCT_iCare
         public virtual DbSet<Expediente> Expediente { get; set; }
         public virtual DbSet<Archivo> Archivo { get; set; }
         public virtual DbSet<EPI> EPI { get; set; }
+        public virtual DbSet<EstatusFactura> EstatusFactura { get; set; }
+        public virtual DbSet<Facturacion> Facturacion { get; set; }
+        public virtual DbSet<CERTIFICADO> CERTIFICADO { get; set; }
     }
 }
