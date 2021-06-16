@@ -1,0 +1,159 @@
+﻿@model SCT_iCare.Expediente
+
+@{
+    ViewBag.Title = "Subir PDF";
+
+    
+
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+    int idUser = oUser.idUsuario;
+
+
+    string Usuario = oUser.Nombre.ToString();
+
+    SCTiCareEntities1 db = new SCTiCareEntities1();
+
+
+    var idSucursal = (from s in db.Recepcionista select s.idSucursal).FirstOrDefault();
+    int sucursal = Convert.ToInt32(idSucursal);
+
+    //var Doctor = (from r in db.Consultorios where r.idUsuario == idUser select r.NombreDoctor).FirstOrDefault();
+    var Doctor = from r in db.Doctores where r.idSucursal == sucursal select r;
+
+    var Consultorio = (from r in db.Sucursales where r.idSucursal == sucursal select r.Nombre).FirstOrDefault();
+
+    //var Consultorio = (from r in db.Consultorios where r.idUsuario == idUser select r.Consultorio).FirstOrDefault();
+
+    string consultorio = Consultorio.ToString();
+}
+<br />
+<h2 class="labelGral">Subir PDF</h2>
+@*<h4 class="labelGral">Ingresa los datos del archivo <span style="color:white">@documento</span></h4>*@
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal labelGral">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.NombreEPI, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.NombreEPI, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.NombreEPI, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.NombreArchivo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.NombreArchivo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.NombreArchivo, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NoFolio, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.NoFolio, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.NoFolio, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Tipo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Tipo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Tipo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.Estatus, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Estatus, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Estatus, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.Fecha, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Fecha, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Fecha, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.idDoctor, "idDoctor", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("idDoctor", null, htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.idDoctor, "", new { @class = "text-danger" })
+                <!--<select name="consultorio" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="labelGral">
+                    <option value="value1" selected>--Estados, Consultorios y Doctores--</option>
+            <option value="SATELITE">Clínica SATÉLITE, CDMX --- Cto. Novelistas 7 Cd. Satélite</option>
+            <option value="LINDAVISTA">Hospital Ángeles LINDAVISTA, CDMX --- Cali 878 Lindavista</option>
+            <option value="UNIVERSIDAD">Clínica UNIVERSIDAD, CDMX --- Gabriel Mancera 1802 Del Valle</option>
+            <option value="VERACRUZ">Clínica VERACRUZ, VER --- Juan de Dios Peza 959 Ignacio Zaragoza</option>-->
+                    @*@{
+                        var sucursales = Model.OrderBy(i => i.idCiudad).ToList(); //from c in Model select c;
+
+                        foreach (var item in sucursales)
+                        {
+                            SCTiCareEntities1 db = new SCTiCareEntities1();
+                            string ciudad = (from c in db.Ciudades where item.idCiudad == c.idCiudad select c.Ciudad).FirstOrDefault().ToString();
+                            string estado = (from c in db.Ciudades where item.idCiudad == c.idCiudad select c.Estado).FirstOrDefault().ToString();
+                            <option value="@item.Nombre">@item.Nombre - - - @item.Calle, @item.Colonia, @ciudad, @estado</option>
+                        }
+                    }*@
+                <!--</select>-->
+                @*<div class="container col-md-10" style="width:100%">
+                    <div class="row">
+                        <div class="dropdown">
+                            <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-info" data-target="#" href="#">
+                                Seleccionar Doctor <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                                <li><a href="#">Some action</a></li>
+                                <li><a href="#">Some other action</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>*@
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.idSucursal, "Sucursal", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @*@Html.DropDownList("idSucursal", null, htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.idSucursal, "", new { @class = "text-danger" })*@
+                <input type="text" asp-for="idSucursal" value=@consultorio class="form-control col-md-8" name="idSucursal" disabled required />
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.idUsuario, "idUsuario", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("idUsuario", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.idUsuario, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+        <input type="text" asp-for="idUsuario" value=@idUser class="form-control col-md-8" name="idUsuario" required style="display:none"/>
+        <input type="hidden" asp-for="file" value=file class="form-control col-md-8" name="file" required/>
+        @*<input type="text" asp-for="NombreArchivo" value=@documento class="form-control col-md-8" name="NombreArchivo" required style="display:none"/>*@
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Enviar Datos" class="btn btn-default boton-transparente" />
+            </div>
+        </div>
+    </div>
+}
+
+@*<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>*@

@@ -1,0 +1,59 @@
+﻿@model IEnumerable<SCT_iCare.Sucursales>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<br />
+
+<br />
+
+<h3 style="color:white" class="text-center">Sucursales</h3>
+
+<br />
+
+<a href="~/Sucursales/Create"><button type="button" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal">Nueva Sucursal</button></a>
+
+<br />
+<br />
+<table class="table tablas" style="color: #2F2D6B">
+    <tr style="background-color:#62E3C9">
+        <th>
+            @Html.DisplayNameFor(model => model.Nombre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Calle)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Colonia)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Ciudades.Ciudad)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <b>@Html.DisplayFor(modelItem => item.Nombre)</b>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Calle)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Colonia)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ciudades.Ciudad)
+            </td>
+            <td>
+                @Html.ActionLink("Editar", "Edit", new { id = item.idSucursal }) |
+                @Html.ActionLink("Detalles", "Details", new { id = item.idSucursal }) |
+                @Html.ActionLink("Eliminar", "Delete", new { id = item.idSucursal })
+            </td>
+        </tr>
+    }
+
+</table>

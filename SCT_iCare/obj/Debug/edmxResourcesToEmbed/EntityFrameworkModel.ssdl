@@ -8,6 +8,18 @@
     <Property Name="Archivo" Type="varbinary(max)" />
     <Property Name="NombreArchivo" Type="varchar" MaxLength="200" />
   </EntityType>
+  <EntityType Name="CERTIFICADO">
+    <Key>
+      <PropertyRef Name="idCertificado" />
+    </Key>
+    <Property Name="idCertificado" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre" Type="varchar" MaxLength="200" />
+    <Property Name="Pasaporte" Type="varchar" MaxLength="20" />
+    <Property Name="Respuesta" Type="varchar" MaxLength="20" />
+    <Property Name="FechaNacimiento" Type="datetime" />
+    <Property Name="FechaToma" Type="datetime" />
+    <Property Name="Sexo" Type="varchar" MaxLength="10" />
+  </EntityType>
   <EntityType Name="Ciudades">
     <Key>
       <PropertyRef Name="idCiudad" />
@@ -137,6 +149,13 @@
     <Property Name="Dictamen" Type="varbinary(max)" />
     <Property Name="Capturista" Type="varchar" MaxLength="100" />
   </EntityType>
+  <EntityType Name="EstatusFactura">
+    <Key>
+      <PropertyRef Name="idEstatusFactura" />
+    </Key>
+    <Property Name="idEstatusFactura" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Estatus" Type="varchar" MaxLength="100" />
+  </EntityType>
   <EntityType Name="Expediente">
     <Key>
       <PropertyRef Name="idEPI" />
@@ -151,6 +170,20 @@
     <Property Name="idDoctor" Type="int" />
     <Property Name="idSucursal" Type="int" />
     <Property Name="idUsuario" Type="int" />
+  </EntityType>
+  <EntityType Name="Facturacion">
+    <Key>
+      <PropertyRef Name="idFactura" />
+    </Key>
+    <Property Name="idFactura" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="RazonSocial" Type="varchar" MaxLength="200" />
+    <Property Name="RFC" Type="varchar" MaxLength="20" />
+    <Property Name="Fecha" Type="datetime" />
+    <Property Name="Nombre" Type="varchar" MaxLength="100" />
+    <Property Name="FormaPago" Type="varchar" MaxLength="100" />
+    <Property Name="MontoPagado" Type="int" />
+    <Property Name="Email" Type="varchar" MaxLength="100" />
+    <Property Name="idEstatusFactura" Type="int" />
   </EntityType>
   <EntityType Name="Menu">
     <Key>
@@ -381,6 +414,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_Facturacion_EstatusFactura">
+    <End Role="EstatusFactura" Type="Self.EstatusFactura" Multiplicity="0..1" />
+    <End Role="Facturacion" Type="Self.Facturacion" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="EstatusFactura">
+        <PropertyRef Name="idEstatusFactura" />
+      </Principal>
+      <Dependent Role="Facturacion">
+        <PropertyRef Name="idEstatusFactura" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Recepcionista_Sucursales">
     <End Role="Sucursales" Type="Self.Sucursales" Multiplicity="0..1" />
     <End Role="Recepcionista" Type="Self.Recepcionista" Multiplicity="*" />
@@ -455,13 +500,16 @@
   </Association>
   <EntityContainer Name="SCTiCareModelStoreContainer">
     <EntitySet Name="Archivo" EntityType="Self.Archivo" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CERTIFICADO" EntityType="Self.CERTIFICADO" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Ciudades" EntityType="Self.Ciudades" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="ConektaPK" EntityType="Self.ConektaPK" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Consultorios" EntityType="Self.Consultorios" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Dictamen" EntityType="Self.Dictamen" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Doctores" EntityType="Self.Doctores" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI" EntityType="Self.EPI" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="EstatusFactura" EntityType="Self.EstatusFactura" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Expediente" EntityType="Self.Expediente" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Facturacion" EntityType="Self.Facturacion" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Menu" EntityType="Self.Menu" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Orden" EntityType="Self.Orden" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="OrdenConekta" EntityType="Self.OrdenConekta" Schema="dbo" store:Type="Tables" />
@@ -498,6 +546,10 @@
     <AssociationSet Name="FK_Expediente_Usuarios" Association="Self.FK_Expediente_Usuarios">
       <End Role="Usuarios" EntitySet="Usuarios" />
       <End Role="Expediente" EntitySet="Expediente" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Facturacion_EstatusFactura" Association="Self.FK_Facturacion_EstatusFactura">
+      <End Role="EstatusFactura" EntitySet="EstatusFactura" />
+      <End Role="Facturacion" EntitySet="Facturacion" />
     </AssociationSet>
     <AssociationSet Name="FK_Recepcionista_Sucursales" Association="Self.FK_Recepcionista_Sucursales">
       <End Role="Sucursales" EntitySet="Sucursales" />

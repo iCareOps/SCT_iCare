@@ -1,0 +1,83 @@
+﻿@model IEnumerable<SCT_iCare.Sucursales>
+@{
+    ViewBag.Title = "Index";
+}
+
+<br />
+
+<br />
+
+<h3 style="color:white" class="text-center">Crear referencia</h3>
+
+<br />
+
+<div class="container formularioLogin2">
+    <div class="row">
+        <div class="">
+            <div>
+                <form action="@Url.Content("~/CallCenter/Orden")" asp-controller="Login" id="Login" method="post">
+                    <div class="form-group col-md-12" style="margin-bottom:6%">
+                        <label class="col-md-12 text-info"><h4>Datos de la solicitud:</h4></label>
+                        <br />
+                        <br />
+
+                            <select class="form-control" name="tipoPago" style="width:50%; min-height:5vh; min-width:240px; font-size:2vh" class="form-select labelGral">
+                                <option value="OXXO">Referencia OXXO</option>
+                                <option value="SPEI">Transferencia SPEI</option>
+                            </select>
+                        <br />
+                        <label class="col-md-12"><h5>Consultorio asignado:</h5></label>
+                        <select name="consultorio" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select labelGral">
+                            @*<option value="value1" selected>--Estados, Consultorios y Doctores--</option>
+            <option value="SATELITE">Clínica SATÉLITE, CDMX --- Cto. Novelistas 7 Cd. Satélite</option>
+            <option value="LINDAVISTA">Hospital Ángeles LINDAVISTA, CDMX --- Cali 878 Lindavista</option>
+            <option value="UNIVERSIDAD">Clínica UNIVERSIDAD, CDMX --- Gabriel Mancera 1802 Del Valle</option>
+            <option value="VERACRUZ">Clínica VERACRUZ, VER --- Juan de Dios Peza 959 Ignacio Zaragoza</option>*@
+                            @{
+                                var sucursales = Model.OrderBy(i => i.idCiudad).ToList(); //from c in Model select c;
+
+                                foreach (var item in sucursales)
+                                {
+                                    SCTiCareEntities1 db = new SCTiCareEntities1();
+                                    string ciudad = (from c in db.Ciudades where item.idCiudad == c.idCiudad select c.Ciudad).FirstOrDefault().ToString();
+                                    string estado = (from c in db.Ciudades where item.idCiudad == c.idCiudad select c.Estado).FirstOrDefault().ToString();
+                                    <option value="@item.Nombre">@item.Nombre - - - @item.Calle, @item.Colonia, @ciudad, @estado</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <br />
+                    <div class="form-group col-md-12">
+                        <label class="col-md-4"><h5>Nombre del Cliente:</h5></label>
+                        <input type="text" asp-for="nombre" class="form-control col-md-8" name="nombre" required />
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label class="col-md-4"><h5>Email:</h5></label>
+                        <input type="text" asp-for="email" class="form-control col-md-8" name="email" required />
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label class="col-md-4"><h5>Teléfono:</h5></label>
+                        <input type="tel" asp-for="telefono" class="form-control col-md-8" name="telefono" required />
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label class="col-md-4"><h5>Precio:</h5></label>
+                        <input type="text" asp-for="precio" class="form-control col-md-8" name="precio" required />
+                    </div>
+                    <br />
+                    <div class="form-group col-md-12">
+                        <label class="col-md-4"><h5></h5></label>
+                        <input type="submit" asp-for="crearOrden" class="form-control btn btn-primary" style="width:100%" value="Crear Orden" />
+                        @*<button class="btn btn-primary botones">@Html.ActionLink("Sign In", "Ingresar", "Login")</button>*@
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+

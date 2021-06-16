@@ -21,20 +21,20 @@ namespace SCT_iCare.Filters
                 {
                     if (filterContext.Controller is LoginController == false)
                     {
-                        filterContext.HttpContext.Response.Redirect("/Login/Login", false);
+                        filterContext.HttpContext.Response.Redirect("/Login/Inicio", false);
                     }
                 }
-                else
-                {
-                    if(filterContext.Controller is LoginController == true)
-                    {
-                        filterContext.HttpContext.Response.Redirect("~/Login/Login");
-                    }
-                }
+                //else
+                //{
+                //    if(filterContext.Controller is LoginController == true)
+                //    {
+                //        filterContext.HttpContext.Response.Redirect("~/Login/Inicio");
+                //    }
+                //}
             }
             catch (Exception)
             {
-                filterContext.Result = new RedirectResult("~/Login/Login");
+                filterContext.Result = new RedirectResult("~/Login/Inicio");
             }
             
         }

@@ -12,13 +12,13 @@ namespace SCT_iCare.Controllers.Login
         private SCTiCareEntities1 db = new SCTiCareEntities1();
 
         // GET: Login
-        public ActionResult Login()
+        public ActionResult Inicio()
         {
             return View();
         }
 
         [HttpPost]
-        public ActionResult Login(string User, string Pass)
+        public ActionResult Inicio(string User, string Pass)
         {
 
             try
@@ -32,33 +32,43 @@ namespace SCT_iCare.Controllers.Login
                     ViewBag.Error = "Usuario o Contraseña inválida";
                     return View();
                 }
-
-                Session["User"] = oUser;
-
-                switch (oUser.idRol)
+                else
                 {
-                    case 5:
-                        ViewBag.Nombre = oUser.Nombre.ToString();
-                        return Redirect("~/Sucursales/Index");
-                    case 1:
-                        ViewBag.Nombre = oUser.Nombre.ToString();
-                        return Redirect("~/CallCenter/Index");
-                    case 3:
-                        ViewBag.Nombre = oUser.Nombre.ToString();
-                        return Redirect("~/EPIs/Index");
-                    case 4:
-                        ViewBag.Nombre = oUser.Nombre.ToString();
-                        return Redirect("~/Contabilidad/Index");
-                    case 6:
-                        ViewBag.Nombre = oUser.Nombre.ToString();
-                        return Redirect("~/SkeedaPK/Index");
-                    case 7:
-                        ViewBag.Nombre = oUser.Nombre.ToString();
-                        return Redirect("~/EPIs/Captura");
+                    Session["User"] = oUser;
 
-                    default:
-                        return Redirect("~/Login/Login");
+                    switch (oUser.idRol)
+                    {
+                        case 5:
+                            ViewBag.Nombre = oUser.Nombre.ToString();
+                            return Redirect("~/Sucursales/Index");
+                        case 1:
+                            ViewBag.Nombre = oUser.Nombre.ToString();
+                            return Redirect("~/CallCenter/Index");
+                        case 3:
+                            ViewBag.Nombre = oUser.Nombre.ToString();
+                            return Redirect("~/EPIs/Index");
+                        case 4:
+                            ViewBag.Nombre = oUser.Nombre.ToString();
+                            return Redirect("~/Contabilidad/Index");
+                        case 6:
+                            ViewBag.Nombre = oUser.Nombre.ToString();
+                            return Redirect("~/SkeedaPK/Index");
+                        case 7:
+                            ViewBag.Nombre = oUser.Nombre.ToString();
+                            return Redirect("~/EPIs/Captura");
+                        case 8:
+                            ViewBag.Nombre = oUser.Nombre.ToString();
+                            return Redirect("~/CERTIFICADOes/Index");
+
+                        default:
+                            //return Redirect("~/Login/Login");
+                            return View();
+                    }
                 }
+
+                
+
+                
 
                 //return RedirectToAction("Index", "Admin");
             }
@@ -68,5 +78,11 @@ namespace SCT_iCare.Controllers.Login
                 return View();
             }
         }
+
+        public ActionResult Redireccionar()
+        {
+            return RedirectToAction("Inicio");
+        }
+
     }
 }

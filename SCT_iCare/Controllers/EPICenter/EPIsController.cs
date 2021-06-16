@@ -14,10 +14,12 @@ namespace SCT_iCare.Controllers.EPICenter
     public class EPIsController : Controller
     {
         private SCTiCareEntities1 db = new SCTiCareEntities1();
+        private Usuarios oUsuario;
 
         // GET: EPIs
-        public ActionResult Index()
+        public ActionResult Index(int? pageSize, int? page)
         {
+
             return View(/*db.EPI.ToList()*/);
         }
 
@@ -270,6 +272,7 @@ namespace SCT_iCare.Controllers.EPICenter
 
         public ActionResult Captura()
         {
+
             return View();
         }
 

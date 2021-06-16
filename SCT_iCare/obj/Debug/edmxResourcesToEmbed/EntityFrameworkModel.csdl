@@ -150,6 +150,13 @@
     </AssociationSet>
     <EntitySet Name="Archivo" EntityType="SCTiCareModel.Archivo" />
     <EntitySet Name="EPI" EntityType="SCTiCareModel.EPI" />
+    <EntitySet Name="EstatusFactura" EntityType="SCTiCareModel.EstatusFactura" />
+    <EntitySet Name="Facturacion" EntityType="SCTiCareModel.Facturacion" />
+    <AssociationSet Name="FK_Facturacion_EstatusFactura" Association="SCTiCareModel.FK_Facturacion_EstatusFactura">
+      <End Role="EstatusFactura" EntitySet="EstatusFactura" />
+      <End Role="Facturacion" EntitySet="Facturacion" />
+    </AssociationSet>
+    <EntitySet Name="CERTIFICADO" EntityType="SCTiCareModel.CERTIFICADO" />
   </EntityContainer>
   <EntityType Name="Consultorios">
     <Key>
@@ -549,5 +556,52 @@
     <Property Name="Usuario" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
     <Property Name="Dictamen" Type="Binary" MaxLength="Max" FixedLength="false" />
     <Property Name="Capturista" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="EstatusFactura">
+    <Key>
+      <PropertyRef Name="idEstatusFactura" />
+    </Key>
+    <Property Name="idEstatusFactura" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Estatus" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Facturacion" Relationship="SCTiCareModel.FK_Facturacion_EstatusFactura" FromRole="EstatusFactura" ToRole="Facturacion" />
+  </EntityType>
+  <EntityType Name="Facturacion">
+    <Key>
+      <PropertyRef Name="idFactura" />
+    </Key>
+    <Property Name="idFactura" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="RazonSocial" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="RFC" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Fecha" Type="DateTime" Precision="3" />
+    <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FormaPago" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="MontoPagado" Type="Int32" />
+    <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idEstatusFactura" Type="Int32" />
+    <NavigationProperty Name="EstatusFactura" Relationship="SCTiCareModel.FK_Facturacion_EstatusFactura" FromRole="Facturacion" ToRole="EstatusFactura" />
+  </EntityType>
+  <Association Name="FK_Facturacion_EstatusFactura">
+    <End Type="SCTiCareModel.EstatusFactura" Role="EstatusFactura" Multiplicity="0..1" />
+    <End Type="SCTiCareModel.Facturacion" Role="Facturacion" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="EstatusFactura">
+        <PropertyRef Name="idEstatusFactura" />
+      </Principal>
+      <Dependent Role="Facturacion">
+        <PropertyRef Name="idEstatusFactura" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="CERTIFICADO">
+    <Key>
+      <PropertyRef Name="idCertificado" />
+    </Key>
+    <Property Name="idCertificado" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Pasaporte" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Respuesta" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="FechaNacimiento" Type="DateTime" Precision="3" />
+    <Property Name="FechaToma" Type="DateTime" Precision="3" />
+    <Property Name="Sexo" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
   </EntityType>
 </Schema>

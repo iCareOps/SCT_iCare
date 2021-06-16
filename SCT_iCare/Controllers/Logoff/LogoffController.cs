@@ -12,7 +12,7 @@ namespace SCT_iCare.Controllers.Logoff
         public ActionResult Logoff()
         {
             Session["User"] = null;
-            return RedirectToAction("Login", "Login");
+            return RedirectToAction("Inicio", "Login");
         }
     }
 }
