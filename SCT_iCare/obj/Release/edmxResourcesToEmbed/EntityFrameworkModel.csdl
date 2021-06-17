@@ -157,6 +157,11 @@
       <End Role="Facturacion" EntitySet="Facturacion" />
     </AssociationSet>
     <EntitySet Name="CERTIFICADO" EntityType="SCTiCareModel.CERTIFICADO" />
+    <EntitySet Name="Incidencias" EntityType="SCTiCareModel.Incidencias" />
+    <AssociationSet Name="FK_Incidencias_EPI" Association="SCTiCareModel.FK_Incidencias_EPI">
+      <End Role="EPI" EntitySet="EPI" />
+      <End Role="Incidencias" EntitySet="Incidencias" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="Consultorios">
     <Key>
@@ -556,6 +561,7 @@
     <Property Name="Usuario" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
     <Property Name="Dictamen" Type="Binary" MaxLength="Max" FixedLength="false" />
     <Property Name="Capturista" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Incidencias" Relationship="SCTiCareModel.FK_Incidencias_EPI" FromRole="EPI" ToRole="Incidencias" />
   </EntityType>
   <EntityType Name="EstatusFactura">
     <Key>
@@ -604,4 +610,29 @@
     <Property Name="FechaToma" Type="DateTime" Precision="3" />
     <Property Name="Sexo" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
   </EntityType>
+  <EntityType Name="Incidencias">
+    <Key>
+      <PropertyRef Name="idIncidencia" />
+    </Key>
+    <Property Name="idIncidencia" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="NombrePaciente" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Expediente" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Capturista" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Incidencia" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FechaIncidencia" Type="DateTime" Precision="3" />
+    <Property Name="idEPI" Type="Int32" />
+    <NavigationProperty Name="EPI" Relationship="SCTiCareModel.FK_Incidencias_EPI" FromRole="Incidencias" ToRole="EPI" />
+  </EntityType>
+  <Association Name="FK_Incidencias_EPI">
+    <End Type="SCTiCareModel.EPI" Role="EPI" Multiplicity="0..1" />
+    <End Type="SCTiCareModel.Incidencias" Role="Incidencias" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="EPI">
+        <PropertyRef Name="idEPI" />
+      </Principal>
+      <Dependent Role="Incidencias">
+        <PropertyRef Name="idEPI" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema>

@@ -28,6 +28,8 @@
 
     int enCaptura = (from e in db.EPI select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.Estatus == "En captura...").Count();
 
+    int incidencia = (from e in db.EPI select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.Estatus == "Pendiente").Count();
+
     var sucursalesLista = from s in db.Sucursales select s.Nombre;
 
     var capturistas = from c in db.Usuarios where c.idRol == 7 && c.idUsuario != 11 select c.Nombre;
@@ -191,7 +193,7 @@
 
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorRo botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal6" style="color:white">
-                <h4><span class="glyphicon glyphicon-alert"></span> &nbsp; &nbsp;Pendientes por Dictaminar: <b>@epis</b></h4>
+                <h4><span class="glyphicon glyphicon-alert"></span> &nbsp; &nbsp;Pendientes por Dictaminar: <b>@incidencia</b></h4>
             </button>
 
             <!-- Modal -->
@@ -199,13 +201,13 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header" style="background-color:orange">
-                            <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-alert"></span> &nbsp; &nbsp;Pendientes por Dictaminar: <b>@epis</b></h3>
+                            <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-alert"></span> &nbsp; &nbsp;Pendientes por Dictaminar: <b>@incidencia</b></h3>
                         </div>
                         <div class="modal-body">
                             @{
                                 foreach (var item in sucursalesLista)
                                 {
-                                    var elemento = (from v in db.EPI where v.Sucursal == item select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
+                                    var elemento = (from v in db.EPI where v.Sucursal == item && v.Estatus == "Pendiente" select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
                             }
@@ -231,6 +233,38 @@
                     contenedor.style.opacity = '0';
                 }
             </script>*@
+    }
+    else
+    {
+<div class="container">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorAz botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal5" style="color:white">
+        <h4><span class="glyphicon glyphicon-user"></span> &nbsp; &nbsp;Dictámenes por Capturista</h4>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aquamarine">
+                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-user"></span> &nbsp; &nbsp;Dictámenes por Capturista</h3>
+                </div>
+                <div class="modal-body">
+                    @{
+                        foreach (var item in capturistas)
+                        {
+                            var elemento = (from v in db.EPI where v.Estatus == "Terminado" && v.FechaExpediente >= thisDate && v.FechaExpediente < tomorrowDate && v.Capturista == item select v).Count();
+                            <h4><b>@item:</b> @elemento</h4>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+
     }
 
 
@@ -359,7 +393,11 @@
                         }
                         else if (item.Estatus == "En captura...")
                         {
-                            <a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idEPI})><button type="button" class="btn btn-warning">Terminar</button></a>
+                            <a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idEPI})><button type="button" class="btn btn-warning">Dictaminar</button></a>
+                        }
+                        else if (item.Estatus == "Pendiente")
+                        {
+                            <a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idEPI})><button type="button" class="btn btn-warning">Dictaminar</button></a>
                         }
                         else if (item.Estatus == "Terminado")
                         {

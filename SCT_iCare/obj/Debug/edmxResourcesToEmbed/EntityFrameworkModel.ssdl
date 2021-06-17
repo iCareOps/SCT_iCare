@@ -1,5 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="SCTiCareModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Aptitud">
+    <Key>
+      <PropertyRef Name="idAptitud" />
+    </Key>
+    <Property Name="idAptitud" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Aptitud" Type="varchar" MaxLength="10" />
+    <Property Name="MotivoAptitud" Type="varchar" MaxLength="200" />
+  </EntityType>
   <EntityType Name="Archivo">
     <Key>
       <PropertyRef Name="idArchivo" />
@@ -7,6 +15,29 @@
     <Property Name="idArchivo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Archivo" Type="varbinary(max)" />
     <Property Name="NombreArchivo" Type="varchar" MaxLength="200" />
+  </EntityType>
+  <EntityType Name="Canal">
+    <Key>
+      <PropertyRef Name="idCanal" />
+    </Key>
+    <Property Name="idCanal" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Canal" Type="varchar" MaxLength="100" />
+  </EntityType>
+  <EntityType Name="Captura">
+    <Key>
+      <PropertyRef Name="idCaptura" />
+    </Key>
+    <Property Name="idCaptura" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="NombrePaciente" Type="varchar" MaxLength="200" />
+    <Property Name="NoExpediente" Type="varchar" MaxLength="100" />
+    <Property Name="TipoTramite" Type="varchar" MaxLength="100" />
+    <Property Name="EstatusCaptura" Type="varchar" MaxLength="50" />
+    <Property Name="InicioCaptura" Type="datetime" />
+    <Property Name="FinalCaptura" Type="datetime" />
+    <Property Name="Doctor" Type="varchar" MaxLength="100" />
+    <Property Name="Sucursal" Type="varchar" MaxLength="100" />
+    <Property Name="Capturista" Type="varchar" MaxLength="100" />
+    <Property Name="idPaciente" Type="int" />
   </EntityType>
   <EntityType Name="CERTIFICADO">
     <Key>
@@ -19,6 +50,25 @@
     <Property Name="FechaNacimiento" Type="datetime" />
     <Property Name="FechaToma" Type="datetime" />
     <Property Name="Sexo" Type="varchar" MaxLength="10" />
+  </EntityType>
+  <EntityType Name="Cita">
+    <Key>
+      <PropertyRef Name="idCita" />
+    </Key>
+    <Property Name="idCita" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="TipoPago" Type="varchar" MaxLength="100" />
+    <Property Name="FechaReferencia" Type="datetime" />
+    <Property Name="NoOrden" Type="varchar" MaxLength="100" />
+    <Property Name="EstatusPago" Type="varchar" MaxLength="100" />
+    <Property Name="TipoLicencia" Type="varchar" MaxLength="100" />
+    <Property Name="NoExpediente" Type="varchar" MaxLength="100" />
+    <Property Name="FechaCita" Type="datetime" />
+    <Property Name="Sucursal" Type="varchar" MaxLength="100" />
+    <Property Name="Doctor" Type="varchar" MaxLength="100" />
+    <Property Name="Recepcionista" Type="varchar" MaxLength="100" />
+    <Property Name="idCanal" Type="int" />
+    <Property Name="Folio" Type="varchar" MaxLength="100" />
+    <Property Name="idPaciente" Type="int" />
   </EntityType>
   <EntityType Name="Ciudades">
     <Key>
@@ -115,12 +165,9 @@
       <PropertyRef Name="idDictamen" />
     </Key>
     <Property Name="idDictamen" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="NombreDictamen" Type="varchar" MaxLength="100" />
-    <Property Name="Archivo" Type="varbinary(max)" />
-    <Property Name="FechaInicio" Type="datetime" />
-    <Property Name="FechaFin" Type="datetime" />
-    <Property Name="idSucursal" Type="int" />
-    <Property Name="idUsuario" Type="int" />
+    <Property Name="Dictamen" Type="varbinary(max)" />
+    <Property Name="idPaciente" Type="int" />
+    <Property Name="idAptitud" Type="int" />
   </EntityType>
   <EntityType Name="Doctores">
     <Key>
@@ -156,20 +203,14 @@
     <Property Name="idEstatusFactura" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Estatus" Type="varchar" MaxLength="100" />
   </EntityType>
-  <EntityType Name="Expediente">
+  <EntityType Name="Expedientes">
     <Key>
-      <PropertyRef Name="idEPI" />
+      <PropertyRef Name="idExpediente" />
     </Key>
-    <Property Name="idEPI" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="NombreEPI" Type="varchar" MaxLength="100" />
-    <Property Name="Archivo" Type="varbinary(max)" />
-    <Property Name="NoFolio" Type="int" />
-    <Property Name="Tipo" Type="varchar" MaxLength="100" />
-    <Property Name="Estatus" Type="varchar" MaxLength="100" />
-    <Property Name="Fecha" Type="datetime" />
-    <Property Name="idDoctor" Type="int" />
-    <Property Name="idSucursal" Type="int" />
-    <Property Name="idUsuario" Type="int" />
+    <Property Name="idExpediente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Expediente" Type="varbinary(max)" />
+    <Property Name="Recepcionista" Type="varchar" MaxLength="100" />
+    <Property Name="idPaciente" Type="int" />
   </EntityType>
   <EntityType Name="Facturacion">
     <Key>
@@ -184,6 +225,29 @@
     <Property Name="MontoPagado" Type="int" />
     <Property Name="Email" Type="varchar" MaxLength="100" />
     <Property Name="idEstatusFactura" Type="int" />
+  </EntityType>
+  <EntityType Name="IncidenciaDictamen">
+    <Key>
+      <PropertyRef Name="idIncidencia" />
+    </Key>
+    <Property Name="idIncidencia" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="NoExpediente" Type="varchar" MaxLength="50" />
+    <Property Name="Capturista" Type="varchar" MaxLength="50" />
+    <Property Name="Incidencia" Type="varchar(max)" />
+    <Property Name="FechaIncidencia" Type="datetime" />
+    <Property Name="idCaptura" Type="int" />
+  </EntityType>
+  <EntityType Name="Incidencias">
+    <Key>
+      <PropertyRef Name="idIncidencia" />
+    </Key>
+    <Property Name="idIncidencia" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="NombrePaciente" Type="varchar" MaxLength="200" />
+    <Property Name="Expediente" Type="varchar" MaxLength="100" />
+    <Property Name="Capturista" Type="varchar" MaxLength="100" />
+    <Property Name="Incidencia" Type="varchar" MaxLength="100" />
+    <Property Name="FechaIncidencia" Type="datetime" />
+    <Property Name="idEPI" Type="int" />
   </EntityType>
   <EntityType Name="Menu">
     <Key>
@@ -240,6 +304,16 @@
     <Property Name="CheckoutRequestName" Type="varchar" MaxLength="100" />
     <Property Name="idConsultorio" Type="int" />
     <Property Name="Asignacion" Type="varchar" MaxLength="10" />
+  </EntityType>
+  <EntityType Name="Paciente">
+    <Key>
+      <PropertyRef Name="idPaciente" />
+    </Key>
+    <Property Name="idPaciente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre" Type="varchar" MaxLength="200" />
+    <Property Name="Telefono" Type="varchar" MaxLength="50" />
+    <Property Name="Email" Type="varchar" MaxLength="100" />
+    <Property Name="Folio" Type="varchar" MaxLength="200" />
   </EntityType>
   <EntityType Name="Recepcionista">
     <Key>
@@ -330,6 +404,42 @@
     <Property Name="Password" Type="varchar" MaxLength="100" Nullable="false" />
     <Property Name="idRol" Type="int" />
   </EntityType>
+  <Association Name="FK_Captura_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="Captura" Type="Self.Captura" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Captura">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Cita_Canal">
+    <End Role="Canal" Type="Self.Canal" Multiplicity="0..1" />
+    <End Role="Cita" Type="Self.Cita" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Canal">
+        <PropertyRef Name="idCanal" />
+      </Principal>
+      <Dependent Role="Cita">
+        <PropertyRef Name="idCanal" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Cita_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="Cita" Type="Self.Cita" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Cita">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Consultorios_Usuarios">
     <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
     <End Role="Consultorios" Type="Self.Consultorios" Multiplicity="*" />
@@ -342,27 +452,27 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_Dictamen_Sucursales">
-    <End Role="Sucursales" Type="Self.Sucursales" Multiplicity="0..1" />
+  <Association Name="FK_Dictamen_Aptitud">
+    <End Role="Aptitud" Type="Self.Aptitud" Multiplicity="0..1" />
     <End Role="Dictamen" Type="Self.Dictamen" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="Sucursales">
-        <PropertyRef Name="idSucursal" />
+      <Principal Role="Aptitud">
+        <PropertyRef Name="idAptitud" />
       </Principal>
       <Dependent Role="Dictamen">
-        <PropertyRef Name="idSucursal" />
+        <PropertyRef Name="idAptitud" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_Dictamen_Usuarios">
-    <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+  <Association Name="FK_Dictamen_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
     <End Role="Dictamen" Type="Self.Dictamen" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="Usuarios">
-        <PropertyRef Name="idUsuario" />
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
       </Principal>
       <Dependent Role="Dictamen">
-        <PropertyRef Name="idUsuario" />
+        <PropertyRef Name="idPaciente" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -378,39 +488,15 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_Expediente_Doctores">
-    <End Role="Doctores" Type="Self.Doctores" Multiplicity="0..1" />
-    <End Role="Expediente" Type="Self.Expediente" Multiplicity="*" />
+  <Association Name="FK_Expedientes_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="Expedientes" Type="Self.Expedientes" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="Doctores">
-        <PropertyRef Name="idDoctor" />
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
       </Principal>
-      <Dependent Role="Expediente">
-        <PropertyRef Name="idDoctor" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_Expediente_Sucursales">
-    <End Role="Sucursales" Type="Self.Sucursales" Multiplicity="0..1" />
-    <End Role="Expediente" Type="Self.Expediente" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Sucursales">
-        <PropertyRef Name="idSucursal" />
-      </Principal>
-      <Dependent Role="Expediente">
-        <PropertyRef Name="idSucursal" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_Expediente_Usuarios">
-    <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
-    <End Role="Expediente" Type="Self.Expediente" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Usuarios">
-        <PropertyRef Name="idUsuario" />
-      </Principal>
-      <Dependent Role="Expediente">
-        <PropertyRef Name="idUsuario" />
+      <Dependent Role="Expedientes">
+        <PropertyRef Name="idPaciente" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -423,6 +509,30 @@
       </Principal>
       <Dependent Role="Facturacion">
         <PropertyRef Name="idEstatusFactura" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_IncidenciaDictamen_Captura">
+    <End Role="Captura" Type="Self.Captura" Multiplicity="0..1" />
+    <End Role="IncidenciaDictamen" Type="Self.IncidenciaDictamen" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Captura">
+        <PropertyRef Name="idCaptura" />
+      </Principal>
+      <Dependent Role="IncidenciaDictamen">
+        <PropertyRef Name="idCaptura" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Incidencias_EPI">
+    <End Role="EPI" Type="Self.EPI" Multiplicity="0..1" />
+    <End Role="Incidencias" Type="Self.Incidencias" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="EPI">
+        <PropertyRef Name="idEPI" />
+      </Principal>
+      <Dependent Role="Incidencias">
+        <PropertyRef Name="idEPI" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -499,8 +609,12 @@
     </ReferentialConstraint>
   </Association>
   <EntityContainer Name="SCTiCareModelStoreContainer">
+    <EntitySet Name="Aptitud" EntityType="Self.Aptitud" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Archivo" EntityType="Self.Archivo" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Canal" EntityType="Self.Canal" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Captura" EntityType="Self.Captura" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CERTIFICADO" EntityType="Self.CERTIFICADO" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Cita" EntityType="Self.Cita" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Ciudades" EntityType="Self.Ciudades" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="ConektaPK" EntityType="Self.ConektaPK" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Consultorios" EntityType="Self.Consultorios" Schema="dbo" store:Type="Tables" />
@@ -508,48 +622,63 @@
     <EntitySet Name="Doctores" EntityType="Self.Doctores" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI" EntityType="Self.EPI" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EstatusFactura" EntityType="Self.EstatusFactura" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="Expediente" EntityType="Self.Expediente" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Expedientes" EntityType="Self.Expedientes" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Facturacion" EntityType="Self.Facturacion" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="IncidenciaDictamen" EntityType="Self.IncidenciaDictamen" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Incidencias" EntityType="Self.Incidencias" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Menu" EntityType="Self.Menu" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Orden" EntityType="Self.Orden" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="OrdenConekta" EntityType="Self.OrdenConekta" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Paciente" EntityType="Self.Paciente" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Recepcionista" EntityType="Self.Recepcionista" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="RolMenu" EntityType="Self.RolMenu" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SkeedaPK" EntityType="Self.SkeedaPK" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Sucursales" EntityType="Self.Sucursales" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_Captura_Paciente" Association="Self.FK_Captura_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Captura" EntitySet="Captura" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Cita_Canal" Association="Self.FK_Cita_Canal">
+      <End Role="Canal" EntitySet="Canal" />
+      <End Role="Cita" EntitySet="Cita" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Cita_Paciente" Association="Self.FK_Cita_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Cita" EntitySet="Cita" />
+    </AssociationSet>
     <AssociationSet Name="FK_Consultorios_Usuarios" Association="Self.FK_Consultorios_Usuarios">
       <End Role="Usuarios" EntitySet="Usuarios" />
       <End Role="Consultorios" EntitySet="Consultorios" />
     </AssociationSet>
-    <AssociationSet Name="FK_Dictamen_Sucursales" Association="Self.FK_Dictamen_Sucursales">
-      <End Role="Sucursales" EntitySet="Sucursales" />
+    <AssociationSet Name="FK_Dictamen_Aptitud" Association="Self.FK_Dictamen_Aptitud">
+      <End Role="Aptitud" EntitySet="Aptitud" />
       <End Role="Dictamen" EntitySet="Dictamen" />
     </AssociationSet>
-    <AssociationSet Name="FK_Dictamen_Usuarios" Association="Self.FK_Dictamen_Usuarios">
-      <End Role="Usuarios" EntitySet="Usuarios" />
+    <AssociationSet Name="FK_Dictamen_Paciente" Association="Self.FK_Dictamen_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
       <End Role="Dictamen" EntitySet="Dictamen" />
     </AssociationSet>
     <AssociationSet Name="FK_Doctores_Sucursales" Association="Self.FK_Doctores_Sucursales">
       <End Role="Sucursales" EntitySet="Sucursales" />
       <End Role="Doctores" EntitySet="Doctores" />
     </AssociationSet>
-    <AssociationSet Name="FK_Expediente_Doctores" Association="Self.FK_Expediente_Doctores">
-      <End Role="Doctores" EntitySet="Doctores" />
-      <End Role="Expediente" EntitySet="Expediente" />
-    </AssociationSet>
-    <AssociationSet Name="FK_Expediente_Sucursales" Association="Self.FK_Expediente_Sucursales">
-      <End Role="Sucursales" EntitySet="Sucursales" />
-      <End Role="Expediente" EntitySet="Expediente" />
-    </AssociationSet>
-    <AssociationSet Name="FK_Expediente_Usuarios" Association="Self.FK_Expediente_Usuarios">
-      <End Role="Usuarios" EntitySet="Usuarios" />
-      <End Role="Expediente" EntitySet="Expediente" />
+    <AssociationSet Name="FK_Expedientes_Paciente" Association="Self.FK_Expedientes_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Expedientes" EntitySet="Expedientes" />
     </AssociationSet>
     <AssociationSet Name="FK_Facturacion_EstatusFactura" Association="Self.FK_Facturacion_EstatusFactura">
       <End Role="EstatusFactura" EntitySet="EstatusFactura" />
       <End Role="Facturacion" EntitySet="Facturacion" />
+    </AssociationSet>
+    <AssociationSet Name="FK_IncidenciaDictamen_Captura" Association="Self.FK_IncidenciaDictamen_Captura">
+      <End Role="Captura" EntitySet="Captura" />
+      <End Role="IncidenciaDictamen" EntitySet="IncidenciaDictamen" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Incidencias_EPI" Association="Self.FK_Incidencias_EPI">
+      <End Role="EPI" EntitySet="EPI" />
+      <End Role="Incidencias" EntitySet="Incidencias" />
     </AssociationSet>
     <AssociationSet Name="FK_Recepcionista_Sucursales" Association="Self.FK_Recepcionista_Sucursales">
       <End Role="Sucursales" EntitySet="Sucursales" />

@@ -14,7 +14,6 @@ namespace SCT_iCare.Controllers.EPICenter
     public class EPIsController : Controller
     {
         private SCTiCareEntities1 db = new SCTiCareEntities1();
-        private Usuarios oUsuario;
 
         // GET: EPIs
         public ActionResult Index(int? pageSize, int? page)
@@ -272,14 +271,51 @@ namespace SCT_iCare.Controllers.EPICenter
 
         public ActionResult Captura()
         {
-
+            ViewBag.Parameter = "";
             return View();
         }
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Captura(string parameter)
+        //{
+        //    ViewBag.Parameter = parameter;
+        //    return View();
+        //}
 
         public ActionResult capturaSucursal(string sucursal)
         {
             ViewBag.Sucursal = sucursal;
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Pendiente(int id, string paciente, string folio, string capturista, string incidencia)
+        {
+            EPI epi = db.EPI.Find(id);
+            Incidencias incidencias = new Incidencias();
+
+            epi.Estatus = "Pendiente";
+            epi.FinalCaptura = DateTime.Now;
+
+            incidencias.NombrePaciente = paciente;
+            incidencias.Expediente = folio;
+            incidencias.Capturista = capturista;
+            incidencias.Incidencia = incidencia;
+            incidencias.FechaIncidencia = DateTime.Now;
+            incidencias.idEPI = id;
+
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(epi).State = EntityState.Modified;
+                db.Incidencias.Add(incidencias);
+                db.SaveChanges();
+                return RedirectToAction("Captura", "EPIs");
+            }
+
+            return RedirectToAction("Captura", "EPIs");
         }
     }
 }

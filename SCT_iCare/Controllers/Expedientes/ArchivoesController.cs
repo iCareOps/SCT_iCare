@@ -39,7 +39,7 @@ namespace SCT_iCare.Controllers.Expedientes
             //{
             //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             //}
-            Expediente expediente = db.Expediente.Find(id);
+            //Expediente expediente = db.Expediente.Find(id);
             //if (expediente == null)
             //{
             //    return HttpNotFound();

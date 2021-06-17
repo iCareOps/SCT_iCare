@@ -12,30 +12,28 @@ namespace SCT_iCare
     using System;
     using System.Collections.Generic;
     
-    public partial class EPI
+    public partial class Captura
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public EPI()
+        public Captura()
         {
-            this.Incidencias = new HashSet<Incidencias>();
+            this.IncidenciaDictamen = new HashSet<IncidenciaDictamen>();
         }
     
-        public int idEPI { get; set; }
+        public int idCaptura { get; set; }
         public string NombrePaciente { get; set; }
-        public byte[] BytesArchivo { get; set; }
-        public Nullable<int> NoFolio { get; set; }
-        public string TipoEPI { get; set; }
-        public string Estatus { get; set; }
-        public Nullable<System.DateTime> FechaExpediente { get; set; }
+        public string NoExpediente { get; set; }
+        public string TipoTramite { get; set; }
+        public string EstatusCaptura { get; set; }
         public Nullable<System.DateTime> InicioCaptura { get; set; }
         public Nullable<System.DateTime> FinalCaptura { get; set; }
         public string Doctor { get; set; }
         public string Sucursal { get; set; }
-        public string Usuario { get; set; }
-        public byte[] Dictamen { get; set; }
         public string Capturista { get; set; }
+        public Nullable<int> idPaciente { get; set; }
     
+        public virtual Paciente Paciente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Incidencias> Incidencias { get; set; }
+        public virtual ICollection<IncidenciaDictamen> IncidenciaDictamen { get; set; }
     }
 }

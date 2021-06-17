@@ -12,25 +12,30 @@ namespace SCT_iCare
     using System;
     using System.Collections.Generic;
     
-    public partial class Usuarios
+    public partial class Paciente
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Usuarios()
+        public Paciente()
         {
-            this.Consultorios = new HashSet<Consultorios>();
-            this.Recepcionista = new HashSet<Recepcionista>();
+            this.Captura = new HashSet<Captura>();
+            this.Cita = new HashSet<Cita>();
+            this.Dictamen = new HashSet<Dictamen>();
+            this.Expedientes = new HashSet<Expedientes>();
         }
     
-        public int idUsuario { get; set; }
+        public int idPaciente { get; set; }
         public string Nombre { get; set; }
+        public string Telefono { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
-        public Nullable<int> idRol { get; set; }
+        public string Folio { get; set; }
     
-        public virtual Roles Roles { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Consultorios> Consultorios { get; set; }
+        public virtual ICollection<Captura> Captura { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Recepcionista> Recepcionista { get; set; }
+        public virtual ICollection<Cita> Cita { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Dictamen> Dictamen { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Expedientes> Expedientes { get; set; }
     }
 }

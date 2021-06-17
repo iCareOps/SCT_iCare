@@ -38,12 +38,19 @@ namespace SCT_iCare
         public virtual DbSet<SkeedaPK> SkeedaPK { get; set; }
         public virtual DbSet<ConektaPK> ConektaPK { get; set; }
         public virtual DbSet<Recepcionista> Recepcionista { get; set; }
-        public virtual DbSet<Dictamen> Dictamen { get; set; }
-        public virtual DbSet<Expediente> Expediente { get; set; }
         public virtual DbSet<Archivo> Archivo { get; set; }
         public virtual DbSet<EPI> EPI { get; set; }
         public virtual DbSet<EstatusFactura> EstatusFactura { get; set; }
         public virtual DbSet<Facturacion> Facturacion { get; set; }
         public virtual DbSet<CERTIFICADO> CERTIFICADO { get; set; }
+        public virtual DbSet<Incidencias> Incidencias { get; set; }
+        public virtual DbSet<Aptitud> Aptitud { get; set; }
+        public virtual DbSet<Canal> Canal { get; set; }
+        public virtual DbSet<Captura> Captura { get; set; }
+        public virtual DbSet<Cita> Cita { get; set; }
+        public virtual DbSet<Dictamen> Dictamen { get; set; }
+        public virtual DbSet<Expedientes> Expedientes { get; set; }
+        public virtual DbSet<IncidenciaDictamen> IncidenciaDictamen { get; set; }
+        public virtual DbSet<Paciente> Paciente { get; set; }
     }
 }

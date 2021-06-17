@@ -12,14 +12,13 @@ namespace SCT_iCare
     using System;
     using System.Collections.Generic;
     
-    public partial class Dictamen
+    public partial class Expedientes
     {
-        public int idDictamen { get; set; }
-        public byte[] Dictamen1 { get; set; }
+        public int idExpediente { get; set; }
+        public byte[] Expediente { get; set; }
+        public string Recepcionista { get; set; }
         public Nullable<int> idPaciente { get; set; }
-        public Nullable<int> idAptitud { get; set; }
     
-        public virtual Aptitud Aptitud { get; set; }
         public virtual Paciente Paciente { get; set; }
     }
 }

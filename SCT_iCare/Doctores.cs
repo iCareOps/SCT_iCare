@@ -14,18 +14,10 @@ namespace SCT_iCare
     
     public partial class Doctores
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Doctores()
-        {
-            this.Expediente = new HashSet<Expediente>();
-        }
-    
         public int idDoctor { get; set; }
         public string Nombre { get; set; }
         public Nullable<int> idSucursal { get; set; }
     
         public virtual Sucursales Sucursales { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Expediente> Expediente { get; set; }
     }
 }

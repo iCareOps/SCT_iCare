@@ -12,25 +12,19 @@ namespace SCT_iCare
     using System;
     using System.Collections.Generic;
     
-    public partial class Usuarios
+    public partial class Aptitud
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Usuarios()
+        public Aptitud()
         {
-            this.Consultorios = new HashSet<Consultorios>();
-            this.Recepcionista = new HashSet<Recepcionista>();
+            this.Dictamen = new HashSet<Dictamen>();
         }
     
-        public int idUsuario { get; set; }
-        public string Nombre { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public Nullable<int> idRol { get; set; }
+        public int idAptitud { get; set; }
+        public string Aptitud1 { get; set; }
+        public string MotivoAptitud { get; set; }
     
-        public virtual Roles Roles { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Consultorios> Consultorios { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Recepcionista> Recepcionista { get; set; }
+        public virtual ICollection<Dictamen> Dictamen { get; set; }
     }
 }

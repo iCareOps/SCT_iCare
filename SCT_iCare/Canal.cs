@@ -12,14 +12,18 @@ namespace SCT_iCare
     using System;
     using System.Collections.Generic;
     
-    public partial class Dictamen
+    public partial class Canal
     {
-        public int idDictamen { get; set; }
-        public byte[] Dictamen1 { get; set; }
-        public Nullable<int> idPaciente { get; set; }
-        public Nullable<int> idAptitud { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Canal()
+        {
+            this.Cita = new HashSet<Cita>();
+        }
     
-        public virtual Aptitud Aptitud { get; set; }
-        public virtual Paciente Paciente { get; set; }
+        public int idCanal { get; set; }
+        public string Canal1 { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Cita> Cita { get; set; }
     }
 }

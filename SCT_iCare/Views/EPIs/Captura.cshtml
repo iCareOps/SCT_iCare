@@ -12,12 +12,20 @@
     int idUser = oUser.idUsuario;
     string nombreUsuario = oUser.Nombre;
 
+    string parameter = ViewBag.Parameter;
+    DateTime rango = Convert.ToDateTime(ViewBag.Fecha);
+
+
     int year = start.Year;
     int month = start.Month;
     int day = start.Day;
     int tomorrorDay = day + 1;
     DateTime thisDate = new DateTime(year, month, day);
     DateTime tomorrowDate = new DateTime(year, month, tomorrorDay);
+
+
+    var repoCentral = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
+
 
 
     int epis = (from e in db.EPI select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
@@ -28,9 +36,13 @@
 
     int enCaptura = (from e in db.EPI select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.Estatus == "En captura...").Count();
 
+    int incidencia = (from e in db.EPI select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.Estatus == "Pendiente").Count();
+
     var sucursalesLista = from s in db.Sucursales select s.Nombre;
 
     var capturistas = from c in db.Usuarios where c.idRol == 7 && c.idUsuario != 11 select c.Nombre;
+
+    string fecha = DateTime.Now.ToString("dd-MMMM-yyyy");
 
     string fila = "";
 
@@ -38,9 +50,10 @@
 
 <br />
 <br />
+<h5 style="color:white" class="text-right">@fecha</h5>
 <h3 style="color:white" class="text-center">EPI Center</h3>
 
-<script>setTimeout('document.location.reload()', 10000);</script>
+@*<script>setTimeout('document.location.reload()', 10000);</script>*@
 <hr />
 
 @{ if (oUser.idUsuario == 11 || oUser.idUsuario == 16)
@@ -191,7 +204,7 @@
 
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorRo botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal6" style="color:white">
-                <h4><span class="glyphicon glyphicon-alert"></span> &nbsp; &nbsp;Pendientes por Dictaminar: <b>@epis</b></h4>
+                <h4><span class="glyphicon glyphicon-alert"></span> &nbsp; &nbsp;Pendientes por Dictaminar: <b>@incidencia</b></h4>
             </button>
 
             <!-- Modal -->
@@ -199,13 +212,13 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header" style="background-color:orange">
-                            <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-alert"></span> &nbsp; &nbsp;Pendientes por Dictaminar: <b>@epis</b></h3>
+                            <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-alert"></span> &nbsp; &nbsp;Pendientes por Dictaminar: <b>@incidencia</b></h3>
                         </div>
                         <div class="modal-body">
                             @{
                                 foreach (var item in sucursalesLista)
                                 {
-                                    var elemento = (from v in db.EPI where v.Sucursal == item select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
+                                    var elemento = (from v in db.EPI where v.Sucursal == item && v.Estatus == "Pendiente" select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
                             }
@@ -232,6 +245,38 @@
                 }
             </script>*@
     }
+    else
+    {
+<div class="container">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorAz botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal5" style="color:white">
+        <h4><span class="glyphicon glyphicon-user"></span> &nbsp; &nbsp;Dictámenes por Capturista</h4>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aquamarine">
+                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-user"></span> &nbsp; &nbsp;Dictámenes por Capturista</h3>
+                </div>
+                <div class="modal-body">
+                    @{
+                        foreach (var item in capturistas)
+                        {
+                            var elemento = (from v in db.EPI where v.Estatus == "Terminado" && v.FechaExpediente >= thisDate && v.FechaExpediente < tomorrowDate && v.Capturista == item select v).Count();
+                            <h4><b>@item:</b> @elemento</h4>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+    }
 
 
 }
@@ -254,17 +299,42 @@
 
 <h4 style="color:white" class="text-center">Repositorio Central</h4>
 
-<nav class="navbar navbar-light bg-light">
-    <form class="form-inline">
-        <input class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Search" style="display:inline-block">
-        <button class="btn btn-info my-2 my-sm-0" type="submit" style="display:inline-block"><b><span class="glyphicon glyphicon-search"></span></b></button>
+<!--<nav class="navbar navbar-light bg-light">
+    <form class="form-inline col-md-10" action="@Url.Content("~/EPIs/Captura")" method="post">
+        @Html.AntiForgeryToken()
+        <input class="form-control mr-sm-2" id="parameter" name="parameter" type="search" placeholder="Paciente o Expediente" aria-label="Search" style="display:inline-block" required>
+        <input class="btn btn-info my-2 my-sm-0" type="submit" style="display:inline-block" value="Buscar">--> @*<b><span class="glyphicon glyphicon-search"></span></b></input>*@
+    <!--</form>
+    <form class="form-inline container" action="@Url.Content("~/EPIs/Captura")" method="post">
+        <input type="date" class="form-control col-md-2" id="fecha" name="nacimiento">
     </form>
-</nav>
+</nav>-->
 
 
 @{
-    var repo = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList(); ;
+    if(ViewBag.Parameter == "")
+    {
+        var repo = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
+        repoCentral = repo;
+    }
+    else
+    {
+        var repo = (from r in db.EPI
+                    where
+                    r.NombrePaciente.Contains(parameter) ||
+                    r.Estatus.Contains(parameter) ||
+                    //r.NoFolio == Convert.ToInt32(parameter) ||
+                    r.TipoEPI.Contains(parameter) ||
+                    r.Doctor.Contains(parameter) ||
+                    r.Sucursal.Contains(parameter) ||
+                    r.Usuario.Contains(parameter) ||
+                    r.Capturista.Contains(parameter)
+                    orderby r.TipoEPI select r)
+            .Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
+        repoCentral = repo;
+    }
 }
+
 @using (Html.BeginForm("EditExpediente", "EPIs"))
 {
     @Html.AntiForgeryToken()
@@ -304,7 +374,7 @@
             <th>Acciones</th>
         </tr>
 
-        @foreach (var item in repo)
+        @foreach (var item in repoCentral)
         {
 
             if (item.TipoEPI == "PRIMERA VEZ")
@@ -359,7 +429,11 @@
                         }
                         else if (item.Estatus == "En captura...")
                         {
-                            <a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idEPI})><button type="button" class="btn btn-warning">Terminar</button></a>
+                            <a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idEPI})><button type="button" class="btn btn-warning">Dictaminar</button></a>
+                        }
+                        else if (item.Estatus == "Pendiente")
+                        {
+                            <a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idEPI})><button type="button" class="btn btn-warning">Dictaminar</button></a>
                         }
                         else if (item.Estatus == "Terminado")
                         {
