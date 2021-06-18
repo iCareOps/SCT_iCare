@@ -26,6 +26,9 @@ namespace SCT_iCare
         public string Calle { get; set; }
         public string Colonia { get; set; }
         public Nullable<int> idCiudad { get; set; }
+        public string SUC { get; set; }
+        public Nullable<int> Contador { get; set; }
+        public Nullable<System.DateTime> ContadorFecha { get; set; }
     
         public virtual Ciudades Ciudades { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

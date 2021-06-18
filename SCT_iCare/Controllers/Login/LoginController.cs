@@ -23,6 +23,43 @@ namespace SCT_iCare.Controllers.Login
 
             try
             {
+                //Query para verificar que los contadores y fechas estén bien
+                int hoy = DateTime.Now.Day;
+                int anio = DateTime.Now.Year;
+
+                var contadores = (from c in db.Sucursales select c);
+
+                
+                foreach (var item in contadores)
+                {
+                    if (hoy != Convert.ToDateTime(item.ContadorFecha).Day)
+                    {
+                        Sucursales sucursales = db.Sucursales.Find(item.idSucursal);
+                        sucursales.Contador = 0;
+                        sucursales.ContadorFecha = DateTime.Now;
+
+                        if (ModelState.IsValid)
+                        {
+                            db.Entry(sucursales).State = EntityState.Modified;
+                            
+                        }
+                    }
+                }
+                db.SaveChanges();
+
+                //if(anio != Convert.ToDateTime(contadores.ContadorFecha).Year)
+                //{
+                //    Sucursales sucursales = new Sucursales();
+                //    sucursales.Contador = 0;
+
+                //    if (ModelState.IsValid)
+                //    {
+                //        db.Entry(sucursales).State = EntityState.Modified;
+                //        db.SaveChanges();
+                //    }
+                //}
+
+
                 Pass = Encrypt.GetSHA256(Pass.Trim());
                 //Usuarios usuario = new Usuarios();
                 var oUser = (from d in db.Usuarios where d.Email==User && d.Password == Pass.Trim() select d).FirstOrDefault();

@@ -1,0 +1,373 @@
+﻿@model IEnumerable<SCT_iCare.Paciente>
+
+@{
+    ViewBag.Title = "Index";
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    SCTiCareEntities1 db = new SCTiCareEntities1();
+
+    var Recepcion = new int?();
+    var Hospital = "";
+    string Sucursal = null;
+    int idUser = -1;
+    string nombreUsuario = null;
+
+    int flag = 1; //contador de la tabla
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+
+        if (idUser != 1)
+        {
+            Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
+            Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
+            Sucursal = Hospital.ToString();
+        }
+        else
+        {
+            Recepcion = -1;
+            Hospital = "GENERAL";
+            Sucursal = Hospital.ToString();
+        }
+    }
+
+    DateTime start = DateTime.Now;
+
+    int year = start.Year;
+    int month = start.Month;
+    int day = start.Day;
+    int tomorrorDay = day + 1;
+    DateTime thisDate = new DateTime(year, month, day);
+    DateTime tomorrowDate = new DateTime(year, month, tomorrorDay);
+
+    var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate);
+
+}
+
+<br />
+<br />
+<h3 style="color:white" class="text-center">Recepción</h3>
+<h4 style="color:#AC9070" class="text-center">Sucursal: <span style="color:white">@Sucursal</span></h4>
+
+<p>
+    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+        <span class="glyphicon glyphicon-plus"></span> Registrar visita
+    </button>
+</p>
+<div class="collapse" id="collapseExample">
+    <div class="card card-body" style="background-color:dimgray; padding:10px; border-radius:5px">
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">Cita con Pago</button>
+        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2">Crear Referecia de Pago</button>
+    </div>
+</div>
+
+<br />
+
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Registrar visita</b></h3>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/Create1")">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Teléfono:</label>
+                        <input type="text" class="form-control" id="telefono" name="telefono" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" name="sucursal" asp-for="file" class="" required value="@Sucursal" />
+                        <input type="hidden" name="usuario" asp-for="file" class="" required value="@nombreUsuario" />
+                    </div>
+                    <div class="form-group" style="width:80%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                        <select name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option value="Referencia OXXO">Referencia OXXO</option>
+                            <option value="Referencia Bancaria">Bancaria</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Número de Referencia:</label>
+                        <input type="text" class="form-control" id="referencia" name="referencia" required>
+                    </div>
+                    <div class="form-group" style="width:80%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
+                        <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                            <option value="MARITIMO">MARITIMO</option>
+                            <option value="AEREO">AEREO</option>
+                            <option value="FERROVIARIO">FERROVIARIO</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="width:80%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Canal:</label>
+
+                        <select name="canal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option value="VENTA EN SITIO">VENTA EN SITIO</option>
+                            @{
+                                var canal = from c in db.Canal select c;
+
+                                foreach (var item in canal)
+                                {
+                                    <option value="@item.Canal1">@item.Canal1</option>
+                                }
+                            }
+                        </select>
+
+                    </div>
+
+                    <div class="form-group" style="width:80%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
+                        <select name="tipoT" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option value="REVALIDACIÓN">REVALIDACIÓN</option>
+                            <option value="PRIMERA VEZ">PRIMERA VEZ</option>
+                        </select>
+                    </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <input type="submit" value="Enviar" class="btn btn-primary" />
+            </div></form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Registrar visita</b></h3>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/Orden")">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Teléfono:</label>
+                        <input type="text" class="form-control" id="telefono" name="telefono" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" name="sucursal" asp-for="file" class="" required value="@Sucursal" />
+                        <input type="hidden" name="usuario" asp-for="file" class="" required value="@nombreUsuario" />
+                    </div>
+                    <div class="form-group" style="width:80%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
+                        <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                            <option value="MARITIMO">MARITIMO</option>
+                            <option value="AEREO">AEREO</option>
+                            <option value="FERROVIARIO">FERROVIARIO</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Precio:</label>
+                        <input type="number" class="form-control" id="precio" name="precio" required>
+                    </div>
+                    <div class="form-group" style="width:80%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Doctor:</label>
+
+                        <select name="doctor" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            @{
+                                var consultorios = from c in db.Doctores select c;
+
+                                foreach (var item in consultorios)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+                            }
+                        </select>
+
+                    </div>
+
+                    <div class="form-group" style="width:80%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
+                        <select name="tipoT" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option value="REVALIDACIÓN">REVALIDACIÓN</option>
+                            <option value="PRIMERA VEZ">PRIMERA VEZ</option>
+                        </select>
+                    </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <input type="submit" value="Enviar" class="btn btn-primary" />
+            </div></form>
+        </div>
+    </div>
+</div>
+
+<table class="table tablas table-hover" style="color: #2F2D6B">
+    <tr style="background-color:#62E3C9">
+        <th>
+        </th>
+
+        <th>
+            Nombre
+        </th>
+
+        <th>
+            Teléfono
+        </th>
+        <th>
+            Email
+        </th>
+        <th>
+            Folio
+        </th>
+        <th>
+            Referencia
+        </th>
+        <th>
+            Sucursal
+        </th>
+        <th>
+            Doctor
+        </th>
+        <th>
+            Tipo de Trámite
+        </th>
+        <th>
+            Estatus Pago
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in modelo)
+    {
+        <tr>
+            <td>
+                @flag
+            </td>
+
+            <td>
+                <b>@Html.DisplayFor(modelItem => item.N.Nombre)</b>
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.N.Telefono)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.N.Email)
+            </td>
+            <td>
+                <b>@Html.DisplayFor(modelItem => item.N.Folio)</b>
+            </td>
+            <td>
+                <b>@Html.DisplayFor(modelItem => item.M.Referencia)</b>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.M.Sucursal)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.M.Doctor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.M.TipoTramite)
+            </td>
+            <td>
+                @if(item.M.EstatusPago == "pending_payment")
+                {
+                <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Pendiente</mark></b>
+                }
+                 else if(item.M.EstatusPago == "paid" || item.M.EstatusPago == "Pagado")
+                {
+                    <b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">Pagado</mark></b>
+                }
+            </td>
+            <td>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                    </button>
+                    <div class="dropdown-menu" style="padding:10px">
+                        <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
+                        <div class="dropdown-divider"></div>
+                    </div>
+                </div>
+
+                <!-- Modal -->
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Create")">
+                    @Html.AntiForgeryToken()
+                    <div class="modal fade" id="Modal_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Digitalizar Expediente de @item.N.Nombre</b></h4>
+                                </div>
+                                <div class="modal-body">
+
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
+                                        <input type="text" class="form-control" id="paciente" name="paciente" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="col-form-label">Número de Expediente:</label>
+                                        <input type="text" class="form-control" id="folio" name="folio" required>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                        <label class="form-check-label" for="flexCheckDefault">
+                                            Cita registrada en METRA
+                                        </label>
+                                    </div>
+                                    <br />
+                                    <div class="form-group">
+                                        <label for="file" class="col-form-label">Archivo:</label>
+                                        <input type="file" name="file" asp-for="file" class="" required value="file" />
+                                        <input type="hidden" name="sucursal" asp-for="file" class="" required value="@Sucursal" />
+                                        <input type="hidden" name="usuario" asp-for="file" class="" required value="@nombreUsuario" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="col-form-label">Doctor:</label>
+                                        <select name="doctor" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                            @{
+                                                consultorios = from c in db.Doctores select c;
+
+                                                foreach (var item1 in consultorios)
+                                                {
+                                                    <option value="@item1.Nombre">@item1.Nombre</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                    <input type="submit" value="Subir PDF" class="btn btn-primary" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </td>
+        </tr>
+
+        flag += 1;
+
+    }
+
+</table>
+

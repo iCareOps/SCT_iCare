@@ -1,0 +1,87 @@
+﻿@model IEnumerable<SCT_iCare.Captura>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.NombrePaciente)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NoExpediente)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TipoTramite)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EstatusCaptura)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.InicioCaptura)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FinalCaptura)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Doctor)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Sucursal)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Capturista)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Paciente.Nombre)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.NombrePaciente)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NoExpediente)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TipoTramite)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EstatusCaptura)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.InicioCaptura)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FinalCaptura)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Doctor)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Sucursal)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Capturista)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Paciente.Nombre)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.idCaptura }) |
+            @Html.ActionLink("Details", "Details", new { id=item.idCaptura }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.idCaptura })
+        </td>
+    </tr>
+}
+
+</table>

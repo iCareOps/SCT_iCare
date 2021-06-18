@@ -74,6 +74,8 @@
           <Property Name="idCanal" Type="int" />
           <Property Name="Folio" Type="varchar" MaxLength="100" />
           <Property Name="idPaciente" Type="int" />
+          <Property Name="TipoTramite" Type="varchar" MaxLength="50" />
+          <Property Name="Referencia" Type="varchar" MaxLength="30" />
         </EntityType>
         <EntityType Name="Ciudades">
           <Key>
@@ -398,6 +400,9 @@
           <Property Name="Calle" Type="varchar" MaxLength="200" />
           <Property Name="Colonia" Type="varchar" MaxLength="100" />
           <Property Name="idCiudad" Type="int" />
+          <Property Name="SUC" Type="varchar" MaxLength="10" />
+          <Property Name="Contador" Type="int" />
+          <Property Name="ContadorFecha" Type="datetime" />
         </EntityType>
         <EntityType Name="Usuarios">
           <Key>
@@ -997,6 +1002,9 @@
           <NavigationProperty Name="Ciudades" Relationship="SCTiCareModel.FK_Sucursales_Ciudades" FromRole="Sucursales" ToRole="Ciudades" />
           <NavigationProperty Name="Doctores" Relationship="SCTiCareModel.FK_Doctores_Sucursales" FromRole="Sucursales" ToRole="Doctores" />
           <NavigationProperty Name="Recepcionista" Relationship="SCTiCareModel.FK_Recepcionista_Sucursales" FromRole="Sucursales" ToRole="Recepcionista" />
+          <Property Name="SUC" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Contador" Type="Int32" />
+          <Property Name="ContadorFecha" Type="DateTime" Precision="3" />
         </EntityType>
         <Association Name="FK_Sucursales_Ciudades">
           <End Type="SCTiCareModel.Ciudades" Role="Ciudades" Multiplicity="0..1" />
@@ -1321,6 +1329,8 @@
           <Property Name="idPaciente" Type="Int32" />
           <NavigationProperty Name="Canal" Relationship="SCTiCareModel.FK_Cita_Canal" FromRole="Cita" ToRole="Canal" />
           <NavigationProperty Name="Paciente" Relationship="SCTiCareModel.FK_Cita_Paciente" FromRole="Cita" ToRole="Paciente" />
+          <Property Name="TipoTramite" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Referencia" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Dictamen">
           <Key>
@@ -1586,6 +1596,9 @@
           <EntitySetMapping Name="Sucursales">
             <EntityTypeMapping TypeName="SCTiCareModel.Sucursales">
               <MappingFragment StoreEntitySet="Sucursales">
+                <ScalarProperty Name="ContadorFecha" ColumnName="ContadorFecha" />
+                <ScalarProperty Name="Contador" ColumnName="Contador" />
+                <ScalarProperty Name="SUC" ColumnName="SUC" />
                 <ScalarProperty Name="idCiudad" ColumnName="idCiudad" />
                 <ScalarProperty Name="Colonia" ColumnName="Colonia" />
                 <ScalarProperty Name="Calle" ColumnName="Calle" />
@@ -1830,6 +1843,8 @@
           <EntitySetMapping Name="Cita">
             <EntityTypeMapping TypeName="SCTiCareModel.Cita">
               <MappingFragment StoreEntitySet="Cita">
+                <ScalarProperty Name="Referencia" ColumnName="Referencia" />
+                <ScalarProperty Name="TipoTramite" ColumnName="TipoTramite" />
                 <ScalarProperty Name="idPaciente" ColumnName="idPaciente" />
                 <ScalarProperty Name="Folio" ColumnName="Folio" />
                 <ScalarProperty Name="idCanal" ColumnName="idCanal" />

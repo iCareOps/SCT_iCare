@@ -28,6 +28,8 @@ namespace SCT_iCare
         public Nullable<int> idCanal { get; set; }
         public string Folio { get; set; }
         public Nullable<int> idPaciente { get; set; }
+        public string TipoTramite { get; set; }
+        public string Referencia { get; set; }
     
         public virtual Canal Canal { get; set; }
         public virtual Paciente Paciente { get; set; }

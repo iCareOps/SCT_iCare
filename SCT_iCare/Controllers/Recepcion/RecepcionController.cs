@@ -1,0 +1,407 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Script.Serialization;
+using conekta;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using SCT_iCare;
+
+namespace SCT_iCare.Controllers.Recepcion
+{
+    public class RecepcionController : Controller
+    {
+        private SCTiCareEntities1 db = new SCTiCareEntities1();
+
+        public static void GetApiKey()
+        {
+            conekta.Api.apiKey = ConfigurationManager.AppSettings["conekta"];
+            conekta.Api.version = "2.0.0";
+            conekta.Api.locale = "es";
+        }
+
+        // GET: Pacientes
+        public ActionResult Index()
+        {
+            return View(db.Paciente.ToList());
+        }
+
+        // GET: Pacientes/Details/5
+        public ActionResult Details(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Paciente paciente = db.Paciente.Find(id);
+            if (paciente == null)
+            {
+                return HttpNotFound();
+            }
+            return View(paciente);
+        }
+
+        // GET: Pacientes/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: Pacientes/Create
+        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que quiere enlazarse. Para obtener 
+        // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create1(string nombre, string telefono, string email, string usuario, string sucursal, string pago, string doctor, string tipoL, string tipoT, string referencia, string canal)
+        {
+            Paciente paciente = new Paciente();
+
+            paciente.Nombre = nombre.ToUpper();
+            paciente.Telefono = telefono;
+            paciente.Email = email;
+
+            //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
+            string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
+            string doc = (from d in db.Doctores where d.Nombre == doctor select d.idDoctor).FirstOrDefault().ToString();
+
+            //Se obtiene el número del contador desde la base de datos
+            int? num = (from c in db.Sucursales where c.Nombre == sucursal select c.Contador).FirstOrDefault() + 1;
+
+            //Contadores por número de citas en cada sucursal
+            string contador = "";
+            if(num == null)
+            {
+                contador = "100";
+            }
+            else if(num < 10)
+            {
+                contador = "00" + Convert.ToString(num);
+            }
+            else if(num >= 10 && num < 100)
+            {
+                contador = "0" + Convert.ToString(num);
+            }
+
+            //Se asigna el número de ID del doctor
+            if(Convert.ToInt32(doc) < 10)
+            {
+                doc = "0" + doc;
+            }
+
+            string mes = DateTime.Now.Month.ToString();
+
+            if(Convert.ToInt32(mes) < 10)
+            {
+                mes = "0" + mes;
+            }
+
+            //Se crea el número de Folio
+            string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + doc + contador;
+            paciente.Folio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + doc + contador;
+
+            if (ModelState.IsValid)
+            {
+                db.Paciente.Add(paciente);
+                db.SaveChanges();
+                //return RedirectToAction("Index");
+            }
+
+            int? idSuc = (from i in db.Sucursales where i.Nombre == sucursal select i.idSucursal).FirstOrDefault();
+
+            Sucursales suc = db.Sucursales.Find(idSuc);
+
+            suc.Contador = Convert.ToInt32(num);
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(suc).State = EntityState.Modified;
+                db.SaveChanges();
+                //No retorna ya que sigue el proceso
+                //return RedirectToAction("Index");
+            }
+
+            var idPaciente = (from i in db.Paciente where i.Folio == paciente.Folio select i.idPaciente).FirstOrDefault();
+
+            Cita cita = new Cita();
+
+            cita.idPaciente = idPaciente;
+            cita.TipoTramite = tipoT;
+            cita.TipoLicencia = tipoL;
+            cita.FechaReferencia = DateTime.Now;
+            cita.Sucursal = sucursal;
+            cita.Doctor = doctor;
+            cita.Recepcionista = usuario;
+            cita.EstatusPago = "Pagado";
+            cita.Folio = numFolio;
+            cita.TipoPago = pago;
+            cita.Referencia = referencia;
+            //cita.Canal =
+
+            if (ModelState.IsValid)
+            {
+                db.Cita.Add(cita);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(paciente);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Orden(string nombre, string telefono, string email, string usuario, string sucursal, string doctor, string tipoL, string tipoT, string precio)
+        {
+
+            GetApiKey();
+
+            Order order = new conekta.Order().create(@"{
+                      ""currency"":""MXN"",
+                      ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
+                      ""line_items"": [{
+                      ""name"": " + ConvertirProductos1(sucursal) + @",
+                      ""unit_price"": " + ConvertirProductos2(precio) + @",
+                      ""quantity"": 1
+                      }]
+                      }");
+
+            order.createCharge(@"{
+                    ""payment_method"": {
+                    ""type"": ""oxxo_cash""
+                    },
+                    ""amount"": " + ConvertirProductos2(precio) + @"
+                    }");
+
+            var orden = new Order().find(order.id);
+
+            var detallesOrden = new Order()
+            {
+                id = orden.id,
+                customer_info = orden.customer_info,
+                line_items = orden.line_items,
+                amount = orden.amount,
+                charges = orden.charges
+            };
+
+            ViewBag.Orden = order.id;
+            ViewBag.Metodo = "OXXO";
+
+            //return View(detallesOrden);
+
+
+            Paciente paciente = new Paciente();
+
+            paciente.Nombre = nombre.ToUpper();
+            paciente.Telefono = telefono;
+            paciente.Email = email;
+
+            //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
+            string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
+            string doc = (from d in db.Doctores where d.Nombre == doctor select d.idDoctor).FirstOrDefault().ToString();
+
+            //Se obtiene el número del contador desde la base de datos
+            int? num = (from c in db.Sucursales where c.Nombre == sucursal select c.Contador).FirstOrDefault() + 1;
+
+            //Contadores por número de citas en cada sucursal
+            string contador = "";
+            if (num == null)
+            {
+                contador = "100";
+            }
+            else if (num < 10)
+            {
+                contador = "00" + Convert.ToString(num);
+            }
+            else if (num >= 10 && num < 100)
+            {
+                contador = "0" + Convert.ToString(num);
+            }
+
+            //Se asigna el número de ID del doctor
+            if (Convert.ToInt32(doc) < 10)
+            {
+                doc = "0" + doc;
+            }
+
+            string mes = DateTime.Now.Month.ToString();
+
+            if (Convert.ToInt32(mes) < 10)
+            {
+                mes = "0" + mes;
+            }
+
+            //Se crea el número de Folio
+            string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + doc + contador;
+            paciente.Folio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + doc + contador;
+
+            if (ModelState.IsValid)
+            {
+                db.Paciente.Add(paciente);
+                db.SaveChanges();
+                //return RedirectToAction("Index");
+            }
+
+            int? idSuc = (from i in db.Sucursales where i.Nombre == sucursal select i.idSucursal).FirstOrDefault();
+
+            Sucursales suc = db.Sucursales.Find(idSuc);
+
+            suc.Contador = Convert.ToInt32(num);
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(suc).State = EntityState.Modified;
+                db.SaveChanges();
+                //No retorna ya que sigue el proceso
+                //return RedirectToAction("Index");
+            }
+
+            var idPaciente = (from i in db.Paciente where i.Folio == paciente.Folio select i.idPaciente).FirstOrDefault();
+
+            Cita cita = new Cita();
+
+            cita.TipoPago = "REFERENCIA OXXO";
+            cita.NoOrden = orden.id;
+
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            dynamic datosCargo2 = js.Deserialize<dynamic>(orden.charges.data[0].ToString());
+
+            string referencia = datosCargo2["payment_method"]["reference"].ToString();
+
+            cita.Referencia = referencia;
+
+            cita.idPaciente = idPaciente;
+            cita.TipoTramite = tipoT;
+            cita.TipoLicencia = tipoL;
+            cita.FechaReferencia = DateTime.Now;
+            cita.Sucursal = sucursal;
+            cita.Doctor = doctor;
+            cita.Recepcionista = usuario;
+            cita.EstatusPago = orden.payment_status;
+            cita.Folio = numFolio;
+            //cita.Canal =
+
+            if (ModelState.IsValid)
+            {
+                db.Cita.Add(cita);
+                db.SaveChanges();
+                //no regresa ya que se debe ver la pantalla de Orden
+                //return RedirectToAction("Index");
+            }
+
+            return View(detallesOrden);
+        }
+
+        // GET: Pacientes/Edit/5
+        public ActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Paciente paciente = db.Paciente.Find(id);
+            if (paciente == null)
+            {
+                return HttpNotFound();
+            }
+            return View(paciente);
+        }
+
+        // POST: Pacientes/Edit/5
+        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que quiere enlazarse. Para obtener 
+        // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind(Include = "idPaciente,Nombre,Telefono,Email,Folio")] Paciente paciente)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(paciente).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(paciente);
+        }
+
+        // GET: Pacientes/Delete/5
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Paciente paciente = db.Paciente.Find(id);
+            if (paciente == null)
+            {
+                return HttpNotFound();
+            }
+            return View(paciente);
+        }
+
+        // POST: Pacientes/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            Paciente paciente = db.Paciente.Find(id);
+            db.Paciente.Remove(paciente);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private string ConvertirCliente(string nombre, string email, string telefono)
+        {
+            var newClient = new Customer()
+            {
+                name = nombre,
+                email = email,
+                phone = telefono
+            };
+            string jsonClient = JsonConvert.SerializeObject(newClient, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            return jsonClient;
+        }
+
+        private string ConvertirProductos1(string consultorio)
+        {
+            string producto = "Consulta EPI (" + consultorio + ")";
+            var product = new LineItem()
+            {
+                name = "Consulta EPI" + consultorio,
+                //unit_price = 258800,
+                //quantity = 1
+            };
+
+            string jsonProductos = JsonConvert.SerializeObject(producto, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            return jsonProductos;
+        }
+
+        private int ConvertirProductos2(string precio)
+        {
+            int producto = Convert.ToInt32(precio) * 100;
+
+            int jsonProductos = Convert.ToInt32(JsonConvert.SerializeObject(producto, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
+            return jsonProductos;
+        }
+
+        private long FechaExpira()
+        {
+            DateTime treintaDias = DateTime.Now.AddDays(2);
+            long marcaTiempo = (Int64)(treintaDias.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
+            //string tiempo = marcaTiempo.ToString();
+            return marcaTiempo;
+        }
+    }
+}
