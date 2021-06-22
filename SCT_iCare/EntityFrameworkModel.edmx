@@ -43,6 +43,7 @@
           <Property Name="Sucursal" Type="varchar" MaxLength="100" />
           <Property Name="Capturista" Type="varchar" MaxLength="100" />
           <Property Name="idPaciente" Type="int" />
+          <Property Name="FechaExpediente" Type="datetime" />
         </EntityType>
         <EntityType Name="CERTIFICADO">
           <Key>
@@ -1308,6 +1309,7 @@
           <Property Name="idPaciente" Type="Int32" />
           <NavigationProperty Name="Paciente" Relationship="SCTiCareModel.FK_Captura_Paciente" FromRole="Captura" ToRole="Paciente" />
           <NavigationProperty Name="IncidenciaDictamen" Relationship="SCTiCareModel.FK_IncidenciaDictamen_Captura" FromRole="Captura" ToRole="IncidenciaDictamen" />
+          <Property Name="FechaExpediente" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Cita">
           <Key>
@@ -1826,6 +1828,7 @@
           <EntitySetMapping Name="Captura">
             <EntityTypeMapping TypeName="SCTiCareModel.Captura">
               <MappingFragment StoreEntitySet="Captura">
+                <ScalarProperty Name="FechaExpediente" ColumnName="FechaExpediente" />
                 <ScalarProperty Name="idPaciente" ColumnName="idPaciente" />
                 <ScalarProperty Name="Capturista" ColumnName="Capturista" />
                 <ScalarProperty Name="Sucursal" ColumnName="Sucursal" />

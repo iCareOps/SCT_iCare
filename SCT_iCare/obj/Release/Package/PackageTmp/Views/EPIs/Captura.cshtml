@@ -12,12 +12,20 @@
     int idUser = oUser.idUsuario;
     string nombreUsuario = oUser.Nombre;
 
+    string parameter = ViewBag.Parameter;
+    DateTime rango = Convert.ToDateTime(ViewBag.Fecha);
+
+
     int year = start.Year;
     int month = start.Month;
     int day = start.Day;
     int tomorrorDay = day + 1;
     DateTime thisDate = new DateTime(year, month, day);
     DateTime tomorrowDate = new DateTime(year, month, tomorrorDay);
+
+
+    var repoCentral = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
+
 
 
     int epis = (from e in db.EPI select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
@@ -34,15 +42,18 @@
 
     var capturistas = from c in db.Usuarios where c.idRol == 7 && c.idUsuario != 11 select c.Nombre;
 
+    string fecha = DateTime.Now.ToString("dd-MMMM-yyyy");
+
     string fila = "";
 
 }
 
 <br />
 <br />
+<h5 style="color:white" class="text-right">@fecha</h5>
 <h3 style="color:white" class="text-center">EPI Center</h3>
 
-<script>setTimeout('document.location.reload()', 10000);</script>
+@*<script>setTimeout('document.location.reload()', 10000);</script>*@
 <hr />
 
 @{ if (oUser.idUsuario == 11 || oUser.idUsuario == 16)
@@ -288,17 +299,42 @@
 
 <h4 style="color:white" class="text-center">Repositorio Central</h4>
 
-<nav class="navbar navbar-light bg-light">
-    <form class="form-inline">
-        <input class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Search" style="display:inline-block">
-        <button class="btn btn-info my-2 my-sm-0" type="submit" style="display:inline-block"><b><span class="glyphicon glyphicon-search"></span></b></button>
+<!--<nav class="navbar navbar-light bg-light">
+    <form class="form-inline col-md-10" action="@Url.Content("~/EPIs/Captura")" method="post">
+        @Html.AntiForgeryToken()
+        <input class="form-control mr-sm-2" id="parameter" name="parameter" type="search" placeholder="Paciente o Expediente" aria-label="Search" style="display:inline-block" required>
+        <input class="btn btn-info my-2 my-sm-0" type="submit" style="display:inline-block" value="Buscar">--> @*<b><span class="glyphicon glyphicon-search"></span></b></input>*@
+    <!--</form>
+    <form class="form-inline container" action="@Url.Content("~/EPIs/Captura")" method="post">
+        <input type="date" class="form-control col-md-2" id="fecha" name="nacimiento">
     </form>
-</nav>
+</nav>-->
 
 
 @{
-    var repo = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList(); ;
+    if(ViewBag.Parameter == "")
+    {
+        var repo = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
+        repoCentral = repo;
+    }
+    else
+    {
+        var repo = (from r in db.EPI
+                    where
+                    r.NombrePaciente.Contains(parameter) ||
+                    r.Estatus.Contains(parameter) ||
+                    //r.NoFolio == Convert.ToInt32(parameter) ||
+                    r.TipoEPI.Contains(parameter) ||
+                    r.Doctor.Contains(parameter) ||
+                    r.Sucursal.Contains(parameter) ||
+                    r.Usuario.Contains(parameter) ||
+                    r.Capturista.Contains(parameter)
+                    orderby r.TipoEPI select r)
+            .Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
+        repoCentral = repo;
+    }
 }
+
 @using (Html.BeginForm("EditExpediente", "EPIs"))
 {
     @Html.AntiForgeryToken()
@@ -338,7 +374,7 @@
             <th>Acciones</th>
         </tr>
 
-        @foreach (var item in repo)
+        @foreach (var item in repoCentral)
         {
 
             if (item.TipoEPI == "PRIMERA VEZ")

@@ -238,6 +238,9 @@ else
                 Referencia
             </th>
             <th>
+                Sucursal
+            </th>
+            <th>
                 Doctor
             </th>
             <th>
@@ -245,9 +248,6 @@ else
             </th>
             <th>
                 Estatus Pago
-            </th>
-            <th>
-                Estatus EPI
             </th>
             <th></th>
         </tr>
@@ -270,18 +270,13 @@ else
                     @Html.DisplayFor(modelItem => item.N.Email)
                 </td>
                 <td>
-                    @if (item.N.Folio.Length == 16)
-                    {
-                        <b>@Html.DisplayFor(modelItem => item.N.Folio)</b>
-                    }
-                    else
-                    {
-                        <span style="color:slategrey">@Html.DisplayFor(modelItem => item.N.Folio)</span> 
-                    }
-
+                    <b>@Html.DisplayFor(modelItem => item.N.Folio)</b>
                 </td>
                 <td>
                     <b>@Html.DisplayFor(modelItem => item.M.Referencia)</b>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.M.Sucursal)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.M.Doctor)
@@ -300,32 +295,10 @@ else
                     }
                 </td>
                 <td>
-                    
-                    @if (item.M.Doctor == null)
-                    {
-                        <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Pendiente</mark></b>
-                    }
-                    else if (item.M.EstatusPago == "paid" || item.M.EstatusPago == "Pagado")
-                    {
-                        <b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">Digitalizado</mark></b>
-                    }
-                </td>
-                <td>
-                    <div class="btn-group"> 
-                        @if(item.M.NoExpediente != null)
-                        {
-                        @*<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
-                        </button>*@
-                        }
-                        else
-                    {
-                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
-                    </button>
-                    }
-
-                        
+                        </button>
                         <div class="dropdown-menu" style="padding:10px">
                             @if (item.M.EstatusPago == "Pagado")
                             {
@@ -350,7 +323,7 @@ else
                     </div>
 
                     <!-- Modal -->
-                    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/Digitalizar")">
+                    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIssss/Create")">
                         @Html.AntiForgeryToken()
                         <div class="modal fade" id="Modal_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
@@ -371,7 +344,7 @@ else
                                             {
                                                 <div class="form-group">
                                                     <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
-                                                    <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                                    <input type="text" class="form-control" id="paciente" name="paciente" required>
                                                 </div>
                                             }
                                             else
@@ -382,7 +355,7 @@ else
 
                                         <div class="form-group">
                                             <label for="recipient-name" class="col-form-label">Número de Expediente:</label>
-                                            <input type="text" class="form-control" id="numero" name="numero" required>
+                                            <input type="text" class="form-control" id="folio" name="folio" required>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
@@ -394,8 +367,8 @@ else
                                         <div class="form-group">
                                             <label for="file" class="col-form-label">Archivo:</label>
                                             <input type="file" name="file" asp-for="file" class="" required value="file" />
-                                            <input type="hidden" name="id" asp-for="file" class="" required value="@item.N.idPaciente" />
-                                            <input type="hidden" value="@oUser.Nombre" name="usuario" />
+                                            <input type="hidden" name="sucursal" asp-for="file" class="" required value="@Sucursal" />
+                                            <input type="hidden" name="usuario" asp-for="file" class="" required value="@nombreUsuario" />
                                         </div>
                                         <div class="form-group">
                                             <label for="recipient-name" class="col-form-label">Doctor Dictaminador:</label>

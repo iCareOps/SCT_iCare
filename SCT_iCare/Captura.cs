@@ -31,6 +31,7 @@ namespace SCT_iCare
         public string Sucursal { get; set; }
         public string Capturista { get; set; }
         public Nullable<int> idPaciente { get; set; }
+        public Nullable<System.DateTime> FechaExpediente { get; set; }
     
         public virtual Paciente Paciente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

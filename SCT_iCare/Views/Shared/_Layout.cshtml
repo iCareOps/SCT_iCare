@@ -9,7 +9,13 @@
     @Scripts.Render("~/bundles/modernizr")
     @{
         var oUsuario = (Usuarios)HttpContext.Current.Session["User"];
-        string Usuario = oUsuario.Nombre;
+        string Usuario = null;
+
+        if(oUsuario != null)
+        {
+            Usuario = oUsuario.Nombre;
+        }
+
 
     }
 
@@ -58,7 +64,7 @@
     </div>
     <div class="container body-content">
         @RenderBody()
-        <hr />
+        @*<hr />*@
         <footer class="colorFooter" style="position: fixed; left: 0px; bottom: 0px; height: 30px; width: 100%">
             <p class="text-right"><img src="~/Images/Powered-blanco.png" style="width:100px; opacity:0.6" /></p>
         </footer>
