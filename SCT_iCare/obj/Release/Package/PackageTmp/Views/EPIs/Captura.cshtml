@@ -9,8 +9,15 @@
 
     var oUser = (Usuarios)HttpContext.Current.Session["User"];
 
-    int idUser = oUser.idUsuario;
-    string nombreUsuario = oUser.Nombre;
+    string nombreUsuario = null;
+
+    if(oUser != null)
+    {
+        int idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+    }
+
+
 
     string parameter = ViewBag.Parameter;
     DateTime rango = Convert.ToDateTime(ViewBag.Fecha);
@@ -24,19 +31,18 @@
     DateTime tomorrowDate = new DateTime(year, month, tomorrorDay);
 
 
-    var repoCentral = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
+    //var repoCentral = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
+    var repoCentral = (from r in db.Captura select r).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList(); ;
 
+    int epis = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
 
+    int dictamenes = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura == "Terminado").Count();
 
-    int epis = (from e in db.EPI select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
+    int pendientes = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura == "No iniciado").Count();
 
-    int dictamenes = (from e in db.EPI select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.Estatus == "Terminado").Count();
+    int enCaptura = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura == "En captura...").Count();
 
-    int pendientes = (from e in db.EPI select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.Estatus == "No iniciado").Count();
-
-    int enCaptura = (from e in db.EPI select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.Estatus == "En captura...").Count();
-
-    int incidencia = (from e in db.EPI select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.Estatus == "Pendiente").Count();
+    int incidencia = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura == "Pendiente").Count();
 
     var sucursalesLista = from s in db.Sucursales select s.Nombre;
 
@@ -54,7 +60,7 @@
 <h3 style="color:white" class="text-center">EPI Center</h3>
 
 @*<script>setTimeout('document.location.reload()', 10000);</script>*@
-<hr />
+<br />
 
 @{ if (oUser.idUsuario == 11 || oUser.idUsuario == 16)
     {
@@ -93,7 +99,7 @@
                             @{
                                 foreach (var item in sucursalesLista)
                                 {
-                                    var elemento = (from v in db.EPI where v.Sucursal == item select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
+                                    var elemento = (from v in db.Captura where v.Sucursal == item select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
                             }
@@ -118,7 +124,7 @@
                             @{
                                 foreach (var item in sucursalesLista)
                                 {
-                                    var elemento = (from v in db.EPI where v.Sucursal == item && v.Estatus == "Terminado" && v.FechaExpediente >= thisDate && v.FechaExpediente < tomorrowDate select v).Count();
+                                    var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "Terminado" && v.FechaExpediente >= thisDate && v.FechaExpediente < tomorrowDate select v).Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
                             }
@@ -143,7 +149,7 @@
                             @{
                                 foreach (var item in sucursalesLista)
                                 {
-                                    var elemento = (from v in db.EPI where v.Sucursal == item && v.Estatus == "No iniciado" && v.FechaExpediente >= thisDate && v.FechaExpediente < tomorrowDate select v).Count();
+                                    var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "No iniciado" && v.FechaExpediente >= thisDate && v.FechaExpediente < tomorrowDate select v).Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
                             }
@@ -168,7 +174,7 @@
                             @{
                                 foreach (var item in sucursalesLista)
                                 {
-                                    var elemento = (from v in db.EPI where v.Sucursal == item select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
+                                    var elemento = (from v in db.Captura where v.Sucursal == item select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
                             }
@@ -193,7 +199,7 @@
                             @{
                                 foreach (var item in capturistas)
                                 {
-                                    var elemento = (from v in db.EPI where v.Estatus == "Terminado" && v.FechaExpediente >= thisDate && v.FechaExpediente < tomorrowDate && v.Capturista == item select v).Count();
+                                    var elemento = (from v in db.Captura where v.EstatusCaptura == "Terminado" && v.FechaExpediente >= thisDate && v.FechaExpediente < tomorrowDate && v.Capturista == item select v).Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
                             }
@@ -218,7 +224,7 @@
                             @{
                                 foreach (var item in sucursalesLista)
                                 {
-                                    var elemento = (from v in db.EPI where v.Sucursal == item && v.Estatus == "Pendiente" select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
+                                    var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "Pendiente" select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
                             }
@@ -228,7 +234,7 @@
             </div>
         </div>
 
-        <hr />
+        <br />
 
 
         @*<div id="contenedor_carga" style="background-color:white">
@@ -274,7 +280,7 @@
     </div>
 </div>
 
-<hr />
+<br />
 
     }
 
@@ -295,7 +301,8 @@
     }
 }
 
-<hr />
+<br />
+<br />
 
 <h4 style="color:white" class="text-center">Repositorio Central</h4>
 
@@ -314,23 +321,23 @@
 @{
     if(ViewBag.Parameter == "")
     {
-        var repo = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
+        var repo = (from r in db.Captura orderby r.TipoTramite select r).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
         repoCentral = repo;
     }
     else
     {
-        var repo = (from r in db.EPI
+        var repo = (from r in db.Captura
                     where
                     r.NombrePaciente.Contains(parameter) ||
-                    r.Estatus.Contains(parameter) ||
-                    //r.NoFolio == Convert.ToInt32(parameter) ||
-                    r.TipoEPI.Contains(parameter) ||
+                    r.EstatusCaptura.Contains(parameter) ||
+                    r.NoExpediente.Contains(parameter) ||
+                    r.TipoTramite.Contains(parameter) ||
                     r.Doctor.Contains(parameter) ||
                     r.Sucursal.Contains(parameter) ||
-                    r.Usuario.Contains(parameter) ||
+                    r.Capturista.Contains(parameter) ||
                     r.Capturista.Contains(parameter)
-                    orderby r.TipoEPI select r)
-            .Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
+                    orderby r.TipoTramite select r)
+                    .Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
         repoCentral = repo;
     }
 }
@@ -348,13 +355,10 @@
                 NoExpediente
             </th>
             <th>
-                Tipo EPI
+                Tipo de Trámite
             </th>
             <th>
                 Estatus
-            </th>
-            <th>
-                Fecha Expediente
             </th>
             <th>
                 Inicio Captura
@@ -369,7 +373,7 @@
                 Sucursal
             </th>
             <th>
-                Recepcionista
+                Capturista
             </th>
             <th>Acciones</th>
         </tr>
@@ -377,7 +381,7 @@
         @foreach (var item in repoCentral)
         {
 
-            if (item.TipoEPI == "PRIMERA VEZ")
+            if (item.TipoTramite == "PRIMERA VEZ")
             {
                 fila = "bg-warning";
             }
@@ -393,16 +397,13 @@
                 </td>
 
                 <td>
-                    @Html.DisplayFor(modelItem => item.NoFolio)
+                    @Html.DisplayFor(modelItem => item.NoExpediente)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.TipoEPI)
+                    @Html.DisplayFor(modelItem => item.TipoTramite)
                 </td>
                 <td>
-                    <b><i>@Html.DisplayFor(modelItem => item.Estatus)</i></b>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FechaExpediente)
+                    <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.InicioCaptura)
@@ -417,27 +418,27 @@
                     @Html.DisplayFor(modelItem => item.Sucursal)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Usuario)
+                    @Html.DisplayFor(modelItem => item.Capturista)
                 </td>
                 <td>
                     @{
-                        if (item.Estatus == "No iniciado")
+                        if (item.EstatusCaptura == "No iniciado")
                         {
                             @*<input type="submit" value="Capturar" class="btn btn-outline-warning boton-transparente botonesGral" />*@
                             @*@Html.ActionLink("Capturar", "EditExpediente", new { id = item.idEPI })*@
-                            <a href=@Url.Action("EditExpediente", "EPIs", new { id = item.idEPI, usuario = nombreUsuario  }) target="_blank" onclick="window.location.reload();" @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                            <a href=@Url.Action("EditExpediente", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario  }) target="_blank" onclick="window.location.reload();" @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
                         }
-                        else if (item.Estatus == "En captura...")
+                        else if (item.EstatusCaptura == "En captura...")
                         {
-                            <a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idEPI})><button type="button" class="btn btn-warning">Dictaminar</button></a>
+                            <a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idCaptura})><button type="button" class="btn btn-warning">Dictaminar</button></a>
                         }
-                        else if (item.Estatus == "Pendiente")
+                        else if (item.EstatusCaptura == "Pendiente")
                         {
-                            <a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idEPI})><button type="button" class="btn btn-warning">Dictaminar</button></a>
+                            <a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idCaptura})><button type="button" class="btn btn-warning">Dictaminar</button></a>
                         }
-                        else if (item.Estatus == "Terminado")
+                        else if (item.EstatusCaptura == "Terminado")
                         {
-                            <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.idEPI })><button type="button" class="btn btn-danger">Descargar</button></a>
+                            <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
                         }
 
                     }

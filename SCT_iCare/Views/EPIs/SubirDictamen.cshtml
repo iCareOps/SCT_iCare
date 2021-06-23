@@ -1,4 +1,4 @@
-﻿@model SCT_iCare.EPI
+﻿@model SCT_iCare.Captura
 
 @{
     ViewBag.Title = "SubirDictamen";
@@ -16,9 +16,9 @@
 
     @{ 
         SCTiCareEntities1 db = new SCTiCareEntities1();
-        string capturista = (from i in db.EPI where i.idEPI == id select i.Capturista).FirstOrDefault().ToString();
-        string folio = (from i in db.EPI where i.idEPI == id select i.NoFolio).FirstOrDefault().ToString();
-        string paciente = (from i in db.EPI where i.idEPI == id select i.NombrePaciente).FirstOrDefault().ToString();
+        string capturista = (from i in db.Captura where i.idCaptura == id select i.Capturista).FirstOrDefault().ToString();
+        string folio = (from i in db.Captura where i.idCaptura == id select i.NoExpediente).FirstOrDefault().ToString();
+        string paciente = (from i in db.Captura where i.idCaptura == id select i.NombrePaciente).FirstOrDefault().ToString();
     }
 
     <p>
@@ -35,6 +35,7 @@
                 <input type="hidden" name="folio" asp-for="id" class="labelGral" required value=@folio />
                 <input type="hidden" name="paciente" asp-for="id" class="labelGral" required value=@paciente />
                 <input type="hidden" name="incidencia" asp-for="id" class="labelGral" required value="Falla del Sistema" />
+                <input type="hidden" name="falla" asp-for="id" class="labelGral" required value="9" />
                 <button class="btn btn-outline-warning boton-transparentePendiente botonesGral" style="color:white" type="submit" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                     <span class="glyphicon glyphicon-alert"></span>&nbsp; Falla del sistema Metra
                 </button>
@@ -45,6 +46,7 @@
                 <input type="hidden" name="capturista" asp-for="id" class="labelGral" required value=@capturista />
                 <input type="hidden" name="folio" asp-for="id" class="labelGral" required value=@folio />
                 <input type="hidden" name="paciente" asp-for="id" class="labelGral" required value=@paciente />
+                <input type="hidden" name="falla" asp-for="id" class="labelGral" required value="10" />
                 <input type="hidden" name="incidencia" asp-for="id" class="labelGral" required value="Error en los Biométricos" />
                 <button class="btn btn-outline-warning boton-transparentePendiente botonesGral" style="color:white" type="submit" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                     <span class="glyphicon glyphicon-alert"></span>&nbsp; Error en los Biométricos
@@ -56,6 +58,7 @@
                 <input type="hidden" name="capturista" asp-for="id" class="labelGral" required value=@capturista />
                 <input type="hidden" name="folio" asp-for="id" class="labelGral" required value=@folio />
                 <input type="hidden" name="paciente" asp-for="id" class="labelGral" required value=@paciente />
+                <input type="hidden" name="falla" asp-for="id" class="labelGral" required value="11" />
                 <input type="hidden" name="incidencia" asp-for="id" class="labelGral" required value="Error en la Captura" />
                 <button class="btn btn-outline-warning boton-transparentePendiente botonesGral" style="color:white" type="submit" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                     <span class="glyphicon glyphicon-alert"></span>&nbsp; Error en la Captura
@@ -81,7 +84,7 @@
         </dt>
 
         <dd>
-            <h4 style="color:white">@Html.DisplayFor(model => model.NoFolio)</h4>
+            <h4 style="color:white">@Html.DisplayFor(model => model.NoExpediente)</h4>
         </dd>
 
         <dt>
@@ -89,7 +92,7 @@
         </dt>
 
         <dd>
-            <h4 style="color:white">@Html.DisplayFor(model => model.TipoEPI)</h4>
+            <h4 style="color:white">@Html.DisplayFor(model => model.TipoTramite)</h4>
         </dd>
 
 

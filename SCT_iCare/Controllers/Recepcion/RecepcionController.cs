@@ -14,6 +14,8 @@ using Newtonsoft.Json.Serialization;
 using SCT_iCare;
 
 using System.IO;
+using System.Text;
+using System.Globalization;
 
 namespace SCT_iCare.Controllers.Recepcion
 {
@@ -64,7 +66,7 @@ namespace SCT_iCare.Controllers.Recepcion
         {
             Paciente paciente = new Paciente();
 
-            paciente.Nombre = nombre.ToUpper();
+            paciente.Nombre = nombre.ToUpper()/*.Normalize(System.Text.NormalizationForm.FormD).Replace(@"´¨", "")*/;
             paciente.Telefono = telefono;
             paciente.Email = email;
 
@@ -208,7 +210,7 @@ namespace SCT_iCare.Controllers.Recepcion
             {
                 Paciente paciente = new Paciente();
 
-                paciente.Nombre = nombre.ToUpper();
+                paciente.Nombre = nombre.ToUpper().Normalize(System.Text.NormalizationForm.FormD);
                 paciente.Telefono = telefono;
                 paciente.Email = email;
 
@@ -311,7 +313,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 {
                     Paciente paciente = new Paciente();
 
-                    paciente.Nombre = nombre.ToUpper() + " " + n;
+                    paciente.Nombre = nombre.ToUpper().Normalize(System.Text.NormalizationForm.FormD) + " " + n;
                     paciente.Telefono = telefono;
                     paciente.Email = email;
 
@@ -502,7 +504,7 @@ namespace SCT_iCare.Controllers.Recepcion
             exp.Expediente = bytes2;
             exp.Recepcionista = usuario;
             exp.idPaciente = ide;
-            paciente.Nombre = nombre.ToUpper();
+            paciente.Nombre = nombre.ToUpper().Normalize(System.Text.NormalizationForm.FormD);
 
             captura.NombrePaciente = nombre.ToUpper();
             captura.NoExpediente = numero;

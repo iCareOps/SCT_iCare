@@ -129,35 +129,24 @@ namespace SCT_iCare.Controllers.EPICenter
 
         public ActionResult EditExpediente(int? id, string usuario /*[Bind(Include = "idEPI,NombrePaciente,BytesArchivo,NoFolio,TipoEPI,Estatus,FechaExpediente,InicioCaptura,FinalCaptura,Doctor,Sucursal,Usuario,Dictamen")] EPI ePI*/)
         {
-                //DescargarPDF(id);
-                EPI ePI = db.EPI.Find(id);
+            Captura captura = db.Captura.Find(id);
 
-                ePI.Estatus = "En captura...";
-                ePI.InicioCaptura = DateTime.Now;
-                ePI.Capturista = usuario;
+            captura.EstatusCaptura = "En captura...";
+            captura.InicioCaptura = DateTime.Now;
+            captura.Capturista = usuario;
 
+            var expediente = (from e in db.Expedientes where e.idPaciente == captura.idPaciente select e).FirstOrDefault();
 
-
-                //if(true)
-                //{
-                var bytesBinary = (from b in db.EPI where b.idEPI == id select b.BytesArchivo).FirstOrDefault();
-            //    Response.ContentType = "application/pdf";
-            //    Response.AddHeader("content-disposition", "attachment;filename=" + ePI.NombrePaciente + ".pdf");
-            //    Response.BinaryWrite(bytesBinary);
-            //    //Response.End();
-            //HttpContext.ApplicationInstance.CompleteRequest();
-
-
-            //}
+            var bytesBinary = expediente.Expediente;
 
                 if (ModelState.IsValid)
                 {
-                    db.Entry(ePI).State = EntityState.Modified;
+                    db.Entry(captura).State = EntityState.Modified;
                     db.SaveChanges();
                 //return Redirect("~/EPIs/capturaSucursal?sucursal=" + ePI.Sucursal + "");
                 return File(bytesBinary, "application/pdf");
             }
-                return View(ePI);
+                return View(captura);
 
         }
 
@@ -167,14 +156,14 @@ namespace SCT_iCare.Controllers.EPICenter
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            EPI ePI = db.EPI.Find(id);
-            if (ePI == null)
+            Captura captura = db.Captura.Find(id);
+            if (captura == null)
             {
                 return HttpNotFound();
             }
             ViewBag.ID = id;
-            ViewBag.Sucursal = ePI.Sucursal;
-            return View(ePI);
+            ViewBag.Sucursal = captura.Sucursal;
+            return View(captura);
 
         }
 
@@ -182,7 +171,9 @@ namespace SCT_iCare.Controllers.EPICenter
         [ValidateAntiForgeryToken]
         public ActionResult Dictaminar(int id, HttpPostedFileBase file)
         {
-            EPI epi = db.EPI.Find(id);
+            //EPI epi = db.EPI.Find(id);
+            Captura captura = db.Captura.Find(id);
+            Dictamen dictamen = new Dictamen();
 
             byte[] bytes2 = null;
 
@@ -199,29 +190,34 @@ namespace SCT_iCare.Controllers.EPICenter
                 }
             }
 
-
-            epi.Dictamen = bytes2;
-            epi.Estatus = "Terminado";
-            epi.FinalCaptura = DateTime.Now;
+            captura.EstatusCaptura = "Terminado";
+            captura.FinalCaptura = DateTime.Now;
+            dictamen.Dictamen1 = bytes2;
+            dictamen.idPaciente = captura.idPaciente;
+            dictamen.idAptitud = 7;
 
 
             if (ModelState.IsValid)
             {
-                db.Entry(epi).State = EntityState.Modified;
+                db.Entry(captura).State = EntityState.Modified;
+                db.Dictamen.Add(dictamen);
                 db.SaveChanges();
-                return RedirectToAction("capturaSucursal", "EPIs", new { sucursal = epi.Sucursal} );
+                return RedirectToAction("capturaSucursal", "EPIs", new { sucursal = captura.Sucursal} );
             }
 
-            return View(epi);
+            return View(captura);
         }
 
         public ActionResult DescargarPDF(int? id)
         {
-            EPI ePI = db.EPI.Find(id);
+            Captura captura = db.Captura.Find(id);
+            Dictamen dictamen = new Dictamen();
 
-            var bytesBinary = ePI.Dictamen;
+            var documento = (from d in db.Dictamen where captura.idPaciente == d.idPaciente select d.Dictamen1).FirstOrDefault();
+
+            var bytesBinary = documento;
             Response.ContentType = "application/pdf";
-            Response.AddHeader("content-disposition", "attachment;filename=" + ePI.NombrePaciente + ".pdf");
+            Response.AddHeader("content-disposition", "attachment;filename=" + captura.NombrePaciente + ".pdf");
             Response.BinaryWrite(bytesBinary);
             Response.End();
 
@@ -231,7 +227,7 @@ namespace SCT_iCare.Controllers.EPICenter
             //    //Response.End();
             //HttpContext.ApplicationInstance.CompleteRequest();
 
-            return RedirectToAction("capturaSucursal", "EPIs", new { sucursal = ePI.Sucursal.ToString() });
+            return RedirectToAction("capturaSucursal", "EPIs", new { sucursal = captura.Sucursal.ToString() });
         }
 
         // GET: EPIs/Delete/5
@@ -291,13 +287,19 @@ namespace SCT_iCare.Controllers.EPICenter
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Pendiente(int id, string paciente, string folio, string capturista, string incidencia)
+        public ActionResult Pendiente(int id, string paciente, string folio, string capturista, string incidencia, string falla)
         {
-            EPI epi = db.EPI.Find(id);
+            Captura captura = db.Captura.Find(id);
             Incidencias incidencias = new Incidencias();
 
-            epi.Estatus = "Pendiente";
-            epi.FinalCaptura = DateTime.Now;
+            Dictamen dictamen = new Dictamen();
+
+            dictamen.idPaciente = captura.idPaciente;
+            dictamen.idAptitud = Convert.ToInt32(falla);
+
+            captura.EstatusCaptura = "Pendiente";
+            captura.FinalCaptura = DateTime.Now;
+            
 
             incidencias.NombrePaciente = paciente;
             incidencias.Expediente = folio;
@@ -309,8 +311,9 @@ namespace SCT_iCare.Controllers.EPICenter
 
             if (ModelState.IsValid)
             {
-                db.Entry(epi).State = EntityState.Modified;
+                db.Entry(captura).State = EntityState.Modified;
                 db.Incidencias.Add(incidencias);
+                db.Dictamen.Add(dictamen);
                 db.SaveChanges();
                 return RedirectToAction("Captura", "EPIs");
             }
