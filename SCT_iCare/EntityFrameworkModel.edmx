@@ -77,6 +77,7 @@
           <Property Name="idPaciente" Type="int" />
           <Property Name="TipoTramite" Type="varchar" MaxLength="50" />
           <Property Name="Referencia" Type="varchar" MaxLength="30" />
+          <Property Name="Canal" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="Ciudades">
           <Key>
@@ -1333,6 +1334,7 @@
           <NavigationProperty Name="Paciente" Relationship="SCTiCareModel.FK_Cita_Paciente" FromRole="Cita" ToRole="Paciente" />
           <Property Name="TipoTramite" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Referencia" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Canal1" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Dictamen">
           <Key>
@@ -1846,6 +1848,7 @@
           <EntitySetMapping Name="Cita">
             <EntityTypeMapping TypeName="SCTiCareModel.Cita">
               <MappingFragment StoreEntitySet="Cita">
+                <ScalarProperty Name="Canal1" ColumnName="Canal" />
                 <ScalarProperty Name="Referencia" ColumnName="Referencia" />
                 <ScalarProperty Name="TipoTramite" ColumnName="TipoTramite" />
                 <ScalarProperty Name="idPaciente" ColumnName="idPaciente" />

@@ -4,8 +4,14 @@
     ViewBag.Title = "capturaSucursal";
 
     var oUser = (Usuarios)HttpContext.Current.Session["User"];
-    int idUser = oUser.idUsuario;
-    string nombreUsuario = oUser.Nombre;
+    string nombreUsuario = null;
+    int idUser = 0;
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+    }
 
     SCTiCareEntities1 db = new SCTiCareEntities1();
     var Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
@@ -22,8 +28,8 @@
     DateTime thisDate = new DateTime(year, month, day);
     DateTime tomorrowDate = new DateTime(year, month, tomorrorDay);
 
-    var Restriccion1 = db.EPI.Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
-    var Restriccion = from r in Restriccion1 orderby r.TipoEPI where r.Sucursal == ViewBag.Sucursal select r;
+    var Restriccion1 = db.Captura.Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
+    var Restriccion = from r in Restriccion1 orderby r.TipoTramite where r.Sucursal == ViewBag.Sucursal select r;
 
     string fila = "";
 }
@@ -53,7 +59,7 @@
                 NoExpediente
             </th>
             <th>
-                Tipo EPI
+                Trámite
             </th>
             <th>
                 Estatus
@@ -82,7 +88,7 @@
         @foreach (var item in Restriccion)
         {
 
-            if (item.TipoEPI == "PRIMERA VEZ")
+            if (item.TipoTramite == "PRIMERA VEZ")
             {
                 fila = "bg-warning";
             }
@@ -98,13 +104,13 @@
                 </td>
 
                 <td>
-                    @Html.DisplayFor(modelItem => item.NoFolio)
+                    @Html.DisplayFor(modelItem => item.NoExpediente)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.TipoEPI)
+                    @Html.DisplayFor(modelItem => item.TipoTramite)
                 </td>
                 <td>
-                    <b><i>@Html.DisplayFor(modelItem => item.Estatus)</i></b>
+                    <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.FechaExpediente)
@@ -122,23 +128,23 @@
                     @Html.DisplayFor(modelItem => item.Sucursal)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Usuario)
+                    @Html.DisplayFor(modelItem => item.Capturista)
                 </td>
                 <td>
                     @{
-                        if (item.Estatus == "No iniciado")
+                        if (item.EstatusCaptura == "No iniciado")
                         {
                             @*<input type="submit" value="Capturar" class="btn btn-outline-warning boton-transparente botonesGral" />*@
                             @*@Html.ActionLink("Capturar", "EditExpediente", new { id = item.idEPI })*@
-                            <a href=@Url.Action("EditExpediente", "EPIs", new { id = item.idEPI, usuario = nombreUsuario  }) target="_blank" onclick="window.location.reload();" @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                            <a href=@Url.Action("EditExpediente", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario  }) target="_blank" onclick="window.location.reload();" @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
                         }
-                        else if (item.Estatus == "En captura...")
+                        else if (item.EstatusCaptura == "En captura...")
                         {
-                            <a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idEPI})><button type="button" class="btn btn-warning">Dictaminar</button></a>
+                            <a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idCaptura})><button type="button" class="btn btn-warning">Dictaminar</button></a>
                         }
-                        else if (item.Estatus == "Terminado")
+                        else if (item.EstatusCaptura == "Terminado")
                         {
-                            <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.idEPI })><button type="button" class="btn btn-danger">Descargar</button></a>
+                            <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
                         }
 
                     }

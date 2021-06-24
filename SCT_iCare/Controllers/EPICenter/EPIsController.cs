@@ -320,5 +320,14 @@ namespace SCT_iCare.Controllers.EPICenter
 
             return RedirectToAction("Captura", "EPIs");
         }
+
+
+        public JsonResult EjemploJSON()
+        {
+            var captura = (from c in db.Paciente select c.Folio).ToList();
+
+            return Json(captura, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

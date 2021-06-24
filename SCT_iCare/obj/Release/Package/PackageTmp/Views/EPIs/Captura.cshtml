@@ -10,10 +10,11 @@
     var oUser = (Usuarios)HttpContext.Current.Session["User"];
 
     string nombreUsuario = null;
+    int idUser = 0;
 
     if(oUser != null)
     {
-        int idUser = oUser.idUsuario;
+        idUser = oUser.idUsuario;
         nombreUsuario = oUser.Nombre;
     }
 
@@ -62,7 +63,7 @@
 @*<script>setTimeout('document.location.reload()', 10000);</script>*@
 <br />
 
-@{ if (oUser.idUsuario == 11 || oUser.idUsuario == 16)
+@{ if (idUser == 11 || idUser == 16)
     {
 
         @*<p class="col-md-4">
@@ -375,7 +376,7 @@
             <th>
                 Capturista
             </th>
-            <th>Acciones</th>
+            @*<th>Acciones</th>*@
         </tr>
 
         @foreach (var item in repoCentral)
@@ -420,38 +421,8 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Capturista)
                 </td>
-                <td>
-                    @{
-                        if (item.EstatusCaptura == "No iniciado")
-                        {
-                            @*<input type="submit" value="Capturar" class="btn btn-outline-warning boton-transparente botonesGral" />*@
-                            @*@Html.ActionLink("Capturar", "EditExpediente", new { id = item.idEPI })*@
-                            <a href=@Url.Action("EditExpediente", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario  }) target="_blank" onclick="window.location.reload();" @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
-                        }
-                        else if (item.EstatusCaptura == "En captura...")
-                        {
-                            <a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idCaptura})><button type="button" class="btn btn-warning">Dictaminar</button></a>
-                        }
-                        else if (item.EstatusCaptura == "Pendiente")
-                        {
-                            <a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idCaptura})><button type="button" class="btn btn-warning">Dictaminar</button></a>
-                        }
-                        else if (item.EstatusCaptura == "Terminado")
-                        {
-                            <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
-                        }
-
-                    }
-
-                    @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1" data-id="@item.idEPI">Open modal for @item.idEPI</button>
-                        @Html.ActionLink("Editar", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#modalEdit" }) |
-                        @Html.ActionLink("Detalles", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#YourModalId" })*@
-                    @*@Html.ActionLink("Edit", "Edit", new { id = item.idEPI }) |
-                        @Html.ActionLink("Details", "Details", new { id = item.idEPI }) |
-                        @Html.ActionLink("Delete", "Delete", new { id = item.idEPI })*@
-                </td>
+                
             </tr>
-
 
         }
 

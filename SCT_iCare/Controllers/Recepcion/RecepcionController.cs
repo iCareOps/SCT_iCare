@@ -62,104 +62,203 @@ namespace SCT_iCare.Controllers.Recepcion
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create1(string nombre, string telefono, string email, string usuario, string sucursal, string pago, string tipoL, string tipoT, string referencia, string canal)
+        public ActionResult Create1(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string pago,/* string tipoL, string tipoT, */ string referencia)
         {
-            Paciente paciente = new Paciente();
+            Paciente paciente1 = new Paciente();
 
-            paciente.Nombre = nombre.ToUpper()/*.Normalize(System.Text.NormalizationForm.FormD).Replace(@"´¨", "")*/;
-            paciente.Telefono = telefono;
-            paciente.Email = email;
+            string canal = null;
 
-            //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
-            string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
-            //string doc = (from d in db.Doctores where d.Nombre == doctor select d.idDoctor).FirstOrDefault().ToString();
-
-            //Se obtiene el número del contador desde la base de datos
-            int? num = (from c in db.Sucursales where c.Nombre == sucursal select c.Contador).FirstOrDefault() + 1;
-
-            //Contadores por número de citas en cada sucursal
-            string contador = "";
-            if(num == null)
+            if (Convert.ToInt32(cantidad) == 1)
             {
-                contador = "100";
+                Paciente paciente = new Paciente();
+                paciente.Nombre = nombre.ToUpper()/*.Normalize(System.Text.NormalizationForm.FormD).Replace(@"´¨", "")*/;
+                paciente.Telefono = telefono;
+                paciente.Email = email;
+
+                //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
+                string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
+                //string doc = (from d in db.Doctores where d.Nombre == doctor select d.idDoctor).FirstOrDefault().ToString();
+
+                //Se obtiene el número del contador desde la base de datos
+                int? num = (from c in db.Sucursales where c.Nombre == sucursal select c.Contador).FirstOrDefault() + 1;
+
+                //Contadores por número de citas en cada sucursal
+                string contador = "";
+                if (num == null)
+                {
+                    contador = "100";
+                }
+                else if (num < 10)
+                {
+                    contador = "00" + Convert.ToString(num);
+                }
+                else if (num >= 10 && num < 100)
+                {
+                    contador = "0" + Convert.ToString(num);
+                }
+
+                //Se asigna el número de ID del doctor
+                //if(Convert.ToInt32(doc) < 10)
+                //{
+                //    doc = "0" + doc;
+                //}
+
+                string mes = DateTime.Now.Month.ToString();
+
+                if (Convert.ToInt32(mes) < 10)
+                {
+                    mes = "0" + mes;
+                }
+
+                //Se crea el número de Folio
+                string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+                paciente.Folio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+
+                if (ModelState.IsValid)
+                {
+                    db.Paciente.Add(paciente);
+                    db.SaveChanges();
+                    //return RedirectToAction("Index");
+                }
+
+                int? idSuc = (from i in db.Sucursales where i.Nombre == sucursal select i.idSucursal).FirstOrDefault();
+
+                Sucursales suc = db.Sucursales.Find(idSuc);
+
+                suc.Contador = Convert.ToInt32(num);
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(suc).State = EntityState.Modified;
+                    db.SaveChanges();
+                    //No retorna ya que sigue el proceso
+                    //return RedirectToAction("Index");
+                }
+
+                var idPaciente = (from i in db.Paciente where i.Folio == paciente.Folio select i.idPaciente).FirstOrDefault();
+
+                Cita cita = new Cita();
+
+                cita.idPaciente = idPaciente;
+                cita.FechaReferencia = DateTime.Now;
+                cita.Sucursal = sucursal;
+                //cita.Doctor = doctor;
+                cita.Recepcionista = usuario;
+                cita.EstatusPago = "Pagado";
+                cita.Referencia = referencia;
+                cita.Folio = numFolio;
+                cita.Canal1 = "SITIO";
+
+                if (ModelState.IsValid)
+                {
+                    db.Cita.Add(cita);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+
             }
-            else if(num < 10)
+            else
             {
-                contador = "00" + Convert.ToString(num);
+                //return View(detallesOrden);
+                for (int n = 1; n <= Convert.ToInt32(cantidad); n++)
+                {
+                    Paciente paciente = new Paciente();
+
+                    paciente.Nombre = nombre.ToUpper() + " " + n;
+                    paciente.Telefono = telefono;
+                    paciente.Email = email;
+
+                    //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
+                    string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
+                    //string doc = (from d in db.Doctores where d.Nombre == doctor select d.idDoctor).FirstOrDefault().ToString();
+
+                    //Se obtiene el número del contador desde la base de datos
+                    int? num = (from c in db.Sucursales where c.Nombre == sucursal select c.Contador).FirstOrDefault() + 1;
+
+                    //Contadores por número de citas en cada sucursal
+                    string contador = "";
+                    if (num == null)
+                    {
+                        contador = "100";
+                    }
+                    else if (num < 10)
+                    {
+                        contador = "00" + Convert.ToString(num);
+                    }
+                    else if (num >= 10 && num < 100)
+                    {
+                        contador = "0" + Convert.ToString(num);
+                    }
+
+                    //Se asigna el número de ID del doctor
+                    //if (Convert.ToInt32(doc) < 10)
+                    //{
+                    //    doc = "0" + doc;
+                    //}
+
+                    string mes = DateTime.Now.Month.ToString();
+
+                    if (Convert.ToInt32(mes) < 10)
+                    {
+                        mes = "0" + mes;
+                    }
+
+                    //Se crea el número de Folio
+                    string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+                    paciente.Folio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Paciente.Add(paciente);
+                        db.SaveChanges();
+                        //return RedirectToAction("Index");
+                    }
+
+                    int? idSuc = (from i in db.Sucursales where i.Nombre == sucursal select i.idSucursal).FirstOrDefault();
+
+                    Sucursales suc = db.Sucursales.Find(idSuc);
+
+                    suc.Contador = Convert.ToInt32(num);
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Entry(suc).State = EntityState.Modified;
+                        db.SaveChanges();
+                        //No retorna ya que sigue el proceso
+                        //return RedirectToAction("Index");
+                    }
+
+                    var idPaciente = (from i in db.Paciente where i.Folio == paciente.Folio select i.idPaciente).FirstOrDefault();
+
+                    Cita cita = new Cita();
+
+                    cita.TipoPago = pago;
+
+                    cita.idPaciente = idPaciente;
+                    cita.FechaReferencia = DateTime.Now;
+                    cita.Sucursal = sucursal;
+                    cita.Recepcionista = usuario;
+                    cita.EstatusPago = "Pagado";
+                    cita.Folio = numFolio;
+                    cita.Referencia = referencia;
+                    cita.Canal1 = nombre.ToUpper();
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Cita.Add(cita);
+                        db.SaveChanges();
+                        //no regresa ya que se debe ver la pantalla de Orden
+                        //return RedirectToAction("Index");
+                    }
+                }
             }
-            else if(num >= 10 && num < 100)
-            {
-                contador = "0" + Convert.ToString(num);
-            }
 
-            //Se asigna el número de ID del doctor
-            //if(Convert.ToInt32(doc) < 10)
-            //{
-            //    doc = "0" + doc;
-            //}
-
-            string mes = DateTime.Now.Month.ToString();
-
-            if(Convert.ToInt32(mes) < 10)
-            {
-                mes = "0" + mes;
-            }
-
-            //Se crea el número de Folio
-            string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
-            paciente.Folio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
-
-            if (ModelState.IsValid)
-            {
-                db.Paciente.Add(paciente);
-                db.SaveChanges();
-                //return RedirectToAction("Index");
-            }
-
-            int? idSuc = (from i in db.Sucursales where i.Nombre == sucursal select i.idSucursal).FirstOrDefault();
-
-            Sucursales suc = db.Sucursales.Find(idSuc);
-
-            suc.Contador = Convert.ToInt32(num);
-
-            if (ModelState.IsValid)
-            {
-                db.Entry(suc).State = EntityState.Modified;
-                db.SaveChanges();
-                //No retorna ya que sigue el proceso
-                //return RedirectToAction("Index");
-            }
-
-            var idPaciente = (from i in db.Paciente where i.Folio == paciente.Folio select i.idPaciente).FirstOrDefault();
-
-            Cita cita = new Cita();
-
-            cita.idPaciente = idPaciente;
-            cita.TipoTramite = tipoT;
-            cita.TipoLicencia = tipoL;
-            cita.FechaReferencia = DateTime.Now;
-            cita.Sucursal = sucursal;
-            //cita.Doctor = doctor;
-            cita.Recepcionista = usuario;
-            cita.EstatusPago = "Pagado";
-            cita.Folio = numFolio;
-            cita.TipoPago = pago;
-            cita.Referencia = referencia;
-            //cita.Canal =
-
-            if (ModelState.IsValid)
-            {
-                db.Cita.Add(cita);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(paciente);
+            return Redirect("Index"); ;
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Orden(string nombre, string telefono, string email, string usuario, string sucursal,  string tipoL, string tipoT, string cantidad)
+        public ActionResult Orden(string nombre, string telefono, string email, string usuario, string sucursal,  /*string tipoL, string tipoT,*/ string cantidad)
         {
             GetApiKey();
 
@@ -210,7 +309,7 @@ namespace SCT_iCare.Controllers.Recepcion
             {
                 Paciente paciente = new Paciente();
 
-                paciente.Nombre = nombre.ToUpper().Normalize(System.Text.NormalizationForm.FormD);
+                paciente.Nombre = nombre.ToUpper();
                 paciente.Telefono = telefono;
                 paciente.Email = email;
 
@@ -289,14 +388,12 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.Referencia = referencia;
 
                 cita.idPaciente = idPaciente;
-                cita.TipoTramite = tipoT;
-                cita.TipoLicencia = tipoL;
                 cita.FechaReferencia = DateTime.Now;
                 cita.Sucursal = sucursal;
                 cita.Recepcionista = usuario;
                 cita.EstatusPago = orden.payment_status;
                 cita.Folio = numFolio;
-                //cita.Canal =
+                cita.Canal1 = "SITIO";
 
                 if (ModelState.IsValid)
                 {
@@ -315,7 +412,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
                     paciente.Nombre = nombre.ToUpper().Normalize(System.Text.NormalizationForm.FormD) + " " + n;
                     paciente.Telefono = telefono;
-                    paciente.Email = email;
+                    paciente.Email = "referenciaoxxo@medicinagmi.mx";
 
                     //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
                     string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
@@ -392,14 +489,12 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.Referencia = referencia;
 
                     cita.idPaciente = idPaciente;
-                    cita.TipoTramite = tipoT;
-                    cita.TipoLicencia = tipoL;
                     cita.FechaReferencia = DateTime.Now;
                     cita.Sucursal = sucursal;
                     cita.Recepcionista = usuario;
                     cita.EstatusPago = orden.payment_status;
                     cita.Folio = numFolio;
-                    //cita.Canal =
+                    cita.Canal1 = nombre.ToUpper();
 
                     if (ModelState.IsValid)
                     {
@@ -471,7 +566,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Digitalizar(HttpPostedFileBase file, string id, string usuario, string nombre, string doctor, string numero)
+        public ActionResult Digitalizar(HttpPostedFileBase file, string id, string usuario, string nombre, string doctor, string numero, string tipoL, string tipoT)
         {
             int ide = Convert.ToInt32(id);
 
@@ -516,6 +611,8 @@ namespace SCT_iCare.Controllers.Recepcion
             captura.FechaExpediente = DateTime.Now;
 
             Cita citaModificar = new Cita();
+            cita.TipoLicencia = tipoL;
+            cita.TipoTramite = tipoT;
             cita.NoExpediente = numero;
             cita.Doctor = doctor;
 
