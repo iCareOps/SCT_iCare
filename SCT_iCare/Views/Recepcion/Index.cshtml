@@ -452,44 +452,42 @@ else
                 </td>
                 <td>
                     <div class="btn-group">
-                        @if (item.M.NoExpediente != null)
-                        {
-                            @*<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
-                                    Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
-                                </button>*@
-                        }
-                        else
-                        {
+
                             <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
                             </button>
+
+
+
+                    <div class="dropdown-menu" style="padding:10px">
+                        @if (item.M.EstatusPago == "Pagado" && item.M.NoExpediente == null)
+                        {
+                            <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
+                            <div class="dropdown-divider"></div>
+                            @*<a href="#" data-toggle="modal" data-target="#ModalEdit_@item.M.idPaciente"><b>Editar Datos</b></a>
+                            <div class="dropdown-divider"></div>*@
+                        }
+                        else if (item.M.EstatusPago == "pending_payment")
+                        {
+                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/CambiarEstatus")">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@item.M.idPaciente" />
+                                <b><input type="submit" value="Pagado" class="text-primary" style="background-color:white; border:none" /></b>
+                                <div class="dropdown-divider"></div>
+                            </form>
+                            @*<a href="#" data-toggle="modal" data-target="#ModalEdit_@item.M.idPaciente"><b>Editar Datos</b></a>
+                            <div class="dropdown-divider"></div>*@
+                        }
+                        else if (item.M.NoExpediente != null && item.M.EstatusPago == "Pagado")
+                        {
+                            <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
+                            <div class="dropdown-divider"></div>
                         }
 
-
-                        <div class="dropdown-menu" style="padding:10px">
-                            @if (item.M.EstatusPago == "Pagado")
-                            {
-                                <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
-                                <div class="dropdown-divider"></div>
-                                <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Editar Datos</b></a>
-                                <div class="dropdown-divider"></div>
-                            }
-                            else
-                            {
-                                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/CambiarEstatus")">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@item.M.idPaciente" />
-                                    <b><input type="submit" value="Pagado" class="text-primary" style="background-color:white; border:none" /></b>
-                                    <div class="dropdown-divider"></div>
-                                </form>
-                                <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Editar Datos</b></a>
-                                <div class="dropdown-divider"></div>
-                            }
-
-                        </div>
+                    </div>
                     </div>
 
-                    <!-- Modal -->
+                    <!-- Modal para digitalización-->
                     <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/Digitalizar")">
                         @Html.AntiForgeryToken()
                         <div class="modal fade" id="Modal_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -499,12 +497,6 @@ else
                                         <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Digitalizar Expediente de @item.N.Nombre</b></h4>
                                     </div>
                                     <div class="modal-body">
-
-                                        @*<div class="form-group">
-            <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
-            <input type="text" class="form-control" id="paciente" name="paciente" required>
-        </div>*@
-
                                         @{
                                             var consulta = (from c in db.Cita where c.Referencia == item.M.Referencia select c).Count();
                                             var consulta1 = (from c in db.Cita where c.Referencia == item.M.Referencia select c.Referencia).FirstOrDefault();
@@ -566,7 +558,7 @@ else
                                                     {
                                                         <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
                                                     }
-                                                    <option disabled >----------------------------------------------</option>
+                                                    <option disabled>----------------------------------------------</option>
                                                     foreach (var item1 in doctoresNO)
                                                     {
                                                         <option value="@item1.Nombre">@item1.Nombre</option>
@@ -583,6 +575,173 @@ else
                             </div>
                         </div>
                     </form>
+
+                    <!-- -------------------------------------------------------------------------------------------------------------- -->
+                    <!-- Modal para digitalización incompleta-->
+                    @*<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/EditarIncompleto")">
+                        @Html.AntiForgeryToken()
+                        <div class="modal fade" id="ModalEdit_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Editar Datos</b></h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        @{
+                                            consulta = (from c in db.Cita where c.Referencia == item.M.Referencia select c).Count();
+                                            consulta1 = (from c in db.Cita where c.Referencia == item.M.Referencia select c.Referencia).FirstOrDefault();
+                                            if (consulta == 1)
+                                            {
+                                                <div class="form-group">
+                                                    <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
+                                                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.N.Nombre">
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="form-group">
+                                                    <label for="recipient-name" class="col-form-label">Nombre del Gestor:</label>
+                                                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.M.Canal1">
+                                                </div>
+                                            }
+                                        }
+                                        <div class="form-group">
+                                            <label for="recipient-name" class="col-form-label">Teléfono:</label>
+                                            <input type="text" class="form-control" id="telefono" name="telefono" placeholder="@item.N.Telefono" />
+                                            <input type="hidden" class="form-control" id="id" name="id" value="@item.N.idPaciente">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="recipient-name" class="col-form-label">Email:</label>
+                                            <input type="email" class="form-control" id="email" name="email" placeholder="@item.N.Email" />
+                                        </div>
+                                        <div class="form-group" style="width:60%; min-width:320px">
+                                            <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                            <select name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                <option value="@item.M.TipoPago">@item.M.TipoPago</option>
+                                                <option value="Referencia OXXO">Referencia OXXO</option>
+                                                <option value="Referencia Scotiabank">Referencia Scotiabank</option>
+                                                <option value="Referencia BanBajío">Referencia BanBajío</option>
+                                                <option value="Transferencia vía Scotiabank">Transferencia vía Scotiabank</option>
+                                                <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                                            </select>
+                                        </div>
+                                        @if ((from c in db.Cita where c.Referencia == item.M.Referencia select c).Count() < 1 && item.M.NoOrden == null)
+                                        {
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Referencia de Pago:</label>
+                                                <input type="text" class="form-control" id="referencia" name="referencia" placeholder="@item.M.Referencia" />
+                                            </div>
+                                        }
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                        <input type="submit" value="Guardar" class="btn btn-primary" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>*@
+
+                    <!-- Modal para digitalización completa-->
+                    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/EditarCompleto")">
+                        @Html.AntiForgeryToken()
+                        <div class="modal fade" id="ModalEdit2_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Editar Datos</b></h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
+                                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.N.Nombre">
+                                            <input type="hidden" class="form-control" id="id" name="id" value="@item.N.idPaciente">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="recipient-name" class="col-form-label">Teléfono:</label>
+                                            <input type="text" class="form-control" id="telefono" name="telefono" placeholder="@item.N.Telefono" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="recipient-name" class="col-form-label">Email:</label>
+                                            <input type="email" class="form-control" id="email" name="email" placeholder="@item.N.Email" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="recipient-name" class="col-form-label">Número de Expediente:</label>
+                                            <input type="text" class="form-control" id="numero" name="numero" placeholder="@item.M.NoExpediente">
+                                        </div>
+                                        <div class="form-group" style="width:80%; min-width:320px">
+                                            <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
+                                            <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                <option value="@item.M.TipoLicencia">@item.M.TipoLicencia</option>
+                                                <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                                                <option value="MARITIMO">MARITIMO</option>
+                                                <option value="AEREO">AEREO</option>
+                                                <option value="FERROVIARIO">FERROVIARIO</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group" style="width:80%; min-width:320px">
+                                            <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
+                                            <select name="tipoT" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                <option value="@item.M.TipoTramite">@item.M.TipoTramite</option>
+                                                <option value="REVALIDACIÓN">REVALIDACIÓN</option>
+                                                <option value="PRIMERA VEZ">PRIMERA VEZ</option>
+                                            </select>
+                                        </div>
+                                        @if ((from c in db.Cita where c.Referencia == item.M.Referencia select c).Count() < 2 && item.M.NoOrden == null)
+                                        {
+                                            <div class="form-group" style="width:60%; min-width:320px">
+                                                <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                                <select name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                    <option value="@item.M.TipoPago">@item.M.TipoPago</option>
+                                                    <option value="Referencia OXXO">Referencia OXXO</option>
+                                                    <option value="Referencia Scotiabank">Referencia Scotiabank</option>
+                                                    <option value="Referencia BanBajío">Referencia BanBajío</option>
+                                                    <option value="Transferencia vía Scotiabank">Transferencia vía Scotiabank</option>
+                                                    <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Referencia de Pago:</label>
+                                                <input type="text" class="form-control" id="referencia" name="referencia" placeholder="@item.M.Referencia" />
+                                            </div>
+                                        }
+
+                                        <div class="form-group">
+                                            <label for="file" class="col-form-label">Archivo:</label>
+                                            <input type="file" name="file" asp-for="file" class="" value="file" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="recipient-name" class="col-form-label">Doctor Dictaminador:</label>
+                                            <select name="doctor" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                <option value="@item.M.Doctor">@item.M.Doctor</option>
+                                                @{
+                                                    doctoresSucursal = from d in db.Doctores where d.idSucursal == idHospital select d;
+                                                    doctoresNO = from d in db.Doctores where d.idSucursal != idHospital select d;
+                                                    consultorios = from c in db.Doctores select c;
+
+                                                    foreach (var item1 in doctoresSucursal)
+                                                    {
+                                                        <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
+                                                    }
+                                                    <option disabled>----------------------------------------------</option>
+                                                    foreach (var item1 in doctoresNO)
+                                                    {
+                                                        <option value="@item1.Nombre">@item1.Nombre</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                        <input type="submit" value="Guardar" class="btn btn-primary" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
                 </td>
             </tr>
 

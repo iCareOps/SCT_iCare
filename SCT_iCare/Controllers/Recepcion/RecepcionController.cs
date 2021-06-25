@@ -410,7 +410,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 {
                     Paciente paciente = new Paciente();
 
-                    paciente.Nombre = nombre.ToUpper().Normalize(System.Text.NormalizationForm.FormD) + " " + n;
+                    paciente.Nombre = nombre.ToUpper() + " " + n;
                     paciente.Telefono = telefono;
                     paciente.Email = "referenciaoxxo@medicinagmi.mx";
 
@@ -599,8 +599,7 @@ namespace SCT_iCare.Controllers.Recepcion
             exp.Expediente = bytes2;
             exp.Recepcionista = usuario;
             exp.idPaciente = ide;
-            paciente.Nombre = nombre.ToUpper().Normalize(System.Text.NormalizationForm.FormD);
-
+            paciente.Nombre = nombre.ToUpper();
             captura.NombrePaciente = nombre.ToUpper();
             captura.NoExpediente = numero;
             captura.TipoTramite = cita.TipoTramite;
@@ -732,6 +731,166 @@ namespace SCT_iCare.Controllers.Recepcion
             long marcaTiempo = (Int64)(treintaDias.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
             //string tiempo = marcaTiempo.ToString();
             return marcaTiempo;
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditarCompleto(HttpPostedFileBase file, string id, string nombre, string doctor, string numero, string tipoL, string tipoT
+            , string pago, string telefono, string email, string referencia)
+        {
+            int ide = Convert.ToInt32(id);
+
+            Paciente paciente = db.Paciente.Find(ide);
+            var cita = (from c in db.Cita where c.idPaciente == ide select c).FirstOrDefault();
+            var expediente = (from c in db.Expedientes where c.idPaciente == ide select c).FirstOrDefault();
+            var captura = (from c in db.Captura where c.idPaciente == ide select c).FirstOrDefault();
+
+            string ID = null;
+            string NOMBRE = null;
+            string DOCTOR = null;
+            string NUMERO = null;
+            string TIPOL = null;
+            string TIPOT = null;
+            string PAGO = null;
+            string TELEFONO = null;
+            string EMAIL = null;
+            string REFERENCIA = null;
+
+            if(id == null)
+            {
+                ID = paciente.idPaciente.ToString();
+            }
+            else
+            {
+                ID = id;
+            }
+
+            if (nombre == "")
+            {
+                NOMBRE = paciente.Nombre;
+            }
+            else
+            {
+                NOMBRE = nombre;
+            }
+
+            if (doctor == "")
+            {
+                DOCTOR = cita.Doctor;
+            }
+            else
+            {
+                DOCTOR = doctor;
+            }
+
+            if (numero == "")
+            {
+                NUMERO = cita.NoExpediente;
+            }
+            else
+            {
+                NUMERO = numero;
+            }
+
+            if (tipoL == "")
+            {
+                TIPOL = cita.TipoLicencia;
+            }
+            else
+            {
+                TIPOL = tipoL;
+            }
+
+            if (tipoT == "")
+            {
+                TIPOT = cita.TipoTramite;
+            }
+            else
+            {
+                TIPOT = tipoT;
+            }
+
+            if (pago == "")
+            {
+                PAGO = cita.TipoPago;
+            }
+            else
+            {
+                PAGO = pago;
+            }
+
+            if (telefono == "")
+            {
+                TELEFONO = paciente.Telefono;
+            }
+            else
+            {
+                TELEFONO = telefono;
+            }
+
+            if (email == "")
+            {
+                EMAIL = paciente.Email;
+            }
+            else
+            {
+                EMAIL = email;
+            }
+
+            if (referencia == "")
+            {
+                REFERENCIA = cita.Referencia;
+            }
+            else
+            {
+                REFERENCIA = referencia;
+            }
+
+            byte[] bytes2 = expediente.Expediente;
+
+            if (file != null && file.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(file.FileName);
+
+                byte[] bytes;
+                using (BinaryReader br = new BinaryReader(file.InputStream))
+                {
+                    bytes = br.ReadBytes(file.ContentLength);
+                }
+
+                bytes2 = bytes;
+
+                //var bytesBinary = bytes;
+                //Response.ContentType = "application/pdf";
+                //Response.AddHeader("content-disposition", "attachment;filename=MyPDF.pdf");
+                //Response.BinaryWrite(bytesBinary);
+                //Response.End();
+            }
+
+            paciente.Nombre = NOMBRE;
+            paciente.Telefono = TELEFONO;
+            paciente.Email = EMAIL;
+
+            cita.TipoPago = PAGO;
+            cita.TipoLicencia = TIPOL;
+            cita.NoExpediente = NUMERO;
+            cita.TipoTramite = TIPOT;
+            cita.Referencia = REFERENCIA;
+            cita.Doctor = DOCTOR;
+
+            expediente.Expediente = bytes2;
+
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(paciente).State = EntityState.Modified;
+                db.Entry(cita).State = EntityState.Modified;
+                db.Entry(expediente).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return Redirect("Index");
         }
     }
 }
