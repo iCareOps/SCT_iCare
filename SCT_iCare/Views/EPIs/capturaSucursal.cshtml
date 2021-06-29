@@ -39,7 +39,22 @@
 <h3 style="color:white" class="text-center">EPI Center</h3>
 <h4 style="color:#AC9070" class="text-center">Captura de la sucursal: <span style="color:white">@ViewBag.Sucursal</span></h4>
 
-<script>setTimeout('document.location.reload()', 10000);</script>
+<script>
+    var i = 0;
+    //var id = setInterval('document.location.reload()', 1000);
+
+    var id = setInterval(function () {
+        document.location.reload();
+
+        i++;
+        
+    } if (i == 2) {
+        clearInterval(id);
+    }, 1000);
+
+    
+
+</script>
 
 <div class="enlaceSinBoton">
     @Html.ActionLink("Volver a la Sucursales", "Captura")
@@ -136,7 +151,7 @@
                         {
                             @*<input type="submit" value="Capturar" class="btn btn-outline-warning boton-transparente botonesGral" />*@
                             @*@Html.ActionLink("Capturar", "EditExpediente", new { id = item.idEPI })*@
-                            <a href=@Url.Action("EditExpediente", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario  }) target="_blank" onclick="window.location.reload();" @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                            <a href=@Url.Action("EditExpediente", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario  }) target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';" @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
                         }
                         else if (item.EstatusCaptura == "En captura...")
                         {
@@ -226,4 +241,6 @@
         </div>
     </div>
 </div>
+
+
 

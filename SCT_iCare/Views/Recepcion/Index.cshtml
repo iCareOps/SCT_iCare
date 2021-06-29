@@ -11,32 +11,12 @@
     var Hospital = "";
     var idHospital = 0;
     string Sucursal = null;
-    int idUser = -1;
+    int idUser = 3;
     string nombreUsuario = null;
     string fila = "";
+    int registros;
 
     int flag = 1; //contador de la tabla
-
-    if (oUser != null)
-    {
-        idUser = oUser.idUsuario;
-        nombreUsuario = oUser.Nombre;
-
-        if (idUser != 1)
-        {
-            Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
-            Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
-            idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
-            Sucursal = Hospital.ToString();
-            Sucursal = Hospital.ToString();
-        }
-        else
-        {
-            Recepcion = -1;
-            Hospital = "GENERAL";
-            Sucursal = Hospital.ToString();
-        }
-    }
 
     DateTime start = DateTime.Now;
 
@@ -49,7 +29,41 @@
 
     var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 
-    int registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate).Count();
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+
+        if (idUser != 3)
+        {
+            Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
+            Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
+            idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
+            Sucursal = Hospital.ToString();
+
+            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+
+            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate).Count();
+
+        }
+        else
+        {
+            Hospital = "GENERAL";
+            Sucursal = Hospital.ToString();
+
+            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+
+            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate).Count();
+
+        }
+    }
+
+    
+
+    //var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+
+    //int registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate).Count();
 
 }
 
@@ -100,10 +114,28 @@
                         <label for="recipient-name" class="col-form-label">Email:</label>
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
-                    <div class="form-group">
-                        <input type="hidden" name="sucursal" asp-for="file" class="" required value="@Sucursal" />
-                        <input type="hidden" name="usuario" asp-for="file" class="" required value="@nombreUsuario" />
-                    </div>
+                        @if (idUser == 3)
+                        {
+                            <div class="form-group" style="width:60%; min-width:320px">
+                                <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                                <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                    @{
+                                        var sucursalesOption = from s in db.Sucursales select s.Nombre;
+                                        foreach (var opcion in sucursalesOption)
+                                        {
+                                            <option value="@opcion">@opcion</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <input type="hidden" name="usuario" asp-for="file" class="" required value="Administración Recepción" />
+                        }
+                        else
+                        {
+                            <input type="hidden" name="sucursal" asp-for="file" class="" required value="@Sucursal" />
+                            <input type="hidden" name="usuario" asp-for="file" class="" required value="@nombreUsuario" />
+                        }
+
                     <div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
                         <select name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
@@ -242,19 +274,36 @@
                         <label for="recipient-name" class="col-form-label">Email:</label>
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
-                    <div class="form-group">
+                    @if (idUser == 3)
+                    {
+                        <div class="form-group" style="width:60%; min-width:320px">
+                            <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                            <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                @{
+                                    var sucursalesOption = from s in db.Sucursales select s.Nombre;
+                                    foreach (var opcion in sucursalesOption)
+                                    {
+                                        <option value="@opcion">@opcion</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <input type="hidden" name="usuario" asp-for="file" class="" required value="Administración Recepción" />
+                    }
+                    else
+                    {
                         <input type="hidden" name="sucursal" asp-for="file" class="" required value="@Sucursal" />
                         <input type="hidden" name="usuario" asp-for="file" class="" required value="@nombreUsuario" />
-                    </div>
+                    }
                     @*<div class="form-group" style="width:80%; min-width:320px">
-                        <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
-                        <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                            <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
-                            <option value="MARITIMO">MARITIMO</option>
-                            <option value="AEREO">AEREO</option>
-                            <option value="FERROVIARIO">FERROVIARIO</option>
-                        </select>
-                    </div>*@
+            <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
+            <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                <option value="MARITIMO">MARITIMO</option>
+                <option value="AEREO">AEREO</option>
+                <option value="FERROVIARIO">FERROVIARIO</option>
+            </select>
+        </div>*@
                     @*<div class="form-group" style="width:80%; min-width:320px">
             <label for="recipient-name" class="col-form-label">Doctor:</label>
 
@@ -272,12 +321,12 @@
         </div>*@
 
                     @*<div class="form-group" style="width:80%; min-width:320px">
-                        <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
-                        <select name="tipoT" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                            <option value="REVALIDACIÓN">REVALIDACIÓN</option>
-                            <option value="PRIMERA VEZ">PRIMERA VEZ</option>
-                        </select>
-                    </div>*@
+            <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
+            <select name="tipoT" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                <option value="REVALIDACIÓN">REVALIDACIÓN</option>
+                <option value="PRIMERA VEZ">PRIMERA VEZ</option>
+            </select>
+        </div>*@
 
 </div>
             <div class="modal-footer">

@@ -289,23 +289,45 @@
 }
 
 <h4 style="color:white" class="text-center">Sucursales</h4>
+<center>
+    @{
+        var sucursales = from s in db.Sucursales select s;
+        string sucursal = null;
 
-@{
-    var sucursales = from s in db.Sucursales select s;
-    string sucursal = null;
+        foreach (var item in sucursales)
+        {
+            sucursal = item.Nombre;
+            <a href=@Url.Action("capturaSucursal", "EPIs", new { sucursal = sucursal }) ><button type="button" class="btn btn-outline-warning boton-transparenteExcel botonesGral"><span class="glyphicon glyphicon-folder-open"></span> &nbsp; &nbsp;@item.Nombre</button></a>
 
-    foreach (var item in sucursales)
-    {
-        sucursal = item.Nombre;
-        <a href=@Url.Action("capturaSucursal", "EPIs", new { sucursal = sucursal })><button type="button" class="btn btn-outline-warning boton-transparenteExcel botonesGral"><span class="glyphicon glyphicon-folder-open"></span> &nbsp; &nbsp;@item.Nombre</button></a>
-
+        }
     }
-}
-
+</center>
 <br />
 <br />
 
 <h4 style="color:white" class="text-center">Repositorio Central</h4>
+
+@*<button type="button" onclick="Obtener();">Ejemplo</button>
+
+<script>
+    function Obtener() {
+        fetch("@Url.Content("~/EPIs/EjemploJSON")")
+            .then(function (res) {
+                return res.json();
+            })
+            .then(function (miJson) {
+                console.log(miJson);
+                let miResultado = "";
+                for (let i = 0; i < miJson.length; i++) {
+                    miResultado += "<p>" + miJson[i].Nombre + "</p>"
+                }
+
+                document.getElementById("MiDiv").innerHTML = miResultado;
+            })
+    }
+</script>*@
+
+<div id="MiDiv" style="color:white"></div>
 
 <!--<nav class="navbar navbar-light bg-light">
     <form class="form-inline col-md-10" action="@Url.Content("~/EPIs/Captura")" method="post">

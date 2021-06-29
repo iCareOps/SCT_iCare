@@ -139,14 +139,14 @@ namespace SCT_iCare.Controllers.EPICenter
 
             var bytesBinary = expediente.Expediente;
 
-                if (ModelState.IsValid)
-                {
-                    db.Entry(captura).State = EntityState.Modified;
-                    db.SaveChanges();
-                //return Redirect("~/EPIs/capturaSucursal?sucursal=" + ePI.Sucursal + "");
-                return File(bytesBinary, "application/pdf");
+            if (ModelState.IsValid)
+            {
+                db.Entry(captura).State = EntityState.Modified;
+                db.SaveChanges();                
             }
-                return View(captura);
+            return File(bytesBinary, "application/pdf");
+            //return View(captura);
+
 
         }
 
@@ -324,9 +324,11 @@ namespace SCT_iCare.Controllers.EPICenter
 
         public JsonResult EjemploJSON()
         {
-            var captura = (from c in db.Paciente select c.Folio).ToList();
+            List<Paciente> data = db.Paciente.ToList();
 
-            return Json(captura, JsonRequestBehavior.AllowGet);
+            var selected = data.Select(S => new { S.Nombre, S.Telefono });
+
+            return Json(selected, JsonRequestBehavior.AllowGet);
         }
 
     }
