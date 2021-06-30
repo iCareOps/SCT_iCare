@@ -142,7 +142,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.idPaciente = idPaciente;
                 cita.FechaReferencia = DateTime.Now;
                 cita.Sucursal = sucursal;
-                //cita.Doctor = doctor;
+                cita.FechaCita = DateTime.Now;
                 cita.Recepcionista = usuario;
                 cita.EstatusPago = "Pagado";
                 cita.Referencia = referencia;
@@ -242,6 +242,7 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.Folio = numFolio;
                     cita.Referencia = referencia;
                     cita.Canal1 = nombre.ToUpper();
+                    cita.FechaCita = DateTime.Now;
 
                     if (ModelState.IsValid)
                     {
@@ -264,11 +265,13 @@ namespace SCT_iCare.Controllers.Recepcion
 
             int cantidadDiferencia;
             int cantidadReal = Convert.ToInt32(cantidad);
+            string mailSeteado = email;
 
             if(Convert.ToInt32(cantidad) > 3)
             {
                 cantidadDiferencia = Convert.ToInt32(cantidad) - 3;
                 cantidadReal = 3;
+                mailSeteado = "referenciaoxxo@medicinagmi.mx";
             }
 
             int precio = Convert.ToInt32(cantidadReal) * 2900;
@@ -276,7 +279,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
             Order order = new conekta.Order().create(@"{
                       ""currency"":""MXN"",
-                      ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @",
+                      ""customer_info"": " + ConvertirCliente(nombre, mailSeteado, telefono) + @",
                       ""line_items"": [{
                       ""name"": " + ConvertirProductos1(sucursal) + @",
                       ""unit_price"": " + ConvertirProductos2(Convert.ToString(precio)) + @",
@@ -379,6 +382,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
                 cita.TipoPago = "REFERENCIA OXXO";
                 cita.NoOrden = orden.id;
+                
 
                 JavaScriptSerializer js = new JavaScriptSerializer();
                 dynamic datosCargo2 = js.Deserialize<dynamic>(orden.charges.data[0].ToString());
@@ -412,7 +416,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
                     paciente.Nombre = nombre.ToUpper() + " " + n;
                     paciente.Telefono = telefono;
-                    paciente.Email = "referenciaoxxo@medicinagmi.mx";
+                    paciente.Email = email;
 
                     //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
                     string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
@@ -480,6 +484,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
                     cita.TipoPago = "REFERENCIA OXXO";
                     cita.NoOrden = orden.id;
+                 
 
                     JavaScriptSerializer js = new JavaScriptSerializer();
                     dynamic datosCargo2 = js.Deserialize<dynamic>(orden.charges.data[0].ToString());
@@ -602,7 +607,7 @@ namespace SCT_iCare.Controllers.Recepcion
             paciente.Nombre = nombre.ToUpper();
             captura.NombrePaciente = nombre.ToUpper();
             captura.NoExpediente = numero;
-            captura.TipoTramite = cita.TipoTramite;
+            captura.TipoTramite = tipoT;
             captura.EstatusCaptura = "No iniciado";
             captura.Doctor = doctor;
             captura.Sucursal = cita.Sucursal;

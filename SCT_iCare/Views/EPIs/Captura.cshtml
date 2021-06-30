@@ -12,7 +12,7 @@
     string nombreUsuario = null;
     int idUser = 0;
 
-    if(oUser != null)
+    if (oUser != null)
     {
         idUser = oUser.idUsuario;
         nombreUsuario = oUser.Nombre;
@@ -61,7 +61,55 @@
 <h3 style="color:white" class="text-center">EPI Center</h3>
 
 @*<script>setTimeout('document.location.reload()', 10000);</script>*@
-<br />
+@{
+    int episProgeso = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
+    int dictamenesProgreso = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura == "Terminado").Count();
+
+    int porcentaje = (dictamenesProgreso * 100) / episProgeso;
+    string progreso = "Progreso:";
+
+    if(porcentaje == 0)
+    {
+        progreso = "Comenzamos el día. Vamos a capturar esos EPIs!";
+    }
+    else if (porcentaje > 0 && porcentaje < 10)
+    {
+        progreso = "Vamos bien. Echémosle galleta!";
+    }
+    else if (porcentaje >= 10  && porcentaje < 45)
+    {
+        progreso = "Uff. Si le echamos montón vamos a terminar rápido";
+    }
+    else if (porcentaje >= 45 && porcentaje < 55)
+    {
+        progreso = "Estamos a la mitad del camino";
+    }
+    else if (porcentaje >= 55 && porcentaje < 75)
+    {
+        progreso = "Ya estamos más para acá que para allá!";
+    }
+    else if (porcentaje >= 75 && porcentaje < 95)
+    {
+        progreso = "Unos cuantos más y lo logramos!!";
+    }
+    else if (porcentaje >= 95 && porcentaje < 100)
+    {
+        progreso = "SI SE PUEDE!! SI SE PUEDE!!";
+    }
+    else if (porcentaje == 100)
+    {
+        progreso = "LO LOGRAMOS!!!!";
+    }
+
+
+    <h4 style="color:chartreuse">@progreso</h4>
+    <div class="progress">
+        <div class="progress-bar bg-warning" role="progressbar" style="width: @porcentaje%; background-color:#57D94E" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">@porcentaje%</div>
+    </div>
+
+    <br />
+}
+
 
 @{ if (idUser == 11 || idUser == 16)
     {
@@ -175,7 +223,7 @@
                             @{
                                 foreach (var item in sucursalesLista)
                                 {
-                                    var elemento = (from v in db.Captura where v.Sucursal == item select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
+                                    var elemento = (from v in db.Captura where v.Sucursal == item select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura == "En captura...").Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
                             }
@@ -254,34 +302,60 @@
     }
     else
     {
-<div class="container">
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorAz botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal5" style="color:white">
-        <h4><span class="glyphicon glyphicon-user"></span> &nbsp; &nbsp;Dictámenes por Capturista</h4>
-    </button>
+        <div class="container">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorAm botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal4" style="color:white">
+                <h4><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs en Captura: <b>@enCaptura</b></h4>
+            </button>
 
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color:aquamarine">
-                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-user"></span> &nbsp; &nbsp;Dictámenes por Capturista</h3>
-                </div>
-                <div class="modal-body">
-                    @{
-                        foreach (var item in capturistas)
-                        {
-                            var elemento = (from v in db.EPI where v.Estatus == "Terminado" && v.FechaExpediente >= thisDate && v.FechaExpediente < tomorrowDate && v.Capturista == item select v).Count();
-                            <h4><b>@item:</b> @elemento</h4>
-                        }
-                    }
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:gold">
+                            <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs en Captura: <b>@enCaptura</b></h3>
+                        </div>
+                        <div class="modal-body">
+                            @{
+                                foreach (var item in sucursalesLista)
+                                {
+                                    var elemento = (from v in db.Captura where v.Sucursal == item select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura == "En captura...").Count();
+                                    <h4><b>@item:</b> @elemento</h4>
+                                }
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<br />
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorRo botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal6" style="color:white">
+                <h4><span class="glyphicon glyphicon-alert"></span> &nbsp; &nbsp;Pendientes por Dictaminar: <b>@incidencia</b></h4>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:orange">
+                            <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-alert"></span> &nbsp; &nbsp;Pendientes por Dictaminar: <b>@incidencia</b></h3>
+                        </div>
+                        <div class="modal-body">
+                            @{
+                                foreach (var item in sucursalesLista)
+                                {
+                                    var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "Pendiente" select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
+                                    <h4><b>@item:</b> @elemento</h4>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <br />
 
     }
 
@@ -297,7 +371,7 @@
         foreach (var item in sucursales)
         {
             sucursal = item.Nombre;
-            <a href=@Url.Action("capturaSucursal", "EPIs", new { sucursal = sucursal }) ><button type="button" class="btn btn-outline-warning boton-transparenteExcel botonesGral"><span class="glyphicon glyphicon-folder-open"></span> &nbsp; &nbsp;@item.Nombre</button></a>
+            <a href=@Url.Action("capturaSucursal", "EPIs", new { sucursal = sucursal })><button type="button" class="btn btn-outline-warning boton-transparenteExcel botonesGral"><span class="glyphicon glyphicon-folder-open"></span> &nbsp; &nbsp;@item.Nombre</button></a>
 
         }
     }
@@ -309,23 +383,23 @@
 
 @*<button type="button" onclick="Obtener();">Ejemplo</button>
 
-<script>
-    function Obtener() {
-        fetch("@Url.Content("~/EPIs/EjemploJSON")")
-            .then(function (res) {
-                return res.json();
-            })
-            .then(function (miJson) {
-                console.log(miJson);
-                let miResultado = "";
-                for (let i = 0; i < miJson.length; i++) {
-                    miResultado += "<p>" + miJson[i].Nombre + "</p>"
-                }
+    <script>
+        function Obtener() {
+            fetch("@Url.Content("~/EPIs/EjemploJSON")")
+                .then(function (res) {
+                    return res.json();
+                })
+                .then(function (miJson) {
+                    console.log(miJson);
+                    let miResultado = "";
+                    for (let i = 0; i < miJson.length; i++) {
+                        miResultado += "<p>" + miJson[i].Nombre + "</p>"
+                    }
 
-                document.getElementById("MiDiv").innerHTML = miResultado;
-            })
-    }
-</script>*@
+                    document.getElementById("MiDiv").innerHTML = miResultado;
+                })
+        }
+    </script>*@
 
 <div id="MiDiv" style="color:white"></div>
 
@@ -333,8 +407,9 @@
     <form class="form-inline col-md-10" action="@Url.Content("~/EPIs/Captura")" method="post">
         @Html.AntiForgeryToken()
         <input class="form-control mr-sm-2" id="parameter" name="parameter" type="search" placeholder="Paciente o Expediente" aria-label="Search" style="display:inline-block" required>
-        <input class="btn btn-info my-2 my-sm-0" type="submit" style="display:inline-block" value="Buscar">--> @*<b><span class="glyphicon glyphicon-search"></span></b></input>*@
-    <!--</form>
+        <input class="btn btn-info my-2 my-sm-0" type="submit" style="display:inline-block" value="Buscar">-->
+@*<b><span class="glyphicon glyphicon-search"></span></b></input>*@
+<!--</form>
     <form class="form-inline container" action="@Url.Content("~/EPIs/Captura")" method="post">
         <input type="date" class="form-control col-md-2" id="fecha" name="nacimiento">
     </form>
@@ -342,7 +417,7 @@
 
 
 @{
-    if(ViewBag.Parameter == "")
+    if (ViewBag.Parameter == "")
     {
         var repo = (from r in db.Captura orderby r.TipoTramite select r).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
         repoCentral = repo;
@@ -359,7 +434,8 @@
                     r.Sucursal.Contains(parameter) ||
                     r.Capturista.Contains(parameter) ||
                     r.Capturista.Contains(parameter)
-                    orderby r.TipoTramite select r)
+                    orderby r.TipoTramite
+                    select r)
                     .Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
         repoCentral = repo;
     }
@@ -443,7 +519,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Capturista)
                 </td>
-                
+
             </tr>
 
         }
