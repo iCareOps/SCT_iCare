@@ -274,7 +274,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 mailSeteado = "referenciaoxxo@medicinagmi.mx";
             }
 
-            int precio = Convert.ToInt32(cantidadReal) * 2900;
+            int precio = Convert.ToInt32(cantidadReal) * 2842;
 
 
             Order order = new conekta.Order().create(@"{
@@ -304,6 +304,9 @@ namespace SCT_iCare.Controllers.Recepcion
                 amount = orden.amount,
                 charges = orden.charges
             };
+
+            var referenciaSB = (from r in db.ReferenciasSB where r.EstatusReferencia == "LIBRE" select r.ReferenciaSB).FirstOrDefault();
+            ViewBag.ReferenciaSB = referenciaSB;
 
             ViewBag.Orden = order.id;
             ViewBag.Metodo = "OXXO";
@@ -398,10 +401,17 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.EstatusPago = orden.payment_status;
                 cita.Folio = numFolio;
                 cita.Canal1 = "SITIO";
+                cita.FechaCita = DateTime.Now;
+
+
+                int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
+                ReferenciasSB refe = db.ReferenciasSB.Find(idRefSB);
+                refe.EstatusReferencia = "PENDIENTE";
 
                 if (ModelState.IsValid)
                 {
                     db.Cita.Add(cita);
+                    db.Entry(refe).State = EntityState.Modified;
                     db.SaveChanges();
                     //no regresa ya que se debe ver la pantalla de Orden
                     //return RedirectToAction("Index");
@@ -500,9 +510,15 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.EstatusPago = orden.payment_status;
                     cita.Folio = numFolio;
                     cita.Canal1 = nombre.ToUpper();
+                    cita.FechaCita = DateTime.Now;
+
+                    int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
+                    ReferenciasSB refe = db.ReferenciasSB.Find(idRefSB);
+                    refe.EstatusReferencia = "PENDIENTE";
 
                     if (ModelState.IsValid)
                     {
+                        db.Entry(refe).State = EntityState.Modified;
                         db.Cita.Add(cita);
                         db.SaveChanges();
                         //no regresa ya que se debe ver la pantalla de Orden
@@ -548,8 +564,38 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CambiarEstatus(int? id)
+        public ActionResult CambiarEstatus(int? id, string pago, string numero)
         {
+            if (pago != "Referencia Scotiabank")
+            {
+                var tipoPago = (from t in db.ReferenciasSB where t.ReferenciaSB == numero select t).FirstOrDefault();
+
+                if(tipoPago != null)
+                {
+                    ReferenciasSB refe = db.ReferenciasSB.Find(tipoPago.idReferencia);
+                    refe.EstatusReferencia = "LIBRE";
+
+                    if(ModelState.IsValid)
+                    {
+                        db.Entry(refe).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+            }
+            else
+            {
+                var tipoPago = (from t in db.ReferenciasSB where t.ReferenciaSB == numero select t).FirstOrDefault();
+
+                ReferenciasSB refe = db.ReferenciasSB.Find(tipoPago.idReferencia);
+                refe.EstatusReferencia = "OCUPADO";
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(refe).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
             var referencia = (from r in db.Cita where r.idPaciente == id select r.Referencia).FirstOrDefault();
             var consulta = from c in db.Cita where c.Referencia == referencia select c;
             if (ModelState.IsValid)
@@ -559,6 +605,7 @@ namespace SCT_iCare.Controllers.Recepcion
                     Cita cita = db.Cita.Find(item.idCita);
 
                     cita.EstatusPago = "Pagado";
+                    cita.TipoPago = pago;
                     db.Entry(cita).State = EntityState.Modified;
                     
                 }
@@ -571,7 +618,42 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Digitalizar(HttpPostedFileBase file, string id, string usuario, string nombre, string doctor, string numero, string tipoL, string tipoT)
+        public ActionResult CURP_Expediente(string id, string nombre, string numero, string curp, string tipoPago)
+        {
+            int ide = Convert.ToInt32(id);
+
+            string NOMBRE = "";
+
+            var paciente = (from p in db.Paciente where p.idPaciente == ide select p).FirstOrDefault();
+            var cita = (from p in db.Cita where p.idPaciente == ide select p).FirstOrDefault();
+
+            if(nombre == "")
+            {
+                NOMBRE = paciente.Nombre;
+            }
+            else
+            {
+                NOMBRE = nombre;
+            }
+
+            paciente.Nombre = NOMBRE.ToUpper();
+            paciente.CURP = curp.ToUpper();
+            cita.NoExpediente = numero;
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(paciente).State = EntityState.Modified;
+                db.Entry(cita).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Digitalizar(HttpPostedFileBase file, string id, string usuario, string nombre, string doctor, string numero, string tipoL, string tipoT, string curp)
         {
             int ide = Convert.ToInt32(id);
 
@@ -601,10 +683,22 @@ namespace SCT_iCare.Controllers.Recepcion
                 //Response.End();
             }
 
+            string CURP;
+
+            if (curp == "")
+            {
+                CURP = paciente.CURP;
+            }
+            else
+            {
+                CURP = curp;
+            }
+
             exp.Expediente = bytes2;
             exp.Recepcionista = usuario;
             exp.idPaciente = ide;
             paciente.Nombre = nombre.ToUpper();
+            paciente.CURP = curp.ToUpper();
             captura.NombrePaciente = nombre.ToUpper();
             captura.NoExpediente = numero;
             captura.TipoTramite = tipoT;
@@ -741,7 +835,7 @@ namespace SCT_iCare.Controllers.Recepcion
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult EditarCompleto(HttpPostedFileBase file, string id, string nombre, string doctor, string numero, string tipoL, string tipoT
-            , string pago, string telefono, string email, string referencia)
+            , string pago, string telefono, string email, string referencia, string curp)
         {
             int ide = Convert.ToInt32(id);
 
@@ -760,6 +854,7 @@ namespace SCT_iCare.Controllers.Recepcion
             string TELEFONO = null;
             string EMAIL = null;
             string REFERENCIA = null;
+            string CURP = null;
 
             if(id == null)
             {
@@ -851,6 +946,15 @@ namespace SCT_iCare.Controllers.Recepcion
                 REFERENCIA = referencia;
             }
 
+            if (curp == "")
+            {
+                CURP = paciente.CURP;
+            }
+            else
+            {
+                CURP = curp;
+            }
+
             byte[] bytes2 = expediente.Expediente;
 
             if (file != null && file.ContentLength > 0)
@@ -875,6 +979,7 @@ namespace SCT_iCare.Controllers.Recepcion
             paciente.Nombre = NOMBRE;
             paciente.Telefono = TELEFONO;
             paciente.Email = EMAIL;
+            paciente.CURP = CURP;
 
             cita.TipoPago = PAGO;
             cita.TipoLicencia = TIPOL;
@@ -897,5 +1002,55 @@ namespace SCT_iCare.Controllers.Recepcion
 
             return Redirect("Index");
         }
+
+
+        public JsonResult Buscar(string dato)
+        {
+            string parametro;
+
+            if(dato.All(char.IsDigit))
+            {
+                parametro = dato;
+            }
+            else
+            {
+                parametro = dato.ToUpper();
+            }
+
+            List<Paciente> data = db.Paciente.ToList();
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            var selected = data.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m } )
+                .Where(r => r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro)
+                .Select(S => new { S.N.idPaciente, S.N.Nombre, S.N.Telefono, S.N.Email, S.N.Folio, S.N.CURP,
+                    S.M.TipoPago, FechaCita = S.M.FechaCita.ToString(), S.M.NoOrden, S.M.EstatusPago, S.M.TipoLicencia, S.M.NoExpediente,
+                    FechaReferencia  = S.M.FechaReferencia.ToString(), S.M.Referencia, S.M.Sucursal, S.M.Doctor, S.M.TipoTramite });
+
+            //var joinSelected = selected.Join(db.Captura, n => n.idPaciente, d => d.idPaciente, (n, d) => new { N = n, D = d })
+            //    .Select(S => new {
+            //        S.N.idPaciente,
+            //        S.N.Nombre,
+            //        S.N.Telefono,
+            //        S.N.Email,
+            //        S.N.Folio,
+            //        S.N.CURP,
+            //        S.N.TipoPago,
+            //        FechaCita = S.N.FechaCita.ToString(),
+            //        S.N.NoOrden,
+            //        S.N.EstatusPago,
+            //        S.N.TipoLicencia,
+            //        S.N.NoExpediente,
+            //        FechaReferencia = S.N.FechaReferencia.ToString(),
+            //        S.N.Referencia,
+            //        S.N.Sucursal,
+            //        S.N.Doctor,
+            //        S.N.TipoTramite,
+            //        S.D.EstatusCaptura
+            //    }); ;
+
+            //string nombre = selected.Nombre.ToString();
+
+            return Json(selected, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

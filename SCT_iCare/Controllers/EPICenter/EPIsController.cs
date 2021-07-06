@@ -22,6 +22,13 @@ namespace SCT_iCare.Controllers.EPICenter
             return View(/*db.EPI.ToList()*/);
         }
 
+        public ActionResult CentroControl()
+        {
+            ViewBag.Date = DateTime.Now.ToString("dd-MMMM-yyyy");
+
+            return View(db.Paciente.ToList());
+        }
+
         // GET: EPIs/Details/5
         public ActionResult Details(int? id)
         {
@@ -326,7 +333,25 @@ namespace SCT_iCare.Controllers.EPICenter
         {
             List<Paciente> data = db.Paciente.ToList();
 
-            var selected = data.Select(S => new { S.Nombre, S.Telefono });
+            var selected = data.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Select( S => new { S.N.Nombre, S.N.Telefono, S.M.FechaCita, S.M.Referencia });
+            var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m });
+
+            return Json(selected, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult General()
+        {
+            List<Paciente> data = db.Paciente.ToList();
+            var selected = data.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Select(S => new { S.N.Nombre, S.N.Telefono, S.M.FechaCita, S.M.Referencia });
+
+            return Json(selected, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult Actuales(string palabra)
+        {
+            List<Paciente> data = db.Paciente.ToList();
+            var selected = data.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(r => r.N.Nombre == palabra).Select(S => new { S.N.Nombre, S.N.Telefono, S.M.FechaCita, S.M.Referencia });
 
             return Json(selected, JsonRequestBehavior.AllowGet);
         }

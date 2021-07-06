@@ -52,5 +52,6 @@ namespace SCT_iCare
         public virtual DbSet<Expedientes> Expedientes { get; set; }
         public virtual DbSet<IncidenciaDictamen> IncidenciaDictamen { get; set; }
         public virtual DbSet<Paciente> Paciente { get; set; }
+        public virtual DbSet<ReferenciasSB> ReferenciasSB { get; set; }
     }
 }

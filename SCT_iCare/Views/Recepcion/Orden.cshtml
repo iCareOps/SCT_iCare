@@ -3,6 +3,8 @@
 @{
     ViewBag.Title = "Details";
 
+    string referenciaSB = ViewBag.ReferenciaSB;
+
     conekta.Order orden = new conekta.Order().find(ViewBag.Orden);
 
     System.Web.Script.Serialization.JavaScriptSerializer js = new System.Web.Script.Serialization.JavaScriptSerializer();
@@ -91,7 +93,7 @@
                 <dd class="labelInfo">
                     @{
                         //int precio = Convert.ToInt32(orden.amount) / 100;
-                        int precio = cantidad * 2900;
+                        int precio = cantidad * 2842;
                     }
                     <h4>$ @precio .00</h4>
                 </dd>
@@ -189,9 +191,9 @@
                         <br />
                     </div>
                     <img src="~/Images/scotiabank.png" class="col-xs-4" />
-                    @{
+                    @*@{
                         var referenciaSB = new string(referencia.Reverse().Take(10).Reverse().ToArray());
-                    }
+                    }*@
                     @*<div class="col-xs-12" style="color:gray"><h5><b>REFERENCIA</b></h5></div>*@
                     <div class="col-xs-12" style="color:black; border:solid gray; border-radius:6px; background-color:aliceblue; text-align:center"><h4><b>@referenciaSB</b></h4></div>
                     <div class="col-xs-12">

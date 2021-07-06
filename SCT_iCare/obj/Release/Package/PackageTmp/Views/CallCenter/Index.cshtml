@@ -1,83 +1,309 @@
-﻿@model IEnumerable<SCT_iCare.Sucursales>
+﻿@model IEnumerable<SCT_iCare.Paciente>
+
 @{
     ViewBag.Title = "Index";
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    SCTiCareEntities1 db = new SCTiCareEntities1();
+
+    var Recepcion = new int?();
+    var Hospital = "";
+    var idHospital = 0;
+    string Sucursal = null;
+    int idUser = 3;
+    string nombreUsuario = null;
+    string fila = "";
+    int registros;
+
+    int flag = 1; //contador de la tabla
+
+    DateTime start = DateTime.Now;
+
+    int year = start.Year;
+    int month = start.Month;
+    int day = start.Day;
+    int tomorrorDay = day + 1;
+    DateTime thisDate = new DateTime(year, month, day);
+    DateTime tomorrowDate = DateTime.Now.AddDays(1);
+
+    var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+
+        
+            Hospital = "GENERAL";
+            Sucursal = Hospital.ToString();
+
+            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && s.M.CC == oUser.Nombre)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+
+            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && s.M.CC == oUser.Nombre).Count();
+    }
+
 }
 
 <br />
+<br />
+<h3 style="color:white" class="text-center">Call Center</h3>
+<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>
 
 <br />
-
-<h3 style="color:white" class="text-center">Crear referencia</h3>
-
 <br />
 
-<div class="container formularioLogin2">
-    <div class="row">
-        <div class="">
-            <div>
-                <form action="@Url.Content("~/CallCenter/Orden")" asp-controller="Login" id="Login" method="post">
-                    <div class="form-group col-md-12" style="margin-bottom:6%">
-                        <label class="col-md-12 text-info"><h4>Datos de la solicitud:</h4></label>
-                        <br />
-                        <br />
 
-                            <select class="form-control" name="tipoPago" style="width:50%; min-height:5vh; min-width:240px; font-size:2vh" class="form-select labelGral">
-                                <option value="OXXO">Referencia OXXO</option>
-                                <option value="SPEI">Transferencia SPEI</option>
-                            </select>
+<div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Generar referencia de pago</b></h3>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/CallCenter/Orden")">
+                    @Html.AntiForgeryToken()
+                    <div class="form-inline">
+                        <label for="recipient-name" class="col-form-label">Cantidad de EPIs requeridos:</label>
+                    </div>
+                    <div class="form-inline">
+                        <span class="">
+                            <button class="btn btn-info" id="menos1" type="button"><b><span class="glyphicon glyphicon-minus"></span></b></button>
+                        </span>
+                        <input style="display:inline-block" type="number" class="form-control" id="contador1" min="1" name="cantidad" placeholder="Ingresa una cantidad" required>
+                        <span class="">
+                            <button class="btn btn-info" id="mas1" type="button"><b><span class="glyphicon glyphicon-plus"></span></b></button>
+                        </span>
                         <br />
-                        <label class="col-md-12"><h5>Consultorio asignado:</h5></label>
-                        <select name="consultorio" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select labelGral">
-                            @*<option value="value1" selected>--Estados, Consultorios y Doctores--</option>
-            <option value="SATELITE">Clínica SATÉLITE, CDMX --- Cto. Novelistas 7 Cd. Satélite</option>
-            <option value="LINDAVISTA">Hospital Ángeles LINDAVISTA, CDMX --- Cali 878 Lindavista</option>
-            <option value="UNIVERSIDAD">Clínica UNIVERSIDAD, CDMX --- Gabriel Mancera 1802 Del Valle</option>
-            <option value="VERACRUZ">Clínica VERACRUZ, VER --- Juan de Dios Peza 959 Ignacio Zaragoza</option>*@
+                        <br />
+                    </div>
+                    <input type="hidden" class="form-control" id="usuario" name="usuario" value="@oUser.Nombre">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Nombre del Paciente (o Gestor):</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Teléfono:</label>
+                        <input type="tel" class="form-control" pattern="[0-9]{10}" title="El formato de teléfono debe contener 10 números" id="telefono" name="telefono" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
+                        <input type="date" class="form-control" id="fecha" name="fecha" required>
+                    </div>
+                    <div class="form-group" style="width:60%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                        <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
                             @{
-                                var sucursales = Model.OrderBy(i => i.idCiudad).ToList(); //from c in Model select c;
-
-                                foreach (var item in sucursales)
+                                var sucursalesOption = from s in db.Sucursales select s.Nombre;
+                                foreach (var opcion in sucursalesOption)
                                 {
-                                    SCTiCareEntities1 db = new SCTiCareEntities1();
-                                    string ciudad = (from c in db.Ciudades where item.idCiudad == c.idCiudad select c.Ciudad).FirstOrDefault().ToString();
-                                    string estado = (from c in db.Ciudades where item.idCiudad == c.idCiudad select c.Estado).FirstOrDefault().ToString();
-                                    <option value="@item.Nombre">@item.Nombre - - - @item.Calle, @item.Colonia, @ciudad, @estado</option>
+                                    <option value="@opcion">@opcion</option>
                                 }
                             }
                         </select>
                     </div>
-                    <br />
-                    <div class="form-group col-md-12">
-                        <label class="col-md-4"><h5>Nombre del Cliente:</h5></label>
-                        <input type="text" asp-for="nombre" class="form-control col-md-8" name="nombre" required />
-                    </div>
-                    <div class="form-group col-md-12">
-                        <label class="col-md-4"><h5>Email:</h5></label>
-                        <input type="text" asp-for="email" class="form-control col-md-8" name="email" required />
-                    </div>
-                    <div class="form-group col-md-12">
-                        <label class="col-md-4"><h5>Teléfono:</h5></label>
-                        <input type="tel" asp-for="telefono" class="form-control col-md-8" name="telefono" required />
-                    </div>
-                    <div class="form-group col-md-12">
-                        <label class="col-md-4"><h5>Precio:</h5></label>
-                        <input type="text" asp-for="precio" class="form-control col-md-8" name="precio" required />
-                    </div>
-                    <br />
-                    <div class="form-group col-md-12">
-                        <label class="col-md-4"><h5></h5></label>
-                        <input type="submit" asp-for="crearOrden" class="form-control btn btn-primary" style="width:100%" value="Crear Orden" />
-                        @*<button class="btn btn-primary botones">@Html.ActionLink("Sign In", "Ingresar", "Login")</button>*@
-                    </div>
-                </form>
-            </div>
+
+</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <input type="submit" value="Enviar" class="btn btn-primary" />
+            </div></form>
         </div>
     </div>
 </div>
 
-<br />
+<script type="text/javascript">
+    var sumar1 = document.getElementById("mas1");
+    var restar1 = document.getElementById("menos1");
+    var contador1 = document.getElementById("contador1");
+    var importe1 = document.getElementById("importe1");
+    var valorBase1 = 5.20;
+    var prevValue1;
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+    function calcular1() {
+        var value1 = contador1.value;
+        var isValid1 = /^[1-9][0-9]*$/.test(value1);
+
+        if (!isValid1) {
+            contador1.value = prevValue1;
+        } else {
+            prevValue1 = value;
+        }
+
+        importe1.value = Number1.parseFloat(contador1.value * valorBase1).toFixed(2);
+    }
+
+    sumar1.onclick = function () {
+        contador1.value = Number(contador1.value) + 1;
+        calcular1();
+    };
+
+    restar1.onclick = function () {
+        contador1.value = Number(contador1.value) - 1;
+        calcular1();
+    };
+
+    contador1.onchange = function () {
+        calcular1();
+    };
+
+    contador1.onkeyup = function () {
+        if (contador1.value === "") {
+            return;
+        }
+        calcular1();
+    };
+
+    calcular1();
+</script>
+
+@if (modelo.FirstOrDefault() == null)
+{
+    <h1 style="color:white">No tienes Referencias de Pago el día de hoy!</h1>
 }
+else
+{
+<div class="tablaScroll">
+    <table class="table tablas" style="color: #2F2D6B">
+        <tr style="background-color:#62E3C9">
+            <th>
+            </th>
+
+            <th>
+                Nombre
+            </th>
+
+            <th>
+                Email
+            </th>
+            <th>
+                Teléfono
+            </th>
+            <th>
+                Folio
+            </th>
+            <th>
+                Sucursal
+            </th>
+            <th>
+                Fecha Cita
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in modelo)
+        {
+            
+
+            <tr>
+                <td>
+                    @flag
+                </td>
+
+                <td>
+                    <b>@Html.DisplayFor(modelItem => item.N.Nombre)</b>
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.N.Email)
+                </td>
+
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.N.Telefono)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.N.Email)
+                </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.N.Telefono)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.N.Folio)
+                </td>
+                <td>
+                    <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.M.FechaCita)
+                </td>
+                <td>
+                    <div class="btn-group">
+
+                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                            </button>
+
+
+
+                    <div class="dropdown-menu" style="padding:10px">
+                            <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
+                            <div class="dropdown-divider"></div>
+                    </div>
+                    </div>
+
+                    <!-- Modal para editar-->
+                    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/CallCenter/EditarCompleto")">
+                        @Html.AntiForgeryToken()
+                        <div class="modal fade" id="ModalEdit2_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        @{
+                                            if ((from i in db.Cita where i.Referencia == item.M.Referencia select i).Count() < 2)
+                                            {
+                                                <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Editar Datos</b></h4>
+                                            }
+                                            else
+                                            {
+                                                <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Editar Datos</b></h4>
+                                                <h5 class="modal-title text-danger" id="exampleModalLabel"><b>Este registro pertenece a un grupo de gestoría. Al modificar datos se aplicarán los cambios para todo el bloque.</b></h5>
+                                            }
+                                        }
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
+                                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.N.Nombre">
+                                            <input type="hidden" class="form-control" id="id" name="id" value="@item.N.idPaciente">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="recipient-name" class="col-form-label">Teléfono:</label>
+                                            <input type="text" class="form-control" id="telefono" name="telefono" placeholder="@item.N.Telefono" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="recipient-name" class="col-form-label">Email:</label>
+                                            <input type="email" class="form-control" id="email" name="email" placeholder="@item.N.Email" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
+                                            <input type="date" class="form-control" id="fecha" name="fecha" required />
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                        <input type="submit" value="Guardar" class="btn btn-primary" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </td>
+            </tr>
+
+            flag += 1;
+
+        }
+
+    </table>
+</div>
+}
+
+
 

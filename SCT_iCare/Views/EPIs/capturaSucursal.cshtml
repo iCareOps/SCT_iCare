@@ -26,7 +26,7 @@
     int day = start.Day;
     int tomorrorDay = day + 1;
     DateTime thisDate = new DateTime(year, month, day);
-    DateTime tomorrowDate = new DateTime(year, month, tomorrorDay);
+    DateTime tomorrowDate = DateTime.Now.AddDays(1);
 
     var Restriccion1 = db.Captura.Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
     var Restriccion = from r in Restriccion1 orderby r.TipoTramite where r.Sucursal == ViewBag.Sucursal select r;

@@ -225,7 +225,7 @@ namespace SCT_iCare.Controllers.CallCenter
                 mailSeteado = "referenciaoxxo@medicinagmi.mx";
             }
 
-            int precio = Convert.ToInt32(cantidadReal) * 2900;
+            int precio = Convert.ToInt32(cantidadReal) * 2842;
 
 
             Order order = new conekta.Order().create(@"{
@@ -255,6 +255,9 @@ namespace SCT_iCare.Controllers.CallCenter
                 amount = orden.amount,
                 charges = orden.charges
             };
+
+            var referenciaSB = (from r in db.ReferenciasSB where r.EstatusReferencia == "LIBRE" select r.ReferenciaSB).FirstOrDefault();
+            ViewBag.ReferenciaSB = referenciaSB;
 
             ViewBag.Orden = order.id;
             ViewBag.Metodo = "OXXO";
@@ -289,11 +292,7 @@ namespace SCT_iCare.Controllers.CallCenter
                     contador = "0" + Convert.ToString(num);
                 }
 
-                //Se asigna el número de ID del doctor
-                //if (Convert.ToInt32(doc) < 10)
-                //{
-                //    doc = "0" + doc;
-                //}
+                
 
                 string mes = DateTime.Now.Month.ToString();
 
@@ -350,9 +349,16 @@ namespace SCT_iCare.Controllers.CallCenter
                 cita.Canal1 = "SITIO";
                 cita.FechaCita = fecha;
 
+                int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
+
+                ReferenciasSB refe = db.ReferenciasSB.Find(idRefSB);
+                refe.EstatusReferencia = "PENDIENTE";
+                
+
                 if (ModelState.IsValid)
                 {
                     db.Cita.Add(cita);
+                    db.Entry(refe).State = EntityState.Modified;
                     db.SaveChanges();
                     //no regresa ya que se debe ver la pantalla de Orden
                     //return RedirectToAction("Index");
@@ -452,9 +458,14 @@ namespace SCT_iCare.Controllers.CallCenter
                     cita.Folio = numFolio;
                     cita.Canal1 = nombre.ToUpper();
 
+                    int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
+                    ReferenciasSB refe = db.ReferenciasSB.Find(idRefSB);
+                    refe.EstatusReferencia = "PENDIENTE";
+
                     if (ModelState.IsValid)
                     {
                         db.Cita.Add(cita);
+                        db.Entry(refe).State = EntityState.Modified;
                         db.SaveChanges();
                         //no regresa ya que se debe ver la pantalla de Orden
                         //return RedirectToAction("Index");
@@ -758,21 +769,34 @@ namespace SCT_iCare.Controllers.CallCenter
             }
             else
             {
-                var bloque = from i in db.Cita where i.Referencia == (from l in db.Cita where i.idPaciente == ide select l.Referencia).FirstOrDefault() select i;
-
+                var bloque = from i in db.Cita where i.Referencia == ((from l in db.Cita where l.idPaciente == ide select l.Referencia).FirstOrDefault()) select i;
+                int contador = 1;
                 foreach(var item in bloque)
                 {
                     Cita cita2 = db.Cita.Find(item.idCita);
                     Paciente paciente2 = (from p in db.Paciente where p.idPaciente == cita2.idPaciente select p).FirstOrDefault();
 
-                    paciente2.Nombre = NOMBRE;
-                    paciente2.Telefono = TELEFONO;
-                    paciente2.Email = EMAIL;
+                    if(nombre == "")
+                    {
+                        paciente2.Telefono = TELEFONO;
+                        paciente2.Email = EMAIL;
 
-                    cita2.FechaCita = fecha;
-                    db.Entry(cita).State = EntityState.Modified;
-                    db.Entry(paciente).State = EntityState.Modified;
-                    
+                        cita2.FechaCita = fecha;
+                        db.Entry(cita).State = EntityState.Modified;
+                        db.Entry(paciente).State = EntityState.Modified;
+                    }
+                    else
+                    {
+                        paciente2.Nombre = nombre.ToUpper() +" " + contador.ToString();
+                        paciente2.Telefono = TELEFONO;
+                        paciente2.Email = EMAIL;
+
+                        cita2.FechaCita = fecha;
+                        cita2.Canal1 = nombre.ToUpper();
+                        db.Entry(cita).State = EntityState.Modified;
+                        db.Entry(paciente).State = EntityState.Modified;
+                    }
+                    contador++;
                 }
                 db.SaveChanges();
 

@@ -29,7 +29,7 @@
     int day = start.Day;
     int tomorrorDay = day + 1;
     DateTime thisDate = new DateTime(year, month, day);
-    DateTime tomorrowDate = new DateTime(year, month, tomorrorDay);
+    DateTime tomorrowDate = DateTime.Now.AddDays(1);
 
 
     //var repoCentral = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
@@ -65,10 +65,20 @@
     int episProgeso = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
     int dictamenesProgreso = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura == "Terminado").Count();
 
-    int porcentaje = (dictamenesProgreso * 100) / episProgeso;
+    int porcentaje;
+
+    if (episProgeso == 0)
+    {
+        porcentaje = 0;
+    }
+    else
+    {
+        porcentaje = (dictamenesProgreso * 100) / episProgeso;
+    }
+
     string progreso = "Progreso:";
 
-    if(porcentaje == 0)
+    if (porcentaje == 0)
     {
         progreso = "Comenzamos el día. Vamos a capturar esos EPIs!";
     }
@@ -76,7 +86,7 @@
     {
         progreso = "Vamos bien. Echémosle galleta!";
     }
-    else if (porcentaje >= 10  && porcentaje < 45)
+    else if (porcentaje >= 10 && porcentaje < 45)
     {
         progreso = "Uff. Si le echamos montón vamos a terminar rápido";
     }
@@ -299,9 +309,9 @@
                     contenedor.style.opacity = '0';
                 }
             </script>*@
-    }
-    else
-    {
+                                }
+                                else
+                                {
         <div class="container">
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorAm botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal4" style="color:white">
@@ -357,7 +367,7 @@
 
         <br />
 
-    }
+                                }
 
 
 }
@@ -374,6 +384,10 @@
             <a href=@Url.Action("capturaSucursal", "EPIs", new { sucursal = sucursal })><button type="button" class="btn btn-outline-warning boton-transparenteExcel botonesGral"><span class="glyphicon glyphicon-folder-open"></span> &nbsp; &nbsp;@item.Nombre</button></a>
 
         }
+        if (idUser == 11 || idUser == 16)
+        {
+            <a href=@Url.Action("CentroControl", "EPIs")><button type="button" class="btn btn-outline-warning boton-transparenteAzul botonesGral"><span class="glyphicon glyphicon-th-list"></span> &nbsp; &nbsp;CENTRO DE CONTROL</button></a>
+        }
     }
 </center>
 <br />
@@ -381,7 +395,9 @@
 
 <h4 style="color:white" class="text-center">Repositorio Central</h4>
 
-@*<button type="button" onclick="Obtener();">Ejemplo</button>
+<button type="button" onclick="Obtener();">Ejemplo</button>
+<button type="button" onclick="ObtenerG();">Ejemplo2</button>
+<input type="button" onchange="Obtener2();" />
 
     <script>
         function Obtener() {
@@ -393,15 +409,68 @@
                     console.log(miJson);
                     let miResultado = "";
                     for (let i = 0; i < miJson.length; i++) {
-                        miResultado += "<p>" + miJson[i].Nombre + "</p>"
+                        if (i == 0) {
+                            miResultado = "<tr style=\"background-color:#62E3C9\"><th>Nombre Paciente</th><th>No Expediente</th></tr>"
+                        }
+                        else {
+                            miResultado += "<tr style=\"backgroud-color:white\"><td>" + miJson[i].Nombre + "</td> <td>" + miJson[i].Referencia + "</td></tr>"
+                        }
+                        
                     }
-
-                    document.getElementById("MiDiv").innerHTML = miResultado;
+                    
+                    document.getElementById("tablaEjemplo").innerHTML = miResultado;
                 })
         }
-    </script>*@
+    </script>
 
-<div id="MiDiv" style="color:white"></div>
+    <script>
+        function ObtenerG() {
+            fetch("@Url.Content("~/EPIs/General")")
+                .then(function (res) {
+                    return res.json();
+                })
+                .then(function (miJson) {
+                    console.log(miJson);
+                    let miResultado = "";
+                    for (let i = 0; i < miJson.length; i++) {
+                        if (i == 0) {
+                            miResultado = "<tr style=\"background-color:#62E3C9\"><th>Nombre Paciente</th><th>Teléfono</th></tr>"
+                        }
+                        else {
+                            miResultado += "<tr style=\"backgroud-color:white\"><td>" + miJson[i].Nombre + "</td> <td>" + miJson[i].Telefono + "</td></tr>"
+                        }
+
+                    }
+
+                    document.getElementById("tablaEjemplo").innerHTML = miResultado;
+                })
+        }
+    </script>
+
+    <script>
+        function Obtener2() {
+            fetch("@Url.Action("~/EPIs/Actuales")", "ANTONIO")
+                .then(function (res) {
+                    return res.json();
+                })
+                .then(function (miJson) {
+                    console.log(miJson);
+                    let miResultado = "";
+                    for (let i = 0; i < miJson.length; i++) {
+                        if (i == 0) {
+                            miResultado = "<tr style=\"background-color:#62E3C9\"><th>Nombre Paciente</th><th>Teléfono</th></tr>"
+                        }
+                        else {
+                            miResultado += "<tr style=\"backgroud-color:white\"><td>" + miJson[i].Nombre + "</td> <td>" + miJson[i].Telefono + "</td></tr>"
+                        }
+
+                    }
+
+                    document.getElementById("tablaEjemplo").innerHTML = miResultado;
+                })
+        }
+    </script>
+
 
 <!--<nav class="navbar navbar-light bg-light">
     <form class="form-inline col-md-10" action="@Url.Content("~/EPIs/Captura")" method="post">
@@ -444,7 +513,7 @@
 @using (Html.BeginForm("EditExpediente", "EPIs"))
 {
     @Html.AntiForgeryToken()
-    <table class="table tablas table-responsive" style="color: #2F2D6B">
+    <table class="table tablas table-responsive" id="tablaEjemplo" style="color: #2F2D6B">
         <tr style="background-color:#62E3C9">
             <th>
                 Nombre Paciente
@@ -527,4 +596,8 @@
     </table>
 
 }
+
+<table class="table tablas table-responsive" id="tablaEjemplo" style="color: #2F2D6B">
+
+</table>
 
