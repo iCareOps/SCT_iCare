@@ -9,7 +9,7 @@ using System.Web.Mvc;
 using SCT_iCare;
 
 using System.IO;
-
+using PagedList;
 
 namespace SCT_iCare.Controllers.EPICenter
 {
@@ -20,6 +20,7 @@ namespace SCT_iCare.Controllers.EPICenter
         // GET: Capturas
         public ActionResult Index()
         {
+
             var captura = db.Captura.Include(c => c.Paciente);
             return View(captura.ToList());
         }

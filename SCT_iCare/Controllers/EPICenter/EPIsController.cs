@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using PagedList;
 using SCT_iCare;
 
 namespace SCT_iCare.Controllers.EPICenter
@@ -272,10 +273,23 @@ namespace SCT_iCare.Controllers.EPICenter
             base.Dispose(disposing);
         }
 
-        public ActionResult Captura()
+        public ActionResult Captura(int? pageSize, int? page)
         {
+            DateTime start = DateTime.Now;
+            int year = start.Year;
+            int month = start.Month;
+            int day = start.Day;
+            int tomorrorDay = day + 1;
+            DateTime thisDate = new DateTime(year, month, day);
+            DateTime tomorrowDate = DateTime.Now.AddDays(1);
+
+            pageSize = (pageSize ?? 10);
+            page = (page ?? 1);
+            ViewBag.PageSize = pageSize;
+
             ViewBag.Parameter = "";
-            return View();
+            //return View();
+            return View(db.Cita.Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate).OrderByDescending(i => i.FechaCita).ToPagedList(page.Value, pageSize.Value));
         }
 
         //[HttpPost]
@@ -289,6 +303,15 @@ namespace SCT_iCare.Controllers.EPICenter
         public ActionResult capturaSucursal(string sucursal)
         {
             ViewBag.Sucursal = sucursal;
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult capturaDoctor(string sucursal, string doctor)
+        {
+            ViewBag.Sucursal = sucursal;
+            ViewBag.Doctor = doctor;
             return View();
         }
 

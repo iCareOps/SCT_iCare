@@ -353,6 +353,7 @@ namespace SCT_iCare.Controllers.CallCenter
 
                 ReferenciasSB refe = db.ReferenciasSB.Find(idRefSB);
                 refe.EstatusReferencia = "PENDIENTE";
+                refe.idPaciente = idPaciente;
                 
 
                 if (ModelState.IsValid)
@@ -461,6 +462,7 @@ namespace SCT_iCare.Controllers.CallCenter
                     int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
                     ReferenciasSB refe = db.ReferenciasSB.Find(idRefSB);
                     refe.EstatusReferencia = "PENDIENTE";
+                    refe.idPaciente = idPaciente;
 
                     if (ModelState.IsValid)
                     {

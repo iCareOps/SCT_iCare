@@ -1,4 +1,6 @@
-﻿
+﻿@using PagedList.Mvc;
+@model PagedList.IPagedList<SCT_iCare.Cita>
+
 @{
     ViewBag.Title = "Captura";
 
@@ -57,9 +59,9 @@
 
 <br />
 <br />
-<h5 style="color:white" class="text-right">@fecha</h5>
-<h3 style="color:white" class="text-center">EPI Center</h3>
-
+@*<h5 style="color:white" class="text-right">@fecha</h5>*@
+<h3 style="color:white" class="text-center">EPI Center &nbsp; &nbsp; &nbsp;<span class="h4" style="color:#AC9070"><b>@fecha</b></span></h3>
+<br />
 @*<script>setTimeout('document.location.reload()', 10000);</script>*@
 @{
     int episProgeso = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
@@ -309,9 +311,9 @@
                     contenedor.style.opacity = '0';
                 }
             </script>*@
-                                }
-                                else
-                                {
+    }
+    else
+    {
         <div class="container">
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorAm botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal4" style="color:white">
@@ -367,7 +369,7 @@
 
         <br />
 
-                                }
+    }
 
 
 }
@@ -381,95 +383,95 @@
         foreach (var item in sucursales)
         {
             sucursal = item.Nombre;
-            <a href=@Url.Action("capturaSucursal", "EPIs", new { sucursal = sucursal })><button type="button" class="btn btn-outline-warning boton-transparenteExcel botonesGral"><span class="glyphicon glyphicon-folder-open"></span> &nbsp; &nbsp;@item.Nombre</button></a>
+            <a href=@Url.Action("capturaSucursal", "EPIs", new { sucursal = sucursal })><button style="color:white" type="button" class="btn btn-outline-warning boton-transparenteExcel botonesGral"><span class="glyphicon glyphicon-folder-open"></span> &nbsp; &nbsp;@item.Nombre</button></a>
 
         }
         if (idUser == 11 || idUser == 16)
         {
-            <a href=@Url.Action("CentroControl", "EPIs")><button type="button" class="btn btn-outline-warning boton-transparenteAzul botonesGral"><span class="glyphicon glyphicon-th-list"></span> &nbsp; &nbsp;CENTRO DE CONTROL</button></a>
+            <a href=@Url.Action("CentroControl", "EPIs")><button style="color:white" type="button" class="btn btn-outline-warning boton-transparenteAzul botonesGral"><span class="glyphicon glyphicon-th-list"></span> &nbsp; &nbsp;CENTRO DE CONTROL</button></a>
         }
     }
 </center>
 <br />
 <br />
 
-<h4 style="color:white" class="text-center">Repositorio Central</h4>
+@*<h4 style="color:white" class="text-center">Repositorio Central</h4>
 
-<button type="button" onclick="Obtener();">Ejemplo</button>
-<button type="button" onclick="ObtenerG();">Ejemplo2</button>
-<input type="button" onchange="Obtener2();" />
+    <button type="button" onclick="Obtener();">Ejemplo</button>
+    <button type="button" onclick="ObtenerG();">Ejemplo2</button>
+    <input type="button" onchange="Obtener2();" />
 
-    <script>
-        function Obtener() {
-            fetch("@Url.Content("~/EPIs/EjemploJSON")")
-                .then(function (res) {
-                    return res.json();
-                })
-                .then(function (miJson) {
-                    console.log(miJson);
-                    let miResultado = "";
-                    for (let i = 0; i < miJson.length; i++) {
-                        if (i == 0) {
-                            miResultado = "<tr style=\"background-color:#62E3C9\"><th>Nombre Paciente</th><th>No Expediente</th></tr>"
-                        }
-                        else {
-                            miResultado += "<tr style=\"backgroud-color:white\"><td>" + miJson[i].Nombre + "</td> <td>" + miJson[i].Referencia + "</td></tr>"
-                        }
-                        
-                    }
-                    
-                    document.getElementById("tablaEjemplo").innerHTML = miResultado;
-                })
-        }
-    </script>
+        <script>
+            function Obtener() {
+                fetch("@Url.Content("~/EPIs/EjemploJSON")")
+                    .then(function (res) {
+                        return res.json();
+                    })
+                    .then(function (miJson) {
+                        console.log(miJson);
+                        let miResultado = "";
+                        for (let i = 0; i < miJson.length; i++) {
+                            if (i == 0) {
+                                miResultado = "<tr style=\"background-color:#62E3C9\"><th>Nombre Paciente</th><th>No Expediente</th></tr>"
+                            }
+                            else {
+                                miResultado += "<tr style=\"backgroud-color:white\"><td>" + miJson[i].Nombre + "</td> <td>" + miJson[i].Referencia + "</td></tr>"
+                            }
 
-    <script>
-        function ObtenerG() {
-            fetch("@Url.Content("~/EPIs/General")")
-                .then(function (res) {
-                    return res.json();
-                })
-                .then(function (miJson) {
-                    console.log(miJson);
-                    let miResultado = "";
-                    for (let i = 0; i < miJson.length; i++) {
-                        if (i == 0) {
-                            miResultado = "<tr style=\"background-color:#62E3C9\"><th>Nombre Paciente</th><th>Teléfono</th></tr>"
-                        }
-                        else {
-                            miResultado += "<tr style=\"backgroud-color:white\"><td>" + miJson[i].Nombre + "</td> <td>" + miJson[i].Telefono + "</td></tr>"
                         }
 
-                    }
+                        document.getElementById("tablaEjemplo").innerHTML = miResultado;
+                    })
+            }
+        </script>
 
-                    document.getElementById("tablaEjemplo").innerHTML = miResultado;
-                })
-        }
-    </script>
+        <script>
+            function ObtenerG() {
+                fetch("@Url.Content("~/EPIs/General")")
+                    .then(function (res) {
+                        return res.json();
+                    })
+                    .then(function (miJson) {
+                        console.log(miJson);
+                        let miResultado = "";
+                        for (let i = 0; i < miJson.length; i++) {
+                            if (i == 0) {
+                                miResultado = "<tr style=\"background-color:#62E3C9\"><th>Nombre Paciente</th><th>Teléfono</th></tr>"
+                            }
+                            else {
+                                miResultado += "<tr style=\"backgroud-color:white\"><td>" + miJson[i].Nombre + "</td> <td>" + miJson[i].Telefono + "</td></tr>"
+                            }
 
-    <script>
-        function Obtener2() {
-            fetch("@Url.Action("~/EPIs/Actuales")", "ANTONIO")
-                .then(function (res) {
-                    return res.json();
-                })
-                .then(function (miJson) {
-                    console.log(miJson);
-                    let miResultado = "";
-                    for (let i = 0; i < miJson.length; i++) {
-                        if (i == 0) {
-                            miResultado = "<tr style=\"background-color:#62E3C9\"><th>Nombre Paciente</th><th>Teléfono</th></tr>"
                         }
-                        else {
-                            miResultado += "<tr style=\"backgroud-color:white\"><td>" + miJson[i].Nombre + "</td> <td>" + miJson[i].Telefono + "</td></tr>"
+
+                        document.getElementById("tablaEjemplo").innerHTML = miResultado;
+                    })
+            }
+        </script>
+
+        <script>
+            function Obtener2() {
+                fetch("@Url.Action("~/EPIs/Actuales")", "ANTONIO")
+                    .then(function (res) {
+                        return res.json();
+                    })
+                    .then(function (miJson) {
+                        console.log(miJson);
+                        let miResultado = "";
+                        for (let i = 0; i < miJson.length; i++) {
+                            if (i == 0) {
+                                miResultado = "<tr style=\"background-color:#62E3C9\"><th>Nombre Paciente</th><th>Teléfono</th></tr>"
+                            }
+                            else {
+                                miResultado += "<tr style=\"backgroud-color:white\"><td>" + miJson[i].Nombre + "</td> <td>" + miJson[i].Telefono + "</td></tr>"
+                            }
+
                         }
 
-                    }
-
-                    document.getElementById("tablaEjemplo").innerHTML = miResultado;
-                })
-        }
-    </script>
+                        document.getElementById("tablaEjemplo").innerHTML = miResultado;
+                    })
+            }
+        </script>*@
 
 
 <!--<nav class="navbar navbar-light bg-light">
@@ -510,94 +512,124 @@
     }
 }
 
+
 @using (Html.BeginForm("EditExpediente", "EPIs"))
 {
     @Html.AntiForgeryToken()
-    <table class="table tablas table-responsive" id="tablaEjemplo" style="color: #2F2D6B">
-        <tr style="background-color:#62E3C9">
-            <th>
-                Nombre Paciente
-            </th>
 
-            <th>
-                NoExpediente
-            </th>
-            <th>
-                Tipo de Trámite
-            </th>
-            <th>
-                Estatus
-            </th>
-            <th>
-                Inicio Captura
-            </th>
-            <th>
-                Final Captura
-            </th>
-            <th>
-                Doctor Dictaminador
-            </th>
-            <th>
-                Sucursal
-            </th>
-            <th>
-                Capturista
-            </th>
-            @*<th>Acciones</th>*@
-        </tr>
+    if (epis != 0)
+    {
+        <table class="table tablas table-responsive" id="tablaEjemplo" style="color: #2F2D6B">
+            <tr style="background-color:#62E3C9">
+                <th>
+                    Nombre Paciente
+                </th>
 
-        @foreach (var item in repoCentral)
-        {
-
-            if (item.TipoTramite == "PRIMERA VEZ")
-            {
-                fila = "bg-warning";
-            }
-            else
-            {
-                fila = "bg-default";
-            }
-
-
-            <tr class=@fila>
-                <td>
-                    <b>@Html.DisplayFor(modelItem => item.NombrePaciente)</b>
-                </td>
-
-                <td>
-                    @Html.DisplayFor(modelItem => item.NoExpediente)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TipoTramite)
-                </td>
-                <td>
-                    <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.InicioCaptura)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FinalCaptura)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Doctor)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Sucursal)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Capturista)
-                </td>
-
+                <th>
+                    NoExpediente
+                </th>
+                <th>
+                    Tipo de Trámite
+                </th>
+                <th>
+                    Estatus
+                </th>
+                <th>
+                    Inicio Captura
+                </th>
+                <th>
+                    Final Captura
+                </th>
+                <th>
+                    Doctor Dictaminador
+                </th>
+                <th>
+                    Sucursal
+                </th>
+                <th>
+                    Capturista
+                </th>
+                @*<th>Acciones</th>*@
             </tr>
 
+            @foreach (var item in repoCentral)
+            {
+
+                if (item.TipoTramite == "PRIMERA VEZ")
+                {
+                    fila = "bg-warning";
+                }
+                else
+                {
+                    fila = "bg-default";
+                }
+
+
+                <tr class=@fila>
+                    <td>
+                        <b>@Html.DisplayFor(modelItem => item.NombrePaciente)</b>
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NoExpediente)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TipoTramite)
+                    </td>
+                    <td>
+                        <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.InicioCaptura)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FinalCaptura)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Doctor)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Sucursal)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Capturista)
+                    </td>
+
+                </tr>
+
+            }
+
+        </table>
+
+        <br />
+        using (Html.BeginForm("Captura", "EPIs", FormMethod.Post))
+        {
+            <p>
+                <h5 class="labelGral">
+                    Mostrando: <select name="PageSize" id="PageSize" onchange="this.form.submit();">
+                        <option @if ((int)ViewBag.PageSize == 10) { @Html.Raw("selected") } value="10">10</option>
+                        <option @if ((int)ViewBag.PageSize == 20) { @Html.Raw("selected") } value="20">20</option>
+                        <option @if ((int)ViewBag.PageSize == 50) { @Html.Raw("selected") } value="50">50</option>
+                        <option @if ((int)ViewBag.PageSize == 100) { @Html.Raw("selected") } value="100">100</option>
+                    </select> registros
+                </h5>
+            </p>
         }
 
-    </table>
+        <h5 class="labelGral">Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount. Elementos totales: @Model.TotalItemCount</h5>
+
+        @Html.PagedListPager(Model, page => Url.Action("Captura", "EPIs", new { page, pageSize = ViewBag.PageSize }))
+    }
+    else
+    {
+        <h1 class="text-center" style="color:white">No existen EPIs digitalizados el día de hoy!!</h1>
+    }
+
 
 }
 
-<table class="table tablas table-responsive" id="tablaEjemplo" style="color: #2F2D6B">
 
+
+<table class="table tablas table-responsive" id="tablaEjemplo" style="color: #2F2D6B">
 </table>
 

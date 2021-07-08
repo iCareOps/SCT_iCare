@@ -30,29 +30,120 @@
     var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 
 
-    if (oUser != null)
-    {
-        idUser = oUser.idUsuario;
-        nombreUsuario = oUser.Nombre;
+if (oUser != null)
+{
+idUser = oUser.idUsuario;
+nombreUsuario = oUser.Nombre;
 
-        
-            Hospital = "GENERAL";
-            Sucursal = Hospital.ToString();
 
-            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && s.M.CC == oUser.Nombre)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+Hospital = "GENERAL";
+Sucursal = Hospital.ToString();
 
-            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && s.M.CC == oUser.Nombre).Count();
-    }
+modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && s.M.CC == oUser.Nombre)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+
+registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && s.M.CC == oUser.Nombre).Count();
+}
 
 }
 
 <br />
 <br />
 <h3 style="color:white" class="text-center">Call Center</h3>
-<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>
+@*<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>*@
+<div class="form-inline">
+    @*<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>*@
+    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>
+    <div class="input-group pull-right">
+        <input type="text" class="form-control" id="buscador" name="dato" placeholder="Paciente o Expediente">
+        <span class="input-group-btn">
+            si
+            <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+        </span>
+    </div>
+</div>
+<br />
+<br />
 
-<br />
-<br />
+@section scripts{
+    <script>
+    $(function () {
+        $(".buscar").click(function () {
+            var url = "@Url.Action("Buscar", "Recepcion")";
+            var dato = $("#buscador").val();
+            var data = { dato: dato };
+
+            $.post(url, data).done(function (data) {
+                console.log(data);
+                let miResultado = "";
+                if ($.isEmptyObject(data)) {
+                    miResultado = "<h3>No se encontraron registros!!</h3>"
+                }
+                else {
+                    miResultado += "<h4 class=\"text-danger\">Se encontraron <b>" + data.length + "</b> registros:</h4><hr/>"
+                    for (let i = 0; i < data.length; i++) {
+
+                        if (data[i].NoExpediente == null) {
+                            miResultado +=
+                            "<h5><b><mark style=\"background-color: #41F51A; padding:5px; border-radius: 10px\">ID: " + data[i].idPaciente + "</mark></b></h5>" +
+                            "<p>Nombre: <b>" + data[i].Nombre + "</b></p>" +
+                            "<p>Teléfono: <b>" + data[i].Telefono + "</b></p>" +
+                            "<p>Email: <b>" + data[i].Email + "</b></p>" +
+                            "<p>Folio: <b>" + data[i].Folio + "</b></p>" +
+                            "<p>CURP: <b>" + data[i].CURP + "</b></p>" +
+                            "<hr/>"
+                        }
+                        else
+                        {
+                            miResultado +=
+                            "<h5><b><mark style=\"background-color: #41F51A; padding:5px; border-radius: 10px\">ID: " + data[i].idPaciente + "</mark></b></h5>" +
+                            "<p>Nombre: <b>" + data[i].Nombre + "</b></p>" +
+                            "<p>Teléfono: <b>" + data[i].Telefono + "</b></p>" +
+                            "<p>Email: <b>" + data[i].Email + "</b></p>" +
+                            "<p>Folio: <b>" + data[i].Folio + "</b></p>" +
+                            "<p>CURP: <b>" + data[i].CURP + "</b></p>" +
+                            "<p>Tipo de Pago: <b>" + data[i].TipoPago + "</b></p>" +
+                            "<p>Fecha Cita: <b>" + data[i].FechaCita + "</b></p>" +
+                            "<p>No. Orden: <b>" + data[i].NoOrden + "</b></p>" +
+                            "<p>Estatus Pago: <b>" + data[i].EstatusPago + "</b></p>" +
+                            "<p>Tipo Licencia : <b>" + data[i].TipoLicencia + "</b></p>" +
+                            "<p>No. Expediente: <b>" + data[i].NoExpediente + "</b></p>" +
+                            "<p>Referencia: <b>" + data[i].Referencia + "</b></p>" +
+                            "<p>Fecha Referencia: <b>" + data[i].FechaReferencia + "</b></p>" +
+                            "<p>Sucursal: <b>" + data[i].Sucursal + "</b></p>" +
+                            "<p>Doctor: <b>" + data[i].Doctor + "</b></p>" +
+                            "<p>Tipo Trámite: <b>" + data[i].TipoTramite + "</b></p>" +
+                            "<hr/>"
+                        }
+                    }
+                }
+
+                $('#exampleModal5').modal('show');
+                document.getElementById("cuerpo").innerHTML = miResultado;
+
+            }).fail().always(function () {
+
+            });
+        });
+    });
+    </script>
+}
+
+<div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body" id="cuerpo">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 
 <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -109,7 +200,7 @@
                         </select>
                     </div>
 
-</div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -169,71 +260,71 @@
 }
 else
 {
-<div class="tablaScroll">
-    <table class="table tablas" style="color: #2F2D6B">
-        <tr style="background-color:#62E3C9">
-            <th>
-            </th>
+    <div class="tablaScroll">
+        <table class="table tablas" style="color: #2F2D6B">
+            <tr style="background-color:#62E3C9">
+                <th>
+                </th>
 
-            <th>
-                Nombre
-            </th>
+                <th>
+                    Nombre
+                </th>
 
-            <th>
-                Email
-            </th>
-            <th>
-                Teléfono
-            </th>
-            <th>
-                Folio
-            </th>
-            <th>
-                Sucursal
-            </th>
-            <th>
-                Fecha Cita
-            </th>
-            <th></th>
-        </tr>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Teléfono
+                </th>
+                <th>
+                    Folio
+                </th>
+                <th>
+                    Sucursal
+                </th>
+                <th>
+                    Fecha Cita
+                </th>
+                <th></th>
+            </tr>
 
-        @foreach (var item in modelo)
-        {
-            
+            @foreach (var item in modelo)
+            {
 
-            <tr>
-                <td>
-                    @flag
-                </td>
 
-                <td>
-                    <b>@Html.DisplayFor(modelItem => item.N.Nombre)</b>
-                </td>
+                <tr>
+                    <td>
+                        @flag
+                    </td>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.N.Email)
-                </td>
+                    <td>
+                        <b>@Html.DisplayFor(modelItem => item.N.Nombre)</b>
+                    </td>
 
-                @*<td>
-                    @Html.DisplayFor(modelItem => item.N.Telefono)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.N.Email)
-                </td>*@
-                <td>
-                    @Html.DisplayFor(modelItem => item.N.Telefono)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.N.Folio)
-                </td>
-                <td>
-                    <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.M.FechaCita)
-                </td>
-                <td>
-                    <div class="btn-group">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.N.Email)
+                    </td>
+
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.N.Telefono)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.N.Email)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.N.Telefono)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.N.Folio)
+                    </td>
+                    <td>
+                        <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.M.FechaCita)
+                    </td>
+                    <td>
+                        <div class="btn-group">
 
                             <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
@@ -241,68 +332,68 @@ else
 
 
 
-                    <div class="dropdown-menu" style="padding:10px">
-                            <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
-                            <div class="dropdown-divider"></div>
-                    </div>
-                    </div>
+                            <div class="dropdown-menu" style="padding:10px">
+                                <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                        </div>
 
-                    <!-- Modal para editar-->
-                    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/CallCenter/EditarCompleto")">
-                        @Html.AntiForgeryToken()
-                        <div class="modal fade" id="ModalEdit2_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        @{
-                                            if ((from i in db.Cita where i.Referencia == item.M.Referencia select i).Count() < 2)
-                                            {
-                                                <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Editar Datos</b></h4>
+                        <!-- Modal para editar-->
+                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/CallCenter/EditarCompleto")">
+                            @Html.AntiForgeryToken()
+                            <div class="modal fade" id="ModalEdit2_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            @{
+                                                if ((from i in db.Cita where i.Referencia == item.M.Referencia select i).Count() < 2)
+                                                {
+                                                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Editar Datos</b></h4>
+                                                }
+                                                else
+                                                {
+                                                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Editar Datos</b></h4>
+                                                    <h5 class="modal-title text-danger" id="exampleModalLabel"><b>Este registro pertenece a un grupo de gestoría. Al modificar datos se aplicarán los cambios para todo el bloque.</b></h5>
+                                                }
                                             }
-                                            else
-                                            {
-                                                <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Editar Datos</b></h4>
-                                                <h5 class="modal-title text-danger" id="exampleModalLabel"><b>Este registro pertenece a un grupo de gestoría. Al modificar datos se aplicarán los cambios para todo el bloque.</b></h5>
-                                            }
-                                        }
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="form-group">
-                                            <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
-                                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.N.Nombre">
-                                            <input type="hidden" class="form-control" id="id" name="id" value="@item.N.idPaciente">
                                         </div>
-                                        <div class="form-group">
-                                            <label for="recipient-name" class="col-form-label">Teléfono:</label>
-                                            <input type="text" class="form-control" id="telefono" name="telefono" placeholder="@item.N.Telefono" />
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
+                                                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.N.Nombre">
+                                                <input type="hidden" class="form-control" id="id" name="id" value="@item.N.idPaciente">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Teléfono:</label>
+                                                <input type="text" class="form-control" id="telefono" name="telefono" placeholder="@item.N.Telefono" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Email:</label>
+                                                <input type="email" class="form-control" id="email" name="email" placeholder="@item.N.Email" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
+                                                <input type="date" class="form-control" id="fecha" name="fecha" required />
+                                            </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="recipient-name" class="col-form-label">Email:</label>
-                                            <input type="email" class="form-control" id="email" name="email" placeholder="@item.N.Email" />
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <input type="submit" value="Guardar" class="btn btn-primary" />
                                         </div>
-                                        <div class="form-group">
-                                            <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
-                                            <input type="date" class="form-control" id="fecha" name="fecha" required />
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                        <input type="submit" value="Guardar" class="btn btn-primary" />
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
 
-                </td>
-            </tr>
+                    </td>
+                </tr>
 
-            flag += 1;
+                flag += 1;
 
-        }
+            }
 
-    </table>
-</div>
+        </table>
+    </div>
 }
 
 

@@ -17,5 +17,6 @@ namespace SCT_iCare
         public int idReferencia { get; set; }
         public string ReferenciaSB { get; set; }
         public string EstatusReferencia { get; set; }
+        public Nullable<int> idPaciente { get; set; }
     }
 }

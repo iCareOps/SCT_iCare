@@ -4,6 +4,8 @@
     ViewBag.Title = "capturaSucursal";
     SCTiCareEntities1 db = new SCTiCareEntities1();
 
+    string doctorSucursal = ViewBag.Doctor;
+
     var oUser = (Usuarios)HttpContext.Current.Session["User"];
     string nombreUsuario = null;
     int idUser = 0;
@@ -21,7 +23,6 @@
         Sucursal = ViewBag.Sucursal;
     }
 
-
     DateTime start = DateTime.Now;
     //DateTime startDay = Convert.ToDateTime(start.Day);
 
@@ -33,7 +34,8 @@
     DateTime tomorrowDate = DateTime.Now.AddDays(1);
 
     var Restriccion1 = db.Captura.Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
-    var Restriccion = from r in Restriccion1 orderby r.TipoTramite where r.Sucursal == ViewBag.Sucursal select r;
+    //var Restriccion = from r in Restriccion1 orderby r.TipoTramite where r.Sucursal == ViewBag.Sucursal select r;
+    var Restriccion = (from r in Restriccion1 orderby r.TipoTramite select r).Where(w => w.Sucursal == ViewBag.Sucursal && w.Doctor == ViewBag.Doctor);
 
     int epis = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.Sucursal == Sucursal).Count();
 
@@ -43,7 +45,7 @@
 <br />
 <br />
 <h3 style="color:white" class="text-center">EPI Center</h3>
-<h4 style="color:#AC9070" class="text-center">Captura de la sucursal: <span style="color:white">@ViewBag.Sucursal</span></h4>
+<h4 style="color:#AC9070" class="text-center">Captura del Doctor: <span style="color:white">@ViewBag.Doctor</span></h4>
 
 @*<script>
         var i = 0;
@@ -75,6 +77,8 @@
                 <button style="color:white; white-space:normal" type="submit" name="doctor" value="@doctor" class="btn btn-outline-warning boton-transparenteExcel botonesGral"><span class="glyphicon glyphicon-folder-open"></span> &nbsp; &nbsp;@doctor</button>
             </form>
         }
+        <a href=@Url.Action("capturaSucursal", "EPIs", new { sucursal = ViewBag.Sucursal })><button style="color:white; white-space: normal" type="button" class="btn btn-outline-warning boton-transparenteAzul botonesGral"><span class="glyphicon glyphicon-th-list"></span> &nbsp; &nbsp;TODOS LOS EPIs DE ESTA SUCURSAL</button></a>
+
     }
     <div class="input-group pull-right">
         <div class="enlaceSinBoton">
@@ -288,6 +292,5 @@
         </div>
     </div>
 </div>
-
 
 

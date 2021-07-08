@@ -407,6 +407,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
                 ReferenciasSB refe = db.ReferenciasSB.Find(idRefSB);
                 refe.EstatusReferencia = "PENDIENTE";
+                refe.idPaciente = idPaciente;
 
                 if (ModelState.IsValid)
                 {
@@ -515,6 +516,7 @@ namespace SCT_iCare.Controllers.Recepcion
                     int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
                     ReferenciasSB refe = db.ReferenciasSB.Find(idRefSB);
                     refe.EstatusReferencia = "PENDIENTE";
+                    refe.idPaciente = idPaciente;
 
                     if (ModelState.IsValid)
                     {
@@ -564,16 +566,23 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CambiarEstatus(int? id, string pago, string numero)
+        public ActionResult CambiarEstatus(int? id, string pago)
         {
+            string referenciaNueva = "";
             if (pago != "Referencia Scotiabank")
             {
-                var tipoPago = (from t in db.ReferenciasSB where t.ReferenciaSB == numero select t).FirstOrDefault();
+                //var tipoPago = (from t in db.ReferenciasSB where t.ReferenciaSB == numero select t).FirstOrDefault();
 
-                if(tipoPago != null)
+                var referenciaRepetida = (from r in db.Cita where r.idPaciente == id select r.Referencia).FirstOrDefault();
+                referenciaNueva = referenciaRepetida;
+                var idFlag = (from i in db.Cita where i.Referencia == referenciaRepetida orderby i.idPaciente descending select i).FirstOrDefault();
+                var tipoPago = (from t in db.ReferenciasSB where t.idPaciente == idFlag.idPaciente select t).FirstOrDefault();
+
+                if (tipoPago != null)
                 {
                     ReferenciasSB refe = db.ReferenciasSB.Find(tipoPago.idReferencia);
                     refe.EstatusReferencia = "LIBRE";
+                    refe.idPaciente = 0;
 
                     if(ModelState.IsValid)
                     {
@@ -584,7 +593,12 @@ namespace SCT_iCare.Controllers.Recepcion
             }
             else
             {
-                var tipoPago = (from t in db.ReferenciasSB where t.ReferenciaSB == numero select t).FirstOrDefault();
+                //var tipoPago = (from t in db.ReferenciasSB where t.ReferenciaSB == numero select t).FirstOrDefault();
+
+                var referenciaRepetida = (from r in db.Cita where r.idPaciente == id select r.Referencia).FirstOrDefault();
+                var idFlag = (from i in db.Cita where i.Referencia == referenciaRepetida orderby i.idPaciente descending select i).FirstOrDefault();
+                referenciaNueva = (from t in db.ReferenciasSB where t.idPaciente == idFlag.idPaciente select t.ReferenciaSB).FirstOrDefault();
+                var tipoPago = (from t in db.ReferenciasSB where t.idPaciente == idFlag.idPaciente select t).FirstOrDefault();
 
                 ReferenciasSB refe = db.ReferenciasSB.Find(tipoPago.idReferencia);
                 refe.EstatusReferencia = "OCUPADO";
@@ -606,6 +620,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
                     cita.EstatusPago = "Pagado";
                     cita.TipoPago = pago;
+                    cita.Referencia = referenciaNueva;
                     db.Entry(cita).State = EntityState.Modified;
                     
                 }
