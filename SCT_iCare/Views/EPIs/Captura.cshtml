@@ -20,6 +20,12 @@
         nombreUsuario = oUser.Nombre;
     }
 
+    string Query = "";
+    if(TempData["ERROR"] == "ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO")
+    {
+        Query = TempData["ERROR"].ToString();
+    }
+
 
 
     string parameter = ViewBag.Parameter;
@@ -123,7 +129,7 @@
 }
 
 
-@{ if (idUser == 11 || idUser == 16)
+@{ if (idUser == 11 || idUser == 15)
     {
 
         @*<p class="col-md-4">
@@ -519,6 +525,7 @@
 
     if (epis != 0)
     {
+        <div class="tablaScroll">
         <table class="table tablas table-responsive" id="tablaEjemplo" style="color: #2F2D6B">
             <tr style="background-color:#62E3C9">
                 <th>
@@ -549,7 +556,7 @@
                 <th>
                     Capturista
                 </th>
-                @*<th>Acciones</th>*@
+                <th>Acciones</th>
             </tr>
 
             @foreach (var item in repoCentral)
@@ -594,14 +601,45 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Capturista)
                     </td>
+                    <td>
+                        @{
+                            if (item.EstatusCaptura == "No iniciado")
+                            {
+                                @*<input type="submit" value="Capturar" class="btn btn-outline-warning boton-transparente botonesGral" />*@
+                                @*@Html.ActionLink("Capturar", "EditExpediente", new { id = item.idEPI })*@
+                                <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                            }
+                            else if (item.EstatusCaptura == "En captura...")
+                            {
+                                <div class="btn-group">
+                                    @*<a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idCaptura})><button type="button" class="btn btn-warning">Dictaminar</button></a>*@
+                                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                    </button>
 
+                                    <div class="dropdown-menu" style="padding:10px">
+                                        <b>@Html.ActionLink("Abrir EPI", "AbrirEPIGeneral", new { id = item.idCaptura })</b>
+                                        <div class="dropdown-divider"></div>
+                                        <b>@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = item.idCaptura })</b>
+                                        <div class="dropdown-divider"></div>
+                                    </div>
+                                </div>
+
+                            }
+                            else if (item.EstatusCaptura == "Terminado")
+                            {
+                                <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
+                            }
+
+                        }
+                    </td>
                 </tr>
 
             }
 
         </table>
+            </div>
 
-        <br />
         using (Html.BeginForm("Captura", "EPIs", FormMethod.Post))
         {
             <p>
@@ -628,6 +666,23 @@
 
 }
 
+@section scripts{
+@if(TempData["ID"] != null)
+    {
+        <script>
+            @*location.href='@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })';*@
+            window.open('@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })');
+        </script>
+    }
+
+@if(Query == "ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO")
+    {
+        <script>
+            alert("ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO");
+        </script>
+    }
+
+}
 
 
 <table class="table tablas table-responsive" id="tablaEjemplo" style="color: #2F2D6B">

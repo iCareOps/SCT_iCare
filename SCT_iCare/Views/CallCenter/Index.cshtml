@@ -19,13 +19,19 @@
     int flag = 1; //contador de la tabla
 
     DateTime start = DateTime.Now;
+    DateTime finish = DateTime.Now.AddDays(1);
 
     int year = start.Year;
     int month = start.Month;
     int day = start.Day;
+
+    int year1 = finish.Year;
+    int month1 = finish.Month;
+    int day1 = finish.Day;
+
     int tomorrorDay = day + 1;
     DateTime thisDate = new DateTime(year, month, day);
-    DateTime tomorrowDate = DateTime.Now.AddDays(1);
+    DateTime tomorrowDate = new DateTime(year1, month1, day1);
 
     var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 

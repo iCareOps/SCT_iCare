@@ -149,6 +149,43 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.Folio = numFolio;
                 cita.Canal1 = "SITIO";
 
+                if (pago != "Referencia Scotiabank")
+                {
+                    //var tipoPago = (from t in db.ReferenciasSB where t.ReferenciaSB == numero select t).FirstOrDefault();
+                    var tipoPago = (from t in db.ReferenciasSB where t.ReferenciaSB == referencia select t).FirstOrDefault();
+
+                    if (tipoPago != null)
+                    {
+                        ReferenciasSB refe = db.ReferenciasSB.Find(tipoPago.idReferencia);
+                        refe.EstatusReferencia = "LIBRE";
+                        refe.idPaciente = idPaciente;
+
+                        if (ModelState.IsValid)
+                        {
+                            db.Entry(refe).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
+                    }
+                }
+                else
+                {
+                    //var tipoPago = (from t in db.ReferenciasSB where t.ReferenciaSB == numero select t).FirstOrDefault();
+
+                    var tipoPago = (from t in db.ReferenciasSB where t.ReferenciaSB == referencia select t).FirstOrDefault();
+
+                    ReferenciasSB refe = db.ReferenciasSB.Find(tipoPago.idReferencia);
+                    refe.EstatusReferencia = "OCUPADO";
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Entry(refe).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+
+                
+
+                //-------------------------------------------------------------
                 if (ModelState.IsValid)
                 {
                     db.Cita.Add(cita);
@@ -699,6 +736,26 @@ namespace SCT_iCare.Controllers.Recepcion
             }
 
             string CURP;
+            string NOMBRE = null;
+            string NOEXPEDIENTE = null;
+
+            if (nombre == "")
+            {
+                NOMBRE = paciente.Nombre;
+            }
+            else
+            {
+                NOMBRE = nombre.ToUpper();
+            }
+
+            if (numero == "")
+            {
+                NOEXPEDIENTE = cita.NoExpediente;
+            }
+            else
+            {
+                NOEXPEDIENTE = numero;
+            }
 
             if (curp == "")
             {
@@ -712,10 +769,10 @@ namespace SCT_iCare.Controllers.Recepcion
             exp.Expediente = bytes2;
             exp.Recepcionista = usuario;
             exp.idPaciente = ide;
-            paciente.Nombre = nombre.ToUpper();
-            paciente.CURP = curp.ToUpper();
-            captura.NombrePaciente = nombre.ToUpper();
-            captura.NoExpediente = numero;
+            paciente.Nombre = NOMBRE;
+            paciente.CURP = CURP.ToUpper();
+            captura.NombrePaciente = NOMBRE;
+            captura.NoExpediente = NOEXPEDIENTE;
             captura.TipoTramite = tipoT;
             captura.EstatusCaptura = "No iniciado";
             captura.Doctor = doctor;
@@ -726,7 +783,7 @@ namespace SCT_iCare.Controllers.Recepcion
             Cita citaModificar = new Cita();
             cita.TipoLicencia = tipoL;
             cita.TipoTramite = tipoT;
-            cita.NoExpediente = numero;
+            cita.NoExpediente = NOEXPEDIENTE;
             cita.Doctor = doctor;
 
 
@@ -1005,6 +1062,10 @@ namespace SCT_iCare.Controllers.Recepcion
 
             expediente.Expediente = bytes2;
 
+            captura.TipoTramite = TIPOT;
+            captura.NombrePaciente = NOMBRE;
+            captura.NoExpediente = NUMERO;
+            captura.Doctor = DOCTOR;
 
             if (ModelState.IsValid)
             {
@@ -1063,6 +1124,38 @@ namespace SCT_iCare.Controllers.Recepcion
             //    }); ;
 
             //string nombre = selected.Nombre.ToString();
+
+            return Json(selected, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult BuscarDictamen(string dato)
+        {
+            string parametro;
+
+            if (dato.All(char.IsDigit))
+            {
+                parametro = dato;
+            }
+            else
+            {
+                parametro = dato.ToUpper();
+            }
+
+            List<Captura> data = db.Captura.ToList();
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            var selected = data.Where(r => r.NombrePaciente.Contains(parametro) || r.NoExpediente == parametro)
+                .Select(S => new {
+                    idCaptura = S.idCaptura,
+                    S.NombrePaciente,
+                    S.TipoTramite,
+                    S.NoExpediente,
+                    S.Sucursal,
+                    S.Doctor,
+                    S.EstatusCaptura
+                }).FirstOrDefault();
+
+            //string estatus = selected.EstatusCaptura;
+
 
             return Json(selected, JsonRequestBehavior.AllowGet);
         }

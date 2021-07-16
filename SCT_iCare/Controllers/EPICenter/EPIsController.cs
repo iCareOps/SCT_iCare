@@ -135,9 +135,36 @@ namespace SCT_iCare.Controllers.EPICenter
             return View(ePI);
         }
 
-        public ActionResult EditExpediente(int? id, string usuario /*[Bind(Include = "idEPI,NombrePaciente,BytesArchivo,NoFolio,TipoEPI,Estatus,FechaExpediente,InicioCaptura,FinalCaptura,Doctor,Sucursal,Usuario,Dictamen")] EPI ePI*/)
+        public ActionResult AbrirEPIGeneral(int? id)
         {
             Captura captura = db.Captura.Find(id);
+
+
+            var expediente = (from e in db.Expedientes where e.idPaciente == captura.idPaciente select e).FirstOrDefault();
+
+            var bytesBinary = expediente.Expediente;
+
+            if (id != null)
+            {
+                TempData["ID"] = id;
+                return RedirectToAction("Captura");
+            }
+            else
+            {
+                TempData["ID"] = null;
+                return RedirectToAction("Captura");
+            }
+        }
+
+        public ActionResult EditExpedienteEC(int? id, string usuario/*[Bind(Include = "idEPI,NombrePaciente,BytesArchivo,NoFolio,TipoEPI,Estatus,FechaExpediente,InicioCaptura,FinalCaptura,Doctor,Sucursal,Usuario,Dictamen")] EPI ePI*/)
+        {
+            Captura captura = db.Captura.Find(id);
+
+            if(captura.EstatusCaptura == "En captura...")
+            {
+                TempData["ERROR"] = "ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO";
+                return RedirectToAction("Captura");
+            }
 
             captura.EstatusCaptura = "En captura...";
             captura.InicioCaptura = DateTime.Now;
@@ -152,10 +179,101 @@ namespace SCT_iCare.Controllers.EPICenter
                 db.Entry(captura).State = EntityState.Modified;
                 db.SaveChanges();                
             }
+
+            if(id != null)
+            {
+                TempData["ID"] = id;
+                return RedirectToAction("Captura");
+            }
+            else
+            {
+                TempData["ID"] = null;
+                return RedirectToAction("Captura");
+            }
+        }
+
+        public ActionResult EditExpedienteS(int? id, string usuario, string sucursal/*[Bind(Include = "idEPI,NombrePaciente,BytesArchivo,NoFolio,TipoEPI,Estatus,FechaExpediente,InicioCaptura,FinalCaptura,Doctor,Sucursal,Usuario,Dictamen")] EPI ePI*/)
+        {
+            Captura captura = db.Captura.Find(id);
+
+            if (captura.EstatusCaptura == "En captura...")
+            {
+                TempData["ERROR"] = "ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO";
+                return RedirectToAction("capturaSucursal", "EPIs", new { sucursal = sucursal });
+            }
+
+            captura.EstatusCaptura = "En captura...";
+            captura.InicioCaptura = DateTime.Now;
+            captura.Capturista = usuario;
+
+            var expediente = (from e in db.Expedientes where e.idPaciente == captura.idPaciente select e).FirstOrDefault();
+
+            var bytesBinary = expediente.Expediente;
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(captura).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            if (id != null)
+            {
+                TempData["ID"] = id;
+                return RedirectToAction("capturaSucursal", "EPIs", new { sucursal = sucursal });
+            }
+            else
+            {
+                TempData["ID"] = null;
+                return RedirectToAction("capturaSucursal", "EPIs", new { sucursal = sucursal });
+            }
+        }
+
+        public ActionResult EditExpedienteD(int? id, string usuario, string sucursal, string doctor/*[Bind(Include = "idEPI,NombrePaciente,BytesArchivo,NoFolio,TipoEPI,Estatus,FechaExpediente,InicioCaptura,FinalCaptura,Doctor,Sucursal,Usuario,Dictamen")] EPI ePI*/)
+        {
+            Captura captura = db.Captura.Find(id);
+
+            if (captura.EstatusCaptura == "En captura...")
+            {
+                TempData["ERROR"] = "ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO";
+                return capturaDoctor(sucursal, doctor);
+            }
+
+            captura.EstatusCaptura = "En captura...";
+            captura.InicioCaptura = DateTime.Now;
+            captura.Capturista = usuario;
+
+            var expediente = (from e in db.Expedientes where e.idPaciente == captura.idPaciente select e).FirstOrDefault();
+
+            var bytesBinary = expediente.Expediente;
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(captura).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            if (id != null)
+            {
+                TempData["ID"] = id;
+                //return RedirectToAction("capturaDoctor", "EPIs", new { sucursal = sucursal, doctor = doctor });
+                return capturaDoctor(sucursal, doctor);
+            }
+            else
+            {
+                TempData["ID"] = null;
+                //return RedirectToAction("capturaDoctor", "EPIs", new { sucursal = sucursal, doctor = doctor });
+                return capturaDoctor(sucursal, doctor);
+            }
+        }
+
+        public ActionResult AbrirEPI(int id)
+        {
+            Captura captura = db.Captura.Find(id);
+            var expediente = (from e in db.Expedientes where e.idPaciente == captura.idPaciente select e).FirstOrDefault();
+
+            var bytesBinary = expediente.Expediente;
+            TempData["ID"] = null;
             return File(bytesBinary, "application/pdf");
-            //return View(captura);
-
-
         }
 
         public ActionResult SubirDictamen(int? id /*[Bind(Include = "idEPI,NombrePaciente,BytesArchivo,NoFolio,TipoEPI,Estatus,FechaExpediente,InicioCaptura,FinalCaptura,Doctor,Sucursal,Usuario,Dictamen")] EPI ePI*/)
@@ -312,7 +430,9 @@ namespace SCT_iCare.Controllers.EPICenter
         {
             ViewBag.Sucursal = sucursal;
             ViewBag.Doctor = doctor;
-            return View();
+            TempData["Sucursal"] = sucursal;
+            TempData["Doctor"] = doctor;
+            return View("capturaDoctor");
         }
 
         [HttpPost]

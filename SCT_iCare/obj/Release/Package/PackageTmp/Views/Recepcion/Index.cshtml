@@ -20,13 +20,19 @@
     int flag = 1; //contador de la tabla
 
     DateTime start = DateTime.Now;
+    DateTime finish = DateTime.Now.AddDays(1);
 
     int year = start.Year;
     int month = start.Month;
     int day = start.Day;
+
+    int year1 = finish.Year;
+    int month1 = finish.Month;
+    int day1 = finish.Day;
+
     int tomorrorDay = day + 1;
     DateTime thisDate = new DateTime(year, month, day);
-    DateTime tomorrowDate = DateTime.Now.AddDays(1);
+    DateTime tomorrowDate = new DateTime(year1, month1, day1);
 
     var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 
@@ -43,9 +49,9 @@ Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nom
 idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
 Sucursal = Hospital.ToString();
 
-modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 
-registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
+registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal).Count();
 
 }
 else
@@ -88,23 +94,6 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
 
 @section scripts{
     <script>
-
-        //$(document).ready(function () {
-        //    $("#buscar").click(function () {
-        //        var dato = $("#buscador").val();
-        //        //name = "ali";
-        //        alert(dato);
-        //        $('#exampleModal').modal('show');
-        //        $.post("Recepcion/Buscar", { dato: dato }, function (data) {
-        //            document.write(data);
-        //            $.each(data, function (key, value) {
-        //                //document.write(data,value);
-        //                // Here you can iterate data one by one and process it.
-        //            });
-        //        }, "text");
-        //    });
-        //});
-
     $(function () {
         $(".buscar").click(function () {
             var url = "@Url.Action("Buscar", "Recepcion")";
@@ -129,6 +118,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             "<p>Email: <b>" + data[i].Email + "</b></p>" +
                             "<p>Folio: <b>" + data[i].Folio + "</b></p>" +
                             "<p>CURP: <b>" + data[i].CURP + "</b></p>" +
+                            "<a href=\"#\" data-toggle=\"modal\" data-target=\"#ModalEditar_" + data[i].idPaciente + "\"><b>Editar</b></a>"+
                             "<hr/>"
                         }
                         else
@@ -151,14 +141,15 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             "<p>Sucursal: <b>" + data[i].Sucursal + "</b></p>" +
                             "<p>Doctor: <b>" + data[i].Doctor + "</b></p>" +
                             "<p>Tipo Trámite: <b>" + data[i].TipoTramite + "</b></p>" +
+                            "<a href=\"#\" data-toggle=\"modal\" data-target=\"#ModalEdit2_" + data[i].idPaciente + "\"><b>Editar Datos</b></a>"+
                             "<hr/>"
                         }
                     }
                 }
-                
+
                 $('#exampleModal5').modal('show');
                 document.getElementById("cuerpo").innerHTML = miResultado;
-   
+
             }).fail().always(function () {
 
             });
@@ -620,7 +611,7 @@ else
                                                     {
                                                         <div class="form-group">
                                                             <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
-                                                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.N.Nombre" required>
+                                                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.N.Nombre">
                                                         </div>
                                                     }
                                                     else
@@ -646,7 +637,18 @@ else
 
                                                 <div class="form-group">
                                                     <label for="recipient-name" class="col-form-label">Número de Expediente:</label>
-                                                    <input type="text" class="form-control" id="numero" name="numero" placeholder="@item.M.NoExpediente" required>
+                                                    @{
+                                                        var consulta5 = (from c in db.Cita where c.idPaciente == item.M.idPaciente select c.NoExpediente).FirstOrDefault();
+                                                        if (consulta5 == null)
+                                                        {
+                                                            <input type="text" class="form-control" id="numero" name="numero" required>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="text" class="form-control" id="numero" name="numero" placeholder="@item.M.NoExpediente">
+                                                        }
+                                                    }
+                                                    @*<input type="text" class="form-control" id="numero" name="numero" placeholder="@item.M.NoExpediente" required>*@
                                                 </div>
                                                 <div class="form-group" style="width:80%; min-width:320px">
                                                     <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
