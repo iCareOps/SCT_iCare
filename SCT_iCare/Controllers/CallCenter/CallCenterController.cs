@@ -8,6 +8,7 @@ using conekta;
 using System.Configuration;
 using Newtonsoft.Json.Serialization;
 using BarcodeLib;
+using SCT_iCare.Models;
 
 using System.IO;
 using System.Text;
@@ -15,6 +16,7 @@ using System.Globalization;
 using System.Net;
 using System.Data.Entity;
 using System.Web.Script.Serialization;
+using System.Runtime.Serialization;
 
 namespace SCT_iCare.Controllers.CallCenter
 {
@@ -331,6 +333,7 @@ namespace SCT_iCare.Controllers.CallCenter
                 Cita cita = new Cita();
 
                 cita.NoOrden = orden.id;
+                cita.TipoPago = "REFERENCIA OXXO";
                 cita.CC = usuario;
 
                 JavaScriptSerializer js = new JavaScriptSerializer();
@@ -458,6 +461,7 @@ namespace SCT_iCare.Controllers.CallCenter
                     cita.EstatusPago = orden.payment_status;
                     cita.Folio = numFolio;
                     cita.Canal1 = nombre.ToUpper();
+                    cita.TipoPago = "REFERENCIA OXXO";
 
                     int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
                     ReferenciasSB refe = db.ReferenciasSB.Find(idRefSB);
@@ -806,6 +810,37 @@ namespace SCT_iCare.Controllers.CallCenter
 
             return Redirect("Index");
         }
+
+        public ActionResult Buscar(string term)
+        {
+            var selected = db.Paciente
+                .Where(r => r.Nombre.Contains(term.ToUpper()))
+                .Select(s => s.Nombre).Take(10);
+
+            return Json(selected, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult BuscarBT()
+        {
+            List<Paciente> data = db.Paciente.ToList();
+
+            var selected = data.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Select(S => new {id = S.N.idPaciente, S.N.Nombre, S.N.Telefono, Fecha =  S.M.FechaCita.ToString(), S.M.Referencia })/*.Where(w => w.Nombre.Contains(dato1))*/;
+            return Json(selected, JsonRequestBehavior.AllowGet);
+        }
+
+        //public ActionResult BuscarBT1()
+        //{
+        //    var datos = new Root();
+        //    var selected = new Object()
+        //    {
+        //        total = 1,
+        //        totalNotFiltered = 1,
+        //        rows = new List<Paciente>()
+        //    };
+
+        //    return Json(selected, JsonRequestBehavior.AllowGet);
+        //}
+
     }
     
 }

@@ -135,7 +135,7 @@ namespace SCT_iCare.Controllers.EPICenter
             return View(ePI);
         }
 
-        public ActionResult AbrirEPIGeneral(int? id)
+        public ActionResult AbrirEPI_EC(int? id)
         {
             Captura captura = db.Captura.Find(id);
 
@@ -192,6 +192,27 @@ namespace SCT_iCare.Controllers.EPICenter
             }
         }
 
+        public ActionResult AbrirEPI_S(int? id, string sucursal)
+        {
+            Captura captura = db.Captura.Find(id);
+
+
+            var expediente = (from e in db.Expedientes where e.idPaciente == captura.idPaciente select e).FirstOrDefault();
+
+            var bytesBinary = expediente.Expediente;
+
+            if (id != null)
+            {
+                TempData["ID"] = id;
+                return RedirectToAction("capturaSucursal", "EPIs", new { sucursal = sucursal });
+            }
+            else
+            {
+                TempData["ID"] = null;
+                return RedirectToAction("capturaSucursal", "EPIs", new { sucursal = sucursal });
+            }
+        }
+
         public ActionResult EditExpedienteS(int? id, string usuario, string sucursal/*[Bind(Include = "idEPI,NombrePaciente,BytesArchivo,NoFolio,TipoEPI,Estatus,FechaExpediente,InicioCaptura,FinalCaptura,Doctor,Sucursal,Usuario,Dictamen")] EPI ePI*/)
         {
             Captura captura = db.Captura.Find(id);
@@ -225,6 +246,48 @@ namespace SCT_iCare.Controllers.EPICenter
             {
                 TempData["ID"] = null;
                 return RedirectToAction("capturaSucursal", "EPIs", new { sucursal = sucursal });
+            }
+        }
+
+        public ActionResult AbrirDictamenS(int? id, string sucursal)
+        {
+            Captura captura = db.Captura.Find(id);
+
+            int idPaciente = Convert.ToInt32(captura.idPaciente);
+            var Dictamen = (from d in db.Dictamen where d.idPaciente == idPaciente select d.Dictamen1).FirstOrDefault();
+
+            var bytesBinary = Dictamen;
+
+            if (id != null)
+            {
+                TempData["ID2"] = id;
+                return RedirectToAction("capturaSucursal", "EPIs", new { sucursal = sucursal });
+            }
+            else
+            {
+                TempData["ID2"] = null;
+                return RedirectToAction("capturaSucursal", "EPIs", new { sucursal = sucursal });
+            }
+        }
+
+        public ActionResult AbrirEPI_D(int? id, string sucursal, string doctor)
+        {
+            Captura captura = db.Captura.Find(id);
+
+
+            var expediente = (from e in db.Expedientes where e.idPaciente == captura.idPaciente select e).FirstOrDefault();
+
+            var bytesBinary = expediente.Expediente;
+
+            if (id != null)
+            {
+                TempData["ID"] = id;
+                return capturaDoctor(sucursal, doctor);
+            }
+            else
+            {
+                TempData["ID"] = null;
+                return capturaDoctor(sucursal, doctor);
             }
         }
 
@@ -266,12 +329,43 @@ namespace SCT_iCare.Controllers.EPICenter
             }
         }
 
+        public ActionResult AbrirDictamenD(int? id, string sucursal, string doctor)
+        {
+            Captura captura = db.Captura.Find(id);
+
+            int idPaciente = Convert.ToInt32(captura.idPaciente);
+            var Dictamen = (from d in db.Dictamen where d.idPaciente == idPaciente select d.Dictamen1).FirstOrDefault();
+
+            var bytesBinary = Dictamen;
+
+            if (id != null)
+            {
+                TempData["ID2"] = id;
+                return capturaDoctor(sucursal, doctor);
+            }
+            else
+            {
+                TempData["ID2"] = null;
+                return capturaDoctor(sucursal, doctor);
+            }
+        }
+
         public ActionResult AbrirEPI(int id)
         {
             Captura captura = db.Captura.Find(id);
             var expediente = (from e in db.Expedientes where e.idPaciente == captura.idPaciente select e).FirstOrDefault();
 
             var bytesBinary = expediente.Expediente;
+            TempData["ID"] = null;
+            return File(bytesBinary, "application/pdf");
+        }
+
+        public ActionResult AbrirDictamen(int id)
+        {
+            Captura captura = db.Captura.Find(id);
+            var expediente = (from e in db.Dictamen where e.idPaciente == captura.idPaciente select e).FirstOrDefault();
+
+            var bytesBinary = expediente.Dictamen1;
             TempData["ID"] = null;
             return File(bytesBinary, "application/pdf");
         }
@@ -328,10 +422,10 @@ namespace SCT_iCare.Controllers.EPICenter
                 db.Entry(captura).State = EntityState.Modified;
                 db.Dictamen.Add(dictamen);
                 db.SaveChanges();
-                return RedirectToAction("capturaSucursal", "EPIs", new { sucursal = captura.Sucursal} );
+                return RedirectToAction("Captura");
             }
 
-            return View(captura);
+            return RedirectToAction("Captura");
         }
 
         public ActionResult DescargarPDF(int? id)

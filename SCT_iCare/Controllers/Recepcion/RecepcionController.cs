@@ -36,6 +36,11 @@ namespace SCT_iCare.Controllers.Recepcion
             return View(db.Paciente.ToList());
         }
 
+        public ActionResult NextDay()
+        {
+            return View(db.Paciente.ToList());
+        }
+
         // GET: Pacientes/Details/5
         public ActionResult Details(int? id)
         {
@@ -148,10 +153,10 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.Referencia = referencia;
                 cita.Folio = numFolio;
                 cita.Canal1 = "SITIO";
+                cita.TipoPago = pago;
 
                 if (pago != "Referencia Scotiabank")
                 {
-                    //var tipoPago = (from t in db.ReferenciasSB where t.ReferenciaSB == numero select t).FirstOrDefault();
                     var tipoPago = (from t in db.ReferenciasSB where t.ReferenciaSB == referencia select t).FirstOrDefault();
 
                     if (tipoPago != null)
@@ -173,14 +178,18 @@ namespace SCT_iCare.Controllers.Recepcion
 
                     var tipoPago = (from t in db.ReferenciasSB where t.ReferenciaSB == referencia select t).FirstOrDefault();
 
-                    ReferenciasSB refe = db.ReferenciasSB.Find(tipoPago.idReferencia);
-                    refe.EstatusReferencia = "OCUPADO";
-
-                    if (ModelState.IsValid)
+                    if(tipoPago != null)
                     {
-                        db.Entry(refe).State = EntityState.Modified;
-                        db.SaveChanges();
+                        ReferenciasSB refe = db.ReferenciasSB.Find(tipoPago.idReferencia);
+                        refe.EstatusReferencia = "OCUPADO";
+
+                        if (ModelState.IsValid)
+                        {
+                            db.Entry(refe).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
                     }
+                    
                 }
 
                 
@@ -420,7 +429,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
                 Cita cita = new Cita();
 
-                cita.TipoPago = "REFERENCIA OXXO";
+                cita.TipoPago = "Referencia OXXO";
                 cita.NoOrden = orden.id;
                 
 
@@ -530,7 +539,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
                     Cita cita = new Cita();
 
-                    cita.TipoPago = "REFERENCIA OXXO";
+                    cita.TipoPago = "Referencia OXXO";
                     cita.NoOrden = orden.id;
                  
 
@@ -670,11 +679,13 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CURP_Expediente(string id, string nombre, string numero, string curp, string tipoPago)
+        public ActionResult CURP_Expediente(string id, string nombre, string numero, string curp, string tel, string email)
         {
             int ide = Convert.ToInt32(id);
 
-            string NOMBRE = "";
+            string NOMBRE = null;
+            string TELEFONO = null;
+            string EMAIL = null;
 
             var paciente = (from p in db.Paciente where p.idPaciente == ide select p).FirstOrDefault();
             var cita = (from p in db.Cita where p.idPaciente == ide select p).FirstOrDefault();
@@ -685,11 +696,31 @@ namespace SCT_iCare.Controllers.Recepcion
             }
             else
             {
-                NOMBRE = nombre;
+                NOMBRE = nombre.ToUpper();
+            }
+
+            if (tel == "")
+            {
+                TELEFONO = paciente.Telefono;
+            }
+            else
+            {
+                TELEFONO = tel;
+            }
+
+            if(email == "")
+            {
+                EMAIL = paciente.Email;
+            }
+            else
+            {
+                EMAIL = email;
             }
 
             paciente.Nombre = NOMBRE.ToUpper();
             paciente.CURP = curp.ToUpper();
+            paciente.Email = EMAIL;
+            paciente.Telefono = TELEFONO;
             cita.NoExpediente = numero;
 
             if (ModelState.IsValid)
@@ -735,7 +766,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 //Response.End();
             }
 
-            string CURP;
+            string CURP = null;
             string NOMBRE = null;
             string NOEXPEDIENTE = null;
 
@@ -1024,7 +1055,7 @@ namespace SCT_iCare.Controllers.Recepcion
             }
             else
             {
-                CURP = curp;
+                CURP = curp.ToUpper();
             }
 
             byte[] bytes2 = expediente.Expediente;

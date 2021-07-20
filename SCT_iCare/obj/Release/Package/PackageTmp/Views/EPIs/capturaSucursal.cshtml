@@ -113,7 +113,7 @@
     {
         <div class="tablaScroll">
             <table class="table tablas table-responsive" style="color: #2F2D6B">
-                <tr style="background-color:#62E3C9">
+                <tr class="bg-primary">
                     <th>
                         Nombre Paciente
                     </th>
@@ -153,7 +153,7 @@
 
                     if (item.TipoTramite == "PRIMERA VEZ")
                     {
-                        fila = "bg-warning";
+                        fila = "bg-info";
                     }
                     else
                     {
@@ -163,7 +163,16 @@
 
                     <tr class=@fila>
                         <td>
-                            <b>@Html.DisplayFor(modelItem => item.NombrePaciente)</b>
+                            @{
+                                if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 11 && idUser != 16))
+                                {
+                                    @Html.DisplayFor(modelItem => item.NombrePaciente)
+                                }
+                                else
+                                {
+                                    <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_S", new { id = item.idCaptura, sucursal = Sucursal }, new { style = "color: black; text-decoration: none" })</b>
+                                }
+                            }
                         </td>
 
                         <td>
@@ -173,7 +182,16 @@
                             @Html.DisplayFor(modelItem => item.TipoTramite)
                         </td>
                         <td>
-                            <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                            @{
+                                if (item.EstatusCaptura == "Terminado")
+                                {
+                                    <b><i><a href=@Url.Action("AbrirDictamenS", "EPIs",  new { id = item.idCaptura, usuario = nombreUsuario, sucursal = Sucursal }) style="color:midnightblue; text-decoration:none">@item.EstatusCaptura</a></i></b>
+                                }
+                                else
+                                {
+                                    @Html.DisplayFor(modelItem => item.EstatusCaptura)
+                                }
+                            }
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.FechaExpediente)
@@ -226,11 +244,11 @@
                             }
 
                             @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1" data-id="@item.idEPI">Open modal for @item.idEPI</button>
-        @Html.ActionLink("Editar", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#modalEdit" }) |
-        @Html.ActionLink("Detalles", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#YourModalId" })*@
+                                @Html.ActionLink("Editar", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#modalEdit" }) |
+                                @Html.ActionLink("Detalles", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#YourModalId" })*@
                             @*@Html.ActionLink("Edit", "Edit", new { id = item.idEPI }) |
-        @Html.ActionLink("Details", "Details", new { id = item.idEPI }) |
-        @Html.ActionLink("Delete", "Delete", new { id = item.idEPI })*@
+                                @Html.ActionLink("Details", "Details", new { id = item.idEPI }) |
+                                @Html.ActionLink("Delete", "Delete", new { id = item.idEPI })*@
                         </td>
                     </tr>
 
@@ -320,6 +338,15 @@
             window.open('@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })');
         </script>
     }
+
+    @if (TempData["ID2"] != null)
+    {
+        <script>
+            @*location.href='@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })';*@
+            window.open('@Url.Action("AbrirDictamen","EPIs", new { id = TempData["ID2"] })');
+        </script>
+    }
+
     @if (Query == "ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO")
     {
         <script>
