@@ -212,22 +212,35 @@ namespace SCT_iCare.Controllers.CallCenter
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Orden(string nombre, string telefono, string email, string sucursal, string usuario, DateTime fecha,  /*string tipoL, string tipoT,*/ string cantidad)
+        public ActionResult Orden(string nombre, string telefono, string email, string sucursal, string usuario, DateTime fecha,  string tipoL, string cantidad)
         {
             GetApiKey();
 
             int cantidadDiferencia;
             int cantidadReal = Convert.ToInt32(cantidad);
             string mailSeteado = email;
+            int precio = 0;
 
-            if (Convert.ToInt32(cantidad) > 3)
+            if(tipoL == "AEREO")
             {
-                cantidadDiferencia = Convert.ToInt32(cantidad) - 3;
-                cantidadReal = 3;
-                mailSeteado = "referenciaoxxo@medicinagmi.mx";
+                if (Convert.ToInt32(cantidad) > 2)
+                {
+                    cantidadDiferencia = Convert.ToInt32(cantidad) - 3;
+                    cantidadReal = 2;
+                    mailSeteado = "referenciaoxxo@medicinagmi.mx";
+                }
+                precio = Convert.ToInt32(cantidadReal) * 4060;
             }
-
-            int precio = Convert.ToInt32(cantidadReal) * 2842;
+            else
+            {
+                if (Convert.ToInt32(cantidad) > 3)
+                {
+                    cantidadDiferencia = Convert.ToInt32(cantidad) - 3;
+                    cantidadReal = 3;
+                    mailSeteado = "referenciaoxxo@medicinagmi.mx";
+                }
+                precio = Convert.ToInt32(cantidadReal) * 2842;
+            }
 
 
             Order order = new conekta.Order().create(@"{
@@ -263,6 +276,7 @@ namespace SCT_iCare.Controllers.CallCenter
 
             ViewBag.Orden = order.id;
             ViewBag.Metodo = "OXXO";
+            ViewBag.Licencia = tipoL;
 
             if (Convert.ToInt32(cantidad) == 1)
             {

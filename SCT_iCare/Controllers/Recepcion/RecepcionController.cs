@@ -305,22 +305,35 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Orden(string nombre, string telefono, string email, string usuario, string sucursal,  /*string tipoL, string tipoT,*/ string cantidad)
+        public ActionResult Orden(string nombre, string telefono, string email, string usuario, string sucursal,  string tipoL, string cantidad)
         {
             GetApiKey();
 
             int cantidadDiferencia;
             int cantidadReal = Convert.ToInt32(cantidad);
             string mailSeteado = email;
+            int precio = 0;
 
-            if(Convert.ToInt32(cantidad) > 3)
+            if (tipoL == "AEREO")
             {
-                cantidadDiferencia = Convert.ToInt32(cantidad) - 3;
-                cantidadReal = 3;
-                mailSeteado = "referenciaoxxo@medicinagmi.mx";
+                if (Convert.ToInt32(cantidad) > 2)
+                {
+                    cantidadDiferencia = Convert.ToInt32(cantidad) - 3;
+                    cantidadReal = 2;
+                    mailSeteado = "referenciaoxxo@medicinagmi.mx";
+                }
+                precio = Convert.ToInt32(cantidadReal) * 4060;
             }
-
-            int precio = Convert.ToInt32(cantidadReal) * 2842;
+            else
+            {
+                if (Convert.ToInt32(cantidad) > 3)
+                {
+                    cantidadDiferencia = Convert.ToInt32(cantidad) - 3;
+                    cantidadReal = 3;
+                    mailSeteado = "referenciaoxxo@medicinagmi.mx";
+                }
+                precio = Convert.ToInt32(cantidadReal) * 2842;
+            }
 
 
             Order order = new conekta.Order().create(@"{
@@ -356,6 +369,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
             ViewBag.Orden = order.id;
             ViewBag.Metodo = "OXXO";
+            ViewBag.Licencia = tipoL;
 
             if (Convert.ToInt32(cantidad) == 1)
             {
@@ -579,6 +593,244 @@ namespace SCT_iCare.Controllers.Recepcion
             return View(detallesOrden);
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult PagoTarjeta(string nombre, string telefono, string email, string usuario, string sucursal, string tipoL, string cantidad)
+        {
+            GetApiKey();
+
+            string precio;
+
+            if (tipoL == "AEREO")
+            {
+                precio = Convert.ToString(Convert.ToInt32(cantidad) * 4060);
+            }
+            else
+            {
+                precio = Convert.ToString(Convert.ToInt32(cantidad) * 2842);
+            }
+
+            PaymentLink nOrder = new PaymentLink().create(@"{
+                      ""name"":""Pago con Tarjeta"",
+                      ""type"":""PaymentLink"",
+                      ""recurrent"": false,
+                      ""expired_at"": " + FechaExpira() + @",
+                      ""allowed_payment_methods"": [""card""],
+                      ""needs_shipping_contact"": false ,
+                      ""monthly_installments_enabled"": false ,
+                       
+                      ""order_template"": {
+                      ""line_items"": [{
+                      ""name"": ""Checkup EPI"",
+                      ""unit_price"": " + ConvertirProductos2(precio) + @",
+                      ""quantity"": 1
+                      }],
+
+                      ""currency"":""MXN"",
+                      ""metadata"":{""my_custom_customer_id"":""202107PEPE""},
+                      ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @"
+                      }
+                    }");
+
+            string link = nOrder.url;
+            string IDEE = nOrder.id; 
+            TempData["Link"] = link;
+
+            if (Convert.ToInt32(cantidad) == 1)
+            {
+                Paciente paciente = new Paciente();
+
+                paciente.Nombre = nombre.ToUpper();
+                paciente.Telefono = telefono;
+                paciente.Email = email;
+
+                //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
+                string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
+                //string doc = (from d in db.Doctores where d.Nombre == doctor select d.idDoctor).FirstOrDefault().ToString();
+
+                //Se obtiene el número del contador desde la base de datos
+                int? num = (from c in db.Sucursales where c.Nombre == sucursal select c.Contador).FirstOrDefault() + 1;
+
+                //Contadores por número de citas en cada sucursal
+                string contador = "";
+                if (num == null)
+                {
+                    contador = "100";
+                }
+                else if (num < 10)
+                {
+                    contador = "00" + Convert.ToString(num);
+                }
+                else if (num >= 10 && num < 100)
+                {
+                    contador = "0" + Convert.ToString(num);
+                }
+
+                //Se asigna el número de ID del doctor
+                //if (Convert.ToInt32(doc) < 10)
+                //{
+                //    doc = "0" + doc;
+                //}
+
+                string mes = DateTime.Now.Month.ToString();
+
+                if (Convert.ToInt32(mes) < 10)
+                {
+                    mes = "0" + mes;
+                }
+
+                //Se crea el número de Folio
+                string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+                paciente.Folio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+
+                if (ModelState.IsValid)
+                {
+                    db.Paciente.Add(paciente);
+                    db.SaveChanges();
+                    //return RedirectToAction("Index");
+                }
+
+                int? idSuc = (from i in db.Sucursales where i.Nombre == sucursal select i.idSucursal).FirstOrDefault();
+
+                Sucursales suc = db.Sucursales.Find(idSuc);
+
+                suc.Contador = Convert.ToInt32(num);
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(suc).State = EntityState.Modified;
+                    db.SaveChanges();
+                    //No retorna ya que sigue el proceso
+                    //return RedirectToAction("Index");
+                }
+
+                var idPaciente = (from i in db.Paciente where i.Folio == paciente.Folio select i.idPaciente).FirstOrDefault();
+
+                Cita cita = new Cita();
+
+                cita.TipoPago = "Pago con Tarjeta";
+
+                cita.NoOrden = IDEE;
+
+                cita.idPaciente = idPaciente;
+                cita.FechaReferencia = DateTime.Now;
+                cita.Sucursal = sucursal;
+                cita.Recepcionista = usuario;
+                cita.EstatusPago = "Pendiente";
+                cita.Folio = numFolio;
+                cita.Canal1 = "SITIO";
+                cita.FechaCita = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    db.Cita.Add(cita);
+                    db.SaveChanges();
+                    //no regresa ya que se debe ver la pantalla de Orden
+                    //return RedirectToAction("Index");
+                }
+            }
+            else
+            {
+                //return View(detallesOrden);
+                for (int n = 1; n <= Convert.ToInt32(cantidad); n++)
+                {
+                    Paciente paciente = new Paciente();
+
+                    paciente.Nombre = nombre.ToUpper() + " " + n;
+                    paciente.Telefono = telefono;
+                    paciente.Email = email;
+
+                    //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
+                    string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
+                    //string doc = (from d in db.Doctores where d.Nombre == doctor select d.idDoctor).FirstOrDefault().ToString();
+
+                    //Se obtiene el número del contador desde la base de datos
+                    int? num = (from c in db.Sucursales where c.Nombre == sucursal select c.Contador).FirstOrDefault() + 1;
+
+                    //Contadores por número de citas en cada sucursal
+                    string contador = "";
+                    if (num == null)
+                    {
+                        contador = "100";
+                    }
+                    else if (num < 10)
+                    {
+                        contador = "00" + Convert.ToString(num);
+                    }
+                    else if (num >= 10 && num < 100)
+                    {
+                        contador = "0" + Convert.ToString(num);
+                    }
+
+                    //Se asigna el número de ID del doctor
+                    //if (Convert.ToInt32(doc) < 10)
+                    //{
+                    //    doc = "0" + doc;
+                    //}
+
+                    string mes = DateTime.Now.Month.ToString();
+
+                    if (Convert.ToInt32(mes) < 10)
+                    {
+                        mes = "0" + mes;
+                    }
+
+                    //Se crea el número de Folio
+                    string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+                    paciente.Folio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Paciente.Add(paciente);
+                        db.SaveChanges();
+                        //return RedirectToAction("Index");
+                    }
+
+                    int? idSuc = (from i in db.Sucursales where i.Nombre == sucursal select i.idSucursal).FirstOrDefault();
+
+                    Sucursales suc = db.Sucursales.Find(idSuc);
+
+                    suc.Contador = Convert.ToInt32(num);
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Entry(suc).State = EntityState.Modified;
+                        db.SaveChanges();
+                        //No retorna ya que sigue el proceso
+                        //return RedirectToAction("Index");
+                    }
+
+                    var idPaciente = (from i in db.Paciente where i.Folio == paciente.Folio select i.idPaciente).FirstOrDefault();
+
+                    Cita cita = new Cita();
+
+                    cita.TipoPago = "Pago con Tarjeta";
+
+                    cita.NoOrden = IDEE;
+                    cita.idPaciente = idPaciente;
+                    cita.FechaReferencia = DateTime.Now;
+                    cita.Sucursal = sucursal;
+                    cita.Recepcionista = usuario;
+                    cita.EstatusPago = "Pendiente";
+                    cita.Folio = numFolio;
+                    cita.Canal1 = nombre.ToUpper();
+                    cita.FechaCita = DateTime.Now;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Cita.Add(cita);
+                        db.SaveChanges();
+                        //no regresa ya que se debe ver la pantalla de Orden
+                        //return RedirectToAction("Index");
+                    }
+                }
+            }
+
+            ViewBag.Cantidad = Convert.ToInt32(cantidad);
+            return Redirect("Index");
+        }
+
         // GET: Pacientes/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -686,6 +938,8 @@ namespace SCT_iCare.Controllers.Recepcion
             string NOMBRE = null;
             string TELEFONO = null;
             string EMAIL = null;
+            string NOEXP = null;
+            string CURP = null;
 
             var paciente = (from p in db.Paciente where p.idPaciente == ide select p).FirstOrDefault();
             var cita = (from p in db.Cita where p.idPaciente == ide select p).FirstOrDefault();
@@ -717,11 +971,29 @@ namespace SCT_iCare.Controllers.Recepcion
                 EMAIL = email;
             }
 
+            if (curp == "")
+            {
+                CURP = paciente.CURP;
+            }
+            else
+            {
+                CURP = curp.ToUpper();
+            }
+
+            if (numero == "")
+            {
+                NOEXP = cita.NoExpediente;
+            }
+            else
+            {
+                NOEXP = numero;
+            }
+
             paciente.Nombre = NOMBRE.ToUpper();
-            paciente.CURP = curp.ToUpper();
+            paciente.CURP = CURP;
             paciente.Email = EMAIL;
             paciente.Telefono = TELEFONO;
-            cita.NoExpediente = numero;
+            cita.NoExpediente = NOEXP;
 
             if (ModelState.IsValid)
             {
@@ -736,7 +1008,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Digitalizar(HttpPostedFileBase file, string id, string usuario, string nombre, string doctor, string numero, string tipoL, string tipoT, string curp)
+        public ActionResult Digitalizar(HttpPostedFileBase file, string id, string usuario, string nombre, string doctor, string numero, string tipoL, string tipoT, string curp, DateTime? fecha)
         {
             int ide = Convert.ToInt32(id);
 
@@ -769,6 +1041,7 @@ namespace SCT_iCare.Controllers.Recepcion
             string CURP = null;
             string NOMBRE = null;
             string NOEXPEDIENTE = null;
+            DateTime FECHA = Convert.ToDateTime(fecha);
 
             if (nombre == "")
             {
@@ -797,6 +1070,11 @@ namespace SCT_iCare.Controllers.Recepcion
                 CURP = curp;
             }
 
+            if(fecha == null)
+            {
+                FECHA = Convert.ToDateTime(cita.FechaCita);
+            }
+
             exp.Expediente = bytes2;
             exp.Recepcionista = usuario;
             exp.idPaciente = ide;
@@ -809,7 +1087,7 @@ namespace SCT_iCare.Controllers.Recepcion
             captura.Doctor = doctor;
             captura.Sucursal = cita.Sucursal;
             captura.idPaciente = Convert.ToInt32(id);
-            captura.FechaExpediente = DateTime.Now;
+            captura.FechaExpediente = FECHA;
 
             Cita citaModificar = new Cita();
             cita.TipoLicencia = tipoL;
@@ -929,7 +1207,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
         private long FechaExpira()
         {
-            DateTime treintaDias = DateTime.Now.AddDays(2);
+            DateTime treintaDias = DateTime.Now.AddDays(365);
             long marcaTiempo = (Int64)(treintaDias.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
             //string tiempo = marcaTiempo.ToString();
             return marcaTiempo;
@@ -938,7 +1216,7 @@ namespace SCT_iCare.Controllers.Recepcion
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult EditarCompleto(HttpPostedFileBase file, string id, string nombre, string doctor, string numero, string tipoL, string tipoT
-            , string pago, string telefono, string email, string referencia, string curp)
+            , string pago, string telefono, string email, string referencia, string curp, DateTime? fecha)
         {
             int ide = Convert.ToInt32(id);
 
@@ -958,6 +1236,7 @@ namespace SCT_iCare.Controllers.Recepcion
             string EMAIL = null;
             string REFERENCIA = null;
             string CURP = null;
+            DateTime FECHA = Convert.ToDateTime(fecha);
 
             if(id == null)
             {
@@ -1058,6 +1337,11 @@ namespace SCT_iCare.Controllers.Recepcion
                 CURP = curp.ToUpper();
             }
 
+            if(fecha == null)
+            {
+                FECHA = Convert.ToDateTime(cita.FechaCita);
+            }
+
             byte[] bytes2 = expediente.Expediente;
 
             if (file != null && file.ContentLength > 0)
@@ -1088,7 +1372,7 @@ namespace SCT_iCare.Controllers.Recepcion
             cita.TipoLicencia = TIPOL;
             cita.NoExpediente = NUMERO;
             cita.TipoTramite = TIPOT;
-            cita.Referencia = REFERENCIA;
+            //cita.Referencia = REFERENCIA;
             cita.Doctor = DOCTOR;
 
             expediente.Expediente = bytes2;
@@ -1097,6 +1381,7 @@ namespace SCT_iCare.Controllers.Recepcion
             captura.NombrePaciente = NOMBRE;
             captura.NoExpediente = NUMERO;
             captura.Doctor = DOCTOR;
+            captura.FechaExpediente = FECHA;
 
             if (ModelState.IsValid)
             {
