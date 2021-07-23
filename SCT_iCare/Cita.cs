@@ -32,6 +32,7 @@ namespace SCT_iCare
         public string Referencia { get; set; }
         public string Canal1 { get; set; }
         public string CC { get; set; }
+        public string Asistencia { get; set; }
     
         public virtual Canal Canal { get; set; }
         public virtual Paciente Paciente { get; set; }

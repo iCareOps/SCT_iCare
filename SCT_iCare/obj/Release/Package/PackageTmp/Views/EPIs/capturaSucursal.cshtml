@@ -44,6 +44,7 @@
     int epis = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.Sucursal == Sucursal).Count();
 
     string fila = "";
+    int flag = 1;
 }
 
 <br />
@@ -114,6 +115,7 @@
         <div class="tablaScroll">
             <table class="table tablas table-responsive" style="color: #2F2D6B">
                 <tr class="bg-primary">
+                    <th></th>
                     <th>
                         Nombre Paciente
                     </th>
@@ -162,6 +164,7 @@
 
 
                     <tr class=@fila>
+                        <td>@flag</td>
                         <td>
                             @{
                                 if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 11 && idUser != 16))
@@ -252,6 +255,7 @@
                         </td>
                     </tr>
 
+                    flag++;
 
                 }
 

@@ -5,52 +5,62 @@
 }
 
 <br />
-<br />
-<a href="~/Usuarios/Create"><button type="button" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal">Nuevo Usuario</button></a>
 
 <br />
+
+<h3 style="color:white" class="text-center">Usuarios</h3>
 <br />
+<a href="~/Usuarios/Create"><button type="button" style="color:white" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal"><span class="glyphicon glyphicon-plus"></span>&nbsp; Agregar Usuario</button></a>
+<a href="~/Sucursales/Index"><button type="button" style="color:white" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal"><span class="glyphicon glyphicon-home"></span> &nbsp;Sucursales</button></a>
+<a href="~/Doctores/Index"><button type="button" style="color:white" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal"><span class="glyphicon glyphicon-user"></span> &nbsp;Doctores</button></a>
 
-<table class="table tablas" style="color: #2F2D6B">
-    <tr style="background-color:#62E3C9">
-        <th>
-            <h4>@Html.DisplayNameFor(model => model.Nombre)</h4>
-        </th>
-        <th>
-            <h4>@Html.DisplayNameFor(model => model.Email)</h4>
-        </th>
-        <th>
-            <h4>@Html.DisplayNameFor(model => model.Roles.Nombre)</h4>
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Nombre)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Roles.Nombre)
-        </td>
-        <td>
-            <div class="btn-group">
-                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Acción
-                </button>
-                <div class="dropdown-menu">
-                    <h5>@Html.ActionLink("Editar", "Edit", new { id = item.idUsuario })</h5>
-                    <div class="dropdown-divider"></div>
-                    <h5>@Html.ActionLink("Detalles", "Details", new { id = item.idUsuario })</h5>
-                    <div class="dropdown-divider"></div>
-                    <h5>@Html.ActionLink("Eliminar", "Delete", new { id = item.idUsuario })</h5>
-                </div>
-            </div>
-        </td>
-    </tr>
-}
+<br />
+<br />
+<div class="tablaScroll">
+    <table class="table tablas table-responsive" style="color: #2F2D6B">
+        <tr class="bg-primary">
+            <th>
+                <h4>@Html.DisplayNameFor(model => model.Nombre)</h4>
+            </th>
+            <th>
+                <h4>@Html.DisplayNameFor(model => model.Email)</h4>
+            </th>
+            <th>
+                <h4>@Html.DisplayNameFor(model => model.Roles.Nombre)</h4>
+            </th>
+            <th></th>
+        </tr>
 
-</table>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Roles.Nombre)
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Acción
+                        </button>
+                        <div class="dropdown-menu">
+                            <h5>@Html.ActionLink("Editar", "Edit", new { id = item.idUsuario })</h5>
+                            <div class="dropdown-divider"></div>
+                            <h5>@Html.ActionLink("Detalles", "Details", new { id = item.idUsuario })</h5>
+                            <div class="dropdown-divider"></div>
+                            <h5>@Html.ActionLink("Eliminar", "Delete", new { id = item.idUsuario })</h5>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>
+

@@ -59,7 +59,7 @@ else
 Hospital = "GENERAL";
 Sucursal = Hospital.ToString();
 
-modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).OrderByDescending(o => o.M.TipoTramite);
+modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate)/*.OrderByDescending(o => o.M.TipoTramite)*/;
 
 registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
 
@@ -560,6 +560,10 @@ else
                 {
                     fila = "bg-info";
                 }
+                else if (item.M.Asistencia == "NO")
+                {
+                    fila = "bg-warning";
+                }
                 else
                 {
                     fila = "bg-default";
@@ -615,21 +619,31 @@ else
                     </td>
                     <td>
 
-                        @if (item.M.Doctor == null)
+                        @if (item.M.Doctor == null && item.M.Asistencia != "NO")
                         {
                             <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Pendiente</mark></b>
                         }
-                        else if (item.M.EstatusPago == "paid" || item.M.EstatusPago == "Pagado")
+                        else if ((item.M.EstatusPago == "paid" || item.M.EstatusPago == "Pagado") && item.M.Asistencia != "NO")
                         {
                             <b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">Digitalizado</mark></b>
+                        }
+                        else if (item.M.Asistencia == "NO")
+                        {
+                            <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px">Cancelado</mark></b>
                         }
                     </td>
                     <td>
                         <div class="btn-group">
 
-                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
-                            </button>
+                            @{
+                                if (item.M.Asistencia == null)
+                                {
+                                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                    </button>
+                                }
+
+                            }
 
 
 
@@ -637,6 +651,9 @@ else
                                 @if (item.M.EstatusPago == "Pagado" && item.M.Doctor == null)
                                 {
                                     <a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>Editar</b></a>
+                                    <div class="dropdown-divider"></div>
+                                    @Html.ActionLink("No llegó", "NoLlego", "Recepcion", new { id = @item.M.idPaciente }, new { style = "color:red; font-weight: bold" })
+                                    @*<a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>No llegó</b></a>*@
                                     <div class="dropdown-divider"></div>
                                     <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
                                     <div class="dropdown-divider"></div>

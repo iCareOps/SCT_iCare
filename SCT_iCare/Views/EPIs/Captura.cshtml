@@ -65,6 +65,7 @@
     string fecha = DateTime.Now.ToString("dd-MMMM-yyyy");
 
     string fila = "";
+    int flag = 1; //contador de la tabla
 
 }
 
@@ -134,7 +135,7 @@
 }
 
 
-@{ if (idUser == 11 || idUser == 16)
+@{ if (idUser == 11 || idUser == 16 || nombreUsuario == "Viridiana España Alanis" || nombreUsuario == "Soporte Captura")
     {
 
         @*<p class="col-md-4">
@@ -397,9 +398,9 @@
             <a href=@Url.Action("capturaSucursal", "EPIs", new { sucursal = sucursal })><button style="color:white" type="button" class="btn btn-outline-warning boton-transparenteExcel botonesGral"><span class="glyphicon glyphicon-folder-open"></span> &nbsp; &nbsp;@item.Nombre</button></a>
 
         }
-        if (idUser == 11 || idUser == 16)
+        if (idUser == 11 || idUser == 16 || nombreUsuario == "Viridiana España Alanis" || nombreUsuario == "Soporte Captura")
         {
-            <a href=@Url.Action("CentroControl", "EPIs")><button style="color:white" type="button" class="btn btn-outline-warning boton-transparenteAzul botonesGral"><span class="glyphicon glyphicon-th-list"></span> &nbsp; &nbsp;CENTRO DE CONTROL</button></a>
+            <a href=@Url.Action("Index", "ControlDictamen")><button style="color:white" type="button" class="btn btn-outline-warning boton-transparenteAzul botonesGral"><span class="glyphicon glyphicon-th-list"></span> &nbsp; &nbsp;CENTRO DE CONTROL</button></a>
         }
     }
 </center>
@@ -534,6 +535,8 @@
         <table class="table tablas table-responsive" id="tablaEjemplo" style="color: #2F2D6B">
             <tr class="bg-primary" @*style="background-color:#62E3C9"*@>
                 <th>
+                </th>
+                <th>
                     Nombre Paciente
                 </th>
 
@@ -578,6 +581,9 @@
 
 
                 <tr class=@fila>
+                    <td>
+                        @flag
+                    </td>
                     <td>
                         @{
                             if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 11 && idUser != 16))
@@ -632,7 +638,7 @@
                                     </button>
 
                                     <div class="dropdown-menu" style="padding:10px">
-                                        <b>@Html.ActionLink("Abrir EPI", "AbrirEPIGeneral", new { id = item.idCaptura })</b>
+                                        <b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = item.idCaptura })</b>
                                         <div class="dropdown-divider"></div>
                                         <b>@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = item.idCaptura })</b>
                                         <div class="dropdown-divider"></div>
@@ -648,7 +654,7 @@
                         }
                     </td>
                 </tr>
-
+            flag++;
             }
 
         </table>

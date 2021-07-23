@@ -12,36 +12,41 @@
 
 <br />
 
-<a href="~/Doctores/Create"><button type="button" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal">Agregar Doctor</button></a>
+<a href="~/Doctores/Create"><button type="button" style="color:white" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal"><span class="glyphicon glyphicon-plus"></span>&nbsp; Agregar Doctor</button></a>
+<a href="~/Sucursales/Index"><button type="button" style="color:white" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal"><span class="glyphicon glyphicon-home"></span> &nbsp;Sucursales</button></a>
+<a href="~/Usuarios/Index"><button type="button" style="color:white" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal"><span class="glyphicon glyphicon-user"></span> &nbsp;Usuarios</button></a>
 
 <br />
 <br />
-<table class="table tablas" style="color: #2F2D6B">
-    <tr style="background-color:#62E3C9">
-        <th>
-            @Html.DisplayNameFor(model => model.Nombre)
-        </th>
-        <th>
-            Sucursal
-        </th>
-        <th></th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                <b>@Html.DisplayFor(modelItem => item.Nombre)</b>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sucursales.Nombre)
-            </td>
-            <td>
-                @Html.ActionLink("Editar", "Edit", new { id = item.idDoctor }) |
-                @Html.ActionLink("Detalles", "Details", new { id = item.idDoctor }) |
-                @Html.ActionLink("Eliminar", "Delete", new { id = item.idDoctor })
-            </td>
+<div class="tablaScroll">
+    <table class="table tablas" style="color: #2F2D6B">
+        <tr class="bg-primary">
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+                Sucursal
+            </th>
+            <th></th>
         </tr>
-    }
 
-</table>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <b>@Html.DisplayFor(modelItem => item.Nombre)</b>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Sucursales.Nombre)
+                </td>
+                <td>
+                    @Html.ActionLink("Editar", "Edit", new { id = item.idDoctor }) |
+                    @Html.ActionLink("Detalles", "Details", new { id = item.idDoctor }) |
+                    @Html.ActionLink("Eliminar", "Delete", new { id = item.idDoctor })
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>
+
