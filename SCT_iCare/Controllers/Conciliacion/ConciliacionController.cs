@@ -11,7 +11,7 @@ namespace SCT_iCare.Controllers.Conciliacion
 {
     public class ConciliacionController : Controller
     {
-        SCTiCareEntities1 db = new SCTiCareEntities1();
+        private GMIEntities db = new GMIEntities();
 
         // GET: Conciliacion
         public ActionResult Index(DateTime? inicio, DateTime? final, int? pageSize, int? page)

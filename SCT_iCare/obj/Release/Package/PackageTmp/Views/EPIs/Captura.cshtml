@@ -4,7 +4,7 @@
 @{
     ViewBag.Title = "Captura";
 
-    SCTiCareEntities1 db = new SCTiCareEntities1();
+    GMIEntities db = new GMIEntities();
 
     DateTime start = DateTime.Now;
     //DateTime startDay = Convert.ToDateTime(start.Day);
@@ -21,7 +21,7 @@
     }
 
     string Query = "";
-    if(TempData["ERROR"] == "ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO")
+    if (TempData["ERROR"] == "ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO")
     {
         Query = TempData["ERROR"].ToString();
     }
@@ -36,31 +36,31 @@
     int month = start.Month;
     int day = start.Day;
     int tomorrorDay = day + 1;
-    DateTime thisDate = new DateTime(year, month, day);
-    DateTime tomorrowDate = DateTime.Now.AddDays(1);
+    DateTime thisDate = Convert.ToDateTime(ViewBag.Inicio);
+    DateTime tomorrowDate = Convert.ToDateTime(ViewBag.Final);
 
 
     //var repoCentral = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
-    var repoCentral = (from r in db.Captura select r).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura != "Terminado").ToList();
+    var repoCentral = (from r in db.Captura select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").ToList();
 
-    var repoCentral2 = (from r in db.Captura select r).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura != "Terminado").Count();
-
-
-    int epis = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
-    int episSinIniciar = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura != "Terminado").Count();
+    var repoCentral2 = (from r in db.Captura select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").Count();
 
 
-    int dictamenes = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura == "Terminado").Count();
+    int epis = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).Count();
+    int episSinIniciar = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").Count();
 
-    int pendientes = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura == "No iniciado").Count();
 
-    int enCaptura = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura == "En captura...").Count();
+    int dictamenes = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Terminado").Count();
 
-    int incidencia = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura == "Pendiente").Count();
+    int pendientes = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "No iniciado").Count();
+
+    int enCaptura = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "En captura...").Count();
+
+    int incidencia = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Pendiente").Count();
 
     var sucursalesLista = from s in db.Sucursales select s.Nombre;
 
-    var capturistas = from c in db.Usuarios where c.idRol == 7 && c.idUsuario != 11 select c.Nombre;
+    var capturistas = from c in db.Usuarios where c.idRol == 7 && c.idUsuario != 13 select c.Nombre;
 
     string fecha = DateTime.Now.ToString("dd-MMMM-yyyy");
 
@@ -73,69 +73,97 @@
 <br />
 @*<h5 style="color:white" class="text-right">@fecha</h5>*@
 <h3 style="color:white" class="text-center">EPI Center &nbsp; &nbsp; &nbsp;<span class="h4" style="color:#AC9070"><b>@fecha</b></span></h3>
-<br />
+@if (ViewBag.Estado == 1)
+{
+    <h5 style="color:darkgray">Mostrando resultados de <span style="color:white">@ViewBag.Inicio.ToString("dd-MMMM-yyyy")</span> hasta <span style="color:white">@ViewBag.Final.ToString("dd-MMMM-yyyy")</span></h5>
+}
 @*<script>setTimeout('document.location.reload()', 10000);</script>*@
 @{
-    int episProgeso = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
-    int dictamenesProgreso = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura == "Terminado").Count();
-
-    int porcentaje;
-
-    if (episProgeso == 0)
+    if (nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España" || nombreUsuario == "Soporte Captura")
     {
-        porcentaje = 0;
+        <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Captura")">
+            <div style="display:inline-block; padding:10px; background-color:gainsboro; border-radius: 5px">
+                <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+                <input type="date" class="form-control" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+                <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
+                <input type="submit" class="btn btn-primary" value="Enviar" />
+                <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+            </div>
+            <div class="input-group pull-right">
+                <input type="text" class="form-control" id="buscador" name="dato" placeholder="Nombre o Expediente">
+                <span class="input-group-btn">
+                    <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                </span>
+            </div>
+        </form>
+        <br />
+        <br />
     }
     else
     {
-        porcentaje = (dictamenesProgreso * 100) / episProgeso;
+        int episProgeso = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).Count();
+        int dictamenesProgreso = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Terminado").Count();
+
+        int porcentaje;
+
+        if (episProgeso == 0)
+        {
+            porcentaje = 0;
+        }
+        else
+        {
+            porcentaje = (dictamenesProgreso * 100) / episProgeso;
+        }
+
+        string progreso = "Progreso:";
+
+        if (porcentaje == 0)
+        {
+            progreso = "Comenzamos el día. Vamos a capturar esos EPIs!";
+        }
+        else if (porcentaje > 0 && porcentaje < 10)
+        {
+            progreso = "Vamos bien. Echémosle galleta!";
+        }
+        else if (porcentaje >= 10 && porcentaje < 45)
+        {
+            progreso = "Uff. Si le echamos montón vamos a terminar rápido";
+        }
+        else if (porcentaje >= 45 && porcentaje < 55)
+        {
+            progreso = "Estamos a la mitad del camino";
+        }
+        else if (porcentaje >= 55 && porcentaje < 75)
+        {
+            progreso = "Ya estamos más para acá que para allá!";
+        }
+        else if (porcentaje >= 75 && porcentaje < 95)
+        {
+            progreso = "Unos cuantos más y lo logramos!!";
+        }
+        else if (porcentaje >= 95 && porcentaje < 100)
+        {
+            progreso = "SI SE PUEDE!! SI SE PUEDE!!";
+        }
+        else if (porcentaje == 100)
+        {
+            progreso = "LO LOGRAMOS!!!!";
+        }
+
+
+        <h4 style="color:chartreuse">@progreso</h4>
+        <div class="progress">
+            <div class="progress-bar bg-warning" role="progressbar" style="width: @porcentaje%; background-color:#57D94E" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">@porcentaje%</div>
+        </div>
+
+        <br />
     }
 
-    string progreso = "Progreso:";
-
-    if (porcentaje == 0)
-    {
-        progreso = "Comenzamos el día. Vamos a capturar esos EPIs!";
-    }
-    else if (porcentaje > 0 && porcentaje < 10)
-    {
-        progreso = "Vamos bien. Echémosle galleta!";
-    }
-    else if (porcentaje >= 10 && porcentaje < 45)
-    {
-        progreso = "Uff. Si le echamos montón vamos a terminar rápido";
-    }
-    else if (porcentaje >= 45 && porcentaje < 55)
-    {
-        progreso = "Estamos a la mitad del camino";
-    }
-    else if (porcentaje >= 55 && porcentaje < 75)
-    {
-        progreso = "Ya estamos más para acá que para allá!";
-    }
-    else if (porcentaje >= 75 && porcentaje < 95)
-    {
-        progreso = "Unos cuantos más y lo logramos!!";
-    }
-    else if (porcentaje >= 95 && porcentaje < 100)
-    {
-        progreso = "SI SE PUEDE!! SI SE PUEDE!!";
-    }
-    else if (porcentaje == 100)
-    {
-        progreso = "LO LOGRAMOS!!!!";
-    }
-
-
-    <h4 style="color:chartreuse">@progreso</h4>
-    <div class="progress">
-        <div class="progress-bar bg-warning" role="progressbar" style="width: @porcentaje%; background-color:#57D94E" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">@porcentaje%</div>
-    </div>
-
-    <br />
 }
 
 
-@{ if (idUser == 11 || idUser == 16 || nombreUsuario == "Viridiana España Alanis")
+@{ if (nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España" || nombreUsuario == "Soporte Captura")
     {
 
         @*<p class="col-md-4">
@@ -172,7 +200,7 @@
                             @{
                                 foreach (var item in sucursalesLista)
                                 {
-                                    var elemento = (from v in db.Captura where v.Sucursal == item select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
+                                    var elemento = (from v in db.Captura where v.Sucursal == item select v).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
                             }
@@ -197,7 +225,7 @@
                             @{
                                 foreach (var item in sucursalesLista)
                                 {
-                                    var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "Terminado" && v.FechaExpediente >= thisDate && v.FechaExpediente < tomorrowDate select v).Count();
+                                    var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "Terminado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate select v).Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
                             }
@@ -222,7 +250,7 @@
                             @{
                                 foreach (var item in sucursalesLista)
                                 {
-                                    var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "No iniciado" && v.FechaExpediente >= thisDate && v.FechaExpediente < tomorrowDate select v).Count();
+                                    var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "No iniciado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate select v).Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
                             }
@@ -247,7 +275,7 @@
                             @{
                                 foreach (var item in sucursalesLista)
                                 {
-                                    var elemento = (from v in db.Captura where v.Sucursal == item select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura == "En captura...").Count();
+                                    var elemento = (from v in db.Captura where v.Sucursal == item select v).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "En captura...").Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
                             }
@@ -272,7 +300,7 @@
                             @{
                                 foreach (var item in capturistas)
                                 {
-                                    var elemento = (from v in db.Captura where v.EstatusCaptura == "Terminado" && v.FechaExpediente >= thisDate && v.FechaExpediente < tomorrowDate && v.Capturista == item select v).Count();
+                                    var elemento = (from v in db.Captura where v.EstatusCaptura == "Terminado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate && v.Capturista == item select v).Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
                             }
@@ -297,7 +325,7 @@
                             @{
                                 foreach (var item in sucursalesLista)
                                 {
-                                    var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "Pendiente" select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
+                                    var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "Pendiente" select v).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
                             }
@@ -343,7 +371,7 @@
                             @{
                                 foreach (var item in sucursalesLista)
                                 {
-                                    var elemento = (from v in db.Captura where v.Sucursal == item select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura == "En captura...").Count();
+                                    var elemento = (from v in db.Captura where v.Sucursal == item select v).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "En captura...").Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
                             }
@@ -368,7 +396,7 @@
                             @{
                                 foreach (var item in sucursalesLista)
                                 {
-                                    var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "Pendiente" select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
+                                    var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "Pendiente" select v).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
                             }
@@ -398,7 +426,7 @@
             <a href=@Url.Action("capturaSucursal", "EPIs", new { sucursal = sucursal })><button style="color:white" type="button" class="btn btn-outline-warning boton-transparenteExcel botonesGral"><span class="glyphicon glyphicon-folder-open"></span> &nbsp; &nbsp;@item.Nombre</button></a>
 
         }
-        if (idUser == 11 || idUser == 16 || nombreUsuario == "Viridiana España Alanis")
+        if (nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España" || nombreUsuario == "Soporte Captura")
         {
             <a href=@Url.Action("Index", "ControlDictamen")><button style="color:white" type="button" class="btn btn-outline-warning boton-transparenteAzul botonesGral"><span class="glyphicon glyphicon-th-list"></span> &nbsp; &nbsp;CENTRO DE CONTROL</button></a>
         }
@@ -407,122 +435,6 @@
 <br />
 <br />
 
-@*<h4 style="color:white" class="text-center">Repositorio Central</h4>
-
-    <button type="button" onclick="Obtener();">Ejemplo</button>
-    <button type="button" onclick="ObtenerG();">Ejemplo2</button>
-    <input type="button" onchange="Obtener2();" />
-
-        <script>
-            function Obtener() {
-                fetch("@Url.Content("~/EPIs/EjemploJSON")")
-                    .then(function (res) {
-                        return res.json();
-                    })
-                    .then(function (miJson) {
-                        console.log(miJson);
-                        let miResultado = "";
-                        for (let i = 0; i < miJson.length; i++) {
-                            if (i == 0) {
-                                miResultado = "<tr style=\"background-color:#62E3C9\"><th>Nombre Paciente</th><th>No Expediente</th></tr>"
-                            }
-                            else {
-                                miResultado += "<tr style=\"backgroud-color:white\"><td>" + miJson[i].Nombre + "</td> <td>" + miJson[i].Referencia + "</td></tr>"
-                            }
-
-                        }
-
-                        document.getElementById("tablaEjemplo").innerHTML = miResultado;
-                    })
-            }
-        </script>
-
-        <script>
-            function ObtenerG() {
-                fetch("@Url.Content("~/EPIs/General")")
-                    .then(function (res) {
-                        return res.json();
-                    })
-                    .then(function (miJson) {
-                        console.log(miJson);
-                        let miResultado = "";
-                        for (let i = 0; i < miJson.length; i++) {
-                            if (i == 0) {
-                                miResultado = "<tr style=\"background-color:#62E3C9\"><th>Nombre Paciente</th><th>Teléfono</th></tr>"
-                            }
-                            else {
-                                miResultado += "<tr style=\"backgroud-color:white\"><td>" + miJson[i].Nombre + "</td> <td>" + miJson[i].Telefono + "</td></tr>"
-                            }
-
-                        }
-
-                        document.getElementById("tablaEjemplo").innerHTML = miResultado;
-                    })
-            }
-        </script>
-
-        <script>
-            function Obtener2() {
-                fetch("@Url.Action("~/EPIs/Actuales")", "ANTONIO")
-                    .then(function (res) {
-                        return res.json();
-                    })
-                    .then(function (miJson) {
-                        console.log(miJson);
-                        let miResultado = "";
-                        for (let i = 0; i < miJson.length; i++) {
-                            if (i == 0) {
-                                miResultado = "<tr style=\"background-color:#62E3C9\"><th>Nombre Paciente</th><th>Teléfono</th></tr>"
-                            }
-                            else {
-                                miResultado += "<tr style=\"backgroud-color:white\"><td>" + miJson[i].Nombre + "</td> <td>" + miJson[i].Telefono + "</td></tr>"
-                            }
-
-                        }
-
-                        document.getElementById("tablaEjemplo").innerHTML = miResultado;
-                    })
-            }
-        </script>*@
-
-
-<!--<nav class="navbar navbar-light bg-light">
-    <form class="form-inline col-md-10" action="@Url.Content("~/EPIs/Captura")" method="post">
-        @Html.AntiForgeryToken()
-        <input class="form-control mr-sm-2" id="parameter" name="parameter" type="search" placeholder="Paciente o Expediente" aria-label="Search" style="display:inline-block" required>
-        <input class="btn btn-info my-2 my-sm-0" type="submit" style="display:inline-block" value="Buscar">-->
-@*<b><span class="glyphicon glyphicon-search"></span></b></input>*@
-<!--</form>
-    <form class="form-inline container" action="@Url.Content("~/EPIs/Captura")" method="post">
-        <input type="date" class="form-control col-md-2" id="fecha" name="nacimiento">
-    </form>
-</nav>-->
-
-
-@{
-    if (ViewBag.Parameter == "")
-    {
-        var repo = (from r in db.Captura orderby r.TipoTramite select r).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura != "Terminado").ToList();
-        repoCentral = repo;
-    }
-    else
-    {
-        var repo = (from r in db.Captura
-                    where
-                    r.NombrePaciente.Contains(parameter) ||
-                    r.EstatusCaptura.Contains(parameter) ||
-                    r.NoExpediente.Contains(parameter) ||
-                    r.TipoTramite.Contains(parameter) ||
-                    r.Doctor.Contains(parameter) ||
-                    r.Sucursal.Contains(parameter) ||
-                    r.Capturista.Contains(parameter) ||
-                    r.Capturista.Contains(parameter)
-                    orderby r.TipoTramite
-                    select r)
-                    .Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
-        repoCentral = repo;
-    }
-}
 
 
 @using (Html.BeginForm("EditExpediente", "EPIs"))
@@ -532,133 +444,231 @@
     if (epis != 0 && episSinIniciar != 0)
     {
         <div class="tablaScroll">
-        <table class="table tablas table-responsive" id="tablaEjemplo" style="color: #2F2D6B">
-            <tr class="bg-primary" @*style="background-color:#62E3C9"*@>
-                <th>
-                </th>
-                <th>
-                    Nombre Paciente
-                </th>
+            <table class="table tablas table-responsive" id="tablaEjemplo" style="color: #2F2D6B">
+                <tr class="bg-primary" @*style="background-color:#62E3C9"*@>
+                    <th>
+                    </th>
+                    <th>
+                        Nombre Paciente
+                    </th>
 
-                <th>
-                    NoExpediente
-                </th>
-                <th>
-                    Tipo de Trámite
-                </th>
-                <th>
-                    Estatus
-                </th>
-                <th>
-                    Inicio Captura
-                </th>
-                <th>
-                    Final Captura
-                </th>
-                <th>
-                    Doctor Dictaminador
-                </th>
-                <th>
-                    Sucursal
-                </th>
-                <th>
-                    Capturista
-                </th>
-                <th>Acciones</th>
-            </tr>
-
-            @foreach (var item in repoCentral)
-            {
-
-                if (item.TipoTramite == "PRIMERA VEZ")
+                    <th>
+                        NoExpediente
+                    </th>
+                    <th>
+                        Tipo de Trámite
+                    </th>
+                    <th>
+                        Estatus
+                    </th>
+                    <th>
+                        Inicio Captura
+                    </th>
+                    <th>
+                        Final Captura
+                    </th>
+                    <th>
+                        Doctor Dictaminador
+                    </th>
+                    <th>
+                        Sucursal
+                    </th>
+                    <th>
+                        Capturista
+                    </th>
+                    <th>Acciones</th>
+                </tr>
+                @if (ViewBag.Estado == 1)
                 {
-                    fila = "bg-info";
+                    var repoCompleta = (from r in db.Captura select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).OrderBy(o => o.FechaExpdiente).ThenBy(t => t.NombrePaciente).ToList();
+
+                    foreach (var item in repoCompleta)
+                    {
+
+                        if (item.TipoTramite == "PRIMERA VEZ")
+                        {
+                            fila = "bg-info";
+                        }
+                        else
+                        {
+                            fila = "bg-default";
+                        }
+
+
+                        <tr class=@fila>
+                            <td>
+                                @flag
+                            </td>
+                            <td>
+                                @{
+                                    if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 2 && idUser != 3 && idUser != 13 && idUser != 25))
+                                    {
+                                        @Html.DisplayFor(modelItem => item.NombrePaciente)
+                                    }
+                                    else
+                                    {
+                                        <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_EC", new { id = item.idCaptura }, new { style = "color: black; text-decoration: none" })</b>
+                                    }
+                                }
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.NoExpediente)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TipoTramite)
+                            </td>
+                            <td>
+                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.InicioCaptura)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FinalCaptura)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Doctor)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Sucursal)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Capturista)
+                            </td>
+                            <td>
+                                @{
+                                    if (item.EstatusCaptura == "No iniciado")
+                                    {
+                                        @*<input type="submit" value="Capturar" class="btn btn-outline-warning boton-transparente botonesGral" />*@
+                                        @*@Html.ActionLink("Capturar", "EditExpediente", new { id = item.idEPI })*@
+                                        <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                    }
+                                    else if (item.EstatusCaptura == "En captura...")
+                                    {
+                                        <div class="btn-group">
+                                            @*<a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idCaptura})><button type="button" class="btn btn-warning">Dictaminar</button></a>*@
+                                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                            </button>
+
+                                            <div class="dropdown-menu" style="padding:10px">
+                                                <b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = item.idCaptura })</b>
+                                                <div class="dropdown-divider"></div>
+                                                <b>@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = item.idCaptura })</b>
+                                                <div class="dropdown-divider"></div>
+                                            </div>
+                                        </div>
+
+                                    }
+                                    else if (item.EstatusCaptura == "Terminado")
+                                    {
+                                        <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
+                                    }
+
+                                }
+                            </td>
+                        </tr>
+                        flag++;
+                    }
                 }
                 else
                 {
-                    fila = "bg-default";
+                    foreach (var item in repoCentral)
+                    {
+
+                        if (item.TipoTramite == "PRIMERA VEZ")
+                        {
+                            fila = "bg-info";
+                        }
+                        else
+                        {
+                            fila = "bg-default";
+                        }
+
+
+                        <tr class=@fila>
+                            <td>
+                                @flag
+                            </td>
+                            <td>
+                                @{
+                                    if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 2 && idUser != 3 && idUser != 13 && idUser != 25))
+                                    {
+                                        @Html.DisplayFor(modelItem => item.NombrePaciente)
+                                    }
+                                    else
+                                    {
+                                        <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_EC", new { id = item.idCaptura }, new { style = "color: black; text-decoration: none" })</b>
+                                    }
+                                }
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.NoExpediente)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TipoTramite)
+                            </td>
+                            <td>
+                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.InicioCaptura)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FinalCaptura)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Doctor)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Sucursal)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Capturista)
+                            </td>
+                            <td>
+                                @{
+                                    if (item.EstatusCaptura == "No iniciado")
+                                    {
+                                        @*<input type="submit" value="Capturar" class="btn btn-outline-warning boton-transparente botonesGral" />*@
+                                        @*@Html.ActionLink("Capturar", "EditExpediente", new { id = item.idEPI })*@
+                                        <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                    }
+                                    else if (item.EstatusCaptura == "En captura...")
+                                    {
+                                        <div class="btn-group">
+                                            @*<a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idCaptura})><button type="button" class="btn btn-warning">Dictaminar</button></a>*@
+                                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                            </button>
+
+                                            <div class="dropdown-menu" style="padding:10px">
+                                                <b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = item.idCaptura })</b>
+                                                <div class="dropdown-divider"></div>
+                                                <b>@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = item.idCaptura })</b>
+                                                <div class="dropdown-divider"></div>
+                                            </div>
+                                        </div>
+
+                                    }
+                                    else if (item.EstatusCaptura == "Terminado")
+                                    {
+                                        <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
+                                    }
+
+                                }
+                            </td>
+                        </tr>
+                        flag++;
+                    }
                 }
 
 
-                <tr class=@fila>
-                    <td>
-                        @flag
-                    </td>
-                    <td>
-                        @{
-                            if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 11 && idUser != 16))
-                            {
-                                @Html.DisplayFor(modelItem => item.NombrePaciente)
-                            }
-                            else
-                            {
-                                <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_EC", new { id = item.idCaptura }, new { style = "color: black; text-decoration: none" })</b>
-                            }
-                        }
-                    </td>
 
-                    <td>
-                        @Html.DisplayFor(modelItem => item.NoExpediente)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.TipoTramite)
-                    </td>
-                    <td>
-                        <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.InicioCaptura)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.FinalCaptura)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Doctor)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Sucursal)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Capturista)
-                    </td>
-                    <td>
-                        @{
-                            if (item.EstatusCaptura == "No iniciado")
-                            {
-                                @*<input type="submit" value="Capturar" class="btn btn-outline-warning boton-transparente botonesGral" />*@
-                                @*@Html.ActionLink("Capturar", "EditExpediente", new { id = item.idEPI })*@
-                                <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
-                            }
-                            else if (item.EstatusCaptura == "En captura...")
-                            {
-                                <div class="btn-group">
-                                    @*<a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idCaptura})><button type="button" class="btn btn-warning">Dictaminar</button></a>*@
-                                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
-                                    </button>
-
-                                    <div class="dropdown-menu" style="padding:10px">
-                                        <b>@Html.ActionLink("Abrir EPI", "AbrirEPIGeneral", new { id = item.idCaptura })</b>
-                                        <div class="dropdown-divider"></div>
-                                        <b>@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = item.idCaptura })</b>
-                                        <div class="dropdown-divider"></div>
-                                    </div>
-                                </div>
-
-                            }
-                            else if (item.EstatusCaptura == "Terminado")
-                            {
-                                <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
-                            }
-
-                        }
-                    </td>
-                </tr>
-            flag++;
-            }
-
-        </table>
-            </div>
+            </table>
+        </div>
 
         using (Html.BeginForm("Captura", "EPIs", FormMethod.Post))
         {
@@ -687,7 +697,7 @@
 }
 
 @section scripts{
-@if(TempData["ID"] != null)
+    @if (TempData["ID"] != null)
     {
         <script>
             @*location.href='@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })';*@
@@ -695,16 +705,71 @@
         </script>
     }
 
-@if(Query == "ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO")
+    @if (Query == "ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO")
     {
         <script>
             alert("ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO");
         </script>
     }
 
+<script>
+    $(function () {
+        $(".buscar").click(function () {
+            var url = "@Url.Action("BuscarTodo", "EPIs")";
+            var dato = $("#buscador").val();
+            var data = { dato: dato };
+
+            $.post(url, data).done(function (data) {
+                console.log(data);
+                let miResultado = "";
+                if ($.isEmptyObject(data)) {
+                    miResultado = "<h3>No se encontraron registros.</h3>"
+                }
+                else {
+                    miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>Expediente</th><th>Email</th><th>Teléfono</th><th>Fecha Cita</th><th>Sucursal</th></tr>"
+                    for (let i = 0; i < data.length; i++) {
+                        miResultado += "<tr style=\"border:1px solid gray\">" +
+                            "<td><b>" + data[i].Nombre + "</b></td>" +
+                            "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                            "<td><b>" + data[i].Email + "</b></td>" +
+                            "<td><b>" + data[i].Telefono + "</b></td>" +
+                            "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                            "<td><b>" + data[i].Sucursal + "</b></td>" +
+                            "</tr>"
+                    }
+                }
+
+                $('#exampleModal10').modal('show');
+                document.getElementById("tablaEjemploSS").innerHTML = miResultado;
+
+            }).fail().always(function () {
+
+            });
+        });
+    });
+
+</script>
+
 }
 
 
-<table class="table tablas table-responsive" id="tablaEjemplo" style="color: #2F2D6B">
-</table>
+<div class="modal fade" id="exampleModal10" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body">
+                <div class="tablaScroll">
+                    <table class="table tablas table-responsive" id="tablaEjemploSS" style="color: #2F2D6B">
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 

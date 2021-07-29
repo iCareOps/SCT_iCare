@@ -2,7 +2,7 @@
 
 @{
     ViewBag.Title = "capturaSucursal";
-    SCTiCareEntities1 db = new SCTiCareEntities1();
+    GMIEntities db = new GMIEntities();
 
     string doctorSucursal = ViewBag.Doctor;
     string doctorSucursal2 = TempData["Doctor"].ToString();
@@ -38,13 +38,13 @@
     int day = start.Day;
     int tomorrorDay = day + 1;
     DateTime thisDate = new DateTime(year, month, day);
-    DateTime tomorrowDate = DateTime.Now.AddDays(1);
+    DateTime tomorrowDate = new DateTime(year, month, tomorrorDay);
 
-    var Restriccion1 = db.Captura.Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
+    var Restriccion1 = db.Captura.Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).ToList();
     //var Restriccion = from r in Restriccion1 orderby r.TipoTramite where r.Sucursal == ViewBag.Sucursal select r;
     var Restriccion = (from r in Restriccion1 orderby r.TipoTramite select r).Where(w => w.Sucursal == ViewBag.Sucursal && (w.Doctor == ViewBag.Doctor || w.Doctor == doctorSucursal2));
 
-    int epis = (from e in db.Captura select e).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.Sucursal == Sucursal && (w.Doctor == doctorSucursal || w.Doctor == doctorSucursal2)).Count();
+    int epis = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.Sucursal == Sucursal && (w.Doctor == doctorSucursal || w.Doctor == doctorSucursal2)).Count();
 
     string fila = "";
     int flag = 1;
@@ -201,7 +201,7 @@
                             }
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.FechaExpediente)
+                            @Html.DisplayFor(modelItem => item.FechaExpdiente)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.InicioCaptura)

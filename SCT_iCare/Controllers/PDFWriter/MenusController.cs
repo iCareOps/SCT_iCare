@@ -21,7 +21,7 @@ namespace SCT_iCare.Controllers.PDFWriter
 {
     public class MenusController : Controller
     {
-        private SCTiCareEntities1 db = new SCTiCareEntities1();
+        private GMIEntities db = new GMIEntities();
 
         // GET: Menus
         public ActionResult Index()

@@ -12,7 +12,7 @@ namespace SCT_iCare.Controllers.Admin
 {
     public class UsuariosController : Controller
     {
-        private SCTiCareEntities1 db = new SCTiCareEntities1();
+        private GMIEntities db = new GMIEntities();
 
         // GET: Usuarios
         public ActionResult Index()
@@ -120,6 +120,43 @@ namespace SCT_iCare.Controllers.Admin
             Usuarios usuarios = db.Usuarios.Find(id);
             db.Usuarios.Remove(usuarios);
             db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AsignarSucursal(int id, int sucursal)
+        {
+            var recepcion = (from r in db.Recepcionista where r.idUsuario == id select r).FirstOrDefault();
+            var idSucursal = (from i in db.Sucursales where i.idSucursal == sucursal select i.idSucursal).FirstOrDefault();
+
+            Recepcionista recepcionista = new Recepcionista();
+
+            if(recepcion != null)
+            {
+                recepcion.idUsuario = id;
+                recepcion.idSucursal = idSucursal;
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(recepcion).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+            }
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    recepcion.idUsuario = id;
+                    recepcion.idSucursal = idSucursal;
+
+                    db.Recepcionista.Add(recepcion);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+            }
+
             return RedirectToAction("Index");
         }
 

@@ -18,6 +18,7 @@ namespace SCT_iCare
         public Captura()
         {
             this.IncidenciaDictamen = new HashSet<IncidenciaDictamen>();
+            this.CapturaIncidencia = new HashSet<CapturaIncidencia>();
         }
     
         public int idCaptura { get; set; }
@@ -31,10 +32,15 @@ namespace SCT_iCare
         public string Sucursal { get; set; }
         public string Capturista { get; set; }
         public Nullable<int> idPaciente { get; set; }
-        public Nullable<System.DateTime> FechaExpediente { get; set; }
+        public Nullable<System.DateTime> FechaExpdiente { get; set; }
+        public Nullable<System.DateTime> PausaInicio { get; set; }
+        public Nullable<System.DateTime> PausaFinal { get; set; }
+        public Nullable<int> Duracion { get; set; }
     
         public virtual Paciente Paciente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<IncidenciaDictamen> IncidenciaDictamen { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CapturaIncidencia> CapturaIncidencia { get; set; }
     }
 }

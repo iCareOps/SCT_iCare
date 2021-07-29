@@ -12,13 +12,32 @@ namespace SCT_iCare.Controllers.Admin
 {
     public class SucursalesController : Controller
     {
-        private SCTiCareEntities1 db = new SCTiCareEntities1();
+        private GMIEntities db = new GMIEntities();
 
         // GET: Sucursales
         public ActionResult Index()
         {
             var sucursales = db.Sucursales.Include(s => s.Ciudades);
             return View(sucursales.ToList());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AgregarCiudad(string ciudad, string estado)
+        {
+            Ciudades ciudades = new Ciudades();
+
+            ciudades.Ciudad = ciudad;
+            ciudades.Estado = estado;
+
+            if (ModelState.IsValid)
+            {
+                db.Ciudades.Add(ciudades);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return RedirectToAction("Index");
         }
 
         // GET: Sucursales/Details/5

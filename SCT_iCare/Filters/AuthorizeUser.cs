@@ -10,7 +10,7 @@ namespace SCT_iCare.Filters
     public class AuthorizeUser : AuthorizeAttribute
     {
         private Usuarios oUsuario;
-        private SCTiCareEntities1 db = new SCTiCareEntities1();
+        private GMIEntities db = new GMIEntities();
         private int idOperacion;
 
         public AuthorizeUser(int idOperacion = 0)

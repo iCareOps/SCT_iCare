@@ -9,7 +9,7 @@ namespace SCT_iCare.Controllers.Login
 {
     public class LoginController : Controller
     {
-        private SCTiCareEntities1 db = new SCTiCareEntities1();
+        private GMIEntities db = new GMIEntities();
 
         // GET: Login
         public ActionResult Inicio()
@@ -40,8 +40,7 @@ namespace SCT_iCare.Controllers.Login
 
                         if (ModelState.IsValid)
                         {
-                            db.Entry(sucursales).State = EntityState.Modified;
-                            
+                            db.Entry(sucursales).State = EntityState.Modified;         
                         }
                     }
                 }
@@ -84,9 +83,9 @@ namespace SCT_iCare.Controllers.Login
                         case 3:
                             ViewBag.Nombre = oUser.Nombre.ToString();
                             return Redirect("~/Recepcion/Index");
-                        case 4:
+                        case 9:
                             ViewBag.Nombre = oUser.Nombre.ToString();
-                            return Redirect("~/SkeedaPK/Index");
+                            return Redirect("~/EPIs/Captura");
                         case 6:
                             ViewBag.Nombre = oUser.Nombre.ToString();
                             return Redirect("~/Conciliacion/Index");

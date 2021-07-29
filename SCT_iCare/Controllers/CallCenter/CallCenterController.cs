@@ -174,7 +174,7 @@ namespace SCT_iCare.Controllers.CallCenter
         //}
 
 
-        private SCTiCareEntities1 db = new SCTiCareEntities1();
+        private GMIEntities db = new GMIEntities();
 
         public static void GetApiKey()
         {
@@ -363,7 +363,7 @@ namespace SCT_iCare.Controllers.CallCenter
                 cita.Recepcionista = usuario;
                 cita.EstatusPago = orden.payment_status;
                 cita.Folio = numFolio;
-                cita.Canal1 = "SITIO";
+                cita.Canal = "SITIO";
                 cita.FechaCita = fecha;
 
                 int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
@@ -474,7 +474,7 @@ namespace SCT_iCare.Controllers.CallCenter
                     cita.Recepcionista = usuario;
                     cita.EstatusPago = orden.payment_status;
                     cita.Folio = numFolio;
-                    cita.Canal1 = nombre.ToUpper();
+                    cita.Canal = nombre.ToUpper();
                     cita.TipoPago = "REFERENCIA OXXO";
 
                     int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
@@ -584,7 +584,7 @@ namespace SCT_iCare.Controllers.CallCenter
             }
 
             exp.Expediente = bytes2;
-            exp.Recepcionista = usuario;
+            exp.Recpecionista = usuario;
             exp.idPaciente = ide;
             paciente.Nombre = nombre.ToUpper();
             captura.NombrePaciente = nombre.ToUpper();
@@ -594,7 +594,7 @@ namespace SCT_iCare.Controllers.CallCenter
             captura.Doctor = doctor;
             captura.Sucursal = cita.Sucursal;
             captura.idPaciente = Convert.ToInt32(id);
-            captura.FechaExpediente = DateTime.Now;
+            captura.FechaExpdiente = DateTime.Now;
 
             Cita citaModificar = new Cita();
             cita.TipoLicencia = tipoL;
@@ -812,7 +812,7 @@ namespace SCT_iCare.Controllers.CallCenter
                         paciente2.Email = EMAIL;
 
                         cita2.FechaCita = fecha;
-                        cita2.Canal1 = nombre.ToUpper();
+                        cita2.Canal = nombre.ToUpper();
                         db.Entry(cita).State = EntityState.Modified;
                         db.Entry(paciente).State = EntityState.Modified;
                     }
@@ -825,11 +825,33 @@ namespace SCT_iCare.Controllers.CallCenter
             return Redirect("Index");
         }
 
-        public ActionResult Buscar(string term)
+        public JsonResult Buscar(string dato)
         {
-            var selected = db.Paciente
-                .Where(r => r.Nombre.Contains(term.ToUpper()))
-                .Select(s => s.Nombre).Take(10);
+            string parametro;
+
+            if (dato.All(char.IsDigit))
+            {
+                parametro = dato;
+            }
+            else
+            {
+                parametro = dato.ToUpper();
+            }
+
+            List<Paciente> data = db.Paciente.ToList();
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            var selected = data.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+                .Where(r => (r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro))
+                .Select(S => new {
+                    S.N.idPaciente,
+                    S.N.Nombre,
+                    S.M.NoExpediente,
+                    S.N.Email,
+                    S.N.Telefono,
+                    FechaReferencia = Convert.ToDateTime(S.M.FechaExpdiente).ToString("dd-MMMM-yyyy"),
+                    S.M.Sucursal
+                });
+
 
             return Json(selected, JsonRequestBehavior.AllowGet);
         }

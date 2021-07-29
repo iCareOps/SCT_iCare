@@ -21,7 +21,7 @@ namespace SCT_iCare.Controllers.Recepcion
 {
     public class RecepcionController : Controller
     {
-        private SCTiCareEntities1 db = new SCTiCareEntities1();
+        private GMIEntities db = new GMIEntities();
 
         public static void GetApiKey()
         {
@@ -168,7 +168,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.EstatusPago = "Pagado";
                 cita.Referencia = referencia;
                 cita.Folio = numFolio;
-                cita.Canal1 = "SITIO";
+                cita.Canal = "SITIO";
                 cita.TipoPago = pago;
 
                 if (pago != "Referencia Scotiabank")
@@ -319,7 +319,7 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.EstatusPago = "Pagado";
                     cita.Folio = numFolio;
                     cita.Referencia = referencia;
-                    cita.Canal1 = nombre.ToUpper();
+                    cita.Canal = nombre.ToUpper();
                     cita.FechaCita = DateTime.Now;
 
                     if (ModelState.IsValid)
@@ -508,7 +508,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.Recepcionista = usuario;
                 cita.EstatusPago = orden.payment_status;
                 cita.Folio = numFolio;
-                cita.Canal1 = "SITIO";
+                cita.Canal = "SITIO";
                 cita.FechaCita = DateTime.Now;
 
 
@@ -634,7 +634,7 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.Recepcionista = usuario;
                     cita.EstatusPago = orden.payment_status;
                     cita.Folio = numFolio;
-                    cita.Canal1 = nombre.ToUpper();
+                    cita.Canal = nombre.ToUpper();
                     cita.FechaCita = DateTime.Now;
 
                     int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
@@ -783,7 +783,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.Recepcionista = usuario;
                 cita.EstatusPago = "Pendiente";
                 cita.Folio = numFolio;
-                cita.Canal1 = "SITIO";
+                cita.Canal = "SITIO";
                 cita.FechaCita = DateTime.Now;
 
                 if (ModelState.IsValid)
@@ -878,7 +878,7 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.Recepcionista = usuario;
                     cita.EstatusPago = "Pendiente";
                     cita.Folio = numFolio;
-                    cita.Canal1 = nombre.ToUpper();
+                    cita.Canal = nombre.ToUpper();
                     cita.FechaCita = DateTime.Now;
 
                     if (ModelState.IsValid)
@@ -1140,7 +1140,7 @@ namespace SCT_iCare.Controllers.Recepcion
             }
 
             exp.Expediente = bytes2;
-            exp.Recepcionista = usuario;
+            exp.Recpecionista = usuario;
             exp.idPaciente = ide;
             paciente.Nombre = NOMBRE;
             paciente.CURP = CURP.ToUpper();
@@ -1151,7 +1151,7 @@ namespace SCT_iCare.Controllers.Recepcion
             captura.Doctor = doctor;
             captura.Sucursal = cita.Sucursal;
             captura.idPaciente = Convert.ToInt32(id);
-            captura.FechaExpediente = FECHA;
+            captura.FechaExpdiente = FECHA;
 
             Cita citaModificar = new Cita();
             cita.TipoLicencia = tipoL;
@@ -1460,7 +1460,7 @@ namespace SCT_iCare.Controllers.Recepcion
             captura.NombrePaciente = NOMBRE;
             captura.NoExpediente = NUMERO;
             captura.Doctor = DOCTOR;
-            captura.FechaExpediente = FECHA;
+            captura.FechaExpdiente = FECHA;
 
             if (ModelState.IsValid)
             {

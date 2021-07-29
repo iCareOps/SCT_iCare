@@ -12,7 +12,7 @@ namespace SCT_iCare.Controllers.Admin
 {
     public class DoctoresController : Controller
     {
-        private SCTiCareEntities1 db = new SCTiCareEntities1();
+        private GMIEntities db = new GMIEntities();
 
         // GET: Doctores
         public ActionResult Index()

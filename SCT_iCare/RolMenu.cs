@@ -15,8 +15,8 @@ namespace SCT_iCare
     public partial class RolMenu
     {
         public int idRolMenu { get; set; }
-        public int idMenu { get; set; }
-        public int idRol { get; set; }
+        public Nullable<int> idMenu { get; set; }
+        public Nullable<int> idRol { get; set; }
     
         public virtual Menu Menu { get; set; }
         public virtual Roles Roles { get; set; }

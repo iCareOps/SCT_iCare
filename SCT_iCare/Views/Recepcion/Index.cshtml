@@ -5,14 +5,14 @@
 
     var oUser = (Usuarios)HttpContext.Current.Session["User"];
 
-    SCTiCareEntities1 db = new SCTiCareEntities1();
+    GMIEntities db = new GMIEntities();
     System.Web.Script.Serialization.JavaScriptSerializer js = new System.Web.Script.Serialization.JavaScriptSerializer();
 
     var Recepcion = new int?();
     var Hospital = "";
     var idHospital = 0;
     string Sucursal = null;
-    int idUser = 3;
+    int idUser = 14;
     string nombreUsuario = null;
     string fila = "";
     int registros;
@@ -42,7 +42,7 @@ if (oUser != null)
 idUser = oUser.idUsuario;
 nombreUsuario = oUser.Nombre;
 
-if (idUser != 3)
+if (idUser != 14)
 {
 Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
 Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
@@ -66,11 +66,6 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
 }
 }
 
-
-
-//var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
-
-//int registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate).Count();
 
 }
 
@@ -141,7 +136,6 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             "<p>Sucursal: <b>" + data[i].Sucursal + "</b></p>" +
                             "<p>Doctor: <b>" + data[i].Doctor + "</b></p>" +
                             "<p>Tipo Trámite: <b>" + data[i].TipoTramite + "</b></p>" +
-                            "<a href=\"#\" data-toggle=\"modal\" data-target=\"#ModalEdit2_" + data[i].idPaciente + "\"><b>Editar Datos</b></a>"+
                             "<hr/>"
                         }
                     }
@@ -222,7 +216,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                         <label for="recipient-name" class="col-form-label">Email:</label>
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
-                    @if (idUser == 3)
+                    @if (idUser == 14)
                     {
                         <div class="form-group" style="width:60%; min-width:320px">
                             <label for="recipient-name" class="col-form-label">Sucursal:</label>
@@ -349,7 +343,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                         <label for="recipient-name" class="col-form-label">Email:</label>
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
-                    @if (idUser == 3)
+                    @if (idUser == 14)
                     {
                         <div class="form-group" style="width:60%; min-width:320px">
                             <label for="recipient-name" class="col-form-label">Sucursal:</label>
@@ -423,7 +417,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                         <label for="recipient-name" class="col-form-label">Email:</label>
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
-                    @if (idUser == 3)
+                    @if (idUser == 14)
                     {
                         <div class="form-group" style="width:60%; min-width:320px">
                             <label for="recipient-name" class="col-form-label">Sucursal:</label>

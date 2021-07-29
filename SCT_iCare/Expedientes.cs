@@ -16,7 +16,7 @@ namespace SCT_iCare
     {
         public int idExpediente { get; set; }
         public byte[] Expediente { get; set; }
-        public string Recepcionista { get; set; }
+        public string Recpecionista { get; set; }
         public Nullable<int> idPaciente { get; set; }
     
         public virtual Paciente Paciente { get; set; }

@@ -14,11 +14,46 @@ namespace SCT_iCare.Controllers.EPICenter
 {
     public class EPIsController : Controller
     {
-        private SCTiCareEntities1 db = new SCTiCareEntities1();
+        private GMIEntities db = new GMIEntities();
 
         // GET: EPIs
-        public ActionResult Index(int? pageSize, int? page)
+        public ActionResult Index(int? pageSize, int? page, DateTime? inicio, DateTime? final)
         {
+            //DateTime start1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            //DateTime finish1 = new DateTime(DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day);
+
+            //int nulos = 0;
+
+            //if (inicio != null && final != null)
+            //{
+            //    nulos = 1;
+            //}
+
+            //if (inicio != null)
+            //{
+            //    DateTime start = Convert.ToDateTime(inicio);
+            //    int year = start.Year;
+            //    int month = start.Month;
+            //    int day = start.Day;
+
+            //    inicio = new DateTime(year, month, day);
+            //}
+            //if (final != null)
+            //{
+            //    DateTime finish = Convert.ToDateTime(final).AddDays(1);
+            //    int year = finish.Year;
+            //    int month = finish.Month;
+            //    int day = finish.Day;
+
+            //    final = new DateTime(year, month, day);
+            //}
+
+            //inicio = (inicio ?? start1);
+            //final = (final ?? finish1);
+
+            //ViewBag.Inicio = inicio;
+            //ViewBag.Final = final;
+            //ViewBag.Estado = nulos;
 
             return View(/*db.EPI.ToList()*/);
         }
@@ -28,111 +63,6 @@ namespace SCT_iCare.Controllers.EPICenter
             ViewBag.Date = DateTime.Now.ToString("dd-MMMM-yyyy");
 
             return View(db.Paciente.ToList());
-        }
-
-        // GET: EPIs/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            //EPI ePI = db.EPI.Find(id);
-            var ePI = (from e in db.EPI where e.idEPI == id select e).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).FirstOrDefault();
-            if (ePI == null)
-            {
-                return HttpNotFound();
-            }
-            return View(ePI);
-        }
-
-        // GET: EPIs/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: EPIs/Create
-        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que quiere enlazarse. Para obtener 
-        // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(HttpPostedFileBase file, string paciente, string folio, string doctor, string tipo, string sucursal, string usuario/*[Bind(Include = "idEPI,NombrePaciente,BytesArchivo,NoFolio,TipoEPI,Estatus,FechaExpediente,InicioCaptura,FinalCaptura,Doctor,Sucursal,Usuario,Dictamen")] EPI ePI*/)
-        {
-            EPI epi = new EPI();
-
-            byte[] bytes2 = null;
-
-            if (file != null && file.ContentLength > 0)
-            {
-                var fileName = Path.GetFileName(file.FileName);
-
-                byte[] bytes;
-                using (BinaryReader br = new BinaryReader(file.InputStream))
-                {
-                    bytes = br.ReadBytes(file.ContentLength);
-                }
-
-                bytes2 = bytes;
-
-                //var bytesBinary = bytes;
-                //Response.ContentType = "application/pdf";
-                //Response.AddHeader("content-disposition", "attachment;filename=MyPDF.pdf");
-                //Response.BinaryWrite(bytesBinary);
-                //Response.End();
-            }
-
-            epi.BytesArchivo = bytes2;
-            epi.NombrePaciente = paciente;
-            epi.NoFolio = Convert.ToInt32(folio);
-            epi.TipoEPI = tipo;
-            epi.Estatus = "No iniciado";
-            epi.FechaExpediente = DateTime.Now;
-            epi.Doctor = doctor;
-            epi.Sucursal = sucursal;
-            epi.Usuario = usuario;
-
-
-            if (ModelState.IsValid)
-            {
-                db.EPI.Add(epi);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(epi);
-        }
-
-        // GET: EPIs/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            EPI ePI = db.EPI.Find(id);
-            if (ePI == null)
-            {
-                return HttpNotFound();
-            }
-            TempData["Modal"] = "existe";
-            return RedirectToAction("Index");
-        }
-
-        // POST: EPIs/Edit/5
-        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que quiere enlazarse. Para obtener 
-        // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "idEPI,NombrePaciente,BytesArchivo,NoFolio,TipoEPI,Estatus,FechaExpediente,InicioCaptura,FinalCaptura,Doctor,Sucursal,Usuario,Dictamen")] EPI ePI)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(ePI).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(ePI);
         }
 
         public ActionResult AbrirEPI_EC(int? id)
@@ -414,7 +344,7 @@ namespace SCT_iCare.Controllers.EPICenter
             captura.FinalCaptura = DateTime.Now;
             dictamen.Dictamen1 = bytes2;
             dictamen.idPaciente = captura.idPaciente;
-            dictamen.idAptitud = 7;
+            dictamen.idAptitud = 1;
 
 
             if (ModelState.IsValid)
@@ -449,33 +379,6 @@ namespace SCT_iCare.Controllers.EPICenter
 
             return RedirectToAction("capturaSucursal", "EPIs", new { sucursal = captura.Sucursal.ToString() });
         }
-
-        // GET: EPIs/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            EPI ePI = db.EPI.Find(id);
-            if (ePI == null)
-            {
-                return HttpNotFound();
-            }
-            return View(ePI);
-        }
-
-        // POST: EPIs/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            EPI ePI = db.EPI.Find(id);
-            db.EPI.Remove(ePI);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -485,15 +388,54 @@ namespace SCT_iCare.Controllers.EPICenter
             base.Dispose(disposing);
         }
 
-        public ActionResult Captura(int? pageSize, int? page)
+        public ActionResult Captura(int? pageSize, int? page, DateTime? inicio, DateTime? final)
         {
-            DateTime start = DateTime.Now;
-            int year = start.Year;
-            int month = start.Month;
-            int day = start.Day;
-            int tomorrorDay = day + 1;
-            DateTime thisDate = new DateTime(year, month, day);
-            DateTime tomorrowDate = DateTime.Now.AddDays(1);
+            //DateTime start = DateTime.Now;
+            //int year = start.Year;
+            //int month = start.Month;
+            //int day = start.Day;
+            //int tomorrorDay = day + 1;
+            DateTime thisDate = new DateTime();
+            DateTime tomorrowDate = new DateTime();
+
+            DateTime start1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            DateTime finish1 = new DateTime(DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day);
+
+            int nulos = 0;
+
+            if (inicio != null && final != null)
+            {
+                nulos = 1;
+            }
+
+            if (inicio != null)
+            {
+                DateTime start = Convert.ToDateTime(inicio);
+                int year = start.Year;
+                int month = start.Month;
+                int day = start.Day;
+
+                inicio = new DateTime(year, month, day);
+                thisDate = new DateTime(year, month, day);
+            }
+            if (final != null)
+            {
+                DateTime finish = Convert.ToDateTime(final).AddDays(1);
+                int year = finish.Year;
+                int month = finish.Month;
+                int day = finish.Day;
+
+                final = new DateTime(year, month, day);
+                tomorrowDate = new DateTime(year, month, day);
+            }
+
+            inicio = (inicio ?? start1);
+            final = (final ?? finish1);
+
+            ViewBag.Inicio = inicio;
+            ViewBag.Final = final;
+            ViewBag.Estado = nulos;
+
 
             pageSize = (pageSize ?? 10);
             page = (page ?? 1);
@@ -534,7 +476,7 @@ namespace SCT_iCare.Controllers.EPICenter
         public ActionResult Pendiente(int id, string paciente, string folio, string capturista, string incidencia, string falla)
         {
             Captura captura = db.Captura.Find(id);
-            Incidencias incidencias = new Incidencias();
+            IncidenciaDictamen incidencias = new IncidenciaDictamen();
 
             Dictamen dictamen = new Dictamen();
 
@@ -543,20 +485,20 @@ namespace SCT_iCare.Controllers.EPICenter
 
             captura.EstatusCaptura = "Pendiente";
             captura.FinalCaptura = DateTime.Now;
-            
 
-            incidencias.NombrePaciente = paciente;
-            incidencias.Expediente = folio;
+
+            //incidencias.NombrePaciente = paciente;
+            incidencias.NoExpediente = folio;
             incidencias.Capturista = capturista;
             incidencias.Incidencia = incidencia;
             incidencias.FechaIncidencia = DateTime.Now;
-            incidencias.idEPI = id;
+            incidencias.idCaptura = id;
 
 
             if (ModelState.IsValid)
             {
                 db.Entry(captura).State = EntityState.Modified;
-                db.Incidencias.Add(incidencias);
+                db.IncidenciaDictamen.Add(incidencias);
                 db.Dictamen.Add(dictamen);
                 db.SaveChanges();
                 return RedirectToAction("Captura", "EPIs");
@@ -589,6 +531,36 @@ namespace SCT_iCare.Controllers.EPICenter
         {
             List<Paciente> data = db.Paciente.ToList();
             var selected = data.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(r => r.N.Nombre == palabra).Select(S => new { S.N.Nombre, S.N.Telefono, S.M.FechaCita, S.M.Referencia });
+
+            return Json(selected, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult BuscarTodo(string dato)
+        {
+            string parametro;
+
+            if (dato.All(char.IsDigit))
+            {
+                parametro = dato;
+            }
+            else
+            {
+                parametro = dato.ToUpper();
+            }
+
+            List<Paciente> data = db.Paciente.ToList();
+            var selected = data.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+                .Where(r => (r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro))
+                .Select(S => new {
+                    S.N.idPaciente,
+                    S.N.Nombre,
+                    S.M.NoExpediente,
+                    S.N.Email,
+                    S.N.Telefono,
+                    FechaReferencia = Convert.ToDateTime(S.M.FechaExpdiente).ToString("dd-MMMM-yyyy"),
+                    S.M.Sucursal
+                });
+
 
             return Json(selected, JsonRequestBehavior.AllowGet);
         }

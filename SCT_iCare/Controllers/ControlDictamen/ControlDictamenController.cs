@@ -9,7 +9,7 @@ namespace SCT_iCare.Controllers.ControlDictamen
 {
     public class ControlDictamenController : Controller
     {
-        SCTiCareEntities1 db = new SCTiCareEntities1();
+        private GMIEntities db = new GMIEntities();
         // GET: ControlDictamen
         public ActionResult Index(DateTime? fecha)
         {
@@ -156,14 +156,14 @@ namespace SCT_iCare.Controllers.ControlDictamen
             List<Paciente> data = db.Paciente.ToList();
             JavaScriptSerializer js = new JavaScriptSerializer();
             var selected = data.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
-                .Where(r => (r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro) && r.M.EstatusCaptura == "Terminado")
+                .Where(r => (r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro) )
                 .Select(S => new {
                     S.N.idPaciente,
                     S.N.Nombre,
                     S.M.NoExpediente,
                     S.N.Email,
                     S.N.Telefono,
-                    FechaReferencia = Convert.ToDateTime(S.M.FechaExpediente).ToString("dd-MMMM-yyyy"),
+                    FechaReferencia = Convert.ToDateTime(S.M.FechaExpdiente).ToString("dd-MMMM-yyyy"),
                     S.M.Sucursal
                 });
 

@@ -1,0 +1,463 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="DevModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Aptitud">
+    <Key>
+      <PropertyRef Name="idAptitud" />
+    </Key>
+    <Property Name="idAptitud" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Aptitud1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="MotivoAptitud" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Dictamen" Relationship="Self.FK_Dictamen_Aptitud" FromRole="Aptitud" ToRole="Dictamen" />
+  </EntityType>
+  <EntityType Name="Canal">
+    <Key>
+      <PropertyRef Name="idCanal" />
+    </Key>
+    <Property Name="idCanal" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Canal1" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Cita" Relationship="Self.FK_Cita_Canal" FromRole="Canal" ToRole="Cita" />
+  </EntityType>
+  <EntityType Name="Captura">
+    <Key>
+      <PropertyRef Name="idCaptura" />
+    </Key>
+    <Property Name="idCaptura" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="NombrePaciente" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="NoExpediente" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="TipoTramite" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="EstatusCaptura" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="InicioCaptura" Type="DateTime" Precision="3" />
+    <Property Name="FinalCaptura" Type="DateTime" Precision="3" />
+    <Property Name="Doctor" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Sucursal" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Capturista" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idPaciente" Type="Int32" />
+    <Property Name="FechaExpdiente" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="Paciente" Relationship="Self.FK_Captura_Paciente" FromRole="Captura" ToRole="Paciente" />
+    <NavigationProperty Name="IncidenciaDictamen" Relationship="Self.FK_IncidenciaDictamen_Captura" FromRole="Captura" ToRole="IncidenciaDictamen" />
+  </EntityType>
+  <EntityType Name="CERTIFICADO">
+    <Key>
+      <PropertyRef Name="idCertificado" />
+    </Key>
+    <Property Name="idCertificado" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Pasaporte" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Respuesta" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FechaNacimiento" Type="DateTime" Precision="3" />
+    <Property Name="FechaToma" Type="DateTime" Precision="3" />
+    <Property Name="Sexo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="Cita">
+    <Key>
+      <PropertyRef Name="idCita" />
+    </Key>
+    <Property Name="idCita" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="TipoPago" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FechaReferencia" Type="DateTime" Precision="3" />
+    <Property Name="NoOrden" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="EstatusPago" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="TipoLicencia" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="NoExpediente" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="FechaCita" Type="DateTime" Precision="3" />
+    <Property Name="Sucursal" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Doctor" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Recepcionista" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idCanal" Type="Int32" />
+    <Property Name="Folio" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idPaciente" Type="Int32" />
+    <Property Name="TipoTramite" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Referencia" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Canal" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="CC" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Asistencia" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Canal1" Relationship="Self.FK_Cita_Canal" FromRole="Cita" ToRole="Canal" />
+    <NavigationProperty Name="Paciente" Relationship="Self.FK_Cita_Paciente" FromRole="Cita" ToRole="Paciente" />
+  </EntityType>
+  <EntityType Name="Ciudades">
+    <Key>
+      <PropertyRef Name="idCiudad" />
+    </Key>
+    <Property Name="idCiudad" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Ciudad" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Estado" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Sucursales" Relationship="Self.FK_Sucursales_Ciudades" FromRole="Ciudades" ToRole="Sucursales" />
+  </EntityType>
+  <EntityType Name="Dictamen">
+    <Key>
+      <PropertyRef Name="idDictamen" />
+    </Key>
+    <Property Name="idDictamen" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Dictamen1" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="idPaciente" Type="Int32" />
+    <Property Name="idAptitud" Type="Int32" />
+    <NavigationProperty Name="Aptitud" Relationship="Self.FK_Dictamen_Aptitud" FromRole="Dictamen" ToRole="Aptitud" />
+    <NavigationProperty Name="Paciente" Relationship="Self.FK_Dictamen_Paciente" FromRole="Dictamen" ToRole="Paciente" />
+  </EntityType>
+  <EntityType Name="Doctores">
+    <Key>
+      <PropertyRef Name="idDoctor" />
+    </Key>
+    <Property Name="idDoctor" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="idSucursal" Type="Int32" />
+    <NavigationProperty Name="Sucursales" Relationship="Self.FK_Doctores_Sucursales" FromRole="Doctores" ToRole="Sucursales" />
+  </EntityType>
+  <EntityType Name="Expedientes">
+    <Key>
+      <PropertyRef Name="idExpediente" />
+    </Key>
+    <Property Name="idExpediente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Expediente" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="Recpecionista" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idPaciente" Type="Int32" />
+    <NavigationProperty Name="Paciente" Relationship="Self.FK_Expedientes_Paciente" FromRole="Expedientes" ToRole="Paciente" />
+  </EntityType>
+  <EntityType Name="IncidenciaDictamen">
+    <Key>
+      <PropertyRef Name="idIncidencia" />
+    </Key>
+    <Property Name="idIncidencia" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="NoExpediente" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Capturista" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Incidencia" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FechaIncidencia" Type="DateTime" Precision="3" />
+    <Property Name="idCaptura" Type="Int32" />
+    <NavigationProperty Name="Captura" Relationship="Self.FK_IncidenciaDictamen_Captura" FromRole="IncidenciaDictamen" ToRole="Captura" />
+  </EntityType>
+  <EntityType Name="Menu">
+    <Key>
+      <PropertyRef Name="idMenu" />
+    </Key>
+    <Property Name="idMenu" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Controlador" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Accion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="RolMenu" Relationship="Self.FK_RolMenu_Menu" FromRole="Menu" ToRole="RolMenu" />
+  </EntityType>
+  <EntityType Name="Paciente">
+    <Key>
+      <PropertyRef Name="idPaciente" />
+    </Key>
+    <Property Name="idPaciente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Telefono" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Folio" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="CURP" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Captura" Relationship="Self.FK_Captura_Paciente" FromRole="Paciente" ToRole="Captura" />
+    <NavigationProperty Name="Cita" Relationship="Self.FK_Cita_Paciente" FromRole="Paciente" ToRole="Cita" />
+    <NavigationProperty Name="Dictamen" Relationship="Self.FK_Dictamen_Paciente" FromRole="Paciente" ToRole="Dictamen" />
+    <NavigationProperty Name="Expedientes" Relationship="Self.FK_Expedientes_Paciente" FromRole="Paciente" ToRole="Expedientes" />
+  </EntityType>
+  <EntityType Name="Recepcionista">
+    <Key>
+      <PropertyRef Name="idRecepcionista" />
+    </Key>
+    <Property Name="idRecepcionista" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idUsuario" Type="Int32" />
+    <Property Name="idSucursal" Type="Int32" />
+    <NavigationProperty Name="Sucursales" Relationship="Self.FK_Recepcionista_Sucursales" FromRole="Recepcionista" ToRole="Sucursales" />
+    <NavigationProperty Name="Usuarios" Relationship="Self.FK_Recepcionista_Usuarios" FromRole="Recepcionista" ToRole="Usuarios" />
+  </EntityType>
+  <EntityType Name="ReferenciasSB">
+    <Key>
+      <PropertyRef Name="idReferencia" />
+    </Key>
+    <Property Name="idReferencia" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ReferenciaSB" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="EstatusReferencia" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="idPaciente" Type="Int32" />
+  </EntityType>
+  <EntityType Name="Roles">
+    <Key>
+      <PropertyRef Name="idRol" />
+    </Key>
+    <Property Name="idRol" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="RolMenu" Relationship="Self.FK_RolMenu_Roles" FromRole="Roles" ToRole="RolMenu" />
+    <NavigationProperty Name="Usuarios" Relationship="Self.FK_Usuarios_Roles" FromRole="Roles" ToRole="Usuarios" />
+  </EntityType>
+  <EntityType Name="RolMenu">
+    <Key>
+      <PropertyRef Name="idRolMenu" />
+    </Key>
+    <Property Name="idRolMenu" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idMenu" Type="Int32" />
+    <Property Name="idRol" Type="Int32" />
+    <NavigationProperty Name="Menu" Relationship="Self.FK_RolMenu_Menu" FromRole="RolMenu" ToRole="Menu" />
+    <NavigationProperty Name="Roles" Relationship="Self.FK_RolMenu_Roles" FromRole="RolMenu" ToRole="Roles" />
+  </EntityType>
+  <EntityType Name="Sucursales">
+    <Key>
+      <PropertyRef Name="idSucursal" />
+    </Key>
+    <Property Name="idSucursal" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Calle" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Colonia" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idCiudad" Type="Int32" />
+    <Property Name="SUC" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Contador" Type="Int32" />
+    <Property Name="ContadorFecha" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="Ciudades" Relationship="Self.FK_Sucursales_Ciudades" FromRole="Sucursales" ToRole="Ciudades" />
+    <NavigationProperty Name="Doctores" Relationship="Self.FK_Doctores_Sucursales" FromRole="Sucursales" ToRole="Doctores" />
+    <NavigationProperty Name="Recepcionista" Relationship="Self.FK_Recepcionista_Sucursales" FromRole="Sucursales" ToRole="Recepcionista" />
+  </EntityType>
+  <EntityType Name="Usuarios">
+    <Key>
+      <PropertyRef Name="idUsuario" />
+    </Key>
+    <Property Name="idUsuario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idRol" Type="Int32" />
+    <NavigationProperty Name="Recepcionista" Relationship="Self.FK_Recepcionista_Usuarios" FromRole="Usuarios" ToRole="Recepcionista" />
+    <NavigationProperty Name="Roles" Relationship="Self.FK_Usuarios_Roles" FromRole="Usuarios" ToRole="Roles" />
+  </EntityType>
+  <Association Name="FK_Dictamen_Aptitud">
+    <End Role="Aptitud" Type="Self.Aptitud" Multiplicity="0..1" />
+    <End Role="Dictamen" Type="Self.Dictamen" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Aptitud">
+        <PropertyRef Name="idAptitud" />
+      </Principal>
+      <Dependent Role="Dictamen">
+        <PropertyRef Name="idAptitud" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Cita_Canal">
+    <End Role="Canal" Type="Self.Canal" Multiplicity="0..1" />
+    <End Role="Cita" Type="Self.Cita" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Canal">
+        <PropertyRef Name="idCanal" />
+      </Principal>
+      <Dependent Role="Cita">
+        <PropertyRef Name="idCanal" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Captura_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="Captura" Type="Self.Captura" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Captura">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_IncidenciaDictamen_Captura">
+    <End Role="Captura" Type="Self.Captura" Multiplicity="0..1" />
+    <End Role="IncidenciaDictamen" Type="Self.IncidenciaDictamen" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Captura">
+        <PropertyRef Name="idCaptura" />
+      </Principal>
+      <Dependent Role="IncidenciaDictamen">
+        <PropertyRef Name="idCaptura" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Cita_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="Cita" Type="Self.Cita" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Cita">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Sucursales_Ciudades">
+    <End Role="Ciudades" Type="Self.Ciudades" Multiplicity="0..1" />
+    <End Role="Sucursales" Type="Self.Sucursales" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Ciudades">
+        <PropertyRef Name="idCiudad" />
+      </Principal>
+      <Dependent Role="Sucursales">
+        <PropertyRef Name="idCiudad" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Dictamen_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="Dictamen" Type="Self.Dictamen" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Dictamen">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Doctores_Sucursales">
+    <End Role="Sucursales" Type="Self.Sucursales" Multiplicity="0..1" />
+    <End Role="Doctores" Type="Self.Doctores" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Sucursales">
+        <PropertyRef Name="idSucursal" />
+      </Principal>
+      <Dependent Role="Doctores">
+        <PropertyRef Name="idSucursal" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Expedientes_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="Expedientes" Type="Self.Expedientes" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Expedientes">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_RolMenu_Menu">
+    <End Role="Menu" Type="Self.Menu" Multiplicity="0..1" />
+    <End Role="RolMenu" Type="Self.RolMenu" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Menu">
+        <PropertyRef Name="idMenu" />
+      </Principal>
+      <Dependent Role="RolMenu">
+        <PropertyRef Name="idMenu" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Recepcionista_Sucursales">
+    <End Role="Sucursales" Type="Self.Sucursales" Multiplicity="0..1" />
+    <End Role="Recepcionista" Type="Self.Recepcionista" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Sucursales">
+        <PropertyRef Name="idSucursal" />
+      </Principal>
+      <Dependent Role="Recepcionista">
+        <PropertyRef Name="idSucursal" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Recepcionista_Usuarios">
+    <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+    <End Role="Recepcionista" Type="Self.Recepcionista" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Usuarios">
+        <PropertyRef Name="idUsuario" />
+      </Principal>
+      <Dependent Role="Recepcionista">
+        <PropertyRef Name="idUsuario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_RolMenu_Roles">
+    <End Role="Roles" Type="Self.Roles" Multiplicity="0..1" />
+    <End Role="RolMenu" Type="Self.RolMenu" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Roles">
+        <PropertyRef Name="idRol" />
+      </Principal>
+      <Dependent Role="RolMenu">
+        <PropertyRef Name="idRol" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Usuarios_Roles">
+    <End Role="Roles" Type="Self.Roles" Multiplicity="0..1" />
+    <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Roles">
+        <PropertyRef Name="idRol" />
+      </Principal>
+      <Dependent Role="Usuarios">
+        <PropertyRef Name="idRol" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="GMIEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Aptitud" EntityType="Self.Aptitud" />
+    <EntitySet Name="Canal" EntityType="Self.Canal" />
+    <EntitySet Name="Captura" EntityType="Self.Captura" />
+    <EntitySet Name="CERTIFICADO" EntityType="Self.CERTIFICADO" />
+    <EntitySet Name="Cita" EntityType="Self.Cita" />
+    <EntitySet Name="Ciudades" EntityType="Self.Ciudades" />
+    <EntitySet Name="Dictamen" EntityType="Self.Dictamen" />
+    <EntitySet Name="Doctores" EntityType="Self.Doctores" />
+    <EntitySet Name="Expedientes" EntityType="Self.Expedientes" />
+    <EntitySet Name="IncidenciaDictamen" EntityType="Self.IncidenciaDictamen" />
+    <EntitySet Name="Menu" EntityType="Self.Menu" />
+    <EntitySet Name="Paciente" EntityType="Self.Paciente" />
+    <EntitySet Name="Recepcionista" EntityType="Self.Recepcionista" />
+    <EntitySet Name="ReferenciasSB" EntityType="Self.ReferenciasSB" />
+    <EntitySet Name="Roles" EntityType="Self.Roles" />
+    <EntitySet Name="RolMenu" EntityType="Self.RolMenu" />
+    <EntitySet Name="Sucursales" EntityType="Self.Sucursales" />
+    <EntitySet Name="Usuarios" EntityType="Self.Usuarios" />
+    <AssociationSet Name="FK_Dictamen_Aptitud" Association="Self.FK_Dictamen_Aptitud">
+      <End Role="Aptitud" EntitySet="Aptitud" />
+      <End Role="Dictamen" EntitySet="Dictamen" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Cita_Canal" Association="Self.FK_Cita_Canal">
+      <End Role="Canal" EntitySet="Canal" />
+      <End Role="Cita" EntitySet="Cita" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Captura_Paciente" Association="Self.FK_Captura_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Captura" EntitySet="Captura" />
+    </AssociationSet>
+    <AssociationSet Name="FK_IncidenciaDictamen_Captura" Association="Self.FK_IncidenciaDictamen_Captura">
+      <End Role="Captura" EntitySet="Captura" />
+      <End Role="IncidenciaDictamen" EntitySet="IncidenciaDictamen" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Cita_Paciente" Association="Self.FK_Cita_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Cita" EntitySet="Cita" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Sucursales_Ciudades" Association="Self.FK_Sucursales_Ciudades">
+      <End Role="Ciudades" EntitySet="Ciudades" />
+      <End Role="Sucursales" EntitySet="Sucursales" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Dictamen_Paciente" Association="Self.FK_Dictamen_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Dictamen" EntitySet="Dictamen" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Doctores_Sucursales" Association="Self.FK_Doctores_Sucursales">
+      <End Role="Sucursales" EntitySet="Sucursales" />
+      <End Role="Doctores" EntitySet="Doctores" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Expedientes_Paciente" Association="Self.FK_Expedientes_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Expedientes" EntitySet="Expedientes" />
+    </AssociationSet>
+    <AssociationSet Name="FK_RolMenu_Menu" Association="Self.FK_RolMenu_Menu">
+      <End Role="Menu" EntitySet="Menu" />
+      <End Role="RolMenu" EntitySet="RolMenu" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Recepcionista_Sucursales" Association="Self.FK_Recepcionista_Sucursales">
+      <End Role="Sucursales" EntitySet="Sucursales" />
+      <End Role="Recepcionista" EntitySet="Recepcionista" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Recepcionista_Usuarios" Association="Self.FK_Recepcionista_Usuarios">
+      <End Role="Usuarios" EntitySet="Usuarios" />
+      <End Role="Recepcionista" EntitySet="Recepcionista" />
+    </AssociationSet>
+    <AssociationSet Name="FK_RolMenu_Roles" Association="Self.FK_RolMenu_Roles">
+      <End Role="Roles" EntitySet="Roles" />
+      <End Role="RolMenu" EntitySet="RolMenu" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Usuarios_Roles" Association="Self.FK_Usuarios_Roles">
+      <End Role="Roles" EntitySet="Roles" />
+      <End Role="Usuarios" EntitySet="Usuarios" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
