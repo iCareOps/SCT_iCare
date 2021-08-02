@@ -491,7 +491,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
                 Cita cita = new Cita();
 
-                cita.TipoPago = "Referencia OXXO";
+                cita.TipoPago = "REFERENCIA OXXO";
                 cita.NoOrden = orden.id;
                 
 
@@ -617,7 +617,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
                     Cita cita = new Cita();
 
-                    cita.TipoPago = "Referencia OXXO";
+                    cita.TipoPago = "REFERENCIA OXXO";
                     cita.NoOrden = orden.id;
                  
 
@@ -660,7 +660,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult PagoTarjeta(string nombre, string telefono, string email, string usuario, string sucursal, string tipoL, string cantidad)
+        public ActionResult PagoTarjeta(string nombre, string telefono, string email, string usuario, string sucursal, string tipoL, string cantidad, int card)
         {
             GetApiKey();
 
@@ -738,15 +738,31 @@ namespace SCT_iCare.Controllers.Recepcion
                 //}
 
                 string mes = DateTime.Now.Month.ToString();
+                string dia = DateTime.Now.Day.ToString();
+                char[] year = (DateTime.Now.Year.ToString()).ToCharArray();
+                string anio = "";
+
+                for (int i = 2; i < year.Length; i++)
+                {
+                    anio += year[i];
+                }
 
                 if (Convert.ToInt32(mes) < 10)
                 {
                     mes = "0" + mes;
                 }
 
+                if (Convert.ToInt32(dia) < 10)
+                {
+                    mes = "0" + dia;
+                }
+
                 //Se crea el número de Folio
-                string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
-                paciente.Folio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+                //string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+                //paciente.Folio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+
+                string numFolio = dia + mes + anio + SUC + "-" + contador;
+                paciente.Folio = dia + mes + anio + SUC + "-" + contador;
 
                 if (ModelState.IsValid)
                 {
@@ -785,6 +801,8 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.Folio = numFolio;
                 cita.Canal = "SITIO";
                 cita.FechaCita = DateTime.Now;
+                cita.NoOrden = link;
+                cita.Referencia = Convert.ToString(card);
 
                 if (ModelState.IsValid)
                 {
@@ -834,15 +852,31 @@ namespace SCT_iCare.Controllers.Recepcion
                     //}
 
                     string mes = DateTime.Now.Month.ToString();
+                    string dia = DateTime.Now.Day.ToString();
+                    char[] year = (DateTime.Now.Year.ToString()).ToCharArray();
+                    string anio = "";
+
+                    for (int i = 2; i < year.Length; i++)
+                    {
+                        anio += year[i];
+                    }
 
                     if (Convert.ToInt32(mes) < 10)
                     {
                         mes = "0" + mes;
                     }
 
+                    if (Convert.ToInt32(dia) < 10)
+                    {
+                        mes = "0" + dia;
+                    }
+
                     //Se crea el número de Folio
-                    string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
-                    paciente.Folio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+                    //string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+                    //paciente.Folio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+
+                    string numFolio = dia + mes + anio + SUC + "-" + contador;
+                    paciente.Folio = dia + mes + anio + SUC + "-" + contador;
 
                     if (ModelState.IsValid)
                     {
@@ -880,6 +914,8 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.Folio = numFolio;
                     cita.Canal = nombre.ToUpper();
                     cita.FechaCita = DateTime.Now;
+                    cita.NoOrden = link;
+                    cita.Referencia = Convert.ToString(card);
 
                     if (ModelState.IsValid)
                     {
@@ -1286,7 +1322,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
         private long FechaExpira()
         {
-            DateTime treintaDias = DateTime.Now.AddDays(365);
+            DateTime treintaDias = DateTime.Now.AddDays(364);
             long marcaTiempo = (Int64)(treintaDias.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
             //string tiempo = marcaTiempo.ToString();
             return marcaTiempo;
@@ -1328,11 +1364,11 @@ namespace SCT_iCare.Controllers.Recepcion
 
             if (nombre == "")
             {
-                NOMBRE = paciente.Nombre;
+                NOMBRE = paciente.Nombre.ToUpper();
             }
             else
             {
-                NOMBRE = nombre;
+                NOMBRE = nombre.ToUpper();
             }
 
             if (doctor == "")

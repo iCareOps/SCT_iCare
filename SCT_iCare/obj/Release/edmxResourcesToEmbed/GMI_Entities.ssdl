@@ -31,6 +31,19 @@
     <Property Name="Capturista" Type="varchar" MaxLength="100" />
     <Property Name="idPaciente" Type="int" />
     <Property Name="FechaExpdiente" Type="datetime" />
+    <Property Name="PausaInicio" Type="datetime" />
+    <Property Name="PausaFinal" Type="datetime" />
+    <Property Name="Duracion" Type="int" />
+  </EntityType>
+  <EntityType Name="CapturaIncidencia">
+    <Key>
+      <PropertyRef Name="idCapturaIncidencia" />
+    </Key>
+    <Property Name="idCapturaIncidencia" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Comentario" Type="varchar(max)" />
+    <Property Name="idCaptura" Type="int" />
+    <Property Name="PausaInicio" Type="datetime" />
+    <Property Name="PausaFinal" Type="datetime" />
   </EntityType>
   <EntityType Name="CERTIFICADO">
     <Key>
@@ -200,6 +213,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_CapturaIncidencia_Captura">
+    <End Role="Captura" Type="Self.Captura" Multiplicity="0..1" />
+    <End Role="CapturaIncidencia" Type="Self.CapturaIncidencia" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Captura">
+        <PropertyRef Name="idCaptura" />
+      </Principal>
+      <Dependent Role="CapturaIncidencia">
+        <PropertyRef Name="idCaptura" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Cita_Canal">
     <End Role="Canal" Type="Self.Canal" Multiplicity="0..1" />
     <End Role="Cita" Type="Self.Cita" Multiplicity="*" />
@@ -360,6 +385,7 @@
     <EntitySet Name="Aptitud" EntityType="Self.Aptitud" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Canal" EntityType="Self.Canal" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Captura" EntityType="Self.Captura" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CapturaIncidencia" EntityType="Self.CapturaIncidencia" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CERTIFICADO" EntityType="Self.CERTIFICADO" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Cita" EntityType="Self.Cita" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Ciudades" EntityType="Self.Ciudades" Schema="dbo" store:Type="Tables" />
@@ -378,6 +404,10 @@
     <AssociationSet Name="FK_Captura_Paciente" Association="Self.FK_Captura_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />
       <End Role="Captura" EntitySet="Captura" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CapturaIncidencia_Captura" Association="Self.FK_CapturaIncidencia_Captura">
+      <End Role="Captura" EntitySet="Captura" />
+      <End Role="CapturaIncidencia" EntitySet="CapturaIncidencia" />
     </AssociationSet>
     <AssociationSet Name="FK_Cita_Canal" Association="Self.FK_Cita_Canal">
       <End Role="Canal" EntitySet="Canal" />

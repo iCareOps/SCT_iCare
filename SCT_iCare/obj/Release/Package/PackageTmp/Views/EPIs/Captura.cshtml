@@ -60,7 +60,9 @@
 
     var sucursalesLista = from s in db.Sucursales select s.Nombre;
 
-    var capturistas = from c in db.Usuarios where c.idRol == 7 && c.idUsuario != 13 select c.Nombre;
+    var capturistas = from c in db.Usuarios where c.idRol == 7 && c.idUsuario != 13 && c.idUsuario != 25 select c.Nombre;
+
+    var capturistasAnexa = from c in db.Usuarios where c.idRol == 9  select c.Nombre;
 
     string fecha = DateTime.Now.ToString("dd-MMMM-yyyy");
 
@@ -91,7 +93,7 @@
                 <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
             </div>
             <div class="input-group pull-right">
-                <input type="text" class="form-control" id="buscador" name="dato" placeholder="Nombre o Expediente">
+                <input type="text" class="form-control" id="buscador" name="dato" placeholder="Paciente o Expediente">
                 <span class="input-group-btn">
                     <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
                 </span>
@@ -303,6 +305,12 @@
                                     var elemento = (from v in db.Captura where v.EstatusCaptura == "Terminado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate && v.Capturista == item select v).Count();
                                     <h4><b>@item:</b> @elemento</h4>
                                 }
+                                <h4>----------------------</h4>
+                                foreach (var item in capturistasAnexa)
+                                {
+                                    var elemento = (from v in db.Captura where v.EstatusCaptura == "Terminado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate && v.Capturista == item select v).Count();
+                                    <h4><b>@item (Anexa):</b> @elemento</h4>
+                                }
                             }
                         </div>
                     </div>
@@ -437,9 +445,8 @@
 
 
 
-@using (Html.BeginForm("EditExpediente", "EPIs"))
-{
-    @Html.AntiForgeryToken()
+@*@using (Html.BeginForm("EditExpediente", "EPIs"))*@
+@{
 
     if (epis != 0 && episSinIniciar != 0)
     {
@@ -522,10 +529,19 @@
                                 <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
                             </td>
                             <td>
+
                                 @Html.DisplayFor(modelItem => item.InicioCaptura)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.FinalCaptura)
+                                @if (item.Duracion != null)
+                                {
+                                    @Html.DisplayFor(modelItem => item.FinalCaptura)<b> (Dur: @item.Duracion min)</b>
+                                }
+                                else
+                                {
+                                    @Html.DisplayFor(modelItem => item.FinalCaptura)
+                                }
+
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Doctor)
@@ -540,11 +556,13 @@
                                 @{
                                     if (item.EstatusCaptura == "No iniciado")
                                     {
-                                        @*<input type="submit" value="Capturar" class="btn btn-outline-warning boton-transparente botonesGral" />*@
-                                        @*@Html.ActionLink("Capturar", "EditExpediente", new { id = item.idEPI })*@
-                                        <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                        using (Html.BeginForm("EditExpediente", "EPIs"))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                        }
                                     }
-                                    else if (item.EstatusCaptura == "En captura...")
+                                    else if (item.EstatusCaptura == "En captura..." || item.EstatusCaptura == "Pendiente")
                                     {
                                         <div class="btn-group">
                                             @*<a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idCaptura})><button type="button" class="btn btn-warning">Dictaminar</button></a>*@
@@ -632,24 +650,73 @@
                                 @{
                                     if (item.EstatusCaptura == "No iniciado")
                                     {
-                                        @*<input type="submit" value="Capturar" class="btn btn-outline-warning boton-transparente botonesGral" />*@
-                                        @*@Html.ActionLink("Capturar", "EditExpediente", new { id = item.idEPI })*@
-                                        <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                        using (Html.BeginForm("EditExpediente", "EPIs"))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                        }
                                     }
-                                    else if (item.EstatusCaptura == "En captura...")
+                                    else if (item.EstatusCaptura == "En captura..." || item.EstatusCaptura == "Pausado" || item.EstatusCaptura == "Pendiente")
                                     {
                                         <div class="btn-group">
-                                            @*<a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idCaptura})><button type="button" class="btn btn-warning">Dictaminar</button></a>*@
                                             <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
                                             </button>
 
                                             <div class="dropdown-menu" style="padding:10px">
-                                                <b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = item.idCaptura })</b>
-                                                <div class="dropdown-divider"></div>
-                                                <b>@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = item.idCaptura })</b>
-                                                <div class="dropdown-divider"></div>
+                                                @if (item.EstatusCaptura != "Pausado")
+                                                {
+                                                    <b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = item.idCaptura })</b>
+                                                    <div class="dropdown-divider"></div>
+                                                    <b>@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = item.idCaptura })</b>
+                                                    <div class="dropdown-divider"></div>
+                                                }
+
+                                                @{
+                                                    if ((nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura") && item.EstatusCaptura != "Pausado" && item.EstatusCaptura != "Pendiente")
+                                                    {
+                                                        <a href="#" data-toggle="modal" data-target="#Pausa_@item.idCaptura"><span class="glyphicon glyphicon-pause text-warning"></span><b> Pausa</b></a>
+                                                        <div class="dropdown-divider"></div>
+                                                    }
+                                                    if ((nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura") && item.EstatusCaptura == "Pausado" && item.EstatusCaptura != "Pendiente")
+                                                    {
+
+                                                        //using (Html.BeginForm("Reanudar", "EPIs"))
+                                                        //{
+                                                        <span class="glyphicon glyphicon-play text-success"></span><b>
+                                                            @*@Url.Action("Reanudar", "Reanudar", new { idCaptura = item.idCaptura })*@
+                                                            @Html.ActionLink("Reanudar", "Reanudar", new { idCaptura = item.idCaptura })
+                                                        </b>
+                                                        <div class="dropdown-divider"></div>
+                                                        //}
+                                                    }
+                                                }
                                             </div>
+
+                                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Pausa")">
+                                                @Html.AntiForgeryToken()
+                                                <div class="modal fade" id="Pausa_@item.idCaptura" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title" id="exampleModalLabel"><b>Describa el motivo de la pausa</b></h4>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="form-group" style="width:60%; min-width:320px">
+                                                                    <label for="recipient-name" class="col-form-label">Motivo:</label>
+                                                                    <input type="text" class="form-control" id="motivo" name="motivo" required>
+                                                                    <input type="hidden" class="form-control" id="idCaptura" name="idCaptura" value="@item.idCaptura">
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                                <input type="submit" value="Guardar" class="btn btn-primary" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+
                                         </div>
 
                                     }
@@ -657,6 +724,7 @@
                                     {
                                         <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
                                     }
+
 
                                 }
                             </td>

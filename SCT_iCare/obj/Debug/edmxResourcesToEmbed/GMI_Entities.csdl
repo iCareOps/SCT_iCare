@@ -38,6 +38,7 @@
     <Property Name="PausaInicio" Type="DateTime" Precision="3" />
     <Property Name="PausaFinal" Type="DateTime" Precision="3" />
     <Property Name="Duracion" Type="Int32" />
+    <NavigationProperty Name="CapturaIncidencia" Relationship="DevModel.FK_CapturaIncidencia_Captura" FromRole="Captura" ToRole="CapturaIncidencia" />
   </EntityType>
   <EntityType Name="CERTIFICADO">
     <Key>
@@ -462,5 +463,33 @@
       <End Role="Roles" EntitySet="Roles" />
       <End Role="Usuarios" EntitySet="Usuarios" />
     </AssociationSet>
+    <EntitySet Name="CapturaIncidencia" EntityType="DevModel.CapturaIncidencia" />
+    <AssociationSet Name="FK_CapturaIncidencia_Captura" Association="DevModel.FK_CapturaIncidencia_Captura">
+      <End Role="Captura" EntitySet="Captura" />
+      <End Role="CapturaIncidencia" EntitySet="CapturaIncidencia" />
+    </AssociationSet>
   </EntityContainer>
+  <EntityType Name="CapturaIncidencia">
+    <Key>
+      <PropertyRef Name="idCapturaIncidencia" />
+    </Key>
+    <Property Name="idCapturaIncidencia" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Comentario" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="idCaptura" Type="Int32" />
+    <NavigationProperty Name="Captura" Relationship="DevModel.FK_CapturaIncidencia_Captura" FromRole="CapturaIncidencia" ToRole="Captura" />
+    <Property Name="PausaInicio" Type="DateTime" Precision="3" />
+    <Property Name="PausaFinal" Type="DateTime" Precision="3" />
+  </EntityType>
+  <Association Name="FK_CapturaIncidencia_Captura">
+    <End Type="DevModel.Captura" Role="Captura" Multiplicity="0..1" />
+    <End Type="DevModel.CapturaIncidencia" Role="CapturaIncidencia" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Captura">
+        <PropertyRef Name="idCaptura" />
+      </Principal>
+      <Dependent Role="CapturaIncidencia">
+        <PropertyRef Name="idCaptura" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema>

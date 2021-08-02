@@ -130,16 +130,15 @@ namespace SCT_iCare.Controllers.Admin
             var recepcion = (from r in db.Recepcionista where r.idUsuario == id select r).FirstOrDefault();
             var idSucursal = (from i in db.Sucursales where i.idSucursal == sucursal select i.idSucursal).FirstOrDefault();
 
-            Recepcionista recepcionista = new Recepcionista();
-
             if(recepcion != null)
             {
-                recepcion.idUsuario = id;
-                recepcion.idSucursal = idSucursal;
+                Recepcionista recepcionista = db.Recepcionista.Find(id);
+                recepcionista.idUsuario = id;
+                recepcionista.idSucursal = idSucursal;
 
                 if (ModelState.IsValid)
                 {
-                    db.Entry(recepcion).State = EntityState.Modified;
+                    db.Entry(recepcionista).State = EntityState.Modified;
                     db.SaveChanges();
                     return RedirectToAction("Index");
                 }
@@ -148,10 +147,11 @@ namespace SCT_iCare.Controllers.Admin
             {
                 if (ModelState.IsValid)
                 {
-                    recepcion.idUsuario = id;
-                    recepcion.idSucursal = idSucursal;
+                    Recepcionista recepcionista = new Recepcionista();
+                    recepcionista.idUsuario = id;
+                    recepcionista.idSucursal = idSucursal;
 
-                    db.Recepcionista.Add(recepcion);
+                    db.Recepcionista.Add(recepcionista);
                     db.SaveChanges();
                     return RedirectToAction("Index");
                 }

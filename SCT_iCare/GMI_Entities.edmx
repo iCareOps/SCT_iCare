@@ -47,6 +47,8 @@
           <Property Name="idCapturaIncidencia" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Comentario" Type="varchar(max)" />
           <Property Name="idCaptura" Type="int" />
+          <Property Name="PausaInicio" Type="datetime" />
+          <Property Name="PausaFinal" Type="datetime" />
         </EntityType>
         <EntityType Name="CERTIFICADO">
           <Key>
@@ -946,6 +948,8 @@
           <Property Name="Comentario" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="idCaptura" Type="Int32" />
           <NavigationProperty Name="Captura" Relationship="DevModel.FK_CapturaIncidencia_Captura" FromRole="CapturaIncidencia" ToRole="Captura" />
+          <Property Name="PausaInicio" Type="DateTime" Precision="3" />
+          <Property Name="PausaFinal" Type="DateTime" Precision="3" />
         </EntityType>
         <Association Name="FK_CapturaIncidencia_Captura">
           <End Type="DevModel.Captura" Role="Captura" Multiplicity="0..1" />
@@ -1177,6 +1181,8 @@
           <EntitySetMapping Name="CapturaIncidencia">
             <EntityTypeMapping TypeName="DevModel.CapturaIncidencia">
               <MappingFragment StoreEntitySet="CapturaIncidencia">
+                <ScalarProperty Name="PausaFinal" ColumnName="PausaFinal" />
+                <ScalarProperty Name="PausaInicio" ColumnName="PausaInicio" />
                 <ScalarProperty Name="idCaptura" ColumnName="idCaptura" />
                 <ScalarProperty Name="Comentario" ColumnName="Comentario" />
                 <ScalarProperty Name="idCapturaIncidencia" ColumnName="idCapturaIncidencia" />

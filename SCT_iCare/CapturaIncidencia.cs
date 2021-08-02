@@ -17,6 +17,8 @@ namespace SCT_iCare
         public int idCapturaIncidencia { get; set; }
         public string Comentario { get; set; }
         public Nullable<int> idCaptura { get; set; }
+        public Nullable<System.DateTime> PausaInicio { get; set; }
+        public Nullable<System.DateTime> PausaFinal { get; set; }
     
         public virtual Captura Captura { get; set; }
     }

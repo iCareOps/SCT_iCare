@@ -340,8 +340,27 @@ namespace SCT_iCare.Controllers.EPICenter
                 }
             }
 
+            TimeSpan diferencia = DateTime.Now - Convert.ToDateTime(captura.InicioCaptura);
+            //int totalCaptura = (DateTime.Now.Minute - Convert.ToDateTime(captura.InicioCaptura).Minute);
+            int minutos = Convert.ToInt32(diferencia.TotalMinutes);
+
+            var pausas = (from p in db.CapturaIncidencia where p.idCaptura == id select p).ToList();
+
+            if(pausas != null)
+            {
+                int diferenciaTotal = 0;
+                foreach(var item in pausas)
+                {
+                    TimeSpan diferencia2 = (Convert.ToDateTime(item.PausaFinal) - Convert.ToDateTime(item.PausaInicio));
+                    diferenciaTotal += Convert.ToInt32(diferencia2.TotalMinutes);
+                }
+
+                minutos = minutos - diferenciaTotal;
+            }
+
             captura.EstatusCaptura = "Terminado";
             captura.FinalCaptura = DateTime.Now;
+            captura.Duracion = minutos;
             dictamen.Dictamen1 = bytes2;
             dictamen.idPaciente = captura.idPaciente;
             dictamen.idAptitud = 1;
@@ -403,7 +422,7 @@ namespace SCT_iCare.Controllers.EPICenter
 
             int nulos = 0;
 
-            if (inicio != null && final != null)
+            if (inicio != null || final != null)
             {
                 nulos = 1;
             }
@@ -486,6 +505,26 @@ namespace SCT_iCare.Controllers.EPICenter
             captura.EstatusCaptura = "Pendiente";
             captura.FinalCaptura = DateTime.Now;
 
+            TimeSpan diferencia = DateTime.Now - Convert.ToDateTime(captura.InicioCaptura);
+            //int totalCaptura = (DateTime.Now.Minute - Convert.ToDateTime(captura.InicioCaptura).Minute);
+            int minutos = Convert.ToInt32(diferencia.TotalMinutes);
+
+            var pausas = (from p in db.CapturaIncidencia where p.idCaptura == id select p).ToList();
+
+            if (pausas != null)
+            {
+                int diferenciaTotal = 0;
+                foreach (var item in pausas)
+                {
+                    TimeSpan diferencia2 = (Convert.ToDateTime(item.PausaFinal) - Convert.ToDateTime(item.PausaInicio));
+                    diferenciaTotal += Convert.ToInt32(diferencia2.TotalMinutes);
+                }
+
+                minutos = minutos - diferenciaTotal;
+            }
+
+            captura.Duracion = minutos;
+
 
             //incidencias.NombrePaciente = paciente;
             incidencias.NoExpediente = folio;
@@ -561,8 +600,50 @@ namespace SCT_iCare.Controllers.EPICenter
                     S.M.Sucursal
                 });
 
-
             return Json(selected, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        
+        public ActionResult Pausa(int idCaptura, string motivo)
+        {
+            CapturaIncidencia comentario = new CapturaIncidencia();
+            Captura captura = db.Captura.Find(idCaptura);
+
+            comentario.idCaptura = idCaptura;
+            comentario.Comentario = motivo;
+            comentario.PausaInicio = DateTime.Now;
+
+            captura.EstatusCaptura = "Pausado";
+
+            if (ModelState.IsValid)
+            {
+                db.CapturaIncidencia.Add(comentario);
+                db.SaveChanges();
+                return Redirect("Captura");
+            }
+
+            return Redirect("Captura");
+        }
+
+        public ActionResult Reanudar(int idCaptura)
+        {
+            var capturaIncidencia = (from c in db.CapturaIncidencia where c.idCaptura == idCaptura orderby c.idCapturaIncidencia descending select c).FirstOrDefault();
+            Captura captura = db.Captura.Find(idCaptura);
+
+            capturaIncidencia.PausaFinal = DateTime.Now;
+
+            captura.EstatusCaptura = "En captura...";
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(captura).State = EntityState.Modified;
+                db.Entry(capturaIncidencia).State = EntityState.Modified;
+                db.SaveChanges();
+                return Redirect("Captura");
+            }
+
+            return Redirect("Captura");
         }
 
     }

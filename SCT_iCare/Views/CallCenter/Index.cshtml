@@ -59,6 +59,8 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
 <div class="form-inline">
     @*<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>*@
     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal3"><span class="glyphicon glyphicon-credit-card"></span> Pago con Tarjeta</button>&nbsp;&nbsp;&nbsp;
+
     <a href=@Url.Action("Index", "ControlDictamen")><button style="color:white" type="button" class="btn btn-info"><span class="glyphicon glyphicon-th-list"></span> &nbsp; &nbsp;Dictámenes</button></a>
 
     <div class="input-group pull-right">
@@ -271,8 +273,9 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                         <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
                             <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
                             <option value="MARITIMO">MARITIMO</option>
-                            <option value="AEREO">AEREO</option>
                             <option value="FERROVIARIO">FERROVIARIO</option>
+                            <option disabled>------------</option>
+                            <option value="AEREO">AEREO ($4,060.00)</option>
                         </select>
                     </div>
 
@@ -329,6 +332,130 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
 
     calcular1();
 </script>
+
+
+<div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: orangered">
+                <h3 class="modal-title text-primary" id="exampleModalLabel" style="color:white"><b>Pago con Tarjeta</b></h3>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/CallCenter/PagoTarjeta")">
+                    @Html.AntiForgeryToken()
+                    <div class="form-inline">
+                        <label for="recipient-name" class="col-form-label">Cantidad de EPIs requeridos:</label>
+                    </div>
+                    <div class="form-inline">
+                        <span class="">
+                            <button class="btn btn-info" id="menos2" type="button"><b><span class="glyphicon glyphicon-minus"></span></b></button>
+                        </span>
+                        <input style="display:inline-block" type="number" class="form-control" id="contador2" min="1" name="cantidad" placeholder="Ingresa una cantidad" required>
+                        <span class="">
+                            <button class="btn btn-info" id="mas2" type="button"><b><span class="glyphicon glyphicon-plus"></span></b></button>
+                        </span>
+                        <br />
+                        <br />
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Nombre del Paciente (o Gestor):</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Teléfono:</label>
+                        <input type="tel" class="form-control" pattern="[0-9]{10}" title="El formato de teléfono debe contener 10 números" id="telefono" name="telefono" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label"><b>Terminación de Tarjeta (últimos 4 números):</b></label>
+                        <input type="number" maxlength="4" min="4" class="form-control" id="card" name="card" required>
+                    </div>
+                        <div class="form-group" style="width:60%; min-width:320px">
+                            <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                            <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                @{
+                                    var sucursalesOption1 = from s in db.Sucursales select s.Nombre;
+                                    foreach (var opcion in sucursalesOption1)
+                                    {
+                                        <option value="@opcion">@opcion</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
+                            <input type="date" class="form-control" id="fecha" name="fecha" required>
+                        </div>
+                        <input type="hidden" name="usuario" asp-for="file" class="" required value="Call Center" />
+                    
+                    <div class="form-group" style="width:60%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
+                        <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                            <option value="MARITIMO">MARITIMO</option>
+                            <option value="AEREO">AEREO</option>
+                            <option value="FERROVIARIO">FERROVIARIO</option>
+                        </select>
+                    </div>
+</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <input type="submit" value="Enviar" class="btn btn-primary" />
+            </div></form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var sumar2 = document.getElementById("mas2");
+    var restar2 = document.getElementById("menos2");
+    var contador2 = document.getElementById("contador2");
+    var importe2 = document.getElementById("importe2");
+    var valorBase2 = 5.20;
+    var prevValue2;
+
+    function calcular2() {
+        var value2 = contador2.value;
+        var isValid2 = /^[1-9][0-9]*$/.test(value2);
+
+        if (!isValid2) {
+            contador2.value = prevValue2;
+        } else {
+            prevValue2 = value;
+        }
+
+        importe2.value = Number2.parseFloat(contador2.value * valorBase2).toFixed(2);
+    }
+
+    sumar2.onclick = function () {
+        contador2.value = Number(contador2.value) + 1;
+        calcular2();
+    };
+
+    restar2.onclick = function () {
+        contador2.value = Number(contador2.value) - 1;
+        calcular2();
+    };
+
+    contador2.onchange = function () {
+        calcular2();
+    };
+
+    contador2.onkeyup = function () {
+        if (contador2.value === "") {
+            return;
+        }
+        calcular2();
+    };
+
+    calcular2();
+</script>
+
+
+
 
 @if (modelo.FirstOrDefault() == null)
 {
