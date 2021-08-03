@@ -41,7 +41,7 @@
 
 
     //var repoCentral = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
-    var repoCentral = (from r in db.Captura select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").ToList();
+    var repoCentral = (from r in db.Captura orderby r.TipoTramite select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").ToList();
 
     var repoCentral2 = (from r in db.Captura select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").Count();
 
@@ -303,7 +303,12 @@
                                 foreach (var item in capturistas)
                                 {
                                     var elemento = (from v in db.Captura where v.EstatusCaptura == "Terminado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate && v.Capturista == item select v).Count();
-                                    <h4><b>@item:</b> @elemento</h4>
+                                    var sumaMinutos = ((from v in db.Captura where v.EstatusCaptura == "Terminado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate && v.Capturista == item select v.Duracion).Sum()) / elemento;
+                                    if (sumaMinutos == null)
+                                    {
+                                        sumaMinutos = 0;
+                                    }
+                                    <h4><b>@item:</b> @elemento <b class="text-primary h6">(@sumaMinutos mins/Dictamen)</b></h4>
                                 }
                                 <h4>----------------------</h4>
                                 foreach (var item in capturistasAnexa)

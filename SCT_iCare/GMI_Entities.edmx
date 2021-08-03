@@ -131,6 +131,14 @@
           <Property Name="FechaIncidencia" Type="datetime" />
           <Property Name="idCaptura" Type="int" />
         </EntityType>
+        <EntityType Name="IncidenciaPaciente">
+          <Key>
+            <PropertyRef Name="idComentario" />
+          </Key>
+          <Property Name="idComentario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Comentario" Type="varchar(max)" />
+          <Property Name="idCaptura" Type="int" />
+        </EntityType>
         <EntityType Name="Menu">
           <Key>
             <PropertyRef Name="idMenu" />
@@ -314,6 +322,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_IncidenciaPaciente_Captura">
+          <End Role="Captura" Type="Self.Captura" Multiplicity="0..1" />
+          <End Role="IncidenciaPaciente" Type="Self.IncidenciaPaciente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Captura">
+              <PropertyRef Name="idCaptura" />
+            </Principal>
+            <Dependent Role="IncidenciaPaciente">
+              <PropertyRef Name="idCaptura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Recepcionista_Sucursales">
           <End Role="Sucursales" Type="Self.Sucursales" Multiplicity="0..1" />
           <End Role="Recepcionista" Type="Self.Recepcionista" Multiplicity="*" />
@@ -398,6 +418,7 @@
           <EntitySet Name="Doctores" EntityType="Self.Doctores" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Expedientes" EntityType="Self.Expedientes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="IncidenciaDictamen" EntityType="Self.IncidenciaDictamen" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="IncidenciaPaciente" EntityType="Self.IncidenciaPaciente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Menu" EntityType="Self.Menu" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Paciente" EntityType="Self.Paciente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Recepcionista" EntityType="Self.Recepcionista" Schema="dbo" store:Type="Tables" />
@@ -441,6 +462,10 @@
           <AssociationSet Name="FK_IncidenciaDictamen_Captura" Association="Self.FK_IncidenciaDictamen_Captura">
             <End Role="Captura" EntitySet="Captura" />
             <End Role="IncidenciaDictamen" EntitySet="IncidenciaDictamen" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IncidenciaPaciente_Captura" Association="Self.FK_IncidenciaPaciente_Captura">
+            <End Role="Captura" EntitySet="Captura" />
+            <End Role="IncidenciaPaciente" EntitySet="IncidenciaPaciente" />
           </AssociationSet>
           <AssociationSet Name="FK_Recepcionista_Sucursales" Association="Self.FK_Recepcionista_Sucursales">
             <End Role="Sucursales" EntitySet="Sucursales" />
@@ -510,6 +535,7 @@
           <Property Name="PausaFinal" Type="DateTime" Precision="3" />
           <Property Name="Duracion" Type="Int32" />
           <NavigationProperty Name="CapturaIncidencia" Relationship="DevModel.FK_CapturaIncidencia_Captura" FromRole="Captura" ToRole="CapturaIncidencia" />
+          <NavigationProperty Name="IncidenciaPaciente" Relationship="DevModel.FK_IncidenciaPaciente_Captura" FromRole="Captura" ToRole="IncidenciaPaciente" />
         </EntityType>
         <EntityType Name="CERTIFICADO">
           <Key>
@@ -939,6 +965,11 @@
             <End Role="Captura" EntitySet="Captura" />
             <End Role="CapturaIncidencia" EntitySet="CapturaIncidencia" />
           </AssociationSet>
+          <EntitySet Name="IncidenciaPaciente" EntityType="DevModel.IncidenciaPaciente" />
+          <AssociationSet Name="FK_IncidenciaPaciente_Captura" Association="DevModel.FK_IncidenciaPaciente_Captura">
+            <End Role="Captura" EntitySet="Captura" />
+            <End Role="IncidenciaPaciente" EntitySet="IncidenciaPaciente" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="CapturaIncidencia">
           <Key>
@@ -959,6 +990,27 @@
               <PropertyRef Name="idCaptura" />
             </Principal>
             <Dependent Role="CapturaIncidencia">
+              <PropertyRef Name="idCaptura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="IncidenciaPaciente">
+          <Key>
+            <PropertyRef Name="idComentario" />
+          </Key>
+          <Property Name="idComentario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Comentario" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="idCaptura" Type="Int32" />
+          <NavigationProperty Name="Captura" Relationship="DevModel.FK_IncidenciaPaciente_Captura" FromRole="IncidenciaPaciente" ToRole="Captura" />
+        </EntityType>
+        <Association Name="FK_IncidenciaPaciente_Captura">
+          <End Type="DevModel.Captura" Role="Captura" Multiplicity="0..1" />
+          <End Type="DevModel.IncidenciaPaciente" Role="IncidenciaPaciente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Captura">
+              <PropertyRef Name="idCaptura" />
+            </Principal>
+            <Dependent Role="IncidenciaPaciente">
               <PropertyRef Name="idCaptura" />
             </Dependent>
           </ReferentialConstraint>
@@ -1186,6 +1238,15 @@
                 <ScalarProperty Name="idCaptura" ColumnName="idCaptura" />
                 <ScalarProperty Name="Comentario" ColumnName="Comentario" />
                 <ScalarProperty Name="idCapturaIncidencia" ColumnName="idCapturaIncidencia" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="IncidenciaPaciente">
+            <EntityTypeMapping TypeName="DevModel.IncidenciaPaciente">
+              <MappingFragment StoreEntitySet="IncidenciaPaciente">
+                <ScalarProperty Name="idCaptura" ColumnName="idCaptura" />
+                <ScalarProperty Name="Comentario" ColumnName="Comentario" />
+                <ScalarProperty Name="idComentario" ColumnName="idComentario" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

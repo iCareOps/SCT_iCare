@@ -95,6 +95,9 @@ namespace SCT_iCare.Controllers.Login
                         case 8:
                             ViewBag.Nombre = oUser.Nombre.ToString();
                             return Redirect("~/CERTIFICADOes/Index");
+                        case 10:
+                            ViewBag.Nombre = oUser.Nombre.ToString();
+                            return Redirect("~/ConsultaDictamen/Inicio");
 
                         default:
                             //return Redirect("~/Login/Login");

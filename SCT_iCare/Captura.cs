@@ -19,6 +19,7 @@ namespace SCT_iCare
         {
             this.IncidenciaDictamen = new HashSet<IncidenciaDictamen>();
             this.CapturaIncidencia = new HashSet<CapturaIncidencia>();
+            this.IncidenciaPaciente = new HashSet<IncidenciaPaciente>();
         }
     
         public int idCaptura { get; set; }
@@ -42,5 +43,7 @@ namespace SCT_iCare
         public virtual ICollection<IncidenciaDictamen> IncidenciaDictamen { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CapturaIncidencia> CapturaIncidencia { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<IncidenciaPaciente> IncidenciaPaciente { get; set; }
     }
 }

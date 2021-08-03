@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewBag.Title = "Facturación";
+
+    GMIEntities db = new GMIEntities();
+
+    var modelo = db.Paciente.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+        .Select(S => new { id = S.N.idPaciente, S.N.Nombre, S.N.Telefono, S.M.NoExpediente }).ToList();
+}
+
+<br />
+<br />
+<br />
+<br />
+
+<h2 style="color:white; text-shadow:2px 2px 2px black">Su comentario ha sido enviado. En breve atenderemos su solicitud. Muchas gracias.</h2>
+<a href=@Url.Action("Inicio", "ConsultaDictamen")><button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-home"></span>&nbsp; Volver a Inicio</button></a>
+
+<br />
+<body class="bg-primary bodyLogin" style="color:black">
+
+
+</body>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+

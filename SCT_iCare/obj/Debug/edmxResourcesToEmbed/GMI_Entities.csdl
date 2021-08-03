@@ -39,6 +39,7 @@
     <Property Name="PausaFinal" Type="DateTime" Precision="3" />
     <Property Name="Duracion" Type="Int32" />
     <NavigationProperty Name="CapturaIncidencia" Relationship="DevModel.FK_CapturaIncidencia_Captura" FromRole="Captura" ToRole="CapturaIncidencia" />
+    <NavigationProperty Name="IncidenciaPaciente" Relationship="DevModel.FK_IncidenciaPaciente_Captura" FromRole="Captura" ToRole="IncidenciaPaciente" />
   </EntityType>
   <EntityType Name="CERTIFICADO">
     <Key>
@@ -468,6 +469,11 @@
       <End Role="Captura" EntitySet="Captura" />
       <End Role="CapturaIncidencia" EntitySet="CapturaIncidencia" />
     </AssociationSet>
+    <EntitySet Name="IncidenciaPaciente" EntityType="DevModel.IncidenciaPaciente" />
+    <AssociationSet Name="FK_IncidenciaPaciente_Captura" Association="DevModel.FK_IncidenciaPaciente_Captura">
+      <End Role="Captura" EntitySet="Captura" />
+      <End Role="IncidenciaPaciente" EntitySet="IncidenciaPaciente" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="CapturaIncidencia">
     <Key>
@@ -488,6 +494,27 @@
         <PropertyRef Name="idCaptura" />
       </Principal>
       <Dependent Role="CapturaIncidencia">
+        <PropertyRef Name="idCaptura" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="IncidenciaPaciente">
+    <Key>
+      <PropertyRef Name="idComentario" />
+    </Key>
+    <Property Name="idComentario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Comentario" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="idCaptura" Type="Int32" />
+    <NavigationProperty Name="Captura" Relationship="DevModel.FK_IncidenciaPaciente_Captura" FromRole="IncidenciaPaciente" ToRole="Captura" />
+  </EntityType>
+  <Association Name="FK_IncidenciaPaciente_Captura">
+    <End Type="DevModel.Captura" Role="Captura" Multiplicity="0..1" />
+    <End Type="DevModel.IncidenciaPaciente" Role="IncidenciaPaciente" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Captura">
+        <PropertyRef Name="idCaptura" />
+      </Principal>
+      <Dependent Role="IncidenciaPaciente">
         <PropertyRef Name="idCaptura" />
       </Dependent>
     </ReferentialConstraint>
