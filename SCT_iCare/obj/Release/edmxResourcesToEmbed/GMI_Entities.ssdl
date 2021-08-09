@@ -98,6 +98,15 @@
     <Property Name="idPaciente" Type="int" />
     <Property Name="idAptitud" Type="int" />
   </EntityType>
+  <EntityType Name="DictamenProblema">
+    <Key>
+      <PropertyRef Name="idEnviados" />
+    </Key>
+    <Property Name="idEnviados" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="EstatusEnvio" Type="varchar" MaxLength="20" />
+    <Property Name="Problema" Type="varchar(max)" />
+    <Property Name="idPaciente" Type="int" />
+  </EntityType>
   <EntityType Name="Doctores">
     <Key>
       <PropertyRef Name="idDoctor" />
@@ -125,6 +134,31 @@
     <Property Name="Incidencia" Type="varchar" MaxLength="100" />
     <Property Name="FechaIncidencia" Type="datetime" />
     <Property Name="idCaptura" Type="int" />
+  </EntityType>
+  <EntityType Name="IncidenciaPaciente">
+    <Key>
+      <PropertyRef Name="idComentario" />
+    </Key>
+    <Property Name="idComentario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Comentario" Type="varchar(max)" />
+    <Property Name="idCaptura" Type="int" />
+  </EntityType>
+  <EntityType Name="log_InicioGestor">
+    <Key>
+      <PropertyRef Name="idLogInicioGestor" />
+    </Key>
+    <Property Name="idLogInicioGestor" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="InicioSesion" Type="datetime" />
+    <Property Name="NombreUsuario" Type="varchar" MaxLength="100" />
+    <Property Name="idUsuario" Type="int" />
+  </EntityType>
+  <EntityType Name="log_Movimientos">
+    <Key>
+      <PropertyRef Name="idlog_Movimientos" />
+    </Key>
+    <Property Name="idlog_Movimientos" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Movimiento" Type="varchar" MaxLength="200" />
+    <Property Name="idLogInicioGestor" Type="int" />
   </EntityType>
   <EntityType Name="Menu">
     <Key>
@@ -273,6 +307,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_DictamenProblema_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="DictamenProblema" Type="Self.DictamenProblema" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="DictamenProblema">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Doctores_Sucursales">
     <End Role="Sucursales" Type="Self.Sucursales" Multiplicity="0..1" />
     <End Role="Doctores" Type="Self.Doctores" Multiplicity="*" />
@@ -306,6 +352,42 @@
       </Principal>
       <Dependent Role="IncidenciaDictamen">
         <PropertyRef Name="idCaptura" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_IncidenciaPaciente_Captura">
+    <End Role="Captura" Type="Self.Captura" Multiplicity="0..1" />
+    <End Role="IncidenciaPaciente" Type="Self.IncidenciaPaciente" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Captura">
+        <PropertyRef Name="idCaptura" />
+      </Principal>
+      <Dependent Role="IncidenciaPaciente">
+        <PropertyRef Name="idCaptura" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_log_InicioGestor_Usuarios">
+    <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+    <End Role="log_InicioGestor" Type="Self.log_InicioGestor" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Usuarios">
+        <PropertyRef Name="idUsuario" />
+      </Principal>
+      <Dependent Role="log_InicioGestor">
+        <PropertyRef Name="idUsuario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_log_Movimientos_log_InicioGestor">
+    <End Role="log_InicioGestor" Type="Self.log_InicioGestor" Multiplicity="0..1" />
+    <End Role="log_Movimientos" Type="Self.log_Movimientos" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="log_InicioGestor">
+        <PropertyRef Name="idLogInicioGestor" />
+      </Principal>
+      <Dependent Role="log_Movimientos">
+        <PropertyRef Name="idLogInicioGestor" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -390,9 +472,13 @@
     <EntitySet Name="Cita" EntityType="Self.Cita" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Ciudades" EntityType="Self.Ciudades" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Dictamen" EntityType="Self.Dictamen" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="DictamenProblema" EntityType="Self.DictamenProblema" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Doctores" EntityType="Self.Doctores" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Expedientes" EntityType="Self.Expedientes" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="IncidenciaDictamen" EntityType="Self.IncidenciaDictamen" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="IncidenciaPaciente" EntityType="Self.IncidenciaPaciente" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="log_InicioGestor" EntityType="Self.log_InicioGestor" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="log_Movimientos" EntityType="Self.log_Movimientos" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Menu" EntityType="Self.Menu" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Paciente" EntityType="Self.Paciente" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Recepcionista" EntityType="Self.Recepcionista" Schema="dbo" store:Type="Tables" />
@@ -425,6 +511,10 @@
       <End Role="Paciente" EntitySet="Paciente" />
       <End Role="Dictamen" EntitySet="Dictamen" />
     </AssociationSet>
+    <AssociationSet Name="FK_DictamenProblema_Paciente" Association="Self.FK_DictamenProblema_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="DictamenProblema" EntitySet="DictamenProblema" />
+    </AssociationSet>
     <AssociationSet Name="FK_Doctores_Sucursales" Association="Self.FK_Doctores_Sucursales">
       <End Role="Sucursales" EntitySet="Sucursales" />
       <End Role="Doctores" EntitySet="Doctores" />
@@ -436,6 +526,18 @@
     <AssociationSet Name="FK_IncidenciaDictamen_Captura" Association="Self.FK_IncidenciaDictamen_Captura">
       <End Role="Captura" EntitySet="Captura" />
       <End Role="IncidenciaDictamen" EntitySet="IncidenciaDictamen" />
+    </AssociationSet>
+    <AssociationSet Name="FK_IncidenciaPaciente_Captura" Association="Self.FK_IncidenciaPaciente_Captura">
+      <End Role="Captura" EntitySet="Captura" />
+      <End Role="IncidenciaPaciente" EntitySet="IncidenciaPaciente" />
+    </AssociationSet>
+    <AssociationSet Name="FK_log_InicioGestor_Usuarios" Association="Self.FK_log_InicioGestor_Usuarios">
+      <End Role="Usuarios" EntitySet="Usuarios" />
+      <End Role="log_InicioGestor" EntitySet="log_InicioGestor" />
+    </AssociationSet>
+    <AssociationSet Name="FK_log_Movimientos_log_InicioGestor" Association="Self.FK_log_Movimientos_log_InicioGestor">
+      <End Role="log_InicioGestor" EntitySet="log_InicioGestor" />
+      <End Role="log_Movimientos" EntitySet="log_Movimientos" />
     </AssociationSet>
     <AssociationSet Name="FK_Recepcionista_Sucursales" Association="Self.FK_Recepcionista_Sucursales">
       <End Role="Sucursales" EntitySet="Sucursales" />

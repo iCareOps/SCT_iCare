@@ -37,7 +37,7 @@
     DateTime inicio = Convert.ToDateTime(ViewBag.Inicio);
     DateTime final = Convert.ToDateTime(ViewBag.Final);
 
-    int oxxo = (from o in db.Cita where o.TipoPago == "Referencia OXXO" && o.EstatusPago == "Pagado" && o.FechaReferencia >= inicio && o.FechaReferencia < final select o.Referencia).Distinct().Count();
+    int oxxo = (from o in db.Cita where (o.TipoPago == "Referencia OXXO" && o.TipoPago == "REFERENCIA OXXO") && o.EstatusPago == "Pagado" && o.FechaReferencia >= inicio && o.FechaReferencia < final select o.Referencia).Distinct().Count();
     int scotia = (from o in db.Cita where (o.TipoPago == "Referencia Scotiabank" || o.TipoPago == "Transferencia vía ScotiaBank") && o.EstatusPago == "Pagado" && o.FechaReferencia >= inicio && o.FechaReferencia < final select o.Referencia).Distinct().Count();
     int banbajio = (from o in db.Cita where (o.TipoPago == "Referencia BanBajío" || o.TipoPago == "Transferencia vía BanBajío") && o.EstatusPago == "Pagado" && o.FechaReferencia >= inicio && o.FechaReferencia < final select o.Referencia).Distinct().Count();
     int pending = (from o in db.Cita where (o.EstatusPago == "pending_payment" || o.EstatusPago == "Pendiente") && o.FechaReferencia >= inicio && o.FechaReferencia < final select o.Referencia).Distinct().Count();
@@ -189,7 +189,7 @@
                             @flag
                         </td>
                         <td>
-                            <mark style="background-color:aqua">@Html.DisplayFor(modelItem => item.Canal1)</mark>
+                            <mark style="background-color:aqua">@Html.DisplayFor(modelItem => item.Canal)</mark>
                         </td>
 
                         <td class="text-center">

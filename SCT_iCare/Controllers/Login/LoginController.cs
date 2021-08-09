@@ -76,7 +76,7 @@ namespace SCT_iCare.Controllers.Login
                     {
                         case 5:
                             ViewBag.Nombre = oUser.Nombre.ToString();
-                            return Redirect("~/Sucursales/Index");
+                            return Redirect("~/Usuarios/Index");
                         case 1:
                             ViewBag.Nombre = oUser.Nombre.ToString();
                             return Redirect("~/CallCenter/Index");
@@ -97,7 +97,20 @@ namespace SCT_iCare.Controllers.Login
                             return Redirect("~/CERTIFICADOes/Index");
                         case 10:
                             ViewBag.Nombre = oUser.Nombre.ToString();
-                            return Redirect("~/ConsultaDictamen/Inicio");
+
+                            var logGestor = new log_InicioGestor();
+                            logGestor.InicioSesion = DateTime.Now;
+                            logGestor.NombreUsuario = oUser.Nombre.ToString();
+                            logGestor.idUsuario = oUser.idUsuario;
+
+                            if (ModelState.IsValid)
+                            {
+                                db.log_InicioGestor.Add(logGestor);
+                                db.SaveChanges();
+                            }
+                            int idLog = logGestor.idLogInicioGestor;
+                            TempData["ID"] = idLog;
+                            return Redirect("~/Gestoria/Index");
 
                         default:
                             //return Redirect("~/Login/Login");

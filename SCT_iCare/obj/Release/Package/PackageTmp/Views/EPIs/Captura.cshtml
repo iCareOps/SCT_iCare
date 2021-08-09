@@ -41,7 +41,7 @@
 
 
     //var repoCentral = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
-    var repoCentral = (from r in db.Captura select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").ToList();
+    var repoCentral = (from r in db.Captura orderby r.TipoTramite select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").ToList();
 
     var repoCentral2 = (from r in db.Captura select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").Count();
 
@@ -62,7 +62,7 @@
 
     var capturistas = from c in db.Usuarios where c.idRol == 7 && c.idUsuario != 13 && c.idUsuario != 25 select c.Nombre;
 
-    var capturistasAnexa = from c in db.Usuarios where c.idRol == 9  select c.Nombre;
+    var capturistasAnexa = from c in db.Usuarios where c.idRol == 9 select c.Nombre;
 
     string fecha = DateTime.Now.ToString("dd-MMMM-yyyy");
 
@@ -79,7 +79,9 @@
 {
     <h5 style="color:darkgray">Mostrando resultados de <span style="color:white">@ViewBag.Inicio.ToString("dd-MMMM-yyyy")</span> hasta <span style="color:white">@ViewBag.Final.ToString("dd-MMMM-yyyy")</span></h5>
 }
-@*<script>setTimeout('document.location.reload()', 10000);</script>*@
+
+
+
 @{
     if (nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España" || nombreUsuario == "Soporte Captura")
     {
@@ -303,7 +305,12 @@
                                 foreach (var item in capturistas)
                                 {
                                     var elemento = (from v in db.Captura where v.EstatusCaptura == "Terminado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate && v.Capturista == item select v).Count();
-                                    <h4><b>@item:</b> @elemento</h4>
+                                    var sumaMinutos = ((from v in db.Captura where v.EstatusCaptura == "Terminado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate && v.Capturista == item select v.Duracion).Sum()) / elemento;
+                                    if (sumaMinutos == null)
+                                    {
+                                        sumaMinutos = 0;
+                                    }
+                                    <h4><b>@item:</b> @elemento <b class="text-primary h6">(@sumaMinutos mins/Dictamen)</b></h4>
                                 }
                                 <h4>----------------------</h4>
                                 foreach (var item in capturistasAnexa)
@@ -501,6 +508,13 @@
                             fila = "bg-default";
                         }
 
+                        var Licencia = (from l in db.Cita where l.idPaciente == item.idPaciente select l).FirstOrDefault();
+
+                        if (Licencia.TipoLicencia == "AEREO")
+                        {
+                            fila = "bg-warning";
+                        }
+
 
                         <tr class=@fila>
                             <td>
@@ -673,12 +687,12 @@
                                                 }
 
                                                 @{
-                                                    if ((nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura") && item.EstatusCaptura != "Pausado" && item.EstatusCaptura != "Pendiente")
+                                                    if ((nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España") && item.EstatusCaptura != "Pausado" && item.EstatusCaptura != "Pendiente")
                                                     {
                                                         <a href="#" data-toggle="modal" data-target="#Pausa_@item.idCaptura"><span class="glyphicon glyphicon-pause text-warning"></span><b> Pausa</b></a>
                                                         <div class="dropdown-divider"></div>
                                                     }
-                                                    if ((nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura") && item.EstatusCaptura == "Pausado" && item.EstatusCaptura != "Pendiente")
+                                                    if ((nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España") && item.EstatusCaptura == "Pausado" && item.EstatusCaptura != "Pendiente")
                                                     {
 
                                                         //using (Html.BeginForm("Reanudar", "EPIs"))
@@ -780,7 +794,7 @@
         </script>
     }
 
-<script>
+    <script>
     $(function () {
         $(".buscar").click(function () {
             var url = "@Url.Action("BuscarTodo", "EPIs")";
@@ -816,9 +830,11 @@
         });
     });
 
-</script>
+    </script>
 
 }
+
+<button type="button" class="btn btn-lg btn-danger" data-bs-toggle="popover" title="Popover title" data-bs-content="And here's some amazing content. It's very engaging. Right?">Click to toggle popover</button>
 
 
 <div class="modal fade" id="exampleModal10" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -840,4 +856,6 @@
 
     </div>
 </div>
+
+
 

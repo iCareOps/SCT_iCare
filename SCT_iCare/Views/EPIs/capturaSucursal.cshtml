@@ -162,6 +162,13 @@
                         fila = "bg-default";
                     }
 
+                    var Licencia = (from l in db.Cita where l.idPaciente == item.idPaciente select l).FirstOrDefault();
+
+                    if (Licencia.TipoLicencia == "AEREO")
+                    {
+                        fila = "bg-warning";
+                    }
+
 
                     <tr class=@fila>
                         <td>@flag</td>

@@ -5,6 +5,9 @@
 
     string referenciaSB = ViewBag.ReferenciaSB;
 
+    //System.Drawing.Image QR = ViewBag.QR;
+    byte [] QR = ViewBag.QR;
+
     conekta.Order orden = new conekta.Order().find(ViewBag.Orden);
 
     System.Web.Script.Serialization.JavaScriptSerializer js = new System.Web.Script.Serialization.JavaScriptSerializer();
@@ -217,6 +220,8 @@
                     </div>
                 </div>
                 @*<p style="text-align:center">_______________________________________</p>*@
+
+                <img src="@String.Format("data:image/jpeg;base64, {0}", QR)" />
 
             </div>
 

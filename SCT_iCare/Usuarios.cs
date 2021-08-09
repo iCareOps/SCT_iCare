@@ -18,6 +18,7 @@ namespace SCT_iCare
         public Usuarios()
         {
             this.Recepcionista = new HashSet<Recepcionista>();
+            this.log_InicioGestor = new HashSet<log_InicioGestor>();
         }
     
         public int idUsuario { get; set; }
@@ -29,5 +30,7 @@ namespace SCT_iCare
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Recepcionista> Recepcionista { get; set; }
         public virtual Roles Roles { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<log_InicioGestor> log_InicioGestor { get; set; }
     }
 }

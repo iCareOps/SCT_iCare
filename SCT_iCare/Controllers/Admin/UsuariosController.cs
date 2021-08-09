@@ -21,6 +21,12 @@ namespace SCT_iCare.Controllers.Admin
             return View(usuarios.ToList());
         }
 
+        public ActionResult Gestores()
+        {
+            var usuarios = db.Usuarios.Where(w => w.idRol == 10).Include(u => u.Roles);
+            return View(usuarios.ToList());
+        }
+
         // GET: Usuarios/Details/5
         public ActionResult Details(int? id)
         {
@@ -61,6 +67,27 @@ namespace SCT_iCare.Controllers.Admin
 
             ViewBag.idRol = new SelectList(db.Roles, "idRol", "Nombre", usuarios.idRol);
             return View(usuarios);
+        }
+
+        [HttpPost]
+        public ActionResult CreateGestor(string email, string password, string nombre)
+        {
+            Usuarios usuarios = new Usuarios();
+
+            usuarios.Nombre = nombre;
+            usuarios.Email = email;
+            usuarios.Password = Encrypt.GetSHA256(usuarios.Password);
+            usuarios.idRol = 10;
+
+            if (ModelState.IsValid)
+            {
+                db.Usuarios.Add(usuarios);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.idRol = new SelectList(db.Roles, "idRol", "Nombre", usuarios.idRol);
+            return View("Index");
         }
 
         // GET: Usuarios/Edit/5

@@ -17,6 +17,9 @@ using System.IO;
 using System.Text;
 using System.Globalization;
 
+using MessagingToolkit.QRCode.Codec;
+using System.Drawing;
+
 namespace SCT_iCare.Controllers.Recepcion
 {
     public class RecepcionController : Controller
@@ -70,6 +73,8 @@ namespace SCT_iCare.Controllers.Recepcion
         public ActionResult Create1(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string pago,/* string tipoL, string tipoT, */ string referencia)
         {
             Paciente paciente1 = new Paciente();
+
+            //iTextSharp.text.pdf.BarcodeQRCode barcodeQRCode = new iTextSharp.text.pdf.BarcodeQRCode("dictamenes.medicinagmi.mx/ConsultaDictamen/Resultado?folio=" + noEstudio, 1000, 1000, null);
 
             string canal = null;
 
@@ -125,7 +130,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
                 if (Convert.ToInt32(dia) < 10)
                 {
-                    mes = "0" + dia;
+                    dia = "0" + dia;
                 }
 
                 //Se crea el número de Folio
@@ -275,7 +280,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
                     if (Convert.ToInt32(dia) < 10)
                     {
-                        mes = "0" + dia;
+                        dia = "0" + dia;
                     }
 
                     //Se crea el número de Folio
@@ -456,7 +461,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
                 if (Convert.ToInt32(dia) < 10)
                 {
-                    mes = "0" + dia;
+                    dia = "0" + dia;
                 }
 
                 //Se crea el número de Folio
@@ -491,7 +496,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
                 Cita cita = new Cita();
 
-                cita.TipoPago = "REFERENCIA OXXO";
+                cita.TipoPago = "Referencia OXXO";
                 cita.NoOrden = orden.id;
                 
 
@@ -582,7 +587,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
                     if (Convert.ToInt32(dia) < 10)
                     {
-                        mes = "0" + dia;
+                        dia = "0" + dia;
                     }
 
                     //Se crea el número de Folio
@@ -617,7 +622,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
                     Cita cita = new Cita();
 
-                    cita.TipoPago = "REFERENCIA OXXO";
+                    cita.TipoPago = "Referencia OXXO";
                     cita.NoOrden = orden.id;
                  
 
@@ -652,6 +657,20 @@ namespace SCT_iCare.Controllers.Recepcion
                     }
                 }
             }
+
+            QRCodeEncoder encoder = new QRCodeEncoder();
+            Bitmap img = encoder.Encode("sdfsdf");
+            System.Drawing.Image QR = (System.Drawing.Image)img;
+
+            byte[] imageBytes;
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                QR.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                imageBytes = ms.ToArray();
+            }
+
+            ViewBag.QR = imageBytes;
 
             ViewBag.Cantidad = Convert.ToInt32(cantidad);
             return View(detallesOrden);
@@ -754,7 +773,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
                 if (Convert.ToInt32(dia) < 10)
                 {
-                    mes = "0" + dia;
+                    dia = "0" + dia;
                 }
 
                 //Se crea el número de Folio
@@ -868,7 +887,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
                     if (Convert.ToInt32(dia) < 10)
                     {
-                        mes = "0" + dia;
+                        dia = "0" + dia;
                     }
 
                     //Se crea el número de Folio
@@ -1141,7 +1160,7 @@ namespace SCT_iCare.Controllers.Recepcion
             string CURP = null;
             string NOMBRE = null;
             string NOEXPEDIENTE = null;
-            DateTime FECHA = Convert.ToDateTime(fecha);
+            DateTime FECHA = DateTime.Now;
 
             if (nombre == "")
             {
@@ -1221,7 +1240,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
             if (Convert.ToInt32(dia) < 10)
             {
-                mes = "0" + dia;
+                dia = "0" + dia;
             }
 
             //Se crea el número de Folio

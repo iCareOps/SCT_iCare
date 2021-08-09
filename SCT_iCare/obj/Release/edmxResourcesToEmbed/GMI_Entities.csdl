@@ -39,6 +39,7 @@
     <Property Name="PausaFinal" Type="DateTime" Precision="3" />
     <Property Name="Duracion" Type="Int32" />
     <NavigationProperty Name="CapturaIncidencia" Relationship="DevModel.FK_CapturaIncidencia_Captura" FromRole="Captura" ToRole="CapturaIncidencia" />
+    <NavigationProperty Name="IncidenciaPaciente" Relationship="DevModel.FK_IncidenciaPaciente_Captura" FromRole="Captura" ToRole="IncidenciaPaciente" />
   </EntityType>
   <EntityType Name="CERTIFICADO">
     <Key>
@@ -153,6 +154,7 @@
     <NavigationProperty Name="Cita" Relationship="Self.FK_Cita_Paciente" FromRole="Paciente" ToRole="Cita" />
     <NavigationProperty Name="Dictamen" Relationship="Self.FK_Dictamen_Paciente" FromRole="Paciente" ToRole="Dictamen" />
     <NavigationProperty Name="Expedientes" Relationship="Self.FK_Expedientes_Paciente" FromRole="Paciente" ToRole="Expedientes" />
+    <NavigationProperty Name="DictamenProblema" Relationship="DevModel.FK_DictamenProblema_Paciente" FromRole="Paciente" ToRole="DictamenProblema" />
   </EntityType>
   <EntityType Name="Recepcionista">
     <Key>
@@ -219,6 +221,7 @@
     <Property Name="idRol" Type="Int32" />
     <NavigationProperty Name="Recepcionista" Relationship="Self.FK_Recepcionista_Usuarios" FromRole="Usuarios" ToRole="Recepcionista" />
     <NavigationProperty Name="Roles" Relationship="Self.FK_Usuarios_Roles" FromRole="Usuarios" ToRole="Roles" />
+    <NavigationProperty Name="log_InicioGestor" Relationship="DevModel.FK_log_InicioGestor_Usuarios" FromRole="Usuarios" ToRole="log_InicioGestor" />
   </EntityType>
   <Association Name="FK_Dictamen_Aptitud">
     <End Role="Aptitud" Type="Self.Aptitud" Multiplicity="0..1" />
@@ -468,6 +471,26 @@
       <End Role="Captura" EntitySet="Captura" />
       <End Role="CapturaIncidencia" EntitySet="CapturaIncidencia" />
     </AssociationSet>
+    <EntitySet Name="IncidenciaPaciente" EntityType="DevModel.IncidenciaPaciente" />
+    <AssociationSet Name="FK_IncidenciaPaciente_Captura" Association="DevModel.FK_IncidenciaPaciente_Captura">
+      <End Role="Captura" EntitySet="Captura" />
+      <End Role="IncidenciaPaciente" EntitySet="IncidenciaPaciente" />
+    </AssociationSet>
+    <EntitySet Name="log_InicioGestor" EntityType="DevModel.log_InicioGestor" />
+    <EntitySet Name="log_Movimientos" EntityType="DevModel.log_Movimientos" />
+    <AssociationSet Name="FK_log_InicioGestor_Usuarios" Association="DevModel.FK_log_InicioGestor_Usuarios">
+      <End Role="Usuarios" EntitySet="Usuarios" />
+      <End Role="log_InicioGestor" EntitySet="log_InicioGestor" />
+    </AssociationSet>
+    <AssociationSet Name="FK_log_Movimientos_log_InicioGestor" Association="DevModel.FK_log_Movimientos_log_InicioGestor">
+      <End Role="log_InicioGestor" EntitySet="log_InicioGestor" />
+      <End Role="log_Movimientos" EntitySet="log_Movimientos" />
+    </AssociationSet>
+    <EntitySet Name="DictamenProblema" EntityType="DevModel.DictamenProblema" />
+    <AssociationSet Name="FK_DictamenProblema_Paciente" Association="DevModel.FK_DictamenProblema_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="DictamenProblema" EntitySet="DictamenProblema" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="CapturaIncidencia">
     <Key>
@@ -489,6 +512,93 @@
       </Principal>
       <Dependent Role="CapturaIncidencia">
         <PropertyRef Name="idCaptura" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="IncidenciaPaciente">
+    <Key>
+      <PropertyRef Name="idComentario" />
+    </Key>
+    <Property Name="idComentario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Comentario" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="idCaptura" Type="Int32" />
+    <NavigationProperty Name="Captura" Relationship="DevModel.FK_IncidenciaPaciente_Captura" FromRole="IncidenciaPaciente" ToRole="Captura" />
+  </EntityType>
+  <Association Name="FK_IncidenciaPaciente_Captura">
+    <End Type="DevModel.Captura" Role="Captura" Multiplicity="0..1" />
+    <End Type="DevModel.IncidenciaPaciente" Role="IncidenciaPaciente" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Captura">
+        <PropertyRef Name="idCaptura" />
+      </Principal>
+      <Dependent Role="IncidenciaPaciente">
+        <PropertyRef Name="idCaptura" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="log_InicioGestor">
+    <Key>
+      <PropertyRef Name="idLogInicioGestor" />
+    </Key>
+    <Property Name="idLogInicioGestor" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="InicioSesion" Type="DateTime" Precision="3" />
+    <Property Name="NombreUsuario" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="idUsuario" Type="Int32" />
+    <NavigationProperty Name="Usuarios" Relationship="DevModel.FK_log_InicioGestor_Usuarios" FromRole="log_InicioGestor" ToRole="Usuarios" />
+    <NavigationProperty Name="log_Movimientos" Relationship="DevModel.FK_log_Movimientos_log_InicioGestor" FromRole="log_InicioGestor" ToRole="log_Movimientos" />
+  </EntityType>
+  <EntityType Name="log_Movimientos">
+    <Key>
+      <PropertyRef Name="idlog_Movimientos" />
+    </Key>
+    <Property Name="idlog_Movimientos" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Movimiento" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="idLogInicioGestor" Type="Int32" />
+    <NavigationProperty Name="log_InicioGestor" Relationship="DevModel.FK_log_Movimientos_log_InicioGestor" FromRole="log_Movimientos" ToRole="log_InicioGestor" />
+  </EntityType>
+  <Association Name="FK_log_InicioGestor_Usuarios">
+    <End Type="DevModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+    <End Type="DevModel.log_InicioGestor" Role="log_InicioGestor" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Usuarios">
+        <PropertyRef Name="idUsuario" />
+      </Principal>
+      <Dependent Role="log_InicioGestor">
+        <PropertyRef Name="idUsuario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_log_Movimientos_log_InicioGestor">
+    <End Type="DevModel.log_InicioGestor" Role="log_InicioGestor" Multiplicity="0..1" />
+    <End Type="DevModel.log_Movimientos" Role="log_Movimientos" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="log_InicioGestor">
+        <PropertyRef Name="idLogInicioGestor" />
+      </Principal>
+      <Dependent Role="log_Movimientos">
+        <PropertyRef Name="idLogInicioGestor" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="DictamenProblema">
+    <Key>
+      <PropertyRef Name="idEnviados" />
+    </Key>
+    <Property Name="idEnviados" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EstatusEnvio" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Problema" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="idPaciente" Type="Int32" />
+    <NavigationProperty Name="Paciente" Relationship="DevModel.FK_DictamenProblema_Paciente" FromRole="DictamenProblema" ToRole="Paciente" />
+  </EntityType>
+  <Association Name="FK_DictamenProblema_Paciente">
+    <End Type="DevModel.Paciente" Role="Paciente" Multiplicity="0..1" />
+    <End Type="DevModel.DictamenProblema" Role="DictamenProblema" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="DictamenProblema">
+        <PropertyRef Name="idPaciente" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

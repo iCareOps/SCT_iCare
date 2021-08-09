@@ -75,66 +75,66 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
 
 @section scripts{
     @*<script>
-    $(function () {
-        $(".buscar").click(function () {
-            var url = "@Url.Action("Buscar", "Recepcion")";
-            var dato = $("#buscador").val();
-            var data = { dato: dato };
+        $(function () {
+            $(".buscar").click(function () {
+                var url = "@Url.Action("Buscar", "Recepcion")";
+                var dato = $("#buscador").val();
+                var data = { dato: dato };
 
-            $.post(url, data).done(function (data1) {
-                console.log(data);
-                let miResultado = "";
-                if ($.isEmptyObject(data)) {
-                    miResultado = "<h3>No se encontraron registros!!</h3>"
-                }
-                else {
-                    miResultado += "<h4 class=\"text-danger\">Se encontraron <b>" + data.length + "</b> registros:</h4><hr/>"
-                    for (let i = 0; i < data.length; i++) {
+                $.post(url, data).done(function (data1) {
+                    console.log(data);
+                    let miResultado = "";
+                    if ($.isEmptyObject(data)) {
+                        miResultado = "<h3>No se encontraron registros!!</h3>"
+                    }
+                    else {
+                        miResultado += "<h4 class=\"text-danger\">Se encontraron <b>" + data.length + "</b> registros:</h4><hr/>"
+                        for (let i = 0; i < data.length; i++) {
 
-                        if (data[i].NoExpediente == null) {
-                            miResultado +=
-                            "<h5><b><mark style=\"background-color: #41F51A; padding:5px; border-radius: 10px\">ID: " + data[i].idPaciente + "</mark></b></h5>" +
-                            "<p>Nombre: <b>" + data[i].Nombre + "</b></p>" +
-                            "<p>Teléfono: <b>" + data[i].Telefono + "</b></p>" +
-                            "<p>Email: <b>" + data[i].Email + "</b></p>" +
-                            "<p>Folio: <b>" + data[i].Folio + "</b></p>" +
-                            "<p>CURP: <b>" + data[i].CURP + "</b></p>" +
-                            "<hr/>"
-                        }
-                        else
-                        {
-                            miResultado +=
-                            "<h5><b><mark style=\"background-color: #41F51A; padding:5px; border-radius: 10px\">ID: " + data[i].idPaciente + "</mark></b></h5>" +
-                            "<p>Nombre: <b>" + data[i].Nombre + "</b></p>" +
-                            "<p>Teléfono: <b>" + data[i].Telefono + "</b></p>" +
-                            "<p>Email: <b>" + data[i].Email + "</b></p>" +
-                            "<p>Folio: <b>" + data[i].Folio + "</b></p>" +
-                            "<p>CURP: <b>" + data[i].CURP + "</b></p>" +
-                            "<p>Tipo de Pago: <b>" + data[i].TipoPago + "</b></p>" +
-                            "<p>Fecha Cita: <b>" + data[i].FechaCita + "</b></p>" +
-                            "<p>No. Orden: <b>" + data[i].NoOrden + "</b></p>" +
-                            "<p>Estatus Pago: <b>" + data[i].EstatusPago + "</b></p>" +
-                            "<p>Tipo Licencia : <b>" + data[i].TipoLicencia + "</b></p>" +
-                            "<p>No. Expediente: <b>" + data[i].NoExpediente + "</b></p>" +
-                            "<p>Referencia: <b>" + data[i].Referencia + "</b></p>" +
-                            "<p>Fecha Referencia: <b>" + data[i].FechaReferencia + "</b></p>" +
-                            "<p>Sucursal: <b>" + data[i].Sucursal + "</b></p>" +
-                            "<p>Doctor: <b>" + data[i].Doctor + "</b></p>" +
-                            "<p>Tipo Trámite: <b>" + data[i].TipoTramite + "</b></p>" +
-                            "<hr/>"
+                            if (data[i].NoExpediente == null) {
+                                miResultado +=
+                                "<h5><b><mark style=\"background-color: #41F51A; padding:5px; border-radius: 10px\">ID: " + data[i].idPaciente + "</mark></b></h5>" +
+                                "<p>Nombre: <b>" + data[i].Nombre + "</b></p>" +
+                                "<p>Teléfono: <b>" + data[i].Telefono + "</b></p>" +
+                                "<p>Email: <b>" + data[i].Email + "</b></p>" +
+                                "<p>Folio: <b>" + data[i].Folio + "</b></p>" +
+                                "<p>CURP: <b>" + data[i].CURP + "</b></p>" +
+                                "<hr/>"
+                            }
+                            else
+                            {
+                                miResultado +=
+                                "<h5><b><mark style=\"background-color: #41F51A; padding:5px; border-radius: 10px\">ID: " + data[i].idPaciente + "</mark></b></h5>" +
+                                "<p>Nombre: <b>" + data[i].Nombre + "</b></p>" +
+                                "<p>Teléfono: <b>" + data[i].Telefono + "</b></p>" +
+                                "<p>Email: <b>" + data[i].Email + "</b></p>" +
+                                "<p>Folio: <b>" + data[i].Folio + "</b></p>" +
+                                "<p>CURP: <b>" + data[i].CURP + "</b></p>" +
+                                "<p>Tipo de Pago: <b>" + data[i].TipoPago + "</b></p>" +
+                                "<p>Fecha Cita: <b>" + data[i].FechaCita + "</b></p>" +
+                                "<p>No. Orden: <b>" + data[i].NoOrden + "</b></p>" +
+                                "<p>Estatus Pago: <b>" + data[i].EstatusPago + "</b></p>" +
+                                "<p>Tipo Licencia : <b>" + data[i].TipoLicencia + "</b></p>" +
+                                "<p>No. Expediente: <b>" + data[i].NoExpediente + "</b></p>" +
+                                "<p>Referencia: <b>" + data[i].Referencia + "</b></p>" +
+                                "<p>Fecha Referencia: <b>" + data[i].FechaReferencia + "</b></p>" +
+                                "<p>Sucursal: <b>" + data[i].Sucursal + "</b></p>" +
+                                "<p>Doctor: <b>" + data[i].Doctor + "</b></p>" +
+                                "<p>Tipo Trámite: <b>" + data[i].TipoTramite + "</b></p>" +
+                                "<hr/>"
+                            }
                         }
                     }
-                }
 
-                $('#exampleModal5').modal('show');
-                document.getElementById("cuerpo").innerHTML = miResultado;
+                    $('#exampleModal5').modal('show');
+                    document.getElementById("cuerpo").innerHTML = miResultado;
 
-            }).fail().always(function () {
+                }).fail().always(function () {
 
+                });
             });
         });
-    });
-    </script>*@
+        </script>*@
 
     <script>
     $(function () {
@@ -174,25 +174,33 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
 
     </script>
 
+    @if (TempData["Link"] != null)
+    {
+        <script>
+            @*location.href='@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })';*@
+            window.open('@TempData["Link"]');
+        </script>
+    }
+
 
 }
 
 @*<div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
-            </div>
-            <div class="modal-body" id="cuerpo">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+                </div>
+                <div class="modal-body" id="cuerpo">
 
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-            </div>
+
         </div>
-
-    </div>
-</div>*@
+    </div>*@
 
 <div class="modal fade" id="exampleModal10" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -373,24 +381,24 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                         <label for="recipient-name" class="col-form-label"><b>Terminación de Tarjeta (últimos 4 números):</b></label>
                         <input type="number" maxlength="4" min="4" class="form-control" id="card" name="card" required>
                     </div>
-                        <div class="form-group" style="width:60%; min-width:320px">
-                            <label for="recipient-name" class="col-form-label">Sucursal:</label>
-                            <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                @{
-                                    var sucursalesOption1 = from s in db.Sucursales select s.Nombre;
-                                    foreach (var opcion in sucursalesOption1)
-                                    {
-                                        <option value="@opcion">@opcion</option>
-                                    }
+                    <div class="form-group" style="width:60%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                        <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            @{
+                                var sucursalesOption1 = from s in db.Sucursales select s.Nombre;
+                                foreach (var opcion in sucursalesOption1)
+                                {
+                                    <option value="@opcion">@opcion</option>
                                 }
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
-                            <input type="date" class="form-control" id="fecha" name="fecha" required>
-                        </div>
-                        <input type="hidden" name="usuario" asp-for="file" class="" required value="Call Center" />
-                    
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
+                        <input type="date" class="form-control" id="fecha" name="fecha" required>
+                    </div>
+                    <input type="hidden" name="usuario" asp-for="file" class="" required value="Call Center" />
+
                     <div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
                         <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
@@ -400,7 +408,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             <option value="FERROVIARIO">FERROVIARIO</option>
                         </select>
                     </div>
-</div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -518,7 +526,16 @@ else
                         @Html.DisplayFor(modelItem => item.N.Telefono)
                     </td>
                     <td>
-                        <b>@Html.DisplayFor(modelItem => item.M.Referencia)</b>
+                        @{
+                            if (item.M.TipoPago == "Pago con Tarjeta")
+                            {
+                                <b><a href=@item.M.NoOrden target="_blank">Terminación: @item.M.Referencia</a></b>
+                            }
+                            else
+                            {
+                                <b>@Html.DisplayFor(modelItem => item.M.Referencia)</b>
+                            }
+                        }
                     </td>
                     <td>
                         <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>

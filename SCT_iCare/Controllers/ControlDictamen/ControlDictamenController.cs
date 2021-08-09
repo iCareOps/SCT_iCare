@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -60,6 +61,245 @@ namespace SCT_iCare.Controllers.ControlDictamen
 
             ViewBag.Sucursal = sucursal;
             return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CorreoEnviado(int id, DateTime? fecha)
+        {
+            int idCaptura = (from d in db.Captura where d.idPaciente == id select d.idCaptura).FirstOrDefault();
+            Captura captura = db.Captura.Find(idCaptura);
+            DictamenProblema problema = new DictamenProblema();
+
+            var consulta = (from c in db.DictamenProblema where c.idPaciente == captura.idPaciente select c).FirstOrDefault();
+
+            if(consulta == null)
+            {
+                problema.idPaciente = captura.idPaciente;
+                problema.EstatusEnvio = "SI";
+
+                if (ModelState.IsValid)
+                {
+                    db.DictamenProblema.Add(problema);
+                    db.SaveChanges();
+                }
+            }
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    consulta.idPaciente = captura.idPaciente;
+                    consulta.EstatusEnvio = "SI";
+
+                    db.Entry(consulta).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
+            
+
+            if (fecha == null)
+            {
+                DateTime fechaHoy = DateTime.Now;
+                int year = fechaHoy.Year;
+                int month = fechaHoy.Month;
+                int day = fechaHoy.Day;
+
+                fecha = new DateTime(year, month, day);
+            }
+            else
+            {
+                int year = Convert.ToDateTime(fecha).Year;
+                int month = Convert.ToDateTime(fecha).Month;
+                int day = Convert.ToDateTime(fecha).Day;
+
+                fecha = new DateTime(year, month, day);
+            }
+
+            ViewBag.Fecha = fecha;
+
+            return View("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Problema(int id, DateTime? fecha, string problema)
+        {
+            int idCaptura = (from d in db.Captura where d.idPaciente == id select d.idCaptura).FirstOrDefault();
+            Captura captura = db.Captura.Find(idCaptura);
+            DictamenProblema problema1 = new DictamenProblema();
+
+            var consulta = (from c in db.DictamenProblema where c.idPaciente == captura.idPaciente select c).FirstOrDefault();
+
+            if (fecha == null)
+            {
+                DateTime fechaHoy = DateTime.Now;
+                int year = fechaHoy.Year;
+                int month = fechaHoy.Month;
+                int day = fechaHoy.Day;
+
+                fecha = new DateTime(year, month, day);
+            }
+            else
+            {
+                int year = Convert.ToDateTime(fecha).Year;
+                int month = Convert.ToDateTime(fecha).Month;
+                int day = Convert.ToDateTime(fecha).Day;
+
+                fecha = new DateTime(year, month, day);
+            }
+
+            if (consulta == null)
+            {
+                problema1.idPaciente = captura.idPaciente;
+                problema1.Problema = problema.ToString(); ;
+
+                if (ModelState.IsValid)
+                {
+                    db.DictamenProblema.Add(problema1);
+                    db.SaveChanges();
+                }
+            }
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    consulta.idPaciente = captura.idPaciente;
+                    consulta.Problema = problema.ToString();
+
+                    db.Entry(consulta).State = EntityState.Modified;
+                    db.SaveChanges();
+                    ViewBag.Fecha = fecha;
+                    return View("Index");
+                }
+            }
+
+            
+
+            ViewBag.Fecha = fecha;
+
+            return View("Index", ViewBag.Fecha);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CorreoEnviadoSucursal(int id, DateTime? fecha, string sucursal)
+        {
+            int idCaptura = (from d in db.Captura where d.idPaciente == id select d.idCaptura).FirstOrDefault();
+            Captura captura = db.Captura.Find(idCaptura);
+            DictamenProblema problema = new DictamenProblema();
+
+            var consulta = (from c in db.DictamenProblema where c.idPaciente == captura.idPaciente select c).FirstOrDefault();
+
+            if (consulta == null)
+            {
+                problema.idPaciente = captura.idPaciente;
+                problema.EstatusEnvio = "SI";
+
+                if (ModelState.IsValid)
+                {
+                    db.DictamenProblema.Add(problema);
+                    db.SaveChanges();
+                }
+            }
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    consulta.idPaciente = captura.idPaciente;
+                    consulta.EstatusEnvio = "SI";
+
+                    db.Entry(consulta).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
+
+
+            if (fecha == null)
+            {
+                DateTime fechaHoy = DateTime.Now;
+                int year = fechaHoy.Year;
+                int month = fechaHoy.Month;
+                int day = fechaHoy.Day;
+
+                fecha = new DateTime(year, month, day);
+            }
+            else
+            {
+                int year = Convert.ToDateTime(fecha).Year;
+                int month = Convert.ToDateTime(fecha).Month;
+                int day = Convert.ToDateTime(fecha).Day;
+
+                fecha = new DateTime(year, month, day);
+            }
+
+            ViewBag.Sucursal = sucursal;
+            ViewBag.Fecha = fecha;
+
+            return View("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ProblemaSucursal(int id, DateTime? fecha, string problema, string sucursal)
+        {
+            int idCaptura = (from d in db.Captura where d.idPaciente == id select d.idCaptura).FirstOrDefault();
+            Captura captura = db.Captura.Find(idCaptura);
+            DictamenProblema problema1 = new DictamenProblema();
+
+            var consulta = (from c in db.DictamenProblema where c.idPaciente == captura.idPaciente select c).FirstOrDefault();
+
+            if (fecha == null)
+            {
+                DateTime fechaHoy = DateTime.Now;
+                int year = fechaHoy.Year;
+                int month = fechaHoy.Month;
+                int day = fechaHoy.Day;
+
+                fecha = new DateTime(year, month, day);
+            }
+            else
+            {
+                int year = Convert.ToDateTime(fecha).Year;
+                int month = Convert.ToDateTime(fecha).Month;
+                int day = Convert.ToDateTime(fecha).Day;
+
+                fecha = new DateTime(year, month, day);
+            }
+
+            if (consulta == null)
+            {
+                problema1.idPaciente = captura.idPaciente;
+                problema1.Problema = problema.ToString(); ;
+
+                if (ModelState.IsValid)
+                {
+                    db.DictamenProblema.Add(problema1);
+                    db.SaveChanges();
+                }
+            }
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    consulta.idPaciente = captura.idPaciente;
+                    consulta.Problema = problema.ToString();
+
+                    db.Entry(consulta).State = EntityState.Modified;
+                    db.SaveChanges();
+                    ViewBag.Fecha = fecha;
+                    return View("Index");
+                }
+            }
+
+
+            ViewBag.Sucursal = sucursal;
+            ViewBag.Fecha = fecha;
+
+            return View("Index", ViewBag.Fecha);
         }
 
         public ActionResult AbrirEPI_EC(int? id, DateTime? fecha)

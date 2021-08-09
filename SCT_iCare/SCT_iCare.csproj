@@ -102,6 +102,9 @@
     <Reference Include="Json.Net, Version=1.0.25.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Json.Net.1.0.25\lib\netstandard2.0\Json.Net.dll</HintPath>
     </Reference>
+    <Reference Include="MessagingToolkit.QRCode, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MessagingToolkit.QRCode.1.3.0\lib\MessagingToolkit.QRCode.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="nunit.framework, Version=3.13.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.13.1\lib\net45\nunit.framework.dll</HintPath>
@@ -114,6 +117,11 @@
     </Reference>
     <Reference Include="PdfFileWriter, Version=1.1.25.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\PdfFileWriter.1.25.0\lib\net462\PdfFileWriter.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="QRCoder, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QRCoder.1.4.1\lib\net40\QRCoder.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -184,6 +192,7 @@
       <Private>True</Private>
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
@@ -216,6 +225,7 @@
       <DependentUpon>GMI_Entities.tt</DependentUpon>
     </Compile>
     <Compile Include="Controllers\Admin\DoctoresController.cs" />
+    <Compile Include="Controllers\Admin\LogGestoresController.cs" />
     <Compile Include="Controllers\Admin\SucursalesController.cs" />
     <Compile Include="Controllers\Admin\UsuariosController.cs" />
     <Compile Include="Controllers\CallCenter\CallCenterController.cs" />
@@ -227,12 +237,16 @@
     <Compile Include="Controllers\EPICenter\CapturaIncidenciaController.cs" />
     <Compile Include="Controllers\EPICenter\EPIsController.cs" />
     <Compile Include="Controllers\Error\ErrorController.cs" />
+    <Compile Include="Controllers\Gestoria\GestoriaController.cs" />
     <Compile Include="Controllers\Login\LoginController.cs" />
     <Compile Include="Controllers\Logoff\LogoffController.cs" />
     <Compile Include="Controllers\PDFWriter\MenusController.cs" />
     <Compile Include="Controllers\Recepcion\RecepcionController.cs" />
     <Compile Include="Controllers\SideBarController.cs" />
     <Compile Include="Dictamen.cs">
+      <DependentUpon>GMI_Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DictamenProblema.cs">
       <DependentUpon>GMI_Entities.tt</DependentUpon>
     </Compile>
     <Compile Include="Doctores.cs">
@@ -266,6 +280,12 @@
       <DependentUpon>GMI_Entities.tt</DependentUpon>
     </Compile>
     <Compile Include="IncidenciaPaciente.cs">
+      <DependentUpon>GMI_Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="log_InicioGestor.cs">
+      <DependentUpon>GMI_Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="log_Movimientos.cs">
       <DependentUpon>GMI_Entities.tt</DependentUpon>
     </Compile>
     <Compile Include="Menu.cs">
@@ -615,10 +635,14 @@
     <Content Include="Views\ConsultaDictamen\Inicio.cshtml" />
     <Content Include="Views\ConsultaDictamen\Estatus.cshtml" />
     <Content Include="Views\ConsultaDictamen\Proceso.cshtml" />
+    <Content Include="Views\LogGestores\Index.cshtml" />
+    <Content Include="Views\Usuarios\Gestores.cshtml" />
+    <Content Include="Views\Gestoria\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\CapturaIncidencia\" />
+    <Folder Include="Views\NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -45,5 +45,8 @@ namespace SCT_iCare
         public virtual DbSet<Usuarios> Usuarios { get; set; }
         public virtual DbSet<CapturaIncidencia> CapturaIncidencia { get; set; }
         public virtual DbSet<IncidenciaPaciente> IncidenciaPaciente { get; set; }
+        public virtual DbSet<log_InicioGestor> log_InicioGestor { get; set; }
+        public virtual DbSet<log_Movimientos> log_Movimientos { get; set; }
+        public virtual DbSet<DictamenProblema> DictamenProblema { get; set; }
     }
 }
