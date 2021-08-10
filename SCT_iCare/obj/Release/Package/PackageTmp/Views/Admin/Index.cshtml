@@ -1,0 +1,468 @@
+﻿@using PagedList.Mvc;
+@model PagedList.IPagedList<SCT_iCare.Cita>
+
+@{
+    ViewBag.Title = "Captura";
+
+    GMIEntities db = new GMIEntities();
+
+    DateTime start = DateTime.Now;
+    //DateTime startDay = Convert.ToDateTime(start.Day);
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    string nombreUsuario = null;
+    int idUser = 0;
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+    }
+
+
+
+    string parameter = ViewBag.Parameter;
+    DateTime rango = Convert.ToDateTime(ViewBag.Fecha);
+
+
+    int year = start.Year;
+    int month = start.Month;
+    int day = start.Day;
+    int tomorrorDay = day + 1;
+    DateTime thisDate = Convert.ToDateTime(ViewBag.Inicio);
+    DateTime tomorrowDate = Convert.ToDateTime(ViewBag.Final);
+
+    var modelo = (from m in db.Cita select m).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate);
+
+
+    //var repoCentral = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
+    var repoCentral = (from r in db.Captura orderby r.TipoTramite select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").ToList();
+
+    var repoCentral2 = (from r in db.Captura select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").Count();
+
+
+    int epis = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).Count();
+    int episSinIniciar = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").Count();
+
+
+    int dictamenes = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Terminado").Count();
+
+    int pendientes = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "No iniciado").Count();
+
+    int enCaptura = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "En captura...").Count();
+
+    int citasHoy = (from e in db.Cita select e).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate).Count();
+
+    //int citasMes = (from e in db.Cita select e).Where(w => w.FechaCita >= new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1) && w.FechaCita <= new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day)).Count();
+
+    //int citasSemana = (from e in db.Cita select e).Where(w => Convert.ToDateTime(w.FechaCita).Month == DateTime.Now.Month).Count();
+
+    var sucursalesLista = from s in db.Sucursales select s.Nombre;
+
+    var capturistas = from c in db.Usuarios where c.idRol == 7 && c.idUsuario != 13 && c.idUsuario != 25 select c.Nombre;
+
+    var capturistasAnexa = from c in db.Usuarios where c.idRol == 9 select c.Nombre;
+
+    string fecha = DateTime.Now.ToString("dd-MMMM-yyyy");
+
+    string fila = "";
+    int flag = 1; //contador de la tabla
+
+}
+
+<br />
+<br />
+@*<h5 style="color:white" class="text-right">@fecha</h5>*@
+<h3 style="color:white" class="text-center">Admin &nbsp; &nbsp; &nbsp;<span class="h4" style="color:#AC9070"><b>@fecha</b></span></h3>
+@if (ViewBag.Estado == 1)
+{
+    <h5 style="color:darkgray">Mostrando resultados de <span style="color:white">@ViewBag.Inicio.ToString("dd-MMMM-yyyy")</span> hasta <span style="color:white">@ViewBag.Final.ToString("dd-MMMM-yyyy")</span></h5>
+}
+
+<br />
+<div class="container">
+
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorAz botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal2" style="color:white">
+        <h4><span class="glyphicon glyphicon-ok"></span> &nbsp; &nbsp;Dictámenes Generados: <b>@dictamenes</b></h4>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aquamarine">
+                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-ok"></span> &nbsp; &nbsp;Dictámenes Generados: <b>@dictamenes</b></h3>
+                </div>
+                <div class="modal-body">
+                    @{
+                        foreach (var item in sucursalesLista)
+                        {
+                            var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "Terminado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate select v).Count();
+                            <h4><b>@item:</b> @elemento</h4>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorAm botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal4" style="color:white">
+        <h4><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs en Captura: <b>@enCaptura</b></h4>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:gold">
+                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs en Captura: <b>@enCaptura</b></h3>
+                </div>
+                <div class="modal-body">
+                    @{
+                        foreach (var item in sucursalesLista)
+                        {
+                            var elemento = (from v in db.Captura where v.Sucursal == item select v).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "En captura...").Count();
+                            <h4><b>@item:</b> @elemento</h4>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorRo botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal3" style="color:white">
+        <h4><span class="glyphicon glyphicon-time"></span> &nbsp; &nbsp;EPIs NO Iniciados: <b>@pendientes</b></h4>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:orangered">
+                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs NO Iniciados: <b>@pendientes</b></h3>
+                </div>
+                <div class="modal-body">
+                    @{
+                        foreach (var item in sucursalesLista)
+                        {
+                            var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "No iniciado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate select v).Count();
+                            <h4><b>@item:</b> @elemento</h4>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorAz botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal5" style="color:white">
+        <h4><span class="glyphicon glyphicon-calendar"></span> &nbsp; &nbsp;Citas Generadas Hoy: @citasHoy</h4>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aquamarine">
+                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-calendar"></span> &nbsp; &nbsp;Dictámenes por Capturista</h3>
+                </div>
+                <div class="modal-body">
+                    @{
+                        foreach (var item in sucursalesLista)
+                        {
+                            var elemento = (from v in db.Cita where v.Sucursal == item && v.FechaCita >= thisDate && v.FechaCita < tomorrowDate select v).Count();
+                            <h4><b>@item:</b> @elemento</h4>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorAm botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal6" style="color:white">
+        <h4><span class="glyphicon glyphicon-calendar"></span> &nbsp; &nbsp;Citas Este Mes: <b>@*@citasMes*@</b></h4>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:orange">
+                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-calendar"></span> &nbsp; &nbsp;Citas generadas este mes: <b>@*@citasMes*@</b></h3>
+                </div>
+                @*<div class="modal-body">
+                        @{
+                            foreach (var item in sucursalesLista)
+                            {
+                                var elemento = (from v in db.Cita where v.Sucursal == item select v).Where(w => Convert.ToDateTime(w.FechaCita) >= new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1) && Convert.ToDateTime(w.FechaCita) < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day)).Count();
+                                <h4><b>@item:</b> @elemento</h4>
+                            }
+                        }
+                    </div>*@
+            </div>
+        </div>
+    </div>
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorRo botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal6" style="color:white">
+        <h4><span class="glyphicon glyphicon-calendar"></span> &nbsp; &nbsp;Citas Esta Semana: <b>@*@citasMes*@</b></h4>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:orange">
+                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-calendar"></span> &nbsp; &nbsp;Citas generadas esta semana: <b>@*@citasMes*@</b></h3>
+                </div>
+                @*<div class="modal-body">
+                        @{
+                            foreach (var item in sucursalesLista)
+                            {
+                                var elemento = (from v in db.Cita where v.Sucursal == item select v).Where(w => Convert.ToDateTime(w.FechaCita) >= new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1) && Convert.ToDateTime(w.FechaCita) < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day)).Count();
+                                <h4><b>@item:</b> @elemento</h4>
+                            }
+                        }
+                    </div>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+
+
+
+@if (modelo.FirstOrDefault() == null)
+{
+    <h1 style="color:white">No existen citas el día de hoy!</h1>
+}
+else
+{
+    var repetidas = (from r in db.Cita select r).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal != "SITIO").Select(s => new { s.Canal, s.Sucursal}).Distinct();
+
+    <div class="tablaScroll">
+        <table class="table tablas" style="color: #2F2D6B">
+            <thead>
+                <tr style="background-color:#62E3C9">
+                    <th>
+                    </th>
+
+                    <th>
+                        Nombre del Gestor
+                    </th>
+                    <th>
+                        Sucursal
+                    </th>
+
+                    <th>
+                        Cantidad
+                    </th>
+                    <th>
+                        Referencia
+                    </th>
+                    <th>
+                        Estatus de EPIs
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            
+
+            @foreach (var item in repetidas)
+            {
+                int conteo = (from c in db.Cita where c.Canal == item.Canal select c).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Sucursal == item.Sucursal).Count();
+
+                <tr>
+                    <td>
+                        @flag
+                    </td>
+                    <td>
+                        <b>@item.Canal</b>
+                    </td>
+                    <td>
+                        @item.Sucursal
+                    </td>
+                    <td>
+                        <b>@conteo</b>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        @{
+                            var idPaciente = (from id in db.Cita select id).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Sucursal == item.Sucursal && s.Canal == item.Canal);
+                            var idPaciente2 = (from id in db.Cita select id).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Sucursal == item.Sucursal && s.Canal == item.Canal).FirstOrDefault();
+
+                            int n = 0;
+
+                            foreach (var item1 in idPaciente)
+                            {
+                                var estatus = (from c in db.Captura select c).Where(s => s.FechaExpdiente >= thisDate && s.FechaExpdiente < tomorrowDate && s.Sucursal == item.Sucursal && s.EstatusCaptura == "Terminado" && s.idPaciente == item1.idPaciente).FirstOrDefault();
+                                if (estatus != null)
+                                {
+                                    n++;
+                                }
+
+                                <div class="modal fade" id="exampleModal_@idPaciente2.idCita" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header" style="background-color:gold">
+                                                <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs en Captura: <b>@item.Canal</b></h3>
+                                            </div>
+                                            <div class="modal-body">
+                                                @{
+                                                    foreach (var item2 in idPaciente)
+                                                    {
+                                                        var captura = (from c in db.Captura where c.idPaciente == item2.idPaciente select c).FirstOrDefault();
+                                                        var nombre = (from c in db.Paciente where c.idPaciente == item2.idPaciente select c.Nombre).FirstOrDefault();
+                                                        if (captura != null)
+                                                        {
+                                                            if (captura.EstatusCaptura == "No iniciado")
+                                                            {
+                                                                <b>@nombre: <span class="text-info">@captura.EstatusCaptura</span></b><br />
+                                                            }
+                                                            else if (captura.EstatusCaptura == "Pendiente" || captura.EstatusCaptura == "Pausado")
+                                                            {
+                                                                <b>@nombre:<span class="text-warning">@captura.EstatusCaptura</span> </b><br />
+                                                            }
+                                                            else if (captura.EstatusCaptura == "Terminado")
+                                                            {
+                                                                <b>@nombre: <span class="text-success">@captura.EstatusCaptura</span></b><br />
+                                                            }
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <b>@nombre: <span class="text-danger">Pendiente de digitalizar</span></b><br />
+                                                        }
+
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            if (n == 0)
+                            {
+                                <a data-toggle="modal" data-target="#exampleModal_@idPaciente2.idCita"><mark class="bg-warning">Pendientes</mark></a>
+                            }
+                            else if (n != conteo)
+                            {
+                                <a data-toggle="modal" data-target="#exampleModal_@idPaciente2.idCita"><mark class="bg-info">Parcialmente Listos</mark></a>
+                            }
+                            else if (n == conteo)
+                            {
+                                <a data-toggle="modal" data-target="#exampleModal_@idPaciente2.idCita"><mark class="bg-success">Todos Listos</mark></a>
+                            }
+
+
+                        }
+
+
+
+                    </td>
+                </tr>
+
+
+                flag += 1;
+
+            }
+
+        </table>
+    </div>
+}
+
+
+@section scripts{
+    @if (TempData["ID"] != null)
+    {
+        <script>
+            @*location.href='@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })';*@
+            window.open('@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })');
+        </script>
+    }
+
+    <script>
+    $(function () {
+        $(".buscar").click(function () {
+            var url = "@Url.Action("BuscarTodo", "EPIs")";
+            var dato = $("#buscador").val();
+            var data = { dato: dato };
+
+            $.post(url, data).done(function (data) {
+                console.log(data);
+                let miResultado = "";
+                if ($.isEmptyObject(data)) {
+                    miResultado = "<h3>No se encontraron registros.</h3>"
+                }
+                else {
+                    miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>Expediente</th><th>Email</th><th>Teléfono</th><th>Fecha Cita</th><th>Sucursal</th></tr>"
+                    for (let i = 0; i < data.length; i++) {
+                        miResultado += "<tr style=\"border:1px solid gray\">" +
+                            "<td><b>" + data[i].Nombre + "</b></td>" +
+                            "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                            "<td><b>" + data[i].Email + "</b></td>" +
+                            "<td><b>" + data[i].Telefono + "</b></td>" +
+                            "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                            "<td><b>" + data[i].Sucursal + "</b></td>" +
+                            "</tr>"
+                    }
+                }
+
+                $('#exampleModal10').modal('show');
+                document.getElementById("tablaEjemploSS").innerHTML = miResultado;
+
+            }).fail().always(function () {
+
+            });
+        });
+    });
+
+    </script>
+
+    <script>
+        var input = document.getElementById("buscador");
+        input.addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("buscar").click();
+            }
+        });
+
+    </script>
+
+}
+
+
+<div class="modal fade" id="exampleModal10" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body">
+                <div class="tablaScroll">
+                    <table class="table tablas table-responsive" id="tablaEjemploSS" style="color: #2F2D6B">
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+

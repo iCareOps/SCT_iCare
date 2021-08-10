@@ -88,6 +88,18 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
 </div>
 
 @section scripts{
+
+    <script>
+        var input = document.getElementById("buscador");
+        input.addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("buscar").click();
+            }
+        });
+
+    </script>
+
     <script>
     $(function () {
         $(".buscar").click(function () {
@@ -371,7 +383,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             <option value="MARITIMO">MARITIMO</option>
                             <option value="FERROVIARIO">FERROVIARIO</option>
                             <option disabled>------------</option>
-                            <option value="AEREO">AEREO ($4,060.00)</option>
+                            <option value="AEREO">AEREO ($3,480.00)</option>
                         </select>
                     </div>
             </div>
@@ -559,44 +571,47 @@ else
 {
     <div class="tablaScroll">
         <table class="table tablas" style="color: #2F2D6B">
-            <tr class="bg-primary" style="border-top-color: black">
-                <th>
-                </th>
+            <thead>
+                <tr class="bg-primary" style="border-top-color: black">
+                    <th>
+                    </th>
 
-                <th>
-                    Nombre
-                </th>
+                    <th>
+                        Nombre
+                    </th>
 
-                <th>
-                    Expediente
-                </th>
+                    <th>
+                        Expediente
+                    </th>
 
-                @*<th>
-                        Teléfono
+                    @*<th>
+                Teléfono
+            </th>
+            <th>
+                Email
+            </th>*@
+                    <th>
+                        Referencia
                     </th>
                     <th>
-                        Email
-                    </th>*@
-                <th>
-                    Folio
-                </th>
-                <th>
-                    Referencia
-                </th>
-                <th>
-                    Doctor
-                </th>
-                <th>
-                    Tipo de Trámite
-                </th>
-                <th>
-                    Estatus Pago
-                </th>
-                <th>
-                    Estatus EPI
-                </th>
-                <th></th>
-            </tr>
+                        Doctor
+                    </th>
+                    <th>
+                        Tipo de Trámite
+                    </th>
+                    <th>
+                        Estatus Pago
+                    </th>
+                    <th>
+                        Estatus EPI
+                    </th>
+                    <th>
+                        Estatus Dictamen
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            
 
             @foreach (var item in modelo)
             {
@@ -624,14 +639,7 @@ else
                     <td>
                         <b>@Html.DisplayFor(modelItem => item.M.NoExpediente)</b>
                     </td>
-
                     @*<td>
-                            @Html.DisplayFor(modelItem => item.N.Telefono)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.N.Email)
-                        </td>*@
-                    <td>
                         @if (item.N.Folio.Length == 16)
                         {
                             <b>@Html.DisplayFor(modelItem => item.N.Folio)</b>
@@ -641,7 +649,7 @@ else
                             <span style="color:slategrey">@Html.DisplayFor(modelItem => item.N.Folio)</span>
                         }
 
-                    </td>
+                    </td>*@
                     <td>
                         @{ 
                             if(item.M.TipoPago == "Pago con Tarjeta")
@@ -683,6 +691,30 @@ else
                         else if (item.M.Asistencia == "NO")
                         {
                             <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px">Cancelado</mark></b>
+                        }
+                    </td>
+                    <td>
+                        @{
+                            var estatusDictamen = (from e in db.Captura where e.idPaciente == item.M.idPaciente select e).FirstOrDefault();
+
+                            if (estatusDictamen == null)
+                            {
+                                <b>@*<mark style="background-color: darkgray; padding:5px; border-radius:10px">Sin EPI</mark>*@</b>
+                            }
+                            else if (estatusDictamen.EstatusCaptura == "Pendiente" || estatusDictamen.EstatusCaptura == "Pausado")
+                            {
+                                <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px">Pendiente</mark></b>
+                            }
+                            else if (estatusDictamen.EstatusCaptura == "En captura..." || estatusDictamen.EstatusCaptura == "No iniciado")
+                            {
+                                <b><mark style="background-color: dodgerblue; padding:5px; border-radius:10px">En proceso</mark></b>
+                            }
+                            else if (estatusDictamen.EstatusCaptura == "Terminado")
+                            {
+                                var idCaptura = (from i in db.Captura where i.idPaciente == item.M.idPaciente select i.idCaptura).FirstOrDefault();
+                                <a href=@Url.Action("DescargarPDF", "EPIs", new { id = idCaptura })><b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">Dictaminado</mark></b></a>
+                            }
+
                         }
                     </td>
                     <td>
@@ -783,9 +815,23 @@ else
                             <div class="modal fade" id="Modal_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Digitalizar Expediente de @item.N.Nombre</b></h4>
-                                        </div>
+                                        @{ 
+                                            var consultaAereo = (from c in db.Cita where c.idPaciente == item.N.idPaciente select c.TipoLicencia).FirstOrDefault();
+
+                                            if(consultaAereo != null)
+                    {
+                                                                                <div class="modal-header" style="background-color: orangered">
+                                                                                    <h4 class="modal-title" style="color:white" id="exampleModalLabel"><b>Está digitalizando un EPI Aéreo</b></h4>
+                                                                                </div>
+                    }
+                    else
+                    {
+                                    <div class="modal-header">
+                                        <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Digitalizar Expediente de @item.N.Nombre</b></h4>
+                                    </div>
+                    }
+                                        }
+                                        
                                         <div class="modal-body">
                                             @{
                                                 var consulta = (from c in db.Cita where c.Referencia == item.M.Referencia select c).Count();
@@ -833,15 +879,24 @@ else
                                                 }
                                                 @*<input type="text" class="form-control" id="numero" name="numero" placeholder="@item.M.NoExpediente" required>*@
                                             </div>
-                                            <div class="form-group" style="width:80%; min-width:320px">
-                                                <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
-                                                <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                                    <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
-                                                    <option value="MARITIMO">MARITIMO</option>
-                                                    <option value="AEREO">AEREO</option>
-                                                    <option value="FERROVIARIO">FERROVIARIO</option>
-                                                </select>
-                                            </div>
+                                            @{ 
+                                                if(consultaAereo != null)
+                    {
+                        <input type="hidden" name="tipoL" id="tipoL" value="AEREO" />
+                    }
+                    else
+                    {
+                                        <div class="form-group" style="width:80%; min-width:320px">
+                                            <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
+                                            <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                                                <option value="MARITIMO">MARITIMO</option>
+                                                <option value="FERROVIARIO">FERROVIARIO</option>
+                                            </select>
+                                        </div>
+                    }
+                                            }
+                                            
                                             <div class="form-group" style="width:80%; min-width:320px">
                                                 <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
                                                 <select name="tipoT" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">

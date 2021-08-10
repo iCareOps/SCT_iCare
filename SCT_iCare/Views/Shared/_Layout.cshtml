@@ -10,10 +10,12 @@
     @{
         var oUsuario = (Usuarios)HttpContext.Current.Session["User"];
         string Usuario = null;
+        int? rol = 0;
 
         if (oUsuario != null)
         {
             Usuario = oUsuario.Nombre;
+            rol = oUsuario.idRol;
         }
 
 
@@ -39,6 +41,7 @@
                         <span class="icon-bar"></span>
                     </button>
                 </div>
+
                 <img src="~/Images/SCTlogo.png" style="width:150px; padding-top:12px; padding-bottom:10px; padding-right:20px; padding-left:20px;" />
                 @*<img src="~/Images/DW1.png" style="width:80px; padding-top:12px; padding-bottom:10px; padding-right:20px; padding-left:20px;" />*@
             </div>
@@ -51,16 +54,27 @@
                                     @Usuario  <span class="glyphicon glyphicon-chevron-down"></span>
                                 </button>
                                 <div class="dropdown-menu" style="padding: 7px">
+                                    @{
+                                        if (rol == 2)
+                                        {
+                                            <h5>@Html.ActionLink("Inicio", "Index", "Admin")</h5>
+                                            <h5>@Html.ActionLink("Usuarios", "Index", "Usuarios")</h5>
+                                            <h5>@Html.ActionLink("Gestoría", "Index", "GestorVenta")</h5>
+                                            <h5>@Html.ActionLink("Gestores", "Index", "Gestoria")</h5>
+                                            <h5>@Html.ActionLink("Log Gestores", "Index", "Gestoria")</h5>
+                                        }
+                                    }
                                     <h5>
-                                        @Html.ActionLink("Cerrar Sesión", "Logoff", "Logoff")
+                                        <b>@Html.ActionLink("Cerrar Sesión", "Logoff", "Logoff")</b>
                                     </h5>
                                 </div>
                             </div>
                         </ul>
                     </div>
+                    
                     @*<li><img src="~/Imagenes/iCare-01.png" style="width:100px"/></li>
-                                      <li>@Html.ActionLink("Acerca de", "About", "Home")</li>
-                        <li>@Html.ActionLink("Contacto", "Contact", "Home")</li>*@
+                      <li>@Html.ActionLink("Acerca de", "About", "Home")</li>
+        <li>@Html.ActionLink("Contacto", "Contact", "Home")</li>*@
 
                 </div>
             </div>

@@ -459,39 +459,44 @@
     {
         <div class="tablaScroll">
             <table class="table tablas table-responsive" id="tablaEjemplo" style="color: #2F2D6B">
-                <tr class="bg-primary" @*style="background-color:#62E3C9"*@>
-                    <th>
-                    </th>
-                    <th>
-                        Nombre Paciente
-                    </th>
+                <thead>
+                    <tr class="bg-primary" @*style="background-color:#62E3C9"*@>
+                        <th>
+                        </th>
+                        <th>
+                            Nombre Paciente
+                        </th>
 
-                    <th>
-                        NoExpediente
-                    </th>
-                    <th>
-                        Tipo de Trámite
-                    </th>
-                    <th>
-                        Estatus
-                    </th>
-                    <th>
-                        Inicio Captura
-                    </th>
-                    <th>
-                        Final Captura
-                    </th>
-                    <th>
-                        Doctor Dictaminador
-                    </th>
-                    <th>
-                        Sucursal
-                    </th>
-                    <th>
-                        Capturista
-                    </th>
-                    <th>Acciones</th>
-                </tr>
+                        <th>
+                            NoExpediente
+                        </th>
+                        <th>
+                            Tipo de Trámite
+                        </th>
+                        <th>
+                            Estatus
+                        </th>
+                        <th>
+                            Inicio Captura
+                        </th>
+                        <th>
+                            Final Captura
+                        </th>
+                        <th>
+                            Doctor Dictaminador
+                        </th>
+                        <th>
+                            Sucursal
+                        </th>
+                        <th>
+                            Capturista
+                        </th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                
+
+
                 @if (ViewBag.Estado == 1)
                 {
                     var repoCompleta = (from r in db.Captura select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).OrderBy(o => o.FechaExpdiente).ThenBy(t => t.NombrePaciente).ToList();
@@ -752,7 +757,9 @@
             </table>
         </div>
 
-        using (Html.BeginForm("Captura", "EPIs", FormMethod.Post))
+        <br />
+
+        @*using (Html.BeginForm("Captura", "EPIs", FormMethod.Post))
         {
             <p>
                 <h5 class="labelGral">
@@ -768,7 +775,7 @@
 
         <h5 class="labelGral">Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount. Elementos totales: @Model.TotalItemCount</h5>
 
-        @Html.PagedListPager(Model, page => Url.Action("Captura", "EPIs", new { page, pageSize = ViewBag.PageSize }))
+        @Html.PagedListPager(Model, page => Url.Action("Captura", "EPIs", new { page, pageSize = ViewBag.PageSize }))*@
     }
     else
     {
@@ -832,9 +839,18 @@
 
     </script>
 
-}
+    <script>
+        var input = document.getElementById("buscador");
+        input.addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("buscar").click();
+            }
+        });
 
-<button type="button" class="btn btn-lg btn-danger" data-bs-toggle="popover" title="Popover title" data-bs-content="And here's some amazing content. It's very engaging. Right?">Click to toggle popover</button>
+    </script>
+
+}
 
 
 <div class="modal fade" id="exampleModal10" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

@@ -46,18 +46,6 @@ namespace SCT_iCare.Controllers.Login
                 }
                 db.SaveChanges();
 
-                //if(anio != Convert.ToDateTime(contadores.ContadorFecha).Year)
-                //{
-                //    Sucursales sucursales = new Sucursales();
-                //    sucursales.Contador = 0;
-
-                //    if (ModelState.IsValid)
-                //    {
-                //        db.Entry(sucursales).State = EntityState.Modified;
-                //        db.SaveChanges();
-                //    }
-                //}
-
 
                 Pass = Encrypt.GetSHA256(Pass.Trim());
                 //Usuarios usuario = new Usuarios();
@@ -74,9 +62,9 @@ namespace SCT_iCare.Controllers.Login
 
                     switch (oUser.idRol)
                     {
-                        case 5:
+                        case 2:
                             ViewBag.Nombre = oUser.Nombre.ToString();
-                            return Redirect("~/Usuarios/Index");
+                            return Redirect("~/Admin/Index");
                         case 1:
                             ViewBag.Nombre = oUser.Nombre.ToString();
                             return Redirect("~/CallCenter/Index");
@@ -95,6 +83,12 @@ namespace SCT_iCare.Controllers.Login
                         case 8:
                             ViewBag.Nombre = oUser.Nombre.ToString();
                             return Redirect("~/CERTIFICADOes/Index");
+                        case 5:
+                            ViewBag.Nombre = oUser.Nombre.ToString();
+                            return Redirect("~/Usuarios/Index");
+                        case 11:
+                            ViewBag.Nombre = oUser.Nombre.ToString();
+                            return Redirect("~/GestorVenta/Index");
                         case 10:
                             ViewBag.Nombre = oUser.Nombre.ToString();
 

@@ -12,7 +12,7 @@
 
 <h3 style="color:white" class="text-center">Usuarios</h3>
 <br />
-<a href="~/Usuarios/Create"><button type="button" style="color:white" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal"><span class="glyphicon glyphicon-plus"></span>&nbsp; Agregar Gestor</button></a>
+<a href="#"><button type="button" style="color:white" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal"><span class="glyphicon glyphicon-plus"></span>&nbsp; Agregar Gestor</button></a>
 <a href="~/Sucursales/Index"><button type="button" style="color:white" class="btn btn-outline-warning boton-transparente botonesGral"><span class="glyphicon glyphicon-home"></span> &nbsp;Sucursales</button></a>
 <a href="~/Doctores/Index"><button type="button" style="color:white" class="btn btn-outline-warning boton-transparente botonesGral" ><span class="glyphicon glyphicon-user"></span> &nbsp;Doctores</button></a>
 
@@ -27,7 +27,7 @@
                 <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Nuevo Usuario</b></h3>
             </div>
             <div class="modal-body">
-                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Usuarios/Create")">
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Usuarios/CreateGestor")">
                     @Html.AntiForgeryToken()
                     <div class="form-group">
                         <label for="recipient-name" class="col-form-label">Nombre del Gestor:</label>
@@ -53,18 +53,21 @@
 
 <div class="tablaScroll">
     <table class="table tablas table-responsive" style="color: #2F2D6B">
-        <tr class="bg-primary">
-            <th>
-                <h4>@Html.DisplayNameFor(model => model.Nombre)</h4>
-            </th>
-            <th>
-                <h4>@Html.DisplayNameFor(model => model.Email)</h4>
-            </th>
-            <th>
-                <h4>Rol</h4>
-            </th>
-            <th></th>
-        </tr>
+        <thead>
+            <tr class="bg-primary">
+                <th>
+                    <h4>@Html.DisplayNameFor(model => model.Nombre)</h4>
+                </th>
+                <th>
+                    <h4>@Html.DisplayNameFor(model => model.Email)</h4>
+                </th>
+                <th>
+                    <h4>Rol</h4>
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        
 
         @foreach (var item in Model)
         {

@@ -359,7 +359,7 @@ namespace SCT_iCare.Controllers.Recepcion
                     cantidadReal = 2;
                     mailSeteado = "referenciaoxxo@medicinagmi.mx";
                 }
-                precio = Convert.ToInt32(cantidadReal) * 4060;
+                precio = Convert.ToInt32(cantidadReal) * 3480;
             }
             else
             {
@@ -687,7 +687,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
             if (tipoL == "AEREO")
             {
-                precio = Convert.ToString(Convert.ToInt32(cantidad) * 4060);
+                precio = Convert.ToString(Convert.ToInt32(cantidad) * 3480);
             }
             else
             {

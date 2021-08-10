@@ -82,6 +82,18 @@
 <br />
 
 @section scripts{
+
+    <script>
+        var input = document.getElementById("buscador");
+        input.addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("buscar").click();
+            }
+        });
+
+    </script>
+
     <script>
     $(function () {
         $(".buscar").click(function () {
@@ -150,31 +162,34 @@
 
 <div class="tablaScroll">
     <table class="table tablas table-hover" id="tablaEjemplo" style="color: #2F2D6B">
-        <tr class="bg-primary">
-            <th></th>
-            <th>
-                Paciente o Géstor
-            </th>
-            <th>
-                Cantidad EPIs
-            </th>
-            <th>
-                Sucursal
-            </th>
-            <th>
-                Referencia
-            </th>
-            <th>
-                Tipo Pago
-            </th>
-            <th>
-                Fecha
-            </th>
-            <th>
-                Estatus Pago
-            </th>
-            <th>Acciones</th>
-        </tr>
+        <thead>
+            <tr class="bg-primary">
+                <th></th>
+                <th>
+                    Paciente o Géstor
+                </th>
+                <th>
+                    Cantidad EPIs
+                </th>
+                <th>
+                    Sucursal
+                </th>
+                <th>
+                    Referencia
+                </th>
+                <th>
+                    Tipo Pago
+                </th>
+                <th>
+                    Fecha
+                </th>
+                <th>
+                    Estatus Pago
+                </th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        
 
         @foreach (var item in Model)
         {
