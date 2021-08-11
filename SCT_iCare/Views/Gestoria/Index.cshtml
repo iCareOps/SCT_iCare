@@ -33,7 +33,7 @@
     DateTime thisDate = new DateTime(year, month, day);
     DateTime tomorrowDate = new DateTime(year1, month1, day1);
 
-    var modelo = (from m in db.Cita select m).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate);
+    var modelo = (from m in db.Cita select m).Take(15);/*.Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate);*/
 
     if (oUser != null)
     {
@@ -42,7 +42,7 @@
 
         if(nombreUsuario == "Gestoría General")
         {
-            modelo = (from m in db.Cita select m).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate);
+            modelo = (from m in db.Cita select m).Take(15);/*.Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate);*/
         }
     }
 
@@ -80,7 +80,7 @@
 }
 else
 {
-    var repetidas = (from r in db.Cita select r).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal != "SITIO").Select(s => new { s.Canal, s.Sucursal } ).Distinct();
+    var repetidas = (from r in db.Cita select r).Select(s => new { s.Canal, s.Sucursal, s.FechaReferencia }).Where(s => /*s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate &&*/ s.Canal != "SITIO").Select(s => new { s.Canal, s.Sucursal } ).Distinct().Take(15);
 
     <div class="tablaScroll">
         <table class="table tablas" style="color: #2F2D6B">
@@ -112,7 +112,7 @@ else
 
             @foreach (var item in repetidas)
             {
-                int conteo = (from c in db.Cita where c.Canal == item.Canal select c).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Sucursal == item.Sucursal).Count();
+                int conteo = (from c in db.Cita where c.Canal == item.Canal select c).Where(s => /*s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate &&*/ s.Sucursal == item.Sucursal).Take(15).Count();
 
                 <tr>
                     <td>

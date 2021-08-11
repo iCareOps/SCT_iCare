@@ -398,7 +398,7 @@ namespace SCT_iCare.Controllers.ControlDictamen
             var selected = data.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
                 .Where(r => (r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro) )
                 .Select(S => new {
-                    S.N.idPaciente,
+                    S.M.idCaptura,
                     S.N.Nombre,
                     S.M.NoExpediente,
                     S.N.Email,

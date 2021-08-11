@@ -91,7 +91,7 @@ namespace SCT_iCare.Controllers.Gestoria
                 cantidadA = Convert.ToInt32(cantidadAereo);
             }
 
-            int precio = (cantidadN * 2482) + (cantidadA * 3480);
+            int precio = (cantidadN * 2842) + (cantidadA * 3480);
 
             if (precio > 10000)
             {
@@ -239,7 +239,7 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.Recepcionista = usuario;
                 cita.EstatusPago = orden.payment_status;
                 cita.Folio = numFolio;
-                cita.Canal = "SITIO";
+                cita.Canal = nombre.ToUpper();
                 cita.FechaCita = fecha;
 
                 int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
@@ -391,7 +391,7 @@ namespace SCT_iCare.Controllers.Gestoria
 
             ViewBag.AEREO = Convert.ToInt32(cantidadA);
             ViewBag.AUTO = Convert.ToInt32(cantidadN);
-            ViewBag.Precio = (Convert.ToInt32(cantidadN) * 2482) + (Convert.ToInt32(cantidadA) * 3480);
+            ViewBag.Precio = (Convert.ToInt32(cantidadN) * 2842) + (Convert.ToInt32(cantidadA) * 3480);
             return View(detallesOrden);
         }
 
@@ -427,7 +427,7 @@ namespace SCT_iCare.Controllers.Gestoria
                 cantidadA = Convert.ToInt32(cantidadAereo);
             }
 
-            int precio = (cantidadN * 2482) + (cantidadA * 3480);
+            int precio = (cantidadN * 2842) + (cantidadA * 3480);
 
             if (precio > 10000)
             {
@@ -569,7 +569,7 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.Recepcionista = usuario;
                 cita.EstatusPago = "Pendiente";
                 cita.Folio = numFolio;
-                cita.Canal = "SITIO";
+                cita.Canal = nombre.ToUpper();
                 cita.FechaCita = FECHA;
                 cita.NoOrden = link;
                 cita.Referencia = Convert.ToString(card);

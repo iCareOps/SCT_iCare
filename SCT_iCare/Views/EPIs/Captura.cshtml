@@ -13,11 +13,13 @@
 
     string nombreUsuario = null;
     int idUser = 0;
+    int? idRol = 0;
 
     if (oUser != null)
     {
         idUser = oUser.idUsuario;
         nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
     }
 
     string Query = "";
@@ -83,7 +85,7 @@
 
 
 @{
-    if (nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España" || nombreUsuario == "Soporte Captura")
+    if (nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España" || nombreUsuario == "Soporte Captura" || idRol == 2)
     {
         <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Captura")">
             <div style="display:inline-block; padding:10px; background-color:gainsboro; border-radius: 5px">
@@ -167,7 +169,7 @@
 }
 
 
-@{ if (nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España" || nombreUsuario == "Soporte Captura")
+@{ if (nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España" || nombreUsuario == "Soporte Captura" || idRol == 2)
     {
 
         @*<p class="col-md-4">
@@ -441,7 +443,7 @@
             <a href=@Url.Action("capturaSucursal", "EPIs", new { sucursal = sucursal })><button style="color:white" type="button" class="btn btn-outline-warning boton-transparenteExcel botonesGral"><span class="glyphicon glyphicon-folder-open"></span> &nbsp; &nbsp;@item.Nombre</button></a>
 
         }
-        if (nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España" || nombreUsuario == "Soporte Captura")
+        if (nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España" || nombreUsuario == "Soporte Captura" || oUser.idRol == 2)
         {
             <a href=@Url.Action("Index", "ControlDictamen")><button style="color:white" type="button" class="btn btn-outline-warning boton-transparenteAzul botonesGral"><span class="glyphicon glyphicon-th-list"></span> &nbsp; &nbsp;CENTRO DE CONTROL</button></a>
         }
@@ -630,7 +632,7 @@
                             </td>
                             <td>
                                 @{
-                                    if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 2 && idUser != 3 && idUser != 13 && idUser != 25))
+                                    if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 2 && idUser != 3 && idUser != 13 && idUser != 25 && idRol != 2))
                                     {
                                         @Html.DisplayFor(modelItem => item.NombrePaciente)
                                     }

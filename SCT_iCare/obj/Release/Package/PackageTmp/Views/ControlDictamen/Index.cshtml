@@ -98,8 +98,10 @@
                     miResultado = "<h3>No se encontraron registros.</h3>"
                 }
                 else {
-                    miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>Expediente</th><th>Email</th><th>Teléfono</th><th>Fecha Cita</th><th>Sucursal</th></tr>"
+                    miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>Expediente</th><th>Email</th><th>Teléfono</th><th>Fecha Cita</th><th>Sucursal</th><th></th></tr>"
                     for (let i = 0; i < data.length; i++) {
+                        var url = '@Url.Action("DescargarPDF","EPIs", new {id="xxxx"})';
+                        url = url.replace("xxxx", data[i].idCaptura);
                         miResultado += "<tr style=\"border:1px solid gray\">" +
                             "<td><b>" + data[i].Nombre + "</b></td>" +
                             "<td><b>" + data[i].NoExpediente + "</b></td>" +
@@ -107,6 +109,8 @@
                             "<td><b>" + data[i].Telefono + "</b></td>" +
                             "<td><b>" + data[i].FechaReferencia + "</b></td>" +
                             "<td><b>" + data[i].Sucursal + "</b></td>" +
+                            "<td><a href="+url+"> <b.autton type=\"button\" class=\"btn btn-danger\">Descargar</button></a></td>" +
+
                             "</tr>"
                     }
                 }
@@ -132,7 +136,7 @@
 }
 
 <div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog" role="document" style="width:70%">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
@@ -166,7 +170,7 @@
         {
             <a href=@Url.Action("Captura", "EPIs")><button style="color:white" type="button" class="btn btn-outline-warning boton-transparenteAzul botonesGral"><span class="glyphicon glyphicon-folder-open"></span> &nbsp; &nbsp;EPI CENTER</button></a>
         }
-        if (oUser.idRol == 1)
+        if (oUser.idRol == 1 || oUser.idRol == 2)
         {
             <a href=@Url.Action("Index", "CallCenter")><button style="color:white" type="button" class="btn btn-outline-warning boton-transparenteAzul botonesGral"><span class="glyphicon glyphicon-folder-open"></span> &nbsp; &nbsp;Call Center</button></a>
         }

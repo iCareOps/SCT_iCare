@@ -7,6 +7,7 @@
     var oUser = (Usuarios)HttpContext.Current.Session["User"];
     string nombreUsuario = null;
     int idUser = 0;
+    int? idRol = 0;
 
     var Recepcion = new int?();
     var Hospital = "";
@@ -25,6 +26,7 @@
         Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
         Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
         Sucursal = ViewBag.Sucursal;
+        idRol = oUser.idRol;
     }
 
 
@@ -177,7 +179,7 @@
                         <td>@flag</td>
                         <td>
                             @{
-                                if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 11 && idUser != 16))
+                                if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 11 && idUser != 16 && idRol != 2 && nombreUsuario == "Viridiana España"))
                                 {
                                     @Html.DisplayFor(modelItem => item.NombrePaciente)
                                 }
