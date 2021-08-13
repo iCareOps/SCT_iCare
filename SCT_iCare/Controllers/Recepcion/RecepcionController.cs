@@ -70,7 +70,7 @@ namespace SCT_iCare.Controllers.Recepcion
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create1(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string pago,/* string tipoL, string tipoT, */ string referencia)
+        public ActionResult Create1(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, string pago,string referencia)
         {
             Paciente paciente1 = new Paciente();
 
@@ -78,7 +78,28 @@ namespace SCT_iCare.Controllers.Recepcion
 
             string canal = null;
 
-            if (Convert.ToInt32(cantidad) == 1)
+            int cantidadN;
+            int cantidadA;
+
+            if (cantidad == "")
+            {
+                cantidadN = 0;
+            }
+            else
+            {
+                cantidadN = Convert.ToInt32(cantidad);
+            }
+
+            if (cantidadAereo == "")
+            {
+                cantidadA = 0;
+            }
+            else
+            {
+                cantidadA = Convert.ToInt32(cantidadAereo);
+            }
+
+            if ((cantidadN + cantidadA) == 1)
             {
                 Paciente paciente = new Paciente();
                 paciente.Nombre = nombre.ToUpper()/*.Normalize(System.Text.NormalizationForm.FormD).Replace(@"´¨", "")*/;
@@ -213,7 +234,13 @@ namespace SCT_iCare.Controllers.Recepcion
                     
                 }
 
-                
+                string TIPOLIC = null;
+                if (cantidadA != 0)
+                {
+                    TIPOLIC = "AEREO";
+                }
+                cita.TipoLicencia = TIPOLIC;
+
 
                 //-------------------------------------------------------------
                 if (ModelState.IsValid)
@@ -227,7 +254,7 @@ namespace SCT_iCare.Controllers.Recepcion
             else
             {
                 //return View(detallesOrden);
-                for (int n = 1; n <= Convert.ToInt32(cantidad); n++)
+                for (int n = 1; n <= Convert.ToInt32((cantidadN + cantidadA)); n++)
                 {
                     Paciente paciente = new Paciente();
 
@@ -327,6 +354,11 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.Canal = nombre.ToUpper();
                     cita.FechaCita = DateTime.Now;
 
+                    if (n > cantidadN)
+                    {
+                        cita.TipoLicencia = "AEREO";
+                    }
+
                     if (ModelState.IsValid)
                     {
                         db.Cita.Add(cita);
@@ -342,34 +374,44 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Orden(string nombre, string telefono, string email, string usuario, string sucursal,  string tipoL, string cantidad)
+        public ActionResult Orden(string nombre, string telefono, string email, string usuario, string sucursal,  string cantidad, string cantidadAereo)
         {
             GetApiKey();
 
-            int cantidadDiferencia;
-            int cantidadReal = Convert.ToInt32(cantidad);
-            string mailSeteado = email;
-            int precio = 0;
+            string mailSeteado = "referenciasoxxo@medicinagmi.mx";
 
-            if (tipoL == "AEREO")
+
+            int cantidadN;
+            int cantidadA;
+
+            if (cantidad == "")
             {
-                if (Convert.ToInt32(cantidad) > 2)
-                {
-                    cantidadDiferencia = Convert.ToInt32(cantidad) - 3;
-                    cantidadReal = 2;
-                    mailSeteado = "referenciaoxxo@medicinagmi.mx";
-                }
-                precio = Convert.ToInt32(cantidadReal) * 3480;
+                cantidadN = 0;
             }
             else
             {
-                if (Convert.ToInt32(cantidad) > 3)
-                {
-                    cantidadDiferencia = Convert.ToInt32(cantidad) - 3;
-                    cantidadReal = 3;
-                    mailSeteado = "referenciaoxxo@medicinagmi.mx";
-                }
-                precio = Convert.ToInt32(cantidadReal) * 2842;
+                cantidadN = Convert.ToInt32(cantidad);
+            }
+
+            if (cantidadAereo == "")
+            {
+                cantidadA = 0;
+            }
+            else
+            {
+                cantidadA = Convert.ToInt32(cantidadAereo);
+            }
+
+            int precio = (cantidadN * 2842) + (cantidadA * 3480);
+
+            if (precio > 10000)
+            {
+                precio = 9990;
+            }
+
+            if (cantidadAereo == "" && cantidad == "")
+            {
+                return View("Index");
             }
 
 
@@ -406,9 +448,8 @@ namespace SCT_iCare.Controllers.Recepcion
 
             ViewBag.Orden = order.id;
             ViewBag.Metodo = "OXXO";
-            ViewBag.Licencia = tipoL;
 
-            if (Convert.ToInt32(cantidad) == 1)
+            if ((cantidadN + cantidadA) == 1)
             {
                 Paciente paciente = new Paciente();
 
@@ -522,6 +563,13 @@ namespace SCT_iCare.Controllers.Recepcion
                 refe.EstatusReferencia = "PENDIENTE";
                 refe.idPaciente = idPaciente;
 
+                string TIPOLIC = null;
+                if (cantidadA != 0)
+                {
+                    TIPOLIC = "AEREO";
+                }
+                cita.TipoLicencia = TIPOLIC;
+
                 if (ModelState.IsValid)
                 {
                     db.Cita.Add(cita);
@@ -534,7 +582,7 @@ namespace SCT_iCare.Controllers.Recepcion
             else
             {
                 //return View(detallesOrden);
-                for (int n = 1; n <= Convert.ToInt32(cantidad); n++)
+                for (int n = 1; n <= Convert.ToInt32((cantidadN + cantidadA)); n++)
                 {
                     Paciente paciente = new Paciente();
 
@@ -642,10 +690,17 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.Canal = nombre.ToUpper();
                     cita.FechaCita = DateTime.Now;
 
+                    if (n > cantidadN)
+                    {
+                        cita.TipoLicencia = "AEREO";
+                    }
+
                     int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
                     ReferenciasSB refe = db.ReferenciasSB.Find(idRefSB);
                     refe.EstatusReferencia = "PENDIENTE";
                     refe.idPaciente = idPaciente;
+
+                    
 
                     if (ModelState.IsValid)
                     {
@@ -672,26 +727,47 @@ namespace SCT_iCare.Controllers.Recepcion
 
             ViewBag.QR = imageBytes;
 
-            ViewBag.Cantidad = Convert.ToInt32(cantidad);
+            ViewBag.AEREO = Convert.ToInt32(cantidadA);
+            ViewBag.AUTO = Convert.ToInt32(cantidadN);
+            ViewBag.Precio = (Convert.ToInt32(cantidadN) * 2842) + (Convert.ToInt32(cantidadA) * 3480);
             return View(detallesOrden);
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult PagoTarjeta(string nombre, string telefono, string email, string usuario, string sucursal, string tipoL, string cantidad, int card)
+        public ActionResult PagoTarjeta(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, int card)
         {
             GetApiKey();
 
-            string precio;
+            string mailSeteado = "referenciaoxxo@medicinagmi.mx";
 
-            if (tipoL == "AEREO")
+            int cantidadN;
+            int cantidadA;
+
+            if (cantidad == "")
             {
-                precio = Convert.ToString(Convert.ToInt32(cantidad) * 3480);
+                cantidadN = 0;
             }
             else
             {
-                precio = Convert.ToString(Convert.ToInt32(cantidad) * 2842);
+                cantidadN = Convert.ToInt32(cantidad);
+            }
+
+            if (cantidadAereo == "")
+            {
+                cantidadA = 0;
+            }
+            else
+            {
+                cantidadA = Convert.ToInt32(cantidadAereo);
+            }
+
+            int precio = (cantidadN * 2842) + (cantidadA * 3480);
+
+            if (precio > 10000)
+            {
+                precio = 9990;
             }
 
             PaymentLink nOrder = new PaymentLink().create(@"{
@@ -706,7 +782,7 @@ namespace SCT_iCare.Controllers.Recepcion
                       ""order_template"": {
                       ""line_items"": [{
                       ""name"": ""Checkup EPI"",
-                      ""unit_price"": " + ConvertirProductos2(precio) + @",
+                      ""unit_price"": " + ConvertirProductos2(Convert.ToString(precio)) + @",
                       ""quantity"": 1
                       }],
 
@@ -720,7 +796,7 @@ namespace SCT_iCare.Controllers.Recepcion
             string IDEE = nOrder.id; 
             TempData["Link"] = link;
 
-            if (Convert.ToInt32(cantidad) == 1)
+            if ((cantidadN + cantidadA) == 1)
             {
                 Paciente paciente = new Paciente();
 
@@ -823,6 +899,13 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.NoOrden = link;
                 cita.Referencia = Convert.ToString(card);
 
+                string TIPOLIC = null;
+                if (cantidadA != 0)
+                {
+                    TIPOLIC = "AEREO";
+                }
+                cita.TipoLicencia = TIPOLIC;
+
                 if (ModelState.IsValid)
                 {
                     db.Cita.Add(cita);
@@ -834,7 +917,7 @@ namespace SCT_iCare.Controllers.Recepcion
             else
             {
                 //return View(detallesOrden);
-                for (int n = 1; n <= Convert.ToInt32(cantidad); n++)
+                for (int n = 1; n <= Convert.ToInt32((cantidadN + cantidadA)); n++)
                 {
                     Paciente paciente = new Paciente();
 
@@ -924,6 +1007,11 @@ namespace SCT_iCare.Controllers.Recepcion
 
                     cita.TipoPago = "Pago con Tarjeta";
 
+                    if (n > cantidadN)
+                    {
+                        cita.TipoLicencia = "AEREO";
+                    }
+
                     cita.NoOrden = IDEE;
                     cita.idPaciente = idPaciente;
                     cita.FechaReferencia = DateTime.Now;
@@ -945,8 +1033,6 @@ namespace SCT_iCare.Controllers.Recepcion
                     }
                 }
             }
-
-            ViewBag.Cantidad = Convert.ToInt32(cantidad);
             return Redirect("Index");
         }
 
@@ -1529,10 +1615,11 @@ namespace SCT_iCare.Controllers.Recepcion
             return Redirect("Index");
         }
 
-        public ActionResult NoLlego(int id)
+        public ActionResult NoLlego(int id, string comentario)
         {
             var cita = (from c in db.Cita where c.idPaciente == id select c).FirstOrDefault();
             cita.Asistencia = "NO";
+            cita.CancelaComentario = comentario;
 
             if (ModelState.IsValid)
             {

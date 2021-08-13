@@ -85,6 +85,7 @@
           <Property Name="Canal" Type="varchar" MaxLength="100" />
           <Property Name="CC" Type="varchar" MaxLength="100" />
           <Property Name="Asistencia" Type="varchar" MaxLength="50" />
+          <Property Name="CancelaComentario" Type="varchar" MaxLength="200" />
         </EntityType>
         <EntityType Name="Ciudades">
           <Key>
@@ -651,6 +652,7 @@
           <Property Name="Asistencia" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Canal1" Relationship="Self.FK_Cita_Canal" FromRole="Cita" ToRole="Canal" />
           <NavigationProperty Name="Paciente" Relationship="Self.FK_Cita_Paciente" FromRole="Cita" ToRole="Paciente" />
+          <Property Name="CancelaComentario" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Ciudades">
           <Key>
@@ -1235,6 +1237,7 @@
           <EntitySetMapping Name="Cita">
             <EntityTypeMapping TypeName="DevModel.Cita">
               <MappingFragment StoreEntitySet="Cita">
+                <ScalarProperty Name="CancelaComentario" ColumnName="CancelaComentario" />
                 <ScalarProperty Name="idCita" ColumnName="idCita" />
                 <ScalarProperty Name="TipoPago" ColumnName="TipoPago" />
                 <ScalarProperty Name="FechaReferencia" ColumnName="FechaReferencia" />

@@ -224,7 +224,6 @@ namespace SCT_iCare.Controllers.Gestoria
 
                 cita.NoOrden = orden.id;
                 cita.TipoPago = "REFERENCIA OXXO";
-                cita.CC = usuario;
 
                 JavaScriptSerializer js = new JavaScriptSerializer();
                 dynamic datosCargo2 = js.Deserialize<dynamic>(orden.charges.data[0].ToString());
@@ -241,6 +240,7 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.Folio = numFolio;
                 cita.Canal = nombre.ToUpper();
                 cita.FechaCita = fecha;
+                cita.CC = "Call Center";
 
                 int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
 
@@ -367,6 +367,7 @@ namespace SCT_iCare.Controllers.Gestoria
                     cita.Folio = numFolio;
                     cita.Canal = nombre.ToUpper();
                     cita.TipoPago = "REFERENCIA OXXO";
+                    cita.CC = "Call Center";
 
                     if(n > cantidadN)
                     {
@@ -573,7 +574,7 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.FechaCita = FECHA;
                 cita.NoOrden = link;
                 cita.Referencia = Convert.ToString(card);
-                cita.CC = usuario;
+                cita.CC = "Call Center";
 
                 if (ModelState.IsValid)
                 {

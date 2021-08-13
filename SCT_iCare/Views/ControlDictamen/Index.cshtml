@@ -13,11 +13,13 @@
 
     string nombreUsuario = null;
     int idUser = 0;
+    int? idRol = 0;
 
     if (oUser != null)
     {
         idUser = oUser.idUsuario;
         nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
     }
 
     string fecha = ViewBag.Fecha.ToString("dd-MMMM-yyyy");
@@ -40,6 +42,7 @@
     //var repoCentral = (from r in db.Captura select r).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura == "Terminado").ToList();
 
     int epis = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Terminado").Count();
+
     int episSinIniciar = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").Count();
 
 
@@ -75,7 +78,7 @@
 
     <script>
         var input = document.getElementById("buscador");
-        input.addEventListener("keyup", function (event) {
+        input.addEventListener("keydown", function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
                 document.getElementById("buscar").click();
@@ -211,170 +214,184 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                
+
 
                 @foreach (var item in repoCentral)
                 {
                     var enviados = (from e in db.DictamenProblema where e.idPaciente == item.M.idPaciente select e).FirstOrDefault();
 
-                    if (item.N.TipoTramite == "PRIMERA VEZ")
+                    if (enviados == null)
                     {
-                        fila = "bg-info";
-                    }
-                    else
-                    {
-                        fila = "bg-default";
-                    }
+                        if (item.N.TipoTramite == "PRIMERA VEZ")
+                        {
+                            fila = "bg-info";
+                        }
+                        else
+                        {
+                            fila = "bg-default";
+                        }
 
-                    <tr class=@fila>
-                        <td>
-                            @flag
-                        </td>
-                        <td>
-                            @{
-
-                                using (Html.BeginForm("EditExpediente", "ControlDictamen"))
-                                {
-                                    @Html.AntiForgeryToken()
-
-                                    if (enviados != null && enviados.Problema == null)
-                                    {
-                                        <b>@Html.ActionLink(item.N.NombrePaciente, "AbrirEPI_EC", "ControlDictamen", new { id = item.N.idCaptura, fecha = fechaControl }, new { style = "color: black; text-decoration: none" }) &nbsp;<span class="glyphicon glyphicon-send text-danger"></span></b>
-                                    }
-                                    else if (enviados != null && enviados.Problema != null)
-                                    {
-                                        <b>@Html.ActionLink(item.N.NombrePaciente, "AbrirEPI_EC", "ControlDictamen", new { id = item.N.idCaptura, fecha = fechaControl }, new { style = "color: black; text-decoration: none" }) &nbsp;<span class="glyphicon glyphicon-send text-danger"></span>&nbsp;<span class="glyphicon glyphicon-alert text-danger"></span></b>
-                                    }
-                                    else
-                                    {
-                                        <b>@Html.ActionLink(item.N.NombrePaciente, "AbrirEPI_EC", "ControlDictamen", new { id = item.N.idCaptura, fecha = fechaControl }, new { style = "color: black; text-decoration: none" })</b>
-                                    }
-                                }
-                            }
-                        </td>
-
-                        <td>
-                            @Html.DisplayFor(modelItem => item.N.NoExpediente)
-                        </td>
-                        <td>
-                            <a href="mailto:@item.M.Email"><b>@Html.DisplayFor(modelItem => item.M.Email)</b></a>
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.M.Telefono)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.N.FechaExpdiente)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.N.Sucursal)
-                        </td>
-                        <td>
-                            <div class="btn-group">
-                                @*<a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idCaptura})><button type="button" class="btn btn-warning">Dictaminar</button></a>*@
-                                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
-                                </button>
+                        <tr class=@fila>
+                            <td>
+                                @flag
+                            </td>
+                            <td>
                                 @{
-                                    if (item.N.EstatusCaptura == "No iniciado")
+
+                                    using (Html.BeginForm("EditExpediente", "ControlDictamen"))
                                     {
-                                        <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.N.idCaptura, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
-                                    }
-                                    else if (item.N.EstatusCaptura == "En captura...")
-                                    {
+                                        @Html.AntiForgeryToken()
 
+                                        @*if (enviados != null && enviados.Problema == null)
+                {
+                    <b>@Html.ActionLink(item.N.NombrePaciente, "AbrirEPI_EC", "ControlDictamen", new { id = item.N.idCaptura, fecha = fechaControl }, new { style = "color: black; text-decoration: none" }) &nbsp;<span class="glyphicon glyphicon-send text-danger"></span></b>
+                }
+                else if (enviados != null && enviados.Problema != null)
+                {
+                    <b>@Html.ActionLink(item.N.NombrePaciente, "AbrirEPI_EC", "ControlDictamen", new { id = item.N.idCaptura, fecha = fechaControl }, new { style = "color: black; text-decoration: none" }) &nbsp;<span class="glyphicon glyphicon-send text-danger"></span>&nbsp;<span class="glyphicon glyphicon-alert text-danger"></span></b>
+                }
+                else
+                {
+                    <b>@Html.ActionLink(item.N.NombrePaciente, "AbrirEPI_EC", "ControlDictamen", new { id = item.N.idCaptura, fecha = fechaControl }, new { style = "color: black; text-decoration: none" })</b>
+                }*@
+                                        if (idRol == 1)
+                                        {
+                                            <b>@item.N.NombrePaciente</b>
+                                        }
+                                        else
+                                        {
+                                            <b>@Html.ActionLink(item.N.NombrePaciente, "AbrirEPI_EC", "ControlDictamen", new { id = item.N.idCaptura, fecha = fechaControl }, new { style = "color: black; text-decoration: none" })</b>
+                                        }
 
-                                        <div class="dropdown-menu" style="padding:10px">
-                                            <b>@Html.ActionLink("Abrir EPI", "AbrirEPIGeneral", new { id = item.N.idCaptura })</b>
-                                            <div class="dropdown-divider"></div>
-                                            <b>@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = item.N.idCaptura })</b>
-                                            <div class="dropdown-divider"></div>
-                                        </div>
-
-                                    }
-                                    else if (item.N.EstatusCaptura == "Terminado" && enviados == null)
-                                    {
-                                        <div class="dropdown-menu" style="padding:10px">
-                                            <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.N.idCaptura })><b>Descargar <span class="glyphicon glyphicon-download-alt"></span></b></a>
-                                            <div class="dropdown-divider"></div>
-                                            <a href="#" data-toggle="modal" data-target="#Enviado_@item.N.idCaptura"><b>Enviado <span class="glyphicon glyphicon-alert"></span></b></a>
-                                            @*<a href=@Url.Action("CorreoEnviado", "ControlDictamen", new { id = item.N.idCaptura, fecha = fechaControl })><b>Enviado<span class="glyphicon glyphicon-flag"></span></b></a>*@
-                                            <div class="dropdown-divider"></div>
-
-                                        </div>
-                                        @*<a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.N.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>*@
-
-                                    }
-                                    else if (item.N.EstatusCaptura == "Terminado" && enviados != null)
-                                    {
-                                        <div class="dropdown-menu" style="padding:10px">
-                                            <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.N.idCaptura })><b>Descargar <span class="glyphicon glyphicon-download-alt"></span></b></a>
-                                            <div class="dropdown-divider"></div>
-                                            <a href="#" data-toggle="modal" data-target="#Problema_@item.N.idCaptura"><b>Reportar <span class="glyphicon glyphicon-alert"></span></b></a>
-                                            @*<a href=@Url.Action("Problema", "ControlDictamen", new { id = item.N.idCaptura, fecha = fechaControl })><b>Reportar Problema <span class="glyphicon glyphicon-alert"></span></b></a>*@
-                                            <div class="dropdown-divider"></div>
-                                        </div>
-                                        @*<a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.N.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>*@
                                     }
                                 }
-                            </div>@**@
+                            </td>
 
-                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ControlDictamen/CorreoEnviado")">
-                                @Html.AntiForgeryToken()
-                                <div class="modal fade" id="Enviado_@item.N.idCaptura" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h4 class="modal-title" id="exampleModalLabel"><b>¿Está seguro que ha enviado el correo de la siguiente persona? @item.N.idCaptura</b></h4>
-                                            </div>
-                                            <div class="modal-body">
-                                                <input type="hidden" name="id" value="@item.M.idPaciente" />
-                                                <input type="hidden" name="fecha" value="@fechaControl" />
-                                                <h5>
-                                                    <label for="recipient-name" class="col-form-label">Nombre: <span class="text-danger">@item.N.NombrePaciente</span></label><br />
-                                                    <label for="recipient-name" class="col-form-label">Email: <span class="text-danger">@item.M.Email</span></label><br />
-                                                    <label for="recipient-name" class="col-form-label">Teléfono: <span class="text-danger">@item.M.Telefono</span></label><br />
-                                                    <label for="recipient-name" class="col-form-label">CURP: <span class="text-danger">@item.M.CURP</span></label><br />
-                                                    <label for="recipient-name" class="col-form-label">Sucursal: <span class="text-danger">@item.N.Sucursal</span></label><br />
-                                                    <label for="recipient-name" class="col-form-label">Doctor: <span class="text-danger">@item.N.Doctor</span></label><br />
-                                                    <label for="recipient-name" class="col-form-label">Fecha Expediente: <span class="text-danger">@Convert.ToDateTime(item.N.FechaExpdiente).ToString("dd-MMMM-yyyy")</span></label>
-                                                </h5>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                                <input type="submit" value="Enviar" class="btn btn-primary" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.N.NoExpediente)
+                            </td>
+                            <td>
+                                <a href="mailto:@item.M.Email"><b>@Html.DisplayFor(modelItem => item.M.Email)</b></a>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.M.Telefono)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.N.FechaExpdiente)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.N.Sucursal)
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    @*<a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idCaptura})><button type="button" class="btn btn-warning">Dictaminar</button></a>*@
+                                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                    </button>
+                                    @{
+                                        if (item.N.EstatusCaptura == "No iniciado")
+                                        {
+                                            <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.N.idCaptura, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                        }
+                                        else if (item.N.EstatusCaptura == "En captura...")
+                                        {
 
-                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ControlDictamen/Problema")">
-                                @Html.AntiForgeryToken()
-                                <div class="modal fade" id="Problema_@item.N.idCaptura" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h4 class="modal-title" id="exampleModalLabel"><b>Reportar problema @item.N.idCaptura</b></h4>
+
+                                            <div class="dropdown-menu" style="padding:10px">
+                                                <b>@Html.ActionLink("Abrir EPI", "AbrirEPIGeneral", new { id = item.N.idCaptura })</b>
+                                                <div class="dropdown-divider"></div>
+                                                <b>@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = item.N.idCaptura })</b>
+                                                <div class="dropdown-divider"></div>
                                             </div>
-                                            <div class="modal-body">
-                                                <input type="hidden" name="id" value="@item.M.idPaciente" />
-                                                <input type="hidden" name="fecha" value="@fechaControl" />
-                                                <div class="form-group" style="width:60%; min-width:320px">
-                                                    <label for="recipient-name" class="col-form-label">Descripción del Problema:</label>
-                                                    <input type="text" class="form-control" name="problema" id="problema" required />
+
+                                        }
+                                        else if (item.N.EstatusCaptura == "Terminado" && enviados == null)
+                                        {
+                                            <div class="dropdown-menu" style="padding:10px">
+                                                <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.N.idCaptura })><b>Descargar <span class="glyphicon glyphicon-download-alt"></span></b></a>
+                                                <div class="dropdown-divider"></div>
+                                                <a href="#" data-toggle="modal" data-target="#Enviado_@item.N.idCaptura"><b>Enviado <span class="glyphicon glyphicon-alert"></span></b></a>
+                                                @*<a href=@Url.Action("CorreoEnviado", "ControlDictamen", new { id = item.N.idCaptura, fecha = fechaControl })><b>Enviado<span class="glyphicon glyphicon-flag"></span></b></a>*@
+                                                <div class="dropdown-divider"></div>
+
+                                            </div>
+                                            @*<a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.N.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>*@
+
+                                        }
+                                        else if (item.N.EstatusCaptura == "Terminado" && enviados != null)
+                                        {
+                                            <div class="dropdown-menu" style="padding:10px">
+                                                <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.N.idCaptura })><b>Descargar <span class="glyphicon glyphicon-download-alt"></span></b></a>
+                                                <div class="dropdown-divider"></div>
+                                                <a href="#" data-toggle="modal" data-target="#Problema_@item.N.idCaptura"><b>Reportar <span class="glyphicon glyphicon-alert"></span></b></a>
+                                                @*<a href=@Url.Action("Problema", "ControlDictamen", new { id = item.N.idCaptura, fecha = fechaControl })><b>Reportar Problema <span class="glyphicon glyphicon-alert"></span></b></a>*@
+                                                <div class="dropdown-divider"></div>
+                                            </div>
+                                            @*<a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.N.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>*@
+                                        }
+                                    }
+                                </div>@**@
+
+                                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ControlDictamen/CorreoEnviado")">
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal fade" id="Enviado_@item.N.idCaptura" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Está seguro que ha enviado el correo de la siguiente persona? @item.N.idCaptura</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="id" value="@item.M.idPaciente" />
+                                                    <input type="hidden" name="fecha" value="@fechaControl" />
+                                                    <h5>
+                                                        <label for="recipient-name" class="col-form-label">Nombre: <span class="text-danger">@item.N.NombrePaciente</span></label><br />
+                                                        <label for="recipient-name" class="col-form-label">Email: <span class="text-danger">@item.M.Email</span></label><br />
+                                                        <label for="recipient-name" class="col-form-label">Teléfono: <span class="text-danger">@item.M.Telefono</span></label><br />
+                                                        <label for="recipient-name" class="col-form-label">CURP: <span class="text-danger">@item.M.CURP</span></label><br />
+                                                        <label for="recipient-name" class="col-form-label">Sucursal: <span class="text-danger">@item.N.Sucursal</span></label><br />
+                                                        <label for="recipient-name" class="col-form-label">Doctor: <span class="text-danger">@item.N.Doctor</span></label><br />
+                                                        <label for="recipient-name" class="col-form-label">Fecha Expediente: <span class="text-danger">@Convert.ToDateTime(item.N.FechaExpdiente).ToString("dd-MMMM-yyyy")</span></label>
+                                                    </h5>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    <input type="submit" value="Enviar" class="btn btn-primary" />
                                                 </div>
                                             </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                                <input type="submit" value="Enviar" class="btn btn-primary" />
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ControlDictamen/Problema")">
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal fade" id="Problema_@item.N.idCaptura" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>Reportar problema @item.N.idCaptura</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="id" value="@item.M.idPaciente" />
+                                                    <input type="hidden" name="fecha" value="@fechaControl" />
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="col-form-label">Descripción del Problema:</label>
+                                                        <input type="text" class="form-control" name="problema" id="problema" required />
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    <input type="submit" value="Enviar" class="btn btn-primary" />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </form>
+                                </form>
 
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                    }
+
+
                     flag++;
                 }
 

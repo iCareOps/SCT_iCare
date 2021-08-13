@@ -12,9 +12,11 @@
 
     string metodo = ViewBag.Metodo;
 
-    int cantidad = ViewBag.Cantidad;
+    int cantidadAuto = ViewBag.AUTO;
 
-    int precio = 0;
+    int cantidadAereo = ViewBag.AEREO;
+
+    int precio = ViewBag.Precio;
 
 }
 <br />
@@ -93,17 +95,6 @@
                 </dt>
 
                 <dd class="labelInfo">
-                    @{
-                        if(ViewBag.Licencia.ToString() == "AEREO")
-                        {
-                            precio = cantidad * 3480;
-                        }
-                        else
-                        {
-                            precio = cantidad * 2842;
-                        }
-
-                    }
                     <h4>$ @precio .00</h4>
                 </dd>
 
@@ -124,7 +115,10 @@
                 </dt>
 
                 <dd class="labelInfo">
-                    <h4>@cantidad</h4>
+                    @if (cantidadAereo != null && cantidadAuto != null)
+                    {
+                        <h4> @(cantidadAuto + cantidadAereo) (@cantidadAereo Aéreos)</h4>
+                    }
                 </dd>
 
                 <dt>
@@ -170,7 +164,7 @@
                 }
             <div class="col-xs-12">
                 <div class="col-xs-12">
-                    @if ((cantidad <= 3 && ViewBag.Licencia.ToString() != "AEREO") || (cantidad <= 2 && ViewBag.Licencia.ToString() == "AEREO"))
+                    @if (precio < 10000)
                     {
                         <img src="~/Images/oxxopay_brand.png" class="col-xs-4" />
                         @*<div class="col-xs-12" style="color:gray"><h5><b>REFERENCIA</b></h5></div>*@
