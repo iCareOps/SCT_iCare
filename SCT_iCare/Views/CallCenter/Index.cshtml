@@ -612,8 +612,25 @@ else
             @foreach (var item in modelo)
             {
 
+                if (item.M.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.N.idPaciente select i.TipoLicencia).FirstOrDefault()) != "AEREO")
+                {
+                    fila = "#BBDEFB";
+                }
+                else if (item.M.TipoTramite != "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.N.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                {
+                    fila = "#FFF9C4";
+                }
+                else if (item.M.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.N.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                {
+                    fila = "#D1C4E9";
+                }
+                else
+                {
+                    fila = "white";
+                }
 
-                <tr>
+
+                <tr style="background-color:@fila">
                     <td>
                         @flag
                     </td>
