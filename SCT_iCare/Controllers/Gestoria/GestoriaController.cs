@@ -248,6 +248,13 @@ namespace SCT_iCare.Controllers.Gestoria
                 refe.EstatusReferencia = "PENDIENTE";
                 refe.idPaciente = idPaciente;
 
+                string TIPOLIC = null;
+                if (cantidadA != 0)
+                {
+                    TIPOLIC = "AEREO";
+                }
+                cita.TipoLicencia = TIPOLIC;
+
                 if (ModelState.IsValid)
                 {
                     db.Cita.Add(cita);
@@ -410,7 +417,7 @@ namespace SCT_iCare.Controllers.Gestoria
             int cantidadN;
             int cantidadA;
 
-            if (cantidad == null)
+            if (cantidad == "")
             {
                 cantidadN = 0;
             }
@@ -419,7 +426,7 @@ namespace SCT_iCare.Controllers.Gestoria
                 cantidadN = Convert.ToInt32(cantidad);
             }
 
-            if (cantidadAereo == null)
+            if (cantidadAereo == "")
             {
                 cantidadA = 0;
             }
@@ -576,6 +583,13 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.Referencia = Convert.ToString(card);
                 cita.CC = "Call Center";
 
+                string TIPOLIC = null;
+                if (cantidadA != 0)
+                {
+                    TIPOLIC = "AEREO";
+                }
+                cita.TipoLicencia = TIPOLIC;
+
                 if (ModelState.IsValid)
                 {
                     db.Cita.Add(cita);
@@ -704,7 +718,6 @@ namespace SCT_iCare.Controllers.Gestoria
                     }
                 }
             }
-
             return RedirectToAction("Index", "GestorVenta");
         }
 
