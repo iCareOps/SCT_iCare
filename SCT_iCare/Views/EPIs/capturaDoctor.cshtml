@@ -157,29 +157,30 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                
+
 
                 @foreach (var item in Restriccion)
                 {
 
-                    if (item.TipoTramite == "PRIMERA VEZ")
+                    if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) != "AEREO")
                     {
-                        fila = "bg-info";
+                        fila = "#BBDEFB";
+                    }
+                    else if (item.TipoTramite != "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                    {
+                        fila = "#FFF9C4";
+                    }
+                    else if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                    {
+                        fila = "#D1C4E9";
                     }
                     else
                     {
-                        fila = "bg-default";
-                    }
-
-                    var Licencia = (from l in db.Cita where l.idPaciente == item.idPaciente select l).FirstOrDefault();
-
-                    if (Licencia.TipoLicencia == "AEREO")
-                    {
-                        fila = "bg-warning";
+                        fila = "white";
                     }
 
 
-                    <tr class=@fila>
+                    <tr style="background-color:@fila">
                         <td>@flag</td>
                         <td>
                             @{
@@ -198,7 +199,12 @@
                             @Html.DisplayFor(modelItem => item.NoExpediente)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.TipoTramite)
+                            @*@Html.DisplayFor(modelItem => item.TipoTramite)*@
+                            @{
+                                var licencia = (from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault();
+                            }
+                            @item.TipoTramite (<b>@licencia</b>)
+
                         </td>
                         <td>
                             @{
@@ -263,11 +269,11 @@
                             }
 
                             @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1" data-id="@item.idEPI">Open modal for @item.idEPI</button>
-                                @Html.ActionLink("Editar", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#modalEdit" }) |
-                                @Html.ActionLink("Detalles", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#YourModalId" })*@
+                    @Html.ActionLink("Editar", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#modalEdit" }) |
+                    @Html.ActionLink("Detalles", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#YourModalId" })*@
                             @*@Html.ActionLink("Edit", "Edit", new { id = item.idEPI }) |
-                                @Html.ActionLink("Details", "Details", new { id = item.idEPI }) |
-                                @Html.ActionLink("Delete", "Delete", new { id = item.idEPI })*@
+                    @Html.ActionLink("Details", "Details", new { id = item.idEPI }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.idEPI })*@
                         </td>
                     </tr>
 
