@@ -219,19 +219,31 @@
                 @foreach (var item in repoCentral)
                 {
                     var enviados = (from e in db.DictamenProblema where e.idPaciente == item.M.idPaciente select e).FirstOrDefault();
+    
 
-                    if (enviados == null)
+                    if (item.N.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.M.idPaciente select i.TipoLicencia).FirstOrDefault()) != "AEREO")
                     {
-                        if (item.N.TipoTramite == "PRIMERA VEZ")
-                        {
-                            fila = "bg-info";
-                        }
-                        else
-                        {
-                            fila = "bg-default";
-                        }
+                        fila = "#BBDEFB";
+                    }
+                    else if (item.N.TipoTramite != "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.M.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                    {
+                        fila = "#FFF9C4";
+                    }
+                    else if (item.N.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.M.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                    {
+                        fila = "#D1C4E9";
+                    }
+                    else
+                    {
+                        fila = "white";
+                    }
 
-                        <tr class=@fila>
+
+
+
+
+
+                        <tr  style="background-color:@fila">
                             <td>
                                 @flag
                             </td>

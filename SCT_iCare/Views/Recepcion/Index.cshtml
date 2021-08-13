@@ -788,19 +788,31 @@ else
 
             @foreach (var item in modelo)
             {
-                if (item.M.TipoTramite == "PRIMERA VEZ")
+               
+                if (item.M.TipoTramite == "PRIMERA VEZ" && item.M.TipoLicencia != "AEREO")
                 {
-                    fila = "bg-info";
+                    fila = "#BBDEFB";
                 }
-                else if (item.M.Asistencia == "NO")
+                else if (item.M.TipoTramite != "PRIMERA VEZ" && item.M.TipoLicencia == "AEREO")
                 {
-                    fila = "bg-warning";
+                    fila = "#D1C4E9";
+                }
+                else if (item.M.TipoTramite == "PRIMERA VEZ" && item.M.TipoLicencia == "AEREO")
+                {
+                    fila = "#9575CD";
                 }
                 else
                 {
-                    fila = "bg-default";
+                    fila = "white";
                 }
-                <tr class="@fila">
+
+
+
+
+
+
+
+                <tr style="background-color:@fila">
                     <td>
                         @flag
                     </td>
