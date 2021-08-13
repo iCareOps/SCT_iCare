@@ -35,19 +35,21 @@
 
     var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 
+    int? idRol = 0;
 
 if (oUser != null)
 {
 idUser = oUser.idUsuario;
 nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
 
 
 Hospital = "GENERAL";
 Sucursal = Hospital.ToString();
 
-modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && s.M.CC == "Call Center")@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC == "Call Center" || s.M.CC == "Administrador"))@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 
-registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && s.M.CC == "Call Center").Count();
+registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC == "Call Center" || s.M.CC == "Administrador")).Count();
 }
 
 }
@@ -59,9 +61,17 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
 <div class="form-inline">
     @*<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>*@
     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal3"><span class="glyphicon glyphicon-credit-card"></span> Pago con Tarjeta</button>&nbsp;&nbsp;&nbsp;
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal3"><span class="glyphicon glyphicon-credit"></span> Pago con Tarjeta</button>&nbsp;&nbsp;&nbsp;
 
     <a href=@Url.Action("Index", "ControlDictamen")><button style="color:white" type="button" class="btn btn-info"><span class="glyphicon glyphicon-th-list"></span> &nbsp; &nbsp;Dictámenes</button></a>
+    @{
+        if (idRol == 2 || idUser == 83 || idUser == 84)
+        {
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#crearCC"><span class="glyphicon glyphicon-plus"></span> Crear Usuario</button>
+            <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> No Enviados: </button>
+        }
+    }
+
 
     <div class="input-group pull-right">
         <input type="text" class="form-control" id="buscador" name="dato" placeholder="Paciente o Expediente">
@@ -301,7 +311,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                         </select>
                     </div>
 
-                </div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -471,7 +481,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                         <input type="date" class="form-control" id="fecha" name="fecha" required>
                     </div>
                     <input type="hidden" name="usuario" asp-for="file" class="" required value="Call Center" />
-</div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -607,7 +617,7 @@ else
                     <th></th>
                 </tr>
             </thead>
-            
+
 
             @foreach (var item in modelo)
             {
@@ -725,6 +735,38 @@ else
         </table>
     </div>
 }
+
+<!-- Modal para editar-->
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Usuarios/CreateCallCenter")">
+    @Html.AntiForgeryToken()
+    <div class="modal fade" id="crearCC" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Crear Usuario de Call Center:</b></h3>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Nombre:</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Email:</label>
+                        <input type="text" class="form-control" id="email" name="email" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Contraseña:</label>
+                        <input type="password" class="form-control" id="password" name="password" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 
 
 

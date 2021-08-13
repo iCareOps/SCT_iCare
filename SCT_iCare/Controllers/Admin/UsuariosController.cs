@@ -76,7 +76,7 @@ namespace SCT_iCare.Controllers.Admin
 
             usuarios.Nombre = nombre;
             usuarios.Email = email;
-            usuarios.Password = Encrypt.GetSHA256(usuarios.Password);
+            usuarios.Password = Encrypt.GetSHA256(password);
             usuarios.idRol = 10;
 
             if (ModelState.IsValid)
@@ -88,6 +88,27 @@ namespace SCT_iCare.Controllers.Admin
 
             ViewBag.idRol = new SelectList(db.Roles, "idRol", "Nombre", usuarios.idRol);
             return View("Index");
+        }
+
+        [HttpPost]
+        public ActionResult CreateCallCenter(string email, string password, string nombre)
+        {
+            Usuarios usuarios = new Usuarios();
+
+            usuarios.Nombre = nombre;
+            usuarios.Email = email;
+            usuarios.Password = Encrypt.GetSHA256(password);
+            usuarios.idRol = 1;
+
+            if (ModelState.IsValid)
+            {
+                db.Usuarios.Add(usuarios);
+                db.SaveChanges();
+                return View("Index", "CallCenter");
+            }
+
+            ViewBag.idRol = new SelectList(db.Roles, "idRol", "Nombre", usuarios.idRol);
+            return View("Index", "CallCenter");
         }
 
         // GET: Usuarios/Edit/5
