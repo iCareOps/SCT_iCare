@@ -506,24 +506,25 @@
                     foreach (var item in repoCompleta)
                     {
 
-                        if (item.TipoTramite == "PRIMERA VEZ")
+                        if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) != "AEREO")
                         {
-                            fila = "bg-info";
+                            fila = "#BBDEFB";
+                        }
+                        else if (item.TipoTramite != "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                        {
+                            fila = "#D1C4E9";
+                        }
+                        else if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                        {
+                            fila = "#9575CD";
                         }
                         else
                         {
-                            fila = "bg-default";
-                        }
-
-                        var Licencia = (from l in db.Cita where l.idPaciente == item.idPaciente select l).FirstOrDefault();
-
-                        if (Licencia.TipoLicencia == "AEREO")
-                        {
-                            fila = "bg-warning";
+                            fila = "white";
                         }
 
 
-                        <tr class=@fila>
+                        <tr style="background-color:@fila">
                             <td>
                                 @flag
                             </td>
@@ -616,17 +617,25 @@
                     foreach (var item in repoCentral)
                     {
 
-                        if (item.TipoTramite == "PRIMERA VEZ")
-                        {
-                            fila = "bg-info";
-                        }
-                        else
-                        {
-                            fila = "bg-default";
-                        }
+                                          if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) != "AEREO")
+                    {
+                        fila = "#BBDEFB";
+                    }
+                    else if (item.TipoTramite != "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                    {
+                        fila = "#D1C4E9";
+                    }
+                    else if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                    {
+                        fila = "#9575CD";
+                    }
+                    else
+                    {
+                        fila = "white";
+                    }
 
 
-                        <tr class=@fila>
+                        <tr tr style="background-color:@fila">
                             <td>
                                 @flag
                             </td>
@@ -647,7 +656,11 @@
                                 @Html.DisplayFor(modelItem => item.NoExpediente)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.TipoTramite)
+                                @*@Html.DisplayFor(modelItem => item.TipoTramite)*@
+                                @{
+                                    var licencia = (from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault();
+                                }
+                                @item.TipoTramite (<b>@licencia</b>)
                             </td>
                             <td>
                                 <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
