@@ -943,7 +943,7 @@ namespace SCT_iCare.Controllers.CallCenter
         }
 
         [HttpPost]
-        public ActionResult EditarCompleto(string id, string nombre, string telefono, string email, DateTime fecha)
+        public ActionResult EditarCompleto(string id, string nombre, string telefono, string email, DateTime? fecha, string sucursal)
         {
             int ide = Convert.ToInt32(id);
 
@@ -956,6 +956,8 @@ namespace SCT_iCare.Controllers.CallCenter
             string NOMBRE = null;
             string TELEFONO = null;
             string EMAIL = null;
+            DateTime FECHA = new DateTime();
+            string SUCURSAL = null;
 
             if (id == null)
             {
@@ -993,11 +995,21 @@ namespace SCT_iCare.Controllers.CallCenter
                 EMAIL = email;
             }
 
+            if(fecha == null)
+            {
+                FECHA = Convert.ToDateTime(cita.FechaCita);
+            }
+            else
+            {
+                FECHA = Convert.ToDateTime(fecha);
+            }
+
             paciente.Nombre = NOMBRE;
             paciente.Telefono = TELEFONO;
             paciente.Email = EMAIL;
 
             cita.FechaCita = fecha;
+            cita.Sucursal = sucursal;
 
             if ((from i in db.Cita where i.Referencia == ((from l in db.Cita where i.idPaciente == ide select l.Referencia).FirstOrDefault()) select i).Count() < 2)
             {

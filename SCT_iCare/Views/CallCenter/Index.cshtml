@@ -56,16 +56,16 @@ int modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) 
         if (oUser.idRol == 2)
         {
             modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate);
+            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC == "Call Center" || s.M.CC == "Administrador") && (s.M.Recepcionista != "Cristian Airaldi"));
 
             modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-.Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate).Count();
+.Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC == "Call Center" || s.M.CC == "Administrador") && (s.M.Recepcionista != "Cristian Airaldi")).Count();
 
             modelo2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate);
+.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC == "Call Center" || s.M.CC == "Administrador") && (s.M.Recepcionista != "Cristian Airaldi"));
 
             modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
+.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC == "Call Center" || s.M.CC == "Administrador") && (s.M.Recepcionista != "Cristian Airaldi")).Count();
         }
         else
         {
@@ -676,9 +676,9 @@ int modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) 
 
 
 
-@if (modelo.FirstOrDefault() == null)
+@if (modeloCount == 0)
 {
-    <h1 style="color:white">No tienes creadas para el día de hoy!</h1>
+    <h1 style="color:white">No tienes referencias creadas para el día de hoy!</h1>
 }
 else
 {
@@ -705,6 +705,9 @@ else
                     </th>
                     <th>
                         Sucursal
+                    </th>
+                    <th>
+                        Usuario
                     </th>
                     <th>
                         Fecha Cita
@@ -779,6 +782,19 @@ else
                         <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
                     </td>
                     <td>
+                        @{
+                            if (item.M.CC == "Cristian Airaldi")
+                            {
+                                @Html.DisplayFor(modelItem => item.M.Recepcionista)
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(modelItem => item.M.CC)
+                            }
+                        }
+
+                    </td>
+                    <td>
                         @*@Html.DisplayFor(modelItem => item.M.FechaCita)*@
                         @Convert.ToDateTime(item.M.FechaCita).ToString("dd-MMMM-yyyy")
                     </td>
@@ -834,6 +850,19 @@ else
                                                 <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
                                                 <input type="date" class="form-control" id="fecha" name="fecha" required />
                                             </div>
+                                            <div class="form-group" style="width:60%; min-width:320px">
+                                                <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                                                <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                    <option value="@item.M.Sucursal">@item.M.Sucursal</option>
+                                                    @{
+                                                        var sucursalesOpciones = from s in db.Sucursales select s.Nombre;
+                                                        foreach (var opcion in sucursalesOpciones)
+                                                        {
+                                                            <option value="@opcion">@opcion</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -855,9 +884,9 @@ else
     </div>
 }
 
-@if (modelo.FirstOrDefault() == null)
+@if (modeloCount2 == 0)
 {
-    <h1 style="color:white">No tienes Referencias de Pago el día de hoy!</h1>
+    <h1 style="color:white">No citas generadas el día de hoy!</h1>
 }
 else
 {
@@ -884,6 +913,9 @@ else
                     </th>
                     <th>
                         Sucursal
+                    </th>
+                    <th>
+                        Usuario
                     </th>
                     <th>
                         Fecha Cita
@@ -959,6 +991,19 @@ else
                             <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
                             <span class="tip-content">@item.M.Doctor</span>
                         </span>
+                    </td>
+                                        <td>
+                        @{
+                            if (item.M.CC == "Cristian Airaldi")
+                            {
+                                @Html.DisplayFor(modelItem => item.M.Recepcionista)
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(modelItem => item.M.CC)
+                            }
+                        }
+
                     </td>
                     <td>
                         @*@Html.DisplayFor(modelItem => item.M.FechaCita)*@

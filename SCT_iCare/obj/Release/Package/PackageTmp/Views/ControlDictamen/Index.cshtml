@@ -37,7 +37,7 @@
     DateTime tomorrowDate = new DateTime(year, month, day).AddDays(1);
 
     var repoCentral = db.Captura.Join(db.Paciente, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
-.Where(w => w.N.FechaExpdiente >= thisDate && w.N.FechaExpdiente < tomorrowDate && w.N.EstatusCaptura == "Terminado").ToList();
+.Where(w => w.N.FechaExpdiente >= thisDate && w.N.FechaExpdiente < tomorrowDate && (w.N.EstatusCaptura == "Terminado" || w.N.EstatusCaptura == "Pendiente" || w.N.EstatusCaptura == "Pausado")).ToList();
 
     //var repoCentral = (from r in db.Captura select r).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate && w.EstatusCaptura == "Terminado").ToList();
 
@@ -104,9 +104,12 @@
                     miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>Expediente</th><th>Email</th><th>Teléfono</th><th>Fecha Cita</th><th>Sucursal</th><th></th></tr>"
                     for (let i = 0; i < data.length; i++) {
                         var url = '@Url.Action("DescargarPDF","EPIs", new {id="xxxx"})';
+                        var epi = '<b>@Html.ActionLink("XXX", "AbrirEPI_EC", new { id = "xxxxx" }, new { style = "color: black; text-decoration: none" })</b>';
                         url = url.replace("xxxx", data[i].idCaptura);
+                        epi = epi.replace("XXX", data[i].Nombre);
+                        epi = epi.replace("xxxxx", data[i].idCaptura);
                         miResultado += "<tr style=\"border:1px solid gray\">" +
-                            "<td><b>" + data[i].Nombre + "</b></td>" +
+                            "<td><b>" + epi + "</b></td>" +
                             "<td><b>" + data[i].NoExpediente + "</b></td>" +
                             "<td><b>" + data[i].Email + "</b></td>" +
                             "<td><b>" + data[i].Telefono + "</b></td>" +
