@@ -50,7 +50,13 @@ Sucursal = Hospital.ToString();
 modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC == "Call Center" || s.M.CC == "Administrador"))@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 
 registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC == "Call Center" || s.M.CC == "Administrador")).Count();
+
+
 }
+
+    int noEnviados = db.DictamenProblema.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaExpdiente >= thisDate && s.M.FechaExpdiente < tomorrowDate && s.N.EstatusEnvio == "SI").Count();
+    int cita = (from c in db.Cita select c).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate).Count();
+
 
 }
 
@@ -67,8 +73,8 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
     @{
         if (idRol == 2 || idUser == 83 || idUser == 84)
         {
-            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#crearCC"><span class="glyphicon glyphicon-plus"></span> Crear Usuario</button>
-            <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> No Enviados: </button>
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#crearCC"><span class="glyphicon glyphicon-plus"></span> Crear Usuario</button>
+            <button type="button" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> No Enviados: <b>@(cita - noEnviados)</b></button>
         }
     }
 
@@ -646,7 +652,13 @@ else
                     </td>
 
                     <td>
-                        <b>@Html.DisplayFor(modelItem => item.N.Nombre)</b>
+                        @{ var entregado = (from e in db.Cita where e.idPaciente == item.M.idPaciente select e.Entregado).FirstOrDefault(); }
+                        <b>@Html.DisplayFor(modelItem => item.N.Nombre)</b> &nbsp;
+                        @{ if (entregado != null) 
+                            {
+                                <span class="glyphicon glyphicon-thumbs-up text-danger"></span>
+                            }
+                        }
                     </td>
 
                     <td>
@@ -675,10 +687,14 @@ else
                         }
                     </td>
                     <td>
-                        <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
+                        <span class="field-tip">
+                            <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
+                            <span class="tip-content">@item.M.Doctor</span>
+                        </span>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.M.FechaCita)
+                        @*@Html.DisplayFor(modelItem => item.M.FechaCita)*@
+                        @Convert.ToDateTime(item.M.FechaCita).ToString("dd-MMMM-yyyy")
                     </td>
                     <td>
                         <div class="btn-group">

@@ -239,6 +239,7 @@ namespace SCT_iCare.Controllers.CallCenter
                 cita.Folio = numFolio;
                 cita.Canal = "SITIO";
                 cita.FechaCita = fecha;
+                //cita.FechaCita = new DateTime(fecha.Year, fecha.Month, fecha.)
 
                 int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
 
@@ -942,7 +943,6 @@ namespace SCT_iCare.Controllers.CallCenter
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult EditarCompleto(string id, string nombre, string telefono, string email, DateTime fecha)
         {
             int ide = Convert.ToInt32(id);
@@ -1062,15 +1062,16 @@ namespace SCT_iCare.Controllers.CallCenter
             List<Paciente> data = db.Paciente.ToList();
             JavaScriptSerializer js = new JavaScriptSerializer();
             var selected = data.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
-                .Where(r => (r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro))
+                .Where(r => (r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro)).Join(db.Cita, o => o.N.idPaciente, p => p.idPaciente, (o, p) => new { O = o, P = p })
                 .Select(S => new {
-                    S.N.idPaciente,
-                    S.N.Nombre,
-                    S.M.NoExpediente,
-                    S.N.Email,
-                    S.N.Telefono,
-                    FechaReferencia = Convert.ToDateTime(S.M.FechaExpdiente).ToString("dd-MMMM-yyyy"),
-                    S.M.Sucursal
+                    S.O.N.idPaciente,
+                    S.O.N.Nombre,
+                    S.P.NoExpediente,
+                    S.O.N.Email,
+                    S.O.N.Telefono,
+                    FechaReferencia = Convert.ToDateTime(S.O.M.FechaExpdiente).ToString("dd-MMMM-yyyy"),
+                    S.O.M.Sucursal,
+                    S.P.Referencia
                 });
 
 

@@ -1136,6 +1136,24 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public ActionResult Entregado(int? id)
+        {
+            var idCita = (from i in db.Cita where i.idPaciente == id select i.idCita).FirstOrDefault();
+            Cita cita = db.Cita.Find(idCita);
+
+            cita.Entregado = "SI";
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(cita).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            return Redirect("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult CURP_Expediente(string id, string nombre, string numero, string curp, string tel, string email)
         {
             int ide = Convert.ToInt32(id);

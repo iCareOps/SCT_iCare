@@ -382,7 +382,7 @@ namespace SCT_iCare.Controllers.EPICenter
             Captura captura = db.Captura.Find(id);
             Dictamen dictamen = new Dictamen();
 
-            var documento = (from d in db.Dictamen where captura.idPaciente == d.idPaciente select d.Dictamen1).FirstOrDefault();
+            var documento = (from d in db.Dictamen where captura.idPaciente == d.idPaciente orderby d.idDictamen descending select d.Dictamen1).FirstOrDefault();
 
             var bytesBinary = documento;
             Response.ContentType = "application/pdf";
