@@ -590,14 +590,20 @@ namespace SCT_iCare.Controllers.EPICenter
             List<Paciente> data = db.Paciente.ToList();
             var selected = data.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
                 .Where(r => (r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro))
+                .Join(db.Cita, o => o.N.idPaciente, p => p.idPaciente, (o, p) => new { O = o, P = p })
                 .Select(S => new {
-                    S.N.idPaciente,
-                    S.N.Nombre,
-                    S.M.NoExpediente,
-                    S.N.Email,
-                    S.N.Telefono,
-                    FechaReferencia = Convert.ToDateTime(S.M.FechaExpdiente).ToString("dd-MMMM-yyyy"),
-                    S.M.Sucursal
+                    S.O.N.idPaciente,
+                    S.O.N.Nombre,
+                    S.O.M.NoExpediente,
+                    S.O.N.Email,
+                    S.O.M.TipoTramite,
+                    S.O.M.EstatusCaptura,
+                    S.O.N.Telefono,
+                    FechaReferencia = Convert.ToDateTime(S.O.M.FechaExpdiente).ToString("dd-MMMM-yyyy"),
+                    S.O.M.Sucursal,
+                    S.O.M.Doctor,
+                    S.P.TipoLicencia,
+                    S.O.M.idCaptura
                 });
 
             return Json(selected, JsonRequestBehavior.AllowGet);

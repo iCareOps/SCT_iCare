@@ -1665,11 +1665,20 @@ namespace SCT_iCare.Controllers.Recepcion
 
             List<Paciente> data = db.Paciente.ToList();
             JavaScriptSerializer js = new JavaScriptSerializer();
-            var selected = data.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m } )
+            var selected = data.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
                 .Where(r => r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro)
-                .Select(S => new { S.N.idPaciente, S.N.Nombre, S.N.Telefono, S.N.Email, S.N.Folio, S.N.CURP,
-                    S.M.TipoPago, FechaCita = S.M.FechaCita.ToString(), S.M.NoOrden, S.M.EstatusPago, S.M.TipoLicencia, S.M.NoExpediente,
-                    FechaReferencia  = S.M.FechaReferencia.ToString(), S.M.Referencia, S.M.Sucursal, S.M.Doctor, S.M.TipoTramite });
+                .Join(db.Captura, o => o.N.idPaciente, p => p.idPaciente, (o, p) => new { O = o, P = p })
+                .Select(S => new {
+                    S.O.N.idPaciente,
+                    S.O.N.Nombre,
+                    S.O.M.TipoPago,
+                    FechaCita = Convert.ToDateTime(S.O.M.FechaCita).ToString("dd-MMMM-yyyy"),
+                    S.O.M.TipoLicencia,
+                    S.O.M.NoExpediente,
+                    S.O.M.Sucursal,
+                    S.O.M.TipoTramite,
+                    S.P.EstatusCaptura
+                });
 
             //var joinSelected = selected.Join(db.Captura, n => n.idPaciente, d => d.idPaciente, (n, d) => new { N = n, D = d })
             //    .Select(S => new {

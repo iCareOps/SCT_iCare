@@ -772,10 +772,7 @@
 
                                                         //using (Html.BeginForm("Reanudar", "EPIs"))
                                                         //{
-                                                        <span class="glyphicon glyphicon-play text-success"></span><b>
-                                                            @*@Url.Action("Reanudar", "Reanudar", new { idCaptura = item.idCaptura })*@
-                                                            @Html.ActionLink("Reanudar", "Reanudar", new { idCaptura = item.idCaptura })
-                                                        </b>
+                                                        <span class="glyphicon glyphicon-play text-success"></span><b>@Html.ActionLink("Reanudar", "Reanudar", new { idCaptura = item.idCaptura })</b>
                                                         <div class="dropdown-divider"></div>
                                                         //}
                                                     }
@@ -805,7 +802,6 @@
                                                     </div>
                                                 </div>
                                             </form>
-
                                         </div>
 
                                     }
@@ -871,7 +867,7 @@
         </script>
     }
 
-    <script>
+<script>
     $(function () {
         $(".buscar").click(function () {
             var url = "@Url.Action("BuscarTodo", "EPIs")";
@@ -885,16 +881,91 @@
                     miResultado = "<h3>No se encontraron registros.</h3>"
                 }
                 else {
-                    miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>Expediente</th><th>Email</th><th>Teléfono</th><th>Fecha Cita</th><th>Sucursal</th></tr>"
+                    miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>Estatus Captura</th><th>Tipo Trámite</th><th>Fecha Captura</th><th>Sucursal</th><th></th></tr>"
                     for (let i = 0; i < data.length; i++) {
-                        miResultado += "<tr style=\"border:1px solid gray\">" +
-                            "<td><b>" + data[i].Nombre + "</b></td>" +
-                            "<td><b>" + data[i].NoExpediente + "</b></td>" +
-                            "<td><b>" + data[i].Email + "</b></td>" +
-                            "<td><b>" + data[i].Telefono + "</b></td>" +
-                            "<td><b>" + data[i].FechaReferencia + "</b></td>" +
-                            "<td><b>" + data[i].Sucursal + "</b></td>" +
-                            "</tr>"
+                        if (data[i].EstatusCaptura == "No iniciado" || data[i].EstatusCaptura == "Pausado") {
+                            miResultado += "<tr style=\"border:1px solid gray\">" +
+                                "<td><b>" + data[i].Nombre + "</b></td>" +
+                                "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                "<td><b>" + data[i].TipoTramite + " (" + data[i].TipoLicencia + ")</b></td>" +
+                                "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                                "<td><b>" + data[i].Sucursal + " (" + data[i].Doctor + ")</b></td>" +
+                                "<td></td>" +
+                                "</tr>"
+                        }
+                        @*else if (data[i].EstatusCaptura == "Pausado") {
+                            var url = '@Html.ActionLink("Reanudar", "Reanudar", new { idCaptura = "xxxx" })';
+                            url = url.replace("xxxx", data[i].idCaptura);
+                            miResultado += "<tr style=\"border:1px solid gray\">" +
+                                "<td><b>" + data[i].Nombre + "</b></td>" +
+                                "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                "<td><b>" + data[i].TipoTramite + " (" + data[i].TipoLicencia + ")</b></td>" +
+                                "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                                "<td><b>" + data[i].Sucursal + " (" + data[i].Doctor + ")</b></td>" +
+                                "<td><div class=\"btn-group\">" +
+                                "<button type=\"button\" class=\"btn btn-info dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">"+
+                                    "Acciones <span class=\"glyphicon glyphicon-triangle-bottom\"></span>"+
+                                "</button>"+
+
+                                "<div class=\"dropdown-menu\" style=\"padding:10px\">"+
+                                "<span class=\"glyphicon glyphicon-play text-success\"></span><b> "+url+"</b>"+
+                                                        "<div class=\"dropdown-divider\"></div>"+
+                                "</div>" +
+
+                                "</td> " +
+                                "</tr>"
+                        }*@
+                        else if (data[i].EstatusCaptura == "Pendiente" || data[i].EstatusCaptura == "En captura...") {
+                            var url = '@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = "xxxx" })';
+                            url = url.replace("xxxx", data[i].idCaptura);
+
+                            miResultado += "<tr style=\"border:1px solid gray\">" +
+                                "<td><b>" + data[i].Nombre + "</b></td>" +
+                                "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                "<td><b>" + data[i].TipoTramite + " (" + data[i].TipoLicencia + ")</b></td>" +
+                                "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                                "<td><b>" + data[i].Sucursal + " (" + data[i].Doctor + ")</b></td>" +
+                                "<td><div class=\"btn-group\">" +
+                                "<button type=\"button\" class=\"btn btn-info dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">" +
+                                "Acciones <span class=\"glyphicon glyphicon-triangle-bottom\"></span>" +
+                                "</button>" +
+
+                                "<div class=\"dropdown-menu\" style=\"padding:10px\">" +
+                                "<b>" + url + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "</div>" +
+
+                                "</td> " +
+                                "</tr>"
+                        }
+                        @*else if (data[i].EstatusCaptura == "En captura...") {
+                            var url = '@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = "xxxx" })';
+                            var epi = '@Html.ActionLink("Pausar", "Pausa", new { id = "xxxx" , motivo = "Pausado desde barra de búsqueda"})';
+                            url = url.replace("xxxx", data[i].idCaptura);
+                            epi = epi.replace("xxxx", data[i].idCaptura);
+
+                            miResultado += "<tr style=\"border:1px solid gray\">" +
+                                "<td><b>" + data[i].Nombre + "</b></td>" +
+                                "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                "<td><b>" + data[i].TipoTramite + " (" + data[i].TipoLicencia + ")</b></td>" +
+                                "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                                "<td><b>" + data[i].Sucursal + " (" + data[i].Doctor + ")</b></td>" +
+                                "<td><div class=\"btn-group\">" +
+                                "<button type=\"button\" class=\"btn btn-info dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">" +
+                                "Acciones <span class=\"glyphicon glyphicon-triangle-bottom\"></span>" +
+                                "</button>" +
+
+                                "<div class=\"dropdown-menu\" style=\"padding:10px\">" +
+                                "<b>"+url+"</b>"+
+                                "<div class=\"dropdown-divider\"></div>"+
+                                "<b>"+epi+"</b>"+
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "</div>" +
+                                '</div>'+
+
+                                "</td> " +
+                                "</tr>"
+                        }*@
                     }
                 }
 
@@ -907,7 +978,7 @@
         });
     });
 
-    </script>
+</script>
 
     <script>
         var input = document.getElementById("buscador");
@@ -924,8 +995,8 @@
 
 
 <div class="modal fade" id="exampleModal10" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
+    <div class="modal-dialog" role="document" style="width:60%">
+        <div class="modal-content" >
             <div class="modal-header">
                 <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
             </div>
