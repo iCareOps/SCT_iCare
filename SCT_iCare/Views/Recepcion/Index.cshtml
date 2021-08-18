@@ -914,9 +914,13 @@ else
                             {
                                 <b>@*<mark style="background-color: darkgray; padding:5px; border-radius:10px">Sin EPI</mark>*@</b>
                             }
-                            else if (estatusDictamen.EstatusCaptura == "Pendiente" || estatusDictamen.EstatusCaptura == "Pausado")
+                            else if (estatusDictamen.EstatusCaptura == "Pendiente")
                             {
-                                <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px">Pendiente</mark></b>
+                                <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px"><span class="glyphicon glyphicon-alert"></span> Error</mark></b>
+                            }
+                            else if (estatusDictamen.EstatusCaptura == "Pausado")
+                            {
+                                <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Pendiente</mark></b>
                             }
                             else if (estatusDictamen.EstatusCaptura == "En captura..." || estatusDictamen.EstatusCaptura == "No iniciado")
                             {
@@ -958,6 +962,8 @@ else
                                 else if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
                                 {
                                     <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Pagado</b></a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
                                     <div class="dropdown-divider"></div>
                                 }
                                 else if (item.M.NoExpediente != null && item.M.EstatusPago == "Pagado")

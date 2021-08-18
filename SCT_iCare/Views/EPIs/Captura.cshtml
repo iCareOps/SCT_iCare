@@ -548,7 +548,34 @@
                                 @Html.DisplayFor(modelItem => item.TipoTramite)
                             </td>
                             <td>
-                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                @{
+                                    if (item.EstatusCaptura == "Pausado")
+                                    {
+                                        var comentario = (from c in db.CapturaIncidencia where c.idCaptura == item.idCaptura orderby c.idCapturaIncidencia descending select c.Comentario).FirstOrDefault();
+
+                                        <span class="field-tip">
+                                            <h6>
+                                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                                <span class="tip-content">@comentario</span>
+                                            </h6>
+                                        </span>
+                                    }
+                                    else if (item.EstatusCaptura == "Pendiente")
+                                    {
+                                        var comentario = (from c in db.IncidenciaDictamen where c.idCaptura == item.idCaptura orderby c.idIncidencia descending select c.Incidencia).FirstOrDefault();
+
+                                        <span class="field-tip">
+                                            <h6>
+                                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                                <span class="tip-content">@comentario</span>
+                                            </h6>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                    }
+                                }
                             </td>
                             <td>
 
@@ -663,7 +690,35 @@
                                 @item.TipoTramite (<b>@licencia</b>)
                             </td>
                             <td>
-                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                @{
+                                    if (item.EstatusCaptura == "Pausado")
+                                    {
+                                        var comentario = (from c in db.CapturaIncidencia where c.idCaptura == item.idCaptura orderby c.idCapturaIncidencia descending select c.Comentario).FirstOrDefault();
+
+                                        <span class="field-tip">
+                                            <h6>
+                                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                                <span class="tip-content">@comentario</span>
+                                            </h6>
+                                        </span>
+                                    }
+                                    else if (item.EstatusCaptura == "Pendiente")
+                                    {
+                                        var comentario = (from c in db.IncidenciaDictamen where c.idCaptura == item.idCaptura orderby c.idIncidencia descending select c.Incidencia).FirstOrDefault();
+
+                                        <span class="field-tip">
+                                            <h6>
+                                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                                <span class="tip-content">@comentario</span>
+                                            </h6>
+                                        </span>
+                                    }
+                        else
+                        {
+                            <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                        }
+                                }
+                                
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.InicioCaptura)
@@ -687,7 +742,7 @@
                                         using (Html.BeginForm("EditExpediente", "EPIs"))
                                         {
                                             @Html.AntiForgeryToken()
-                                            <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                            <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario })><button type="button" class="btn btn-info">Capturar</button></a>
                                         }
                                     }
                                     else if (item.EstatusCaptura == "En captura..." || item.EstatusCaptura == "Pausado" || item.EstatusCaptura == "Pendiente")
@@ -877,6 +932,7 @@
             <div class="modal-body">
                 <div class="tablaScroll">
                     <table class="table tablas table-responsive" id="tablaEjemploSS" style="color: #2F2D6B">
+
                     </table>
                 </div>
             </div>
