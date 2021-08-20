@@ -8,6 +8,8 @@
 
     GMIEntities db = new GMIEntities();
 
+    string referenciaIndividual = "";
+
     var Recepcion = new int?();
     var Hospital = "";
     var idHospital = 0;
@@ -18,6 +20,7 @@
     int registros;
 
     int flag = 1; //contador de la tabla
+    int flag2 = 1; //contador de la tabla
 
     DateTime start = DateTime.Now;
     DateTime finish = DateTime.Now.AddDays(1);
@@ -30,11 +33,16 @@
     int month1 = finish.Month;
     int day1 = finish.Day;
 
+
     int tomorrorDay = day + 1;
     DateTime thisDate = new DateTime(year, month, day);
     DateTime tomorrowDate = new DateTime(year1, month1, day1);
 
     var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+int modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate).Count()@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+
+    var repetidas = (from r in db.Cita select r).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal != "SITIO" && s.Canal != "Call Center" && s.Asistencia == null).Select(s => new { s.Referencia }).Distinct().Count(); ;
+    var repetidasCitas = (from r in db.Cita select r).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.Canal != "SITIO" && s.Canal != "Call Center" && s.Asistencia == null).Select(s => new { s.Referencia }).Distinct().Count(); ;
 
 
     if (oUser != null)
@@ -48,9 +56,12 @@
 
         modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && s.M.CC == oUser.Nombre);
 
-        if(nombreUsuario == "Cristian Airaldi" || nombreUsuario == "Administrador")
+        if (nombreUsuario == "Cristian Airaldi" || nombreUsuario == "Administrador")
         {
             modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate);
+            modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == "Cristian Airaldi")).Count();
+
         }
 
         registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && s.M.CC == oUser.Nombre).Count();
@@ -511,18 +522,116 @@
 
 
 
+@*@if (modelo.FirstOrDefault() == null)
+    {
+        <h1 style="color:white">No existen citas el día de hoy!</h1>
+    }
+    else
+    {
+        var repetidas = (from r in db.Cita select r).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal != "SITIO").Select(s => new { s.Canal, s.Sucursal }).Distinct();
+        var grupo = from g in db.Cita group g by g.Referencia into i select new { };
+        var grupo2 = db.Cita.GroupBy(x => new { x.Referencia, x.Canal }).Count();
+
+        <div class="tablaScroll">
+            <table class="table tablas" style="color: #2F2D6B">
+                <thead>
+                    <tr style="background-color:#62E3C9">
+                        <th>
+                        </th>
+
+                        <th>
+                            Nombre del Gestor
+                        </th>
+                        <th>
+                            Sucursal
+                        </th>
+
+                        <th>
+                            Cantidad
+                        </th>
+                        <th>
+                            Referencia
+                        </th>
+                        <th>
+                            Estatus de EPIs
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+
+                @foreach (var item in grupo2)
+                {
+                    int conteo = (from c in db.Cita where c.Canal == item.Canal select c).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Sucursal == item.Sucursal).Count();
+
+                    <tr>
+                        <td>
+                            @flag
+                        </td>
+                        <td>
+                            <b>@item.Key.</b>
+                        </td>
+                        <td>
+                            @item.Sucursal
+                        </td>
+                        <td>
+                            <b>@conteo</b>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            @{
+                                var idPaciente = (from id in db.Cita select id).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Sucursal == item.Sucursal && s.Canal == item.Canal);
+
+                                int n = 0;
+
+                                foreach (var item1 in idPaciente)
+                                {
+                                    var estatus = (from c in db.Captura select c).Where(s => s.FechaExpdiente >= thisDate && s.FechaExpdiente < tomorrowDate && s.Sucursal == item.Sucursal && s.EstatusCaptura == "Terminado" && s.idPaciente == item1.idPaciente).FirstOrDefault();
+                                    if (estatus != null)
+                                    {
+                                        n++;
+                                    }
+                                }
+
+                                if (n == 0)
+                                {
+                                    <mark class="bg-warning">Pendientes</mark>
+                                }
+                                else if (n != conteo)
+                                {
+                                    <mark class="bg-info">Parcialmente Listos</mark>
+                                }
+                                else if (n == conteo)
+                                {
+                                    <mark class="bg-success">Todos Listos</mark>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+
+                    flag += 1;
+
+                }
+
+            </table>
+        </div>
+    }*@
+
 @if (modelo.FirstOrDefault() == null)
 {
     <h1 style="color:white">No existen citas el día de hoy!</h1>
 }
 else
 {
-    var repetidas = (from r in db.Cita select r).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal != "SITIO").Select(s => new { s.Canal, s.Sucursal }).Distinct();
+    var citas = (from c in db.Cita select c).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal != "SITIO");
 
-    <div class="tablaScroll">
+    <h3 style="color:white">REFERENCIAS CREADAS HOY: @repetidas</h3>
+    <div class="tablaScroll2">
         <table class="table tablas" style="color: #2F2D6B">
             <thead>
-                <tr style="background-color:#62E3C9">
+                <tr style="background-color:#62E3C9; color:white">
                     <th>
                     </th>
 
@@ -545,60 +654,384 @@ else
                     <th></th>
                 </tr>
             </thead>
-            
 
-            @foreach (var item in repetidas)
+
+            @foreach (var item in citas)
             {
-                int conteo = (from c in db.Cita where c.Canal == item.Canal select c).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Sucursal == item.Sucursal).Count();
+                //string modal = "";
+                //if (item.TipoPago != "Pago con Tarjeta")
+                //{
+                //    modal = "estatus_" + referenciaIndividual;
+                //}
+                //else
+                //{
+                //    modal = (item.idCita).ToString();
+                //}
 
-                <tr>
-                    <td>
-                        @flag
-                    </td>
-                    <td>
-                        <b>@item.Canal</b>
-                    </td>
-                    <td>
-                        @item.Sucursal
-                    </td>
-                    <td>
-                        <b>@conteo</b>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                        @{
-                            var idPaciente = (from id in db.Cita select id).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Sucursal == item.Sucursal && s.Canal == item.Canal);
+                if (referenciaIndividual == item.Referencia)
+                {
+                    continue;
+                }
 
-                            int n = 0;
+                referenciaIndividual = item.Referencia;
 
-                            foreach (var item1 in idPaciente)
-                            {
-                                var estatus = (from c in db.Captura select c).Where(s => s.FechaExpdiente >= thisDate && s.FechaExpdiente < tomorrowDate && s.Sucursal == item.Sucursal && s.EstatusCaptura == "Terminado" && s.idPaciente == item1.idPaciente).FirstOrDefault();
-                                if (estatus != null)
-                                {
-                                    n++;
-                                }
-                            }
+                int referencias = (from r in db.Cita where r.Referencia == item.Referencia select r).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia< tomorrowDate).Count();
 
-                            if (n == 0)
+
+
+        if (referencias > 1)
+        {
+        <tr>
+            <td>
+                @flag
+            </td>
+            <td>
+                <b>@item.Canal</b>
+            </td>
+            <td>
+                @item.Sucursal
+            </td>
+            <td>
+                <b>@referencias</b>
+            </td>
+            <td>
+                @{
+                    if (item.TipoPago == "Pago con Tarjeta")
+                    {
+                        <b><a href=@item.NoOrden target="_blank">Terminación: @referenciaIndividual</a></b>
+                    }
+                    else
+                    {
+                        <b>@referenciaIndividual</b>
+                    }
+                }
+            </td>
+            <td>
+                <a data-toggle="modal" data-target="#estatus_@item.Referencia">
+                    @{
+                        var idPaciente = (from id in db.Cita select id).Where(s => s.Referencia == referenciaIndividual && s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Sucursal == item.Sucursal && s.Canal == item.Canal);
+
+                        int n = 0;
+
+                        foreach (var item1 in idPaciente)
+                        {
+                            var estatus = (from c in db.Captura select c).Where(s => s.FechaExpdiente >= thisDate && s.FechaExpdiente < tomorrowDate && s.Sucursal == item.Sucursal && s.EstatusCaptura == "Terminado" && s.idPaciente == item1.idPaciente).FirstOrDefault();
+                            if (estatus != null)
                             {
-                                <mark class="bg-warning">Pendientes</mark>
-                            }
-                            else if (n != conteo)
-                            {
-                                <mark class="bg-info">Parcialmente Listos</mark>
-                            }
-                            else if (n == conteo)
-                            {
-                                <mark class="bg-success">Todos Listos</mark>
+                                n++;
                             }
                         }
-                    </td>
+
+                        if (n == 0)
+                        {
+                            <mark class="bg-warning">Pendientes</mark>
+                        }
+                        else if (n != referencias)
+                        {
+                            <mark class="bg-info">Parcialmente Listos</mark>
+                        }
+                        else if (n == referencias)
+                        {
+                            <mark class="bg-success">Todos Listos</mark>
+                        }
+                    }
+                </a>
+                @{int flag3 = 1; }
+                <div class="modal fade" id="estatus_@item.Referencia" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>@n de @referencias dictámenes listos</b></h3>
+                            </div>
+                            <div class="modal-body">
+                                <div >
+                                    @{
+                                        //var dictamenes = (from d in db.Cita where d.Referencia == referenciaIndividual && d.FechaReferencia >= thisDate && d.FechaReferencia < tomorrowDate select d);
+
+                                        var dictamenes = db.Cita.Join(db.Captura, o => o.idPaciente, m => m.idPaciente, (o, m) => new { O = o, M = m })
+                                            .Where(r => (r.O.Referencia == referenciaIndividual && r.O.FechaReferencia >= thisDate && r.O.FechaReferencia < tomorrowDate && (r.M.EstatusCaptura == "Terminado" || r.M.EstatusCaptura == "Pausado" || r.M.EstatusCaptura == "Pendiente")))
+                                            .Select(S => new
+                                            {
+                                                S.O.idPaciente,
+                                                S.M.NombrePaciente,
+                                                S.M.Doctor,
+                                                S.M.EstatusCaptura,
+                                                S.M.idCaptura
+                                            });
+
+                                        <table class="table tablas" style="color: #2F2D6B">
+                                            <thead>
+                                                <tr style="background-color:#62E3C9; color:white">
+                                                    <th>
+                                                    </th>
+
+                                                    <th>
+                                                        Nombre
+                                                    </th>
+                                                    <th>
+                                                        Doctor
+                                                    </th>
+
+                                                    <th>
+                                                        Estatus Dictamen
+                                                    </th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+
+
+                                            @foreach (var item3 in dictamenes)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @flag3
+                                                    </td>
+
+                                                    <td>
+                                                        <b>@item3.NombrePaciente</b>
+                                                    </td>
+                                                    <td>
+                                                        @item3.Doctor
+                                                    </td>
+
+                                                    <td>
+                                                        @item3.EstatusCaptura
+                                                    </td>
+                                                    <td>
+                                                        @{
+                                                            if (item3.EstatusCaptura == "Terminado")
+                                                            {
+                                                                <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item3.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
+                                                            }
+                                                        }
+
+                                                    </td>
+                                                </tr>
+
+                                                flag3 += 1;
+                                            }
+
+                                        </table>
+                                    }
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </td>
+        </tr>
+        }
+
+
+        flag += 1;
+
+        }
+
+        </table>
+    </div>
+}
+
+@if (modelo.FirstOrDefault() == null)
+{
+    <h1 style="color:white">No existen citas el día de hoy!</h1>
+}
+else
+{
+    var citas = (from c in db.Cita select c).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.Canal != "SITIO");
+
+    <h3 style="color:white">CITAS PARA HOY: @repetidasCitas</h3>
+    <div class="tablaScroll2">
+        <table class="table tablas" style="color: #2F2D6B">
+            <thead>
+                <tr style="background-color:#62E3C9; color:white">
+                    <th>
+                    </th>
+
+                    <th>
+                        Nombre del Gestor
+                    </th>
+                    <th>
+                        Sucursal
+                    </th>
+
+                    <th>
+                        Cantidad
+                    </th>
+                    <th>
+                        Referencia
+                    </th>
+                    <th>
+                        Estatus de EPIs
+                    </th>
+                    <th></th>
                 </tr>
+            </thead>
 
 
-                flag += 1;
+            @foreach (var item in citas)
+            {
+                if (referenciaIndividual == item.Referencia)
+                {
+                    continue;
+                }
+
+                referenciaIndividual = item.Referencia;
+
+                int referencias = (from r in db.Cita where r.Referencia == item.Referencia select r).Count();
+
+                if (referencias > 1)
+                {
+                    <tr>
+                        <td>
+                            @flag2
+                        </td>
+                        <td>
+                            <b>@item.Canal</b>
+                        </td>
+                        <td>
+                            @item.Sucursal
+                        </td>
+                        <td>
+                            <b>@referencias</b>
+                        </td>
+                        <td>
+                            @{
+                                if (item.TipoPago == "Pago con Tarjeta")
+                                {
+                                    <b><a href=@item.NoOrden target="_blank">Terminación: @referenciaIndividual</a></b>
+                                }
+                                else
+                                {
+                                    <b>@referenciaIndividual</b>
+                                }
+                            }
+                        </td>
+                        <td>
+                            <a data-toggle="modal" data-target="#estatus_@item.Referencia">
+                                @{
+                                    var idPaciente = (from id in db.Cita select id).Where(s => s.Referencia == referenciaIndividual && s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Sucursal == item.Sucursal && s.Canal == item.Canal);
+
+                                    int n = 0;
+
+                                    foreach (var item1 in idPaciente)
+                                    {
+                                        var estatus = (from c in db.Captura select c).Where(s => s.FechaExpdiente >= thisDate && s.FechaExpdiente < tomorrowDate && s.Sucursal == item.Sucursal && s.EstatusCaptura == "Terminado" && s.idPaciente == item1.idPaciente).FirstOrDefault();
+                                        if (estatus != null)
+                                        {
+                                            n++;
+                                        }
+                                    }
+
+                                    if (n == 0)
+                                    {
+                                        <mark class="bg-warning">Pendientes</mark>
+                                    }
+                                    else if (n != referencias)
+                                    {
+                                        <mark class="bg-info">Parcialmente Listos</mark>
+                                    }
+                                    else if (n == referencias)
+                                    {
+                                        <mark class="bg-success">Todos Listos</mark>
+                                    }
+                                }
+                            </a>
+                            @{int flag3 = 1; }
+                            <div class="modal fade" id="estatus_@item.Referencia" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h3 class="modal-title text-primary" id="exampleModalLabel"><b>@n de @referencias dictámenes listos</b></h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div>
+                                                @{
+                                                    //var dictamenes = (from d in db.Cita where d.Referencia == referenciaIndividual && d.FechaReferencia >= thisDate && d.FechaReferencia < tomorrowDate select d);
+
+                                                    var dictamenes = db.Cita.Join(db.Captura, o => o.idPaciente, m => m.idPaciente, (o, m) => new { O = o, M = m })
+                                                        .Where(r => (r.O.Referencia == referenciaIndividual && r.O.FechaReferencia >= thisDate && r.O.FechaReferencia < tomorrowDate && (r.M.EstatusCaptura == "Terminado" || r.M.EstatusCaptura == "Pausado" || r.M.EstatusCaptura == "Pendiente")))
+                                                        .Select(S => new
+                                                        {
+                                                            S.O.idPaciente,
+                                                            S.M.NombrePaciente,
+                                                            S.M.Doctor,
+                                                            S.M.EstatusCaptura,
+                                                            S.M.idCaptura
+                                                        });
+
+                                                    <table class="table tablas" style="color: #2F2D6B">
+                                                        <thead>
+                                                            <tr style="background-color:#62E3C9; color:white">
+                                                                <th>
+                                                                </th>
+
+                                                                <th>
+                                                                    Nombre
+                                                                </th>
+                                                                <th>
+                                                                    Doctor
+                                                                </th>
+
+                                                                <th>
+                                                                    Estatus Dictamen
+                                                                </th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+
+
+                                                        @foreach (var item3 in dictamenes)
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    @flag3
+                                                                </td>
+
+                                                                <td>
+                                                                    <b>@item3.NombrePaciente</b>
+                                                                </td>
+                                                                <td>
+                                                                    @item3.Doctor
+                                                                </td>
+
+                                                                <td>
+                                                                    @item3.EstatusCaptura
+                                                                </td>
+                                                                <td>
+                                                                    @{
+                                                                        if (item3.EstatusCaptura == "Terminado")
+                                                                        {
+                                                                            <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item3.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
+                                                                        }
+                                                                    }
+
+                                                                </td>
+                                                            </tr>
+
+                                                            flag3 += 1;
+                                                        }
+
+                                                    </table>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+
+                flag2 += 1;
 
             }
 

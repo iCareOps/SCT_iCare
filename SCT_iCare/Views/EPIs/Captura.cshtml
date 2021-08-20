@@ -883,19 +883,10 @@
                 else {
                     miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>Estatus Captura</th><th>Tipo Trámite</th><th>Fecha Captura</th><th>Sucursal</th><th></th></tr>"
                     for (let i = 0; i < data.length; i++) {
-                        if (data[i].EstatusCaptura == "No iniciado" || data[i].EstatusCaptura == "Pausado") {
-                            miResultado += "<tr style=\"border:1px solid gray\">" +
-                                "<td><b>" + data[i].Nombre + "</b></td>" +
-                                "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
-                                "<td><b>" + data[i].TipoTramite + " (" + data[i].TipoLicencia + ")</b></td>" +
-                                "<td><b>" + data[i].FechaReferencia + "</b></td>" +
-                                "<td><b>" + data[i].Sucursal + " (" + data[i].Doctor + ")</b></td>" +
-                                "<td></td>" +
-                                "</tr>"
-                        }
-                        @*else if (data[i].EstatusCaptura == "Pausado") {
-                            var url = '@Html.ActionLink("Reanudar", "Reanudar", new { idCaptura = "xxxx" })';
-                            url = url.replace("xxxx", data[i].idCaptura);
+                        if (data[i].EstatusCaptura === "No iniciado" || data[i].EstatusCaptura === "Pausado") {
+
+                            var epi = '<b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = "xxxxx" }, new { style = "color: black; text-decoration: none" })</b>';
+                            epi = epi.replace("xxxxx", data[i].idCaptura);
                             miResultado += "<tr style=\"border:1px solid gray\">" +
                                 "<td><b>" + data[i].Nombre + "</b></td>" +
                                 "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
@@ -903,21 +894,24 @@
                                 "<td><b>" + data[i].FechaReferencia + "</b></td>" +
                                 "<td><b>" + data[i].Sucursal + " (" + data[i].Doctor + ")</b></td>" +
                                 "<td><div class=\"btn-group\">" +
-                                "<button type=\"button\" class=\"btn btn-info dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">"+
-                                    "Acciones <span class=\"glyphicon glyphicon-triangle-bottom\"></span>"+
-                                "</button>"+
+                                "<button type=\"button\" class=\"btn btn-info dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">" +
+                                "Acciones <span class=\"glyphicon glyphicon-triangle-bottom\"></span>" +
+                                "</button>" +
 
-                                "<div class=\"dropdown-menu\" style=\"padding:10px\">"+
-                                "<span class=\"glyphicon glyphicon-play text-success\"></span><b> "+url+"</b>"+
-                                                        "<div class=\"dropdown-divider\"></div>"+
+                                "<div class=\"dropdown-menu\" style=\"padding:10px\">" +
+                                "<b>" + epi + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
                                 "</div>" +
 
                                 "</td> " +
                                 "</tr>"
-                        }*@
-                        else if (data[i].EstatusCaptura == "Pendiente" || data[i].EstatusCaptura == "En captura...") {
+                        }
+                        else if (data[i].EstatusCaptura === "Pendiente" || data[i].EstatusCaptura === "En captura...") {
                             var url = '@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = "xxxx" })';
                             url = url.replace("xxxx", data[i].idCaptura);
+
+                            var epi = '<b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = "xxxxx" }, new { style = "color: black; text-decoration: none" })</b>';
+                            epi = epi.replace("xxxxx", data[i].idCaptura);
 
                             miResultado += "<tr style=\"border:1px solid gray\">" +
                                 "<td><b>" + data[i].Nombre + "</b></td>" +
@@ -933,16 +927,19 @@
                                 "<div class=\"dropdown-menu\" style=\"padding:10px\">" +
                                 "<b>" + url + "</b>" +
                                 "<div class=\"dropdown-divider\"></div>" +
+                                "<b>" + epi + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
                                 "</div>" +
 
                                 "</td> " +
                                 "</tr>"
                         }
-                        @*else if (data[i].EstatusCaptura == "En captura...") {
-                            var url = '@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = "xxxx" })';
-                            var epi = '@Html.ActionLink("Pausar", "Pausa", new { id = "xxxx" , motivo = "Pausado desde barra de búsqueda"})';
+                        else if (data[i].EstatusCaptura === "Terminado") {
+                            var url = '@Html.ActionLink("Descargar", "DescargarPDF", new { id = "xxxx" })';
                             url = url.replace("xxxx", data[i].idCaptura);
-                            epi = epi.replace("xxxx", data[i].idCaptura);
+
+                            var epi = '<b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = "xxxxx" }, new { style = "color: black; text-decoration: none" })</b>';
+                            epi = epi.replace("xxxxx", data[i].idCaptura);
 
                             miResultado += "<tr style=\"border:1px solid gray\">" +
                                 "<td><b>" + data[i].Nombre + "</b></td>" +
@@ -956,16 +953,15 @@
                                 "</button>" +
 
                                 "<div class=\"dropdown-menu\" style=\"padding:10px\">" +
-                                "<b>"+url+"</b>"+
-                                "<div class=\"dropdown-divider\"></div>"+
-                                "<b>"+epi+"</b>"+
+                                "<b>" + url + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "<b>" + epi + "</b>" +
                                 "<div class=\"dropdown-divider\"></div>" +
                                 "</div>" +
-                                '</div>'+
 
                                 "</td> " +
                                 "</tr>"
-                        }*@
+                        }
                     }
                 }
 

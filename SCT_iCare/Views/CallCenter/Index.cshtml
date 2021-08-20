@@ -53,7 +53,7 @@ int modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) 
         Hospital = "GENERAL";
         Sucursal = Hospital.ToString();
 
-        if (oUser.idRol == 2)
+        if (oUser.idRol == 2 || nombreUsuario == "Royer Plata")
         {
             modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
             .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC == "Call Center" || s.M.CC == "Administrador") && (s.M.Recepcionista != "Cristian Airaldi"));
@@ -102,7 +102,7 @@ int modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) 
 
     <a href=@Url.Action("Index", "ControlDictamen")><button style="color:white" type="button" class="btn btn-info"><span class="glyphicon glyphicon-th-list"></span> &nbsp; &nbsp;Dictámenes</button></a>
     @{
-        if (idRol == 2 || idUser == 83 || idUser == 84)
+        if (idRol == 2 || idUser == 93 || idUser == 83)
         {
             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#crearCC"><span class="glyphicon glyphicon-plus"></span> Crear Usuario</button>
             <button type="button" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> No Enviados: <b>@(cita - noEnviados)</b></button>
