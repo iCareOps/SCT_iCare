@@ -237,7 +237,7 @@ namespace SCT_iCare.Controllers.CallCenter
                 cita.Recepcionista = usuario;
                 cita.EstatusPago = orden.payment_status;
                 cita.Folio = numFolio;
-                cita.Canal = "SITIO";
+                cita.Canal = "Call Center";
                 cita.FechaCita = fecha;
                 //cita.FechaCita = new DateTime(fecha.Year, fecha.Month, fecha.)
 
@@ -455,7 +455,7 @@ namespace SCT_iCare.Controllers.CallCenter
                       }],
 
                       ""currency"":""MXN"",
-                      ""metadata"":{""my_custom_customer_id"":""202107PEPE""},
+                      ""metadata"":{},
                       ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @"
                       }
                     }");

@@ -787,7 +787,7 @@ namespace SCT_iCare.Controllers.Recepcion
                       }],
 
                       ""currency"":""MXN"",
-                      ""metadata"":{""my_custom_customer_id"":""202107PEPE""},
+                      ""metadata"":{},
                       ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @"
                       }
                     }");

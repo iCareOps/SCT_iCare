@@ -459,7 +459,7 @@ namespace SCT_iCare.Controllers.Gestoria
                       }],
 
                       ""currency"":""MXN"",
-                      ""metadata"":{""my_custom_customer_id"":""202107PEPE""},
+                      ""metadata"":{},
                       ""customer_info"": " + ConvertirCliente(nombre, mail, telefono) + @"
                       }
                     }");

@@ -20,4 +20,10 @@ namespace SCT_iCare.Models.Consultorios
         public string Consultorio { get; set; }
         public int NoConsultorio { get; set; }
     }
+
+    public class MejorSucursal
+    {
+        public string Sucursal { get; set; }
+        public int EPIS { get; set; }
+    }
 }

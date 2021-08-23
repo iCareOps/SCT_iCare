@@ -854,7 +854,67 @@ else
                         }
                     }
                     <td>
-                        @item.M.Canal
+                        @{
+                        if (item.M.CC == null && item.M.Canal == "SITIO" && item.M.Recepcionista != null)
+                        {
+                            <span class="field-tip">
+
+                                <b>SITIO </b>
+                                <span class="tip-content"><b>Recepcionista: </b>@item.M.Recepcionista</span>
+
+                            </span>
+
+                        }
+                        else if (item.M.CC == null && item.M.Canal != null && item.M.Recepcionista != null)
+                        {
+                         <span class="field-tip">
+
+                             <b>SITIO </b>
+                    <span class="tip-content"><b>Recepcionista: </b>@item.M.Recepcionista<br /><b>Gestor: </b>@item.M.Canal</span>
+
+                         </span>
+                        }
+                        else if (item.M.CC != null && item.M.Canal == "Call Center" && item.M.Recepcionista != null)
+                        {
+
+                            <span class="field-tip">
+                                <b>Call Center </b>
+                                <span class="tip-content"><b>Call Center </b>@item.M.CC</span>
+                            </span>
+                        }
+
+                        else if (item.M.CC != null && item.M.Canal != null && item.M.Recepcionista != null)
+                        {
+
+                       <span class="field-tip">
+                        <b>Call Center </b>
+                        <span class="tip-content">    <b>Call Center: </b>@item.M.CC<br /><b>Gestor: </b>@item.M.Canal</span>
+                        </span>
+                        }
+                        @*else if (item.M.CC == null && item.M.Canal != null && item.M.Recepcionista != null)
+                        {
+
+                         <span class="field-tip">
+                        <b>SITIO </b>
+                        <span class="tip-content"><b>Call Center: </b>@item.M.CC<br /><b>Gestor: </b>@item.M.Canal</span>
+                       </span>
+                        }*@
+
+
+
+
+
+
+
+                        @*else if (item.M.CC == null || item.M.Recepcionista !="Administrador")
+            {
+
+                <span class="field-tip">
+                    <b>Administrador</b>
+                    <span class="tip-content"><b>Gestor: </b>@item.M.Recepcionista</span>
+                </span>
+            }*@
+                    }
                     </td>
                     <td>
                         @{
