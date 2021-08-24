@@ -4,6 +4,19 @@
 
     GMIEntities db = new GMIEntities();
 
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    string nombreUsuario = null;
+    int idUser = 0;
+    int? idRol = 0;
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
+    }
+
     var sucursalesLista = from s in db.Sucursales select s;
 
     int diaHoy = DateTime.Now.Day;
@@ -17,6 +30,9 @@
     int anioManana = DateTime.Now.AddDays(1).Year;
 
     DateTime dateTomorrow = new DateTime(anioManana, mesManana, diaManana);
+
+    dateToday = Convert.ToDateTime(ViewBag.Inicio);
+    dateTomorrow = Convert.ToDateTime(ViewBag.Final);
 
     var citasHoy = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow);
     int citasHoyConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow).Count();
@@ -85,10 +101,119 @@
 
 <br />
 
-<h3 style="color:white" class="text-center">Administrador </h3>
+<h3 style="color:white" class="text-center"><span style="color:#AC9070">Bienvenido</span> @nombreUsuario </h3>
 
 <br />
+@*@if (ViewBag.Estado == 1)
+{
+    <h5 style="color:darkgray">Mostrando resultados de: <span style="color:white">@ViewBag.Inicio.ToString("dd-MMMM-yyyy")</span> hasta <span style="color:white">@ViewBag.Final.ToString("dd-MMMM-yyyy")</span></h5>
+}
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/Index")">
+    <div style="display:inline-block; padding:10px; background-color:gainsboro; border-radius: 5px">
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+        <input type="date" class="form-control" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+        <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
+        <input type="submit" class="btn btn-primary" value="Enviar" />
+        <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+    </div>
+    <div class="input-group pull-right">
+        <input type="text" class="form-control" id="buscador" name="dato" placeholder="Paciente o Expediente">
+        <span class="input-group-btn">
+            <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+        </span>
+    </div>
+</form>
+<br />
+<br />*@
 
+
+@section scripts{
+
+    <script>
+        var input = document.getElementById("buscador");
+        input.addEventListener("keydown", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("buscar").click();
+            }
+        });
+
+    </script>
+
+    <script>
+    $(function () {
+        $(".buscar").click(function () {
+            var url = "@Url.Action("BuscarTodo", "Admin")";
+            var dato = $("#buscador").val();
+            var data = { dato: dato };
+
+            $.post(url, data).done(function (data) {
+                console.log(data);
+                let miResultado = "";
+                if ($.isEmptyObject(data)) {
+                    miResultado = "<h3>No se encontraron registros.</h3>"
+                }
+                else {
+                    miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>Expediente</th><th>Email</th><th>Teléfono</th><th>Fecha Cita</th><th>Sucursal</th><th></th></tr>"
+                    for (let i = 0; i < data.length; i++) {
+                        var url = '@Url.Action("DescargarPDF","EPIs", new {id="xxxx"})';
+                        var epi = '<b>@Html.ActionLink("XXX", "AbrirEPI_EC", new { id = "xxxxx" }, new { style = "color: black; text-decoration: none" })</b>';
+                        url = url.replace("xxxx", data[i].idCaptura);
+                        epi = epi.replace("XXX", data[i].Nombre);
+                        epi = epi.replace("xxxxx", data[i].idCaptura);
+                        miResultado += "<tr style=\"border:1px solid gray\">" +
+                            "<td><b>" + epi + "</b></td>" +
+                            "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                            "<td><b>" + data[i].Email + "</b></td>" +
+                            "<td><b>" + data[i].Telefono + "</b></td>" +
+                            "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                            "<td><b>" + data[i].Sucursal + "</b></td>" +
+                            "<td><a href="+url+"> <b.autton type=\"button\" class=\"btn btn-danger\">Descargar</button></a></td>" +
+
+                            "</tr>"
+                    }
+                }
+
+                $('#exampleModal10').modal('show');
+                document.getElementById("tablaEjemplo").innerHTML = miResultado;
+
+            }).fail().always(function () {
+
+            });
+        });
+    });
+
+    </script>
+
+    @if (TempData["ID"] != null)
+    {
+        <script>
+            window.open('@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })');
+        </script>
+    }
+
+}
+
+<div class="modal fade" id="exampleModal10" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width:70%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body">
+                <div class="tablaScroll">
+                    <table class="table tablas table-responsive" id="tablaEjemplo" style="color: #2F2D6B">
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 
 <!-- Button trigger modal -->
@@ -350,7 +475,7 @@
                     <h4>Sucursal</h4>
                 </th>
                 <th>
-                    <h4>EPIs</h4>
+                    <h4>Citas</h4>
                 </th>
             </tr>
         </thead>
@@ -384,6 +509,9 @@
                     <h4>Gestor</h4>
                 </th>
                 <th>
+                    <h4>Citas</h4>
+                </th>
+                <th>
                     <h4>EPIs</h4>
                 </th>
             </tr>
@@ -399,6 +527,13 @@
                 </td>
                 <td>
                     @item.Count()
+                </td>
+                <td>
+                    @{
+                        var elemento = (from v in db.Cita where v.Doctor != null && v.FechaCita >= dateToday && v.FechaCita < dateTomorrow && v.Canal == item.Key select v).Count();
+
+                        <b>@elemento EPIs concretados </b>
+                    }
                 </td>
             </tr>
             flag2++;
@@ -449,8 +584,8 @@
                     }
                 </td>
             </tr>
-                            flag3++;
-                        }
+            flag3++;
+        }
 
     </table>
 </div>
