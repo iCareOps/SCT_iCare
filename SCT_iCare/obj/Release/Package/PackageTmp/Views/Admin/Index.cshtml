@@ -83,14 +83,14 @@
     var capturistasAnexa = from c in db.Usuarios where c.idRol == 9 select c.Nombre;
 
     int citasEfectuadas = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.CC != null).Count();
-    var citasCompletadas = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.CC != null);
+    var citasCompletadas = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.CC != null && (w.EstatusPago == "Pagado" || w.EstatusPago == "paid"));
     int citasCanceladas = (from c in citasCompletadas select c).Where(w => w.Doctor == null || w.CC != null).Count();
 
     int efectividad = 100;
 
     if (citasCanceladas != 0)
     {
-        efectividad = 100 - ((citasCanceladas * 100) / citasEfectuadas);
+        efectividad = ((citasCanceladas * 100) / citasEfectuadas);
     }
 
     int flag = 1;

@@ -28,7 +28,9 @@
         Query = TempData["ERROR"].ToString();
     }
 
+    DateTime maxDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
+    string fechaMAX = Convert.ToDateTime(maxDate).ToString("yyyy-MM-dd");
 
     string parameter = ViewBag.Parameter;
     DateTime rango = Convert.ToDateTime(ViewBag.Fecha);
@@ -90,16 +92,16 @@
         <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Captura")">
             <div style="display:inline-block; padding:10px; background-color:gainsboro; border-radius: 5px">
                 <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
-                <input type="date" class="form-control" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <input type="date" class="form-control" min="2021-08-02" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
-                <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
+                <input type="date" class="form-control" name="final" max="@fechaMAX" /> &nbsp; &nbsp;
                 <input type="submit" class="btn btn-primary" value="Enviar" />
                 <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
             </div>
             <div class="input-group pull-right">
-                <input type="text" class="form-control" id="buscador" name="dato" placeholder="Paciente o Expediente">
+                <input type="text" class="form-control input-g" id="buscador" name="dato" placeholder="Paciente o Expediente">
                 <span class="input-group-btn">
-                    <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                    <button class="btn btn-info buscar" id="buscar" type="button" ><span class="glyphicon glyphicon-search"></span></button>
                 </span>
             </div>
         </form>
@@ -984,7 +986,6 @@
                 document.getElementById("buscar").click();
             }
         });
-
     </script>
 
 }
