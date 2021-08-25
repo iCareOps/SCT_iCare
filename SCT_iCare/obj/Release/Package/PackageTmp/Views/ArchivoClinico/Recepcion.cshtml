@@ -1,0 +1,179 @@
+﻿@model IEnumerable<SCT_iCare.Paciente>
+
+@{
+    Layout = null;
+
+    ViewBag.Title = "Index";
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    GMIEntities db = new GMIEntities();
+    System.Web.Script.Serialization.JavaScriptSerializer js = new System.Web.Script.Serialization.JavaScriptSerializer();
+
+    var Recepcion = new int?();
+    var Hospital = "";
+    var idHospital = 0;
+    string Sucursal = null;
+    int idUser = 14;
+    string nombreUsuario = null;
+    string fila = "";
+    int registros;
+
+    int flag = 1; //contador de la tabla
+
+    DateTime start = DateTime.Now;
+    DateTime finish = DateTime.Now.AddDays(1);
+
+    int year = start.Year;
+    int month = start.Month;
+    int day = start.Day;
+
+    int year1 = finish.Year;
+    int month1 = finish.Month;
+    int day1 = finish.Day;
+
+    int tomorrorDay = day + 1;
+    DateTime thisDate = new DateTime(year, month, day);
+    DateTime tomorrowDate = new DateTime(year1, month1, day1);
+
+    var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+int? idRol = 0;
+
+if (oUser != null)
+{
+idUser = oUser.idUsuario;
+nombreUsuario = oUser.Nombre;
+idRol = oUser.idRol;
+
+if (idUser != 14 && oUser.idRol != 2)
+{
+Recepcion = (from r in db.DoctorModulo where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
+Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
+idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
+Sucursal = Hospital.ToString();
+
+modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+
+registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal).Count();
+
+}
+else
+{
+Hospital = "GENERAL";
+Sucursal = Hospital.ToString();
+
+modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate)/*.OrderByDescending(o => o.M.TipoTramite)*/;
+
+registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
+
+}
+}
+
+
+}
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - GMI</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope&display=swap" rel="stylesheet">
+    <link rel="icon" href="~/GMI.ico" />
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
+
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+    <link href="~/Content/Chart.min.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+
+<body style="background-color:white">
+
+    <h3 class="text-center text-primary">Archivo Clínico: <span class="text-warning">@Sucursal</span></h3>
+    <br />
+
+    <center>
+        <div style="width:50%; min-width: 330px">
+            <div class="tablaScroll" style="width:100%">
+                <table class="table tablas" style="color: #2F2D6B; border:1px solid gray; border-radius: 5px">
+                    <thead>
+                        <tr class="bg-primary" style="border-top-color: black">
+                            <th>
+                            </th>
+
+                            <th>
+                                Paciente
+                            </th>
+
+                            <th>
+                                No. Expediente
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+
+                    @foreach (var item in modelo)
+                    {
+
+                        if (item.M.TipoTramite == "PRIMERA VEZ" && item.M.TipoLicencia != "AEREO")
+                        {
+                            fila = "#BBDEFB";
+                        }
+                        else if (item.M.TipoTramite != "PRIMERA VEZ" && item.M.TipoLicencia == "AEREO")
+                        {
+                            fila = "#D1C4E9";
+                        }
+                        else if (item.M.TipoTramite == "PRIMERA VEZ" && item.M.TipoLicencia == "AEREO")
+                        {
+                            fila = "#9575CD";
+                        }
+                        else
+                        {
+                            fila = "white";
+                        }
+
+                        <tr style="background-color:@fila">
+                            <td>
+                                @flag
+                            </td>
+
+                            <td>
+                                <span class="field-tip">
+                                    <b>@Html.DisplayFor(modelItem => item.N.Nombre)</b>
+                                    <span class="tip-content">
+                                        <h6>
+                                            <b>Teléfono:</b><br />
+                                            @item.N.Telefono <br />
+                                            <b>Email:</b><br />
+                                            @item.N.Email <br />
+                                            <b>Folio:</b><br />
+                                            @item.N.Folio <br />
+                                        </h6>
+                                    </span>
+                                </span>
+                            </td>
+
+                            <td>
+                                <b>@Html.DisplayFor(modelItem => item.M.NoExpediente)</b>
+                            </td>
+                            <td>
+                                <a href="~/ArchivoClinico/Index"><button type="button" style="color:white" class="btn btn-primary" >Iniciar Examen</button></a>
+                            </td>
+                        </tr>
+
+                        flag += 1;
+
+                    }
+
+                </table>
+            </div>
+        </div>
+    </center>
+</body>

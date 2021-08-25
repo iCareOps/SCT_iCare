@@ -48,5 +48,7 @@ namespace SCT_iCare
         public virtual DbSet<log_InicioGestor> log_InicioGestor { get; set; }
         public virtual DbSet<log_Movimientos> log_Movimientos { get; set; }
         public virtual DbSet<DictamenProblema> DictamenProblema { get; set; }
+        public virtual DbSet<DoctorModulo> DoctorModulo { get; set; }
+        public virtual DbSet<Modulos> Modulos { get; set; }
     }
 }

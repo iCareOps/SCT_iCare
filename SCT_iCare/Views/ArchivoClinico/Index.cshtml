@@ -1,0 +1,69 @@
+﻿
+@{
+    Layout = null;
+
+    ViewBag.Title = "Index";
+
+    GMIEntities db = new GMIEntities();
+
+    DateTime start = DateTime.Now;
+    //DateTime startDay = Convert.ToDateTime(start.Day);
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    string nombreUsuario = null;
+    int idUser = 0;
+    int? idRol = 0;
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
+    }
+}
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - GMI</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope&display=swap" rel="stylesheet">
+    <link rel="icon" href="~/GMI.ico" />
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
+
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+    <link href="~/Content/Chart.min.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+<body style="background-color: white">
+    <br />
+    <h3 class="text-center text-primary">Carrusel Médico</h3>
+    <br />
+
+    <div style="width:100%">
+        <center>
+            @{
+                var modulos = from m in db.DoctorModulo where m.idUsuario == idUser select m.idModulo;
+
+                foreach (var item in modulos)
+                {
+                    var nombreModulo = (from n in db.Modulos where n.idModulo == item select n.Nombre).FirstOrDefault();
+
+                    <button class="btn btn-info" style="width:25vw; height:25vw; margin:0.5%; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%">@nombreModulo</button>
+                }
+            }
+        </center>
+    </div>
+
+</body>
+
+
+

@@ -12,30 +12,17 @@ namespace SCT_iCare
     using System;
     using System.Collections.Generic;
     
-    public partial class Sucursales
+    public partial class Modulos
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Sucursales()
+        public Modulos()
         {
-            this.Doctores = new HashSet<Doctores>();
-            this.Recepcionista = new HashSet<Recepcionista>();
             this.DoctorModulo = new HashSet<DoctorModulo>();
         }
     
-        public int idSucursal { get; set; }
+        public int idModulo { get; set; }
         public string Nombre { get; set; }
-        public string Calle { get; set; }
-        public string Colonia { get; set; }
-        public Nullable<int> idCiudad { get; set; }
-        public string SUC { get; set; }
-        public Nullable<int> Contador { get; set; }
-        public Nullable<System.DateTime> ContadorFecha { get; set; }
     
-        public virtual Ciudades Ciudades { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Doctores> Doctores { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Recepcionista> Recepcionista { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DoctorModulo> DoctorModulo { get; set; }
     }

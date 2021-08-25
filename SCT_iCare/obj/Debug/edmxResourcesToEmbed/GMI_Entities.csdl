@@ -214,6 +214,7 @@
     <NavigationProperty Name="Ciudades" Relationship="Self.FK_Sucursales_Ciudades" FromRole="Sucursales" ToRole="Ciudades" />
     <NavigationProperty Name="Doctores" Relationship="Self.FK_Doctores_Sucursales" FromRole="Sucursales" ToRole="Doctores" />
     <NavigationProperty Name="Recepcionista" Relationship="Self.FK_Recepcionista_Sucursales" FromRole="Sucursales" ToRole="Recepcionista" />
+    <NavigationProperty Name="DoctorModulo" Relationship="DevModel.FK_DoctorModulo_Sucursales" FromRole="Sucursales" ToRole="DoctorModulo" />
   </EntityType>
   <EntityType Name="Usuarios">
     <Key>
@@ -227,6 +228,7 @@
     <NavigationProperty Name="Recepcionista" Relationship="Self.FK_Recepcionista_Usuarios" FromRole="Usuarios" ToRole="Recepcionista" />
     <NavigationProperty Name="Roles" Relationship="Self.FK_Usuarios_Roles" FromRole="Usuarios" ToRole="Roles" />
     <NavigationProperty Name="log_InicioGestor" Relationship="DevModel.FK_log_InicioGestor_Usuarios" FromRole="Usuarios" ToRole="log_InicioGestor" />
+    <NavigationProperty Name="DoctorModulo" Relationship="DevModel.FK_DoctorModulo_Usuarios" FromRole="Usuarios" ToRole="DoctorModulo" />
   </EntityType>
   <Association Name="FK_Dictamen_Aptitud">
     <End Role="Aptitud" Type="Self.Aptitud" Multiplicity="0..1" />
@@ -496,6 +498,20 @@
       <End Role="Paciente" EntitySet="Paciente" />
       <End Role="DictamenProblema" EntitySet="DictamenProblema" />
     </AssociationSet>
+    <EntitySet Name="DoctorModulo" EntityType="DevModel.DoctorModulo" />
+    <EntitySet Name="Modulos" EntityType="DevModel.Modulos" />
+    <AssociationSet Name="FK_DoctorModulo_Modulos" Association="DevModel.FK_DoctorModulo_Modulos">
+      <End Role="Modulos" EntitySet="Modulos" />
+      <End Role="DoctorModulo" EntitySet="DoctorModulo" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DoctorModulo_Sucursales" Association="DevModel.FK_DoctorModulo_Sucursales">
+      <End Role="Sucursales" EntitySet="Sucursales" />
+      <End Role="DoctorModulo" EntitySet="DoctorModulo" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DoctorModulo_Usuarios" Association="DevModel.FK_DoctorModulo_Usuarios">
+      <End Role="Usuarios" EntitySet="Usuarios" />
+      <End Role="DoctorModulo" EntitySet="DoctorModulo" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="CapturaIncidencia">
     <Key>
@@ -604,6 +620,62 @@
       </Principal>
       <Dependent Role="DictamenProblema">
         <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="DoctorModulo">
+    <Key>
+      <PropertyRef Name="idDoctorModulo" />
+    </Key>
+    <Property Name="idDoctorModulo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idUsuario" Type="Int32" />
+    <Property Name="idSucursal" Type="Int32" />
+    <Property Name="idModulo" Type="Int32" />
+    <NavigationProperty Name="Modulos" Relationship="DevModel.FK_DoctorModulo_Modulos" FromRole="DoctorModulo" ToRole="Modulos" />
+    <NavigationProperty Name="Sucursales" Relationship="DevModel.FK_DoctorModulo_Sucursales" FromRole="DoctorModulo" ToRole="Sucursales" />
+    <NavigationProperty Name="Usuarios" Relationship="DevModel.FK_DoctorModulo_Usuarios" FromRole="DoctorModulo" ToRole="Usuarios" />
+  </EntityType>
+  <EntityType Name="Modulos">
+    <Key>
+      <PropertyRef Name="idModulo" />
+    </Key>
+    <Property Name="idModulo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="DoctorModulo" Relationship="DevModel.FK_DoctorModulo_Modulos" FromRole="Modulos" ToRole="DoctorModulo" />
+  </EntityType>
+  <Association Name="FK_DoctorModulo_Modulos">
+    <End Type="DevModel.Modulos" Role="Modulos" Multiplicity="0..1" />
+    <End Type="DevModel.DoctorModulo" Role="DoctorModulo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Modulos">
+        <PropertyRef Name="idModulo" />
+      </Principal>
+      <Dependent Role="DoctorModulo">
+        <PropertyRef Name="idModulo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DoctorModulo_Sucursales">
+    <End Type="DevModel.Sucursales" Role="Sucursales" Multiplicity="0..1" />
+    <End Type="DevModel.DoctorModulo" Role="DoctorModulo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Sucursales">
+        <PropertyRef Name="idSucursal" />
+      </Principal>
+      <Dependent Role="DoctorModulo">
+        <PropertyRef Name="idSucursal" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DoctorModulo_Usuarios">
+    <End Type="DevModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+    <End Type="DevModel.DoctorModulo" Role="DoctorModulo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Usuarios">
+        <PropertyRef Name="idUsuario" />
+      </Principal>
+      <Dependent Role="DoctorModulo">
+        <PropertyRef Name="idUsuario" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

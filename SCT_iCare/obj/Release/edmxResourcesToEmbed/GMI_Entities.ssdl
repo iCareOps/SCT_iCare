@@ -34,6 +34,9 @@
     <Property Name="PausaInicio" Type="datetime" />
     <Property Name="PausaFinal" Type="datetime" />
     <Property Name="Duracion" Type="int" />
+    <Property Name="Aptitud" Type="varchar" MaxLength="10" />
+    <Property Name="ComentarioAptitud" Type="varchar" MaxLength="300" />
+    <Property Name="FechaVigencia" Type="datetime" />
   </EntityType>
   <EntityType Name="CapturaIncidencia">
     <Key>
@@ -117,6 +120,15 @@
     <Property Name="Nombre" Type="varchar" MaxLength="200" />
     <Property Name="idSucursal" Type="int" />
   </EntityType>
+  <EntityType Name="DoctorModulo">
+    <Key>
+      <PropertyRef Name="idDoctorModulo" />
+    </Key>
+    <Property Name="idDoctorModulo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="idUsuario" Type="int" />
+    <Property Name="idSucursal" Type="int" />
+    <Property Name="idModulo" Type="int" />
+  </EntityType>
   <EntityType Name="Expedientes">
     <Key>
       <PropertyRef Name="idExpediente" />
@@ -170,6 +182,13 @@
     <Property Name="Nombre" Type="varchar" MaxLength="50" />
     <Property Name="Controlador" Type="varchar" MaxLength="50" />
     <Property Name="Accion" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="Modulos">
+    <Key>
+      <PropertyRef Name="idModulo" />
+    </Key>
+    <Property Name="idModulo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre" Type="varchar" MaxLength="50" />
   </EntityType>
   <EntityType Name="Paciente">
     <Key>
@@ -333,6 +352,42 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_DoctorModulo_Modulos">
+    <End Role="Modulos" Type="Self.Modulos" Multiplicity="0..1" />
+    <End Role="DoctorModulo" Type="Self.DoctorModulo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Modulos">
+        <PropertyRef Name="idModulo" />
+      </Principal>
+      <Dependent Role="DoctorModulo">
+        <PropertyRef Name="idModulo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DoctorModulo_Sucursales">
+    <End Role="Sucursales" Type="Self.Sucursales" Multiplicity="0..1" />
+    <End Role="DoctorModulo" Type="Self.DoctorModulo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Sucursales">
+        <PropertyRef Name="idSucursal" />
+      </Principal>
+      <Dependent Role="DoctorModulo">
+        <PropertyRef Name="idSucursal" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DoctorModulo_Usuarios">
+    <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+    <End Role="DoctorModulo" Type="Self.DoctorModulo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Usuarios">
+        <PropertyRef Name="idUsuario" />
+      </Principal>
+      <Dependent Role="DoctorModulo">
+        <PropertyRef Name="idUsuario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Expedientes_Paciente">
     <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
     <End Role="Expedientes" Type="Self.Expedientes" Multiplicity="*" />
@@ -476,12 +531,14 @@
     <EntitySet Name="Dictamen" EntityType="Self.Dictamen" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="DictamenProblema" EntityType="Self.DictamenProblema" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Doctores" EntityType="Self.Doctores" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="DoctorModulo" EntityType="Self.DoctorModulo" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Expedientes" EntityType="Self.Expedientes" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="IncidenciaDictamen" EntityType="Self.IncidenciaDictamen" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="IncidenciaPaciente" EntityType="Self.IncidenciaPaciente" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="log_InicioGestor" EntityType="Self.log_InicioGestor" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="log_Movimientos" EntityType="Self.log_Movimientos" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Menu" EntityType="Self.Menu" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Modulos" EntityType="Self.Modulos" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Paciente" EntityType="Self.Paciente" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Recepcionista" EntityType="Self.Recepcionista" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="ReferenciasSB" EntityType="Self.ReferenciasSB" Schema="dbo" store:Type="Tables" />
@@ -520,6 +577,18 @@
     <AssociationSet Name="FK_Doctores_Sucursales" Association="Self.FK_Doctores_Sucursales">
       <End Role="Sucursales" EntitySet="Sucursales" />
       <End Role="Doctores" EntitySet="Doctores" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DoctorModulo_Modulos" Association="Self.FK_DoctorModulo_Modulos">
+      <End Role="Modulos" EntitySet="Modulos" />
+      <End Role="DoctorModulo" EntitySet="DoctorModulo" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DoctorModulo_Sucursales" Association="Self.FK_DoctorModulo_Sucursales">
+      <End Role="Sucursales" EntitySet="Sucursales" />
+      <End Role="DoctorModulo" EntitySet="DoctorModulo" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DoctorModulo_Usuarios" Association="Self.FK_DoctorModulo_Usuarios">
+      <End Role="Usuarios" EntitySet="Usuarios" />
+      <End Role="DoctorModulo" EntitySet="DoctorModulo" />
     </AssociationSet>
     <AssociationSet Name="FK_Expedientes_Paciente" Association="Self.FK_Expedientes_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />

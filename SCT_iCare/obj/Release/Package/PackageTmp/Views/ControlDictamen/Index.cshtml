@@ -271,11 +271,49 @@
                 }*@
                                         if (idRol == 1)
                                         {
-                                            <b>@item.N.NombrePaciente</b>
+
+                                            if (item.N.Aptitud == "APTO")
+                                            {
+
+                                                <span class="field-tip">
+
+                                                    <b>@item.N.NombrePaciente</b>
+                                                    <span class="tip-content"><b>Aptitud: </b>APTO<br /><b>Vigencia: </b>@Convert.ToDateTime(item.N.FechaVigencia).ToString("dd-MMMM-yyyy")</span>
+
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="field-tip">
+
+                                                    <b>@item.N.NombrePaciente</b>
+                                                    <span class="tip-content"><b>Aptitud: </b> NO APTO<br /><b>Razón: </b>@item.N.ComentarioAptitud</span>
+
+                                                </span>
+                                            }
                                         }
                                         else
                                         {
-                                            <b>@Html.ActionLink(item.N.NombrePaciente, "AbrirEPI_EC", "ControlDictamen", new { id = item.N.idCaptura, fecha = fechaControl }, new { style = "color: black; text-decoration: none" })</b>
+                                            
+                                            if (item.N.Aptitud == "APTO")
+                                            {
+
+                                                <span class="field-tip">
+
+                                                    <b>@Html.ActionLink(item.N.NombrePaciente, "AbrirEPI_EC", "ControlDictamen", new { id = item.N.idCaptura, fecha = fechaControl }, new { style = "color: black; text-decoration: none" })</b>
+                                                    <span class="tip-content"><b>Aptitud: </b>APTO<br /><b>Vigencia: </b>@Convert.ToDateTime(item.N.FechaVigencia).ToString("dd-MMMM-yyyy")</span>
+
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="field-tip">
+
+                                                    <b>@Html.ActionLink(item.N.NombrePaciente, "AbrirEPI_EC", "ControlDictamen", new { id = item.N.idCaptura, fecha = fechaControl }, new { style = "color: black; text-decoration: none" })</b>
+                                                    <span class="tip-content"><b>Aptitud: </b>NO APTO<br /><b>Razón: </b>@item.N.ComentarioAptitud</span>
+
+                                                </span>
+                                            }
                                         }
 
                                     }

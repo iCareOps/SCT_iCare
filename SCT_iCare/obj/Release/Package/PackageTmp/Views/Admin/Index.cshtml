@@ -83,14 +83,15 @@
     var capturistasAnexa = from c in db.Usuarios where c.idRol == 9 select c.Nombre;
 
     int citasEfectuadas = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.CC != null).Count();
-    var citasCompletadas = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.CC != null && (w.EstatusPago == "Pagado" || w.EstatusPago == "paid"));
-    int citasCanceladas = (from c in citasCompletadas select c).Where(w => w.Doctor == null || w.CC != null).Count();
+    var citasCompletadas = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.CC != null && w.Asistencia != null && (w.EstatusPago == "Pagado" || w.EstatusPago == "paid")).Count();
+    var citasPendientes = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.CC != null && w.Doctor == null && w.Asistencia == null).Count();
+    int citasCanceladas = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.CC != null && w.Asistencia != null).Count();
 
-    int efectividad = 100;
+    int efectividad = 0;
 
-    if (citasCanceladas != 0)
+    if (citasCompletadas != 0)
     {
-        efectividad = ((citasCanceladas * 100) / citasEfectuadas);
+        efectividad = ((citasCompletadas * 100) / citasEfectuadas);
     }
 
     int flag = 1;
@@ -440,7 +441,17 @@
 
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-outline-warning boton-transparenteIndicador2 botonesGral col-md-4" data-toggle="modal" data-target="#efectividad" style="color:white">
-    <h4><span class="glyphicon glyphicon-stats"></span> &nbsp; &nbsp;Efectividad ANEXA: @efectividad%</h4>
+    @{
+        if (citasEfectuadas == 0)
+        {
+            <h4><span class="glyphicon glyphicon-stats"></span> &nbsp; &nbsp;Sin citas de ANEXA</h4>
+        }
+        else
+        {
+            <h4><span class="glyphicon glyphicon-stats"></span> &nbsp; &nbsp;Efectividad ANEXA: @efectividad%</h4>
+        }
+    }
+
 </button>
 
 <!-- Modal -->
@@ -451,7 +462,10 @@
                 <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-stats"></span> &nbsp; &nbsp;Efectividad ANEXA</h3>
             </div>
             <div class="modal-body">
-
+                <h4><b>Citas desde ANEXA:</b> @citasEfectuadas</h4>
+                <h4><b>Citas completadas:</b> @citasCompletadas</h4>
+                <h4><b>Citas pendientes:</b> @citasPendientes</h4>
+                <h4><b>Citas canceladas:</b> @citasCanceladas</h4>
             </div>
         </div>
     </div>
