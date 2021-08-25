@@ -319,7 +319,7 @@ namespace SCT_iCare.Controllers.EPICenter
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Dictaminar(int id, HttpPostedFileBase file)
+        public ActionResult Dictaminar(int id, HttpPostedFileBase file, string comentario, DateTime? vigencia, string aptitud)
         {
             //EPI epi = db.EPI.Find(id);
             Captura captura = db.Captura.Find(id);
@@ -364,6 +364,9 @@ namespace SCT_iCare.Controllers.EPICenter
             dictamen.Dictamen1 = bytes2;
             dictamen.idPaciente = captura.idPaciente;
             dictamen.idAptitud = 1;
+            captura.Aptitud = aptitud;
+            captura.ComentarioAptitud = comentario;
+            captura.FechaVigencia = vigencia;
 
 
             if (ModelState.IsValid)
