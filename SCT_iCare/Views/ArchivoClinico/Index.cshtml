@@ -1,6 +1,5 @@
 ﻿
 @{
-    Layout = null;
 
     ViewBag.Title = "Index";
 
@@ -15,15 +14,20 @@
     int idUser = 0;
     int? idRol = 0;
 
+    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
     if (oUser != null)
     {
         idUser = oUser.idUsuario;
         nombreUsuario = oUser.Nombre;
         idRol = oUser.idRol;
     }
+
+    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+    var expedientePaciente = (from d in db.Cita where d.idPaciente == idPaciente select d.NoExpediente).FirstOrDefault();
 }
 
-<head>
+<!--<head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,9 +50,51 @@
 <body style="background-color: white">
     <br />
     <h3 class="text-center text-primary">Carrusel Médico</h3>
-    <br />
+    <br />-->
 
-    <div style="width:100%">
+    @*<div style="width:100%">
+            <center>
+                @{
+                    var modulos = from m in db.DoctorModulo where m.idUsuario == idUser select m.idModulo;
+
+                    foreach (var item in modulos)
+                    {
+                        var nombreModulo = (from n in db.Modulos where n.idModulo == item select n.Nombre).FirstOrDefault();
+
+                        <button class="btn btn-info" style="width:25vw; height:25vw; margin:0.5%; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%">@nombreModulo</button>
+                    }
+                }
+            </center>
+        </div>*@
+
+    <!--<div style="width:100%">
+        <center>
+            
+        </center>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#aparicion1').fadeIn(1000);
+            $('#aparicion2').fadeIn(1000);
+            $('#aparicion3').fadeIn(1000);
+            $('#aparicion4').fadeIn(1000);
+            $('#aparicion5').fadeIn(1000);
+            $('#aparicion6').fadeIn(1000);
+            $('#aparicion7').fadeIn(1000);
+            $('#aparicion8').fadeIn(1000);
+            $('#aparicion9').fadeIn(1000);
+        });
+    </script>
+
+
+</body>-->
+
+<br />
+<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Carrusel Médico de: </span>@nombrePaciente (No. Expediente <b>@expedientePaciente</b>)</h3>
+<br />
+
+@*<div style="width:100%">
         <center>
             @{
                 var modulos = from m in db.DoctorModulo where m.idUsuario == idUser select m.idModulo;
@@ -61,9 +107,132 @@
                 }
             }
         </center>
-    </div>
+    </div>*@
 
-</body>
+<div style="width:100%">
+    <center>
+        @{
+
+            int contador = 1;
+
+
+            foreach (var item in db.Modulos)
+            {
+                string aparecer = "aparicion" + contador.ToString();
+                var modulo = (from m in db.Modulos where m.idModulo == item.idModulo select m.idModulo).FirstOrDefault();
+                if ((from i in db.DoctorModulo where i.idUsuario == idUser && i.idModulo == modulo select i).FirstOrDefault() == null)
+                {
+                    <button class="btn " style="width:25vw; height:25vw; margin:0.5%; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer disabled>@item.Nombre</button>
+                }
+                else
+                {
+                    if (item.Nombre == "DICTAMEN")
+                    {
+                        <button class="btn btn-success" style="width:25vw; height:25vw; margin:0.5%; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer>@item.Nombre</button>
+                    }
+                    else
+                    {
+                        string nombreModulo = item.Nombre;
+
+                        if (nombreModulo == "SIGNOS VITALES")
+                        {
+                            nombreModulo = "SIGNOS_VITALES";
+                        }
+                        else if (nombreModulo == "HISTORIA CLÍNICA")
+                        {
+                            nombreModulo = "HISTORIA_CLÍNICA";
+                        }
+
+                        string moduloTabla = item.Nombre;
+                        var consultaCompleta = (from c in db.CarruselMedico where c.InicioCarrusel != null && c.idPaciente == idPaciente select c).FirstOrDefault();
+
+                        if (item.Nombre == "SIGNOS VITALES")
+                        {
+                            consultaCompleta = (from c in db.CarruselMedico where c.Fin_SignosVitales != null && c.idPaciente == idPaciente select c).FirstOrDefault();
+                        }
+                        else if (item.Nombre == "AUDIOLOGÍA")
+                        {
+                            consultaCompleta = (from c in db.CarruselMedico where c.Fin_Audiologia != null && c.idPaciente == idPaciente select c).FirstOrDefault();
+                        }
+                        else if (item.Nombre == "OFTALMOLOGÍA")
+                        {
+                            consultaCompleta = (from c in db.CarruselMedico where c.Fin_Oftalmologia != null && c.idPaciente == idPaciente select c).FirstOrDefault();
+                        }
+                        else if (item.Nombre == "ODONTOLOGÍA")
+                        {
+                            consultaCompleta = (from c in db.CarruselMedico where c.Fin_Odontologia != null && c.idPaciente == idPaciente select c).FirstOrDefault();
+                        }
+                        else if (item.Nombre == "LABORATORIO")
+                        {
+                            consultaCompleta = (from c in db.CarruselMedico where c.Fin_Laboratorio != null && c.idPaciente == idPaciente select c).FirstOrDefault();
+                        }
+                        else if (item.Nombre == "HISTORIA CLÍNICA")
+                        {
+                            consultaCompleta = (from c in db.CarruselMedico where c.Fin_HistoriaClinica != null && c.idPaciente == idPaciente select c).FirstOrDefault();
+                        }
+                        else if (item.Nombre == "CARDIOLOGÍA")
+                        {
+                            consultaCompleta = (from c in db.CarruselMedico where c.Fin_Cardiologia != null && c.idPaciente == idPaciente select c).FirstOrDefault();
+                        }
+
+                        if (consultaCompleta != null)
+                        {
+                            <button type="button" class="btn btn-info" style="width:25vw; height:25vw; margin:0.5%; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer data-toggle="modal" data-target="#carrusel_@idPaciente@nombreModulo">@item.Nombre <span style="color:gold">(COMPLETO)</span></button>
+
+                            <div class="modal fade" id="carrusel_@idPaciente@nombreModulo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document" style="width:60%; min-width:300px">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            @{
+                                                string nombrePacienteModal = (from n in db.Paciente where n.idPaciente == idPaciente select n.Nombre).FirstOrDefault();
+                                                <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Datos del examen @item.Nombre para @nombrePacienteModal</b></h4>
+                                            }
+
+                                        </div>
+                                        <div class="modal-body" id="">
+                                            <div class="tablaScroll">
+                                                <table class="table tablas table-responsive" id="tablaEjemploSS" style="color: #2F2D6B">
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            @*<button class="btn btn-info" style="width:25vw; height:25vw; margin:0.5%; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer>@item.Nombre</button>*@
+                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/"+nombreModulo)" style="display:inline-block; margin:0.5%">
+                                <input type="hidden" value="@idPaciente" name="id" />
+                                <input type="submit" class="btn btn-info" style="width:25vw; height:25vw; margin:0.5%; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer value="@item.Nombre" />
+                            </form>
+                        }
+                    }
+                }
+
+                contador++;
+            }
+        }
+    </center>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#aparicion1').fadeIn(700);
+        $('#aparicion2').fadeIn(700);
+        $('#aparicion3').fadeIn(700);
+        $('#aparicion4').fadeIn(700);
+        $('#aparicion5').fadeIn(700);
+        $('#aparicion6').fadeIn(700);
+        $('#aparicion7').fadeIn(700);
+        $('#aparicion8').fadeIn(700);
+        $('#aparicion9').fadeIn(700);
+    });
+</script>
 
 
 

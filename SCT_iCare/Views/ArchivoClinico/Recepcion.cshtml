@@ -1,7 +1,6 @@
 ﻿@model IEnumerable<SCT_iCare.Paciente>
 
 @{
-    Layout = null;
 
     ViewBag.Title = "Index";
 
@@ -17,7 +16,7 @@
     int idUser = 14;
     string nombreUsuario = null;
     string fila = "";
-    int registros;
+    int registros = 0;
 
     int flag = 1; //contador de la tabla
 
@@ -45,16 +44,16 @@ idUser = oUser.idUsuario;
 nombreUsuario = oUser.Nombre;
 idRol = oUser.idRol;
 
-if (idUser != 14 && oUser.idRol != 2)
+if (idRol == 13 || idRol == 12)
 {
 Recepcion = (from r in db.DoctorModulo where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
 Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
 idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
 Sucursal = Hospital.ToString();
 
-modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal && s.M.EstatusPago == "Pagado" && s.M.NoExpediente != null)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 
-registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal).Count();
+registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal && s.M.EstatusPago == "Pagado" && s.M.NoExpediente != null).Count();
 
 }
 else
@@ -62,46 +61,32 @@ else
 Hospital = "GENERAL";
 Sucursal = Hospital.ToString();
 
-modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate)/*.OrderByDescending(o => o.M.TipoTramite)*/;
+modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.EstatusPago == "Pagado" && s.M.NoExpediente != null)/*.OrderByDescending(o => o.M.TipoTramite)*/;
 
-registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
-
-}
-}
-
+registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.EstatusPago == "Pagado" && s.M.NoExpediente != null).Count();
 
 }
+}
 
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - GMI</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
 
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope&display=swap" rel="stylesheet">
-    <link rel="icon" href="~/GMI.ico" />
+}
 
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
 
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
-    <link href="~/Content/Chart.min.css" rel="stylesheet" />
+<br />
+<h3 class="text-center" style="color:white">Archivo Clínico: <span class="text-warning">@Sucursal</span></h3>
+<br />
 
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-</head>
-
-<body style="background-color:white">
-
-    <h3 class="text-center text-primary">Archivo Clínico: <span class="text-warning">@Sucursal</span></h3>
-    <br />
-
-    <center>
-        <div style="width:50%; min-width: 330px">
-            <div class="tablaScroll" style="width:100%">
-                <table class="table tablas" style="color: #2F2D6B; border:1px solid gray; border-radius: 5px">
+@{
+    if (registros == 0)
+    {
+        <h1 style="color:white">No existen pacientes para revisión</h1>
+    }
+    else
+    {
+        if (idUser != 13)
+        {
+            <div class="tablaScroll">
+                <table class="table tablas" style="color: #2F2D6B">
                     <thead>
                         <tr class="bg-primary" style="border-top-color: black">
                             <th>
@@ -110,9 +95,29 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             <th>
                                 Paciente
                             </th>
-
                             <th>
                                 No. Expediente
+                            </th>
+                            <th>
+                                Signos Vitales
+                            </th>
+                            <th>
+                                Audiología
+                            </th>
+                            <th>
+                                Oftalmología
+                            </th>
+                            <th>
+                                Cardiología
+                            </th>
+                            <th>
+                                Laboratorio
+                            </th>
+                            <th>
+                                Odontología
+                            </th>
+                            <th>
+                                Historía Clínica
                             </th>
                             <th></th>
                         </tr>
@@ -164,7 +169,97 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                                 <b>@Html.DisplayFor(modelItem => item.M.NoExpediente)</b>
                             </td>
                             <td>
-                                <a href="~/ArchivoClinico/Index"><button type="button" style="color:white" class="btn btn-primary" >Iniciar Examen</button></a>
+                                @{
+                                    if ((from c in db.CarruselMedico where c.idPaciente == item.N.idPaciente select c.Fin_SignosVitales).FirstOrDefault() == null)
+                                    {
+                                        <span class="glyphicon glyphicon-minus" style="color:dodgerblue"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="glyphicon glyphicon-ok" style="color:forestgreen"></span>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    if ((from c in db.CarruselMedico where c.idPaciente == item.N.idPaciente select c.Fin_Audiologia).FirstOrDefault() == null)
+                                    {
+                                        <span class="glyphicon glyphicon-minus" style="color:dodgerblue"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="glyphicon glyphicon-ok" style="color:forestgreen"></span>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    if ((from c in db.CarruselMedico where c.idPaciente == item.N.idPaciente select c.Fin_Oftalmologia).FirstOrDefault() == null)
+                                    {
+                                        <span class="glyphicon glyphicon-minus" style="color:dodgerblue"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="glyphicon glyphicon-ok" style="color:forestgreen"></span>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    if ((from c in db.CarruselMedico where c.idPaciente == item.N.idPaciente select c.Fin_Cardiologia).FirstOrDefault() == null)
+                                    {
+                                        <span class="glyphicon glyphicon-minus" style="color:dodgerblue"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="glyphicon glyphicon-ok" style="color:forestgreen"></span>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    if ((from c in db.CarruselMedico where c.idPaciente == item.N.idPaciente select c.Fin_Laboratorio).FirstOrDefault() == null)
+                                    {
+                                        <span class="glyphicon glyphicon-minus" style="color:dodgerblue"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="glyphicon glyphicon-ok" style="color:forestgreen"></span>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    if ((from c in db.CarruselMedico where c.idPaciente == item.N.idPaciente select c.Fin_Odontologia).FirstOrDefault() == null)
+                                    {
+                                        <span class="glyphicon glyphicon-minus" style="color:dodgerblue"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="glyphicon glyphicon-ok" style="color:forestgreen"></span>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    if ((from c in db.CarruselMedico where c.idPaciente == item.N.idPaciente select c.Fin_HistoriaClinica).FirstOrDefault() == null)
+                                    {
+                                        <span class="glyphicon glyphicon-minus" style="color:dodgerblue"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="glyphicon glyphicon-ok" style="color:forestgreen"></span>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @*<a href="~/ArchivoClinico/Index"><button type="button" style="color:white" class="btn btn-info">Iniciar Examen</button></a>*@
+                                @{
+                                    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")">
+                                        <input type="hidden" value="@item.N.idPaciente" name="id" />
+                                        <input type="submit" class="btn btn-info" value="Iniciar Examen" />
+                                    </form>
+                                }
                             </td>
                         </tr>
 
@@ -174,6 +269,93 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
 
                 </table>
             </div>
-        </div>
-    </center>
-</body>
+
+        }
+                else
+                {
+<div class="tablaScroll">
+    <table class="table tablas" style="color: #2F2D6B">
+        <thead>
+            <tr class="bg-primary" style="border-top-color: black">
+                <th>
+                </th>
+
+                <th>
+                    Paciente
+                </th>
+                <th>
+                    No. Expediente
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+
+
+        @foreach (var item in modelo)
+        {
+
+            if (item.M.TipoTramite == "PRIMERA VEZ" && item.M.TipoLicencia != "AEREO")
+            {
+                fila = "#BBDEFB";
+            }
+            else if (item.M.TipoTramite != "PRIMERA VEZ" && item.M.TipoLicencia == "AEREO")
+            {
+                fila = "#D1C4E9";
+            }
+            else if (item.M.TipoTramite == "PRIMERA VEZ" && item.M.TipoLicencia == "AEREO")
+            {
+                fila = "#9575CD";
+            }
+            else
+            {
+                fila = "white";
+            }
+
+            <tr style="background-color:@fila">
+                <td>
+                    @flag
+                </td>
+
+                <td>
+                    <span class="field-tip">
+                        <b>@Html.DisplayFor(modelItem => item.N.Nombre)</b>
+                        <span class="tip-content">
+                            <h6>
+                                <b>Teléfono:</b><br />
+                                @item.N.Telefono <br />
+                                <b>Email:</b><br />
+                                @item.N.Email <br />
+                                <b>Folio:</b><br />
+                                @item.N.Folio <br />
+                            </h6>
+                        </span>
+                    </span>
+                </td>
+
+                <td>
+                    <b>@Html.DisplayFor(modelItem => item.M.NoExpediente)</b>
+                </td>
+                <td>
+                    @*<a href="~/ArchivoClinico/Index"><button type="button" style="color:white" class="btn btn-info">Iniciar Examen</button></a>*@
+                    @{
+                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")">
+                            <input type="hidden" value="@item.N.idPaciente" name="id" />
+                            <input type="submit" class="btn btn-info" value="Iniciar Examen" />
+                        </form>
+                    }
+                </td>
+            </tr>
+
+            flag += 1;
+
+        }
+
+    </table>
+</div>
+                }
+    }
+}
+
+
+
+

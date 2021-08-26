@@ -22,6 +22,7 @@ namespace SCT_iCare
             this.Dictamen = new HashSet<Dictamen>();
             this.Expedientes = new HashSet<Expedientes>();
             this.DictamenProblema = new HashSet<DictamenProblema>();
+            this.CarruselMedico = new HashSet<CarruselMedico>();
         }
     
         public int idPaciente { get; set; }
@@ -41,5 +42,7 @@ namespace SCT_iCare
         public virtual ICollection<Expedientes> Expedientes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DictamenProblema> DictamenProblema { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CarruselMedico> CarruselMedico { get; set; }
     }
 }

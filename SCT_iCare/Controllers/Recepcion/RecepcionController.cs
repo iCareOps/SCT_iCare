@@ -241,7 +241,6 @@ namespace SCT_iCare.Controllers.Recepcion
                 }
                 cita.TipoLicencia = TIPOLIC;
 
-
                 //-------------------------------------------------------------
                 if (ModelState.IsValid)
                 {
@@ -1218,8 +1217,12 @@ namespace SCT_iCare.Controllers.Recepcion
             paciente.Telefono = TELEFONO;
             cita.NoExpediente = NOEXP;
 
+            CarruselMedico cm = new CarruselMedico();
+            cm.idPaciente = paciente.idPaciente;
+
             if (ModelState.IsValid)
             {
+                db.CarruselMedico.Add(cm);
                 db.Entry(paciente).State = EntityState.Modified;
                 db.Entry(cita).State = EntityState.Modified;
                 db.SaveChanges();

@@ -50,5 +50,6 @@ namespace SCT_iCare
         public virtual DbSet<DictamenProblema> DictamenProblema { get; set; }
         public virtual DbSet<DoctorModulo> DoctorModulo { get; set; }
         public virtual DbSet<Modulos> Modulos { get; set; }
+        public virtual DbSet<CarruselMedico> CarruselMedico { get; set; }
     }
 }

@@ -48,6 +48,28 @@
     <Property Name="PausaInicio" Type="datetime" />
     <Property Name="PausaFinal" Type="datetime" />
   </EntityType>
+  <EntityType Name="CarruselMedico">
+    <Key>
+      <PropertyRef Name="idCarruselMedico" />
+    </Key>
+    <Property Name="idCarruselMedico" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="SignosVitales" Type="datetime" />
+    <Property Name="Audiologia" Type="datetime" />
+    <Property Name="Oftalmologia" Type="datetime" />
+    <Property Name="Cardiologia" Type="datetime" />
+    <Property Name="Laboratorio" Type="datetime" />
+    <Property Name="Odontologia" Type="datetime" />
+    <Property Name="HistoriaClinca" Type="datetime" />
+    <Property Name="idPaciente" Type="int" />
+    <Property Name="Fin_SignosVitales" Type="datetime" />
+    <Property Name="Fin_Audiologia" Type="datetime" />
+    <Property Name="Fin_Oftalmologia" Type="datetime" />
+    <Property Name="Fin_Cardiologia" Type="datetime" />
+    <Property Name="Fin_Laboratorio" Type="datetime" />
+    <Property Name="Fin_Odontologia" Type="datetime" />
+    <Property Name="Fin_HistoriaClinica" Type="datetime" />
+    <Property Name="InicioCarrusel" Type="datetime" />
+  </EntityType>
   <EntityType Name="CERTIFICADO">
     <Key>
       <PropertyRef Name="idCertificado" />
@@ -277,6 +299,18 @@
       </Principal>
       <Dependent Role="CapturaIncidencia">
         <PropertyRef Name="idCaptura" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CarruselMedico_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="CarruselMedico" Type="Self.CarruselMedico" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="CarruselMedico">
+        <PropertyRef Name="idPaciente" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -525,6 +559,7 @@
     <EntitySet Name="Canal" EntityType="Self.Canal" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Captura" EntityType="Self.Captura" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CapturaIncidencia" EntityType="Self.CapturaIncidencia" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CarruselMedico" EntityType="Self.CarruselMedico" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CERTIFICADO" EntityType="Self.CERTIFICADO" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Cita" EntityType="Self.Cita" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Ciudades" EntityType="Self.Ciudades" Schema="dbo" store:Type="Tables" />
@@ -553,6 +588,10 @@
     <AssociationSet Name="FK_CapturaIncidencia_Captura" Association="Self.FK_CapturaIncidencia_Captura">
       <End Role="Captura" EntitySet="Captura" />
       <End Role="CapturaIncidencia" EntitySet="CapturaIncidencia" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CarruselMedico_Paciente" Association="Self.FK_CarruselMedico_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="CarruselMedico" EntitySet="CarruselMedico" />
     </AssociationSet>
     <AssociationSet Name="FK_Cita_Canal" Association="Self.FK_Cita_Canal">
       <End Role="Canal" EntitySet="Canal" />
