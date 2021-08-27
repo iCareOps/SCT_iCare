@@ -23,6 +23,10 @@ namespace SCT_iCare
             this.Expedientes = new HashSet<Expedientes>();
             this.DictamenProblema = new HashSet<DictamenProblema>();
             this.CarruselMedico = new HashSet<CarruselMedico>();
+            this.EPI_Laboratorio = new HashSet<EPI_Laboratorio>();
+            this.EPI_SignosVitales = new HashSet<EPI_SignosVitales>();
+            this.EPI_Cardiologia = new HashSet<EPI_Cardiologia>();
+            this.Epi_Oftalmologia = new HashSet<Epi_Oftalmologia>();
         }
     
         public int idPaciente { get; set; }
@@ -44,5 +48,13 @@ namespace SCT_iCare
         public virtual ICollection<DictamenProblema> DictamenProblema { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CarruselMedico> CarruselMedico { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<EPI_Laboratorio> EPI_Laboratorio { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<EPI_SignosVitales> EPI_SignosVitales { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<EPI_Cardiologia> EPI_Cardiologia { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Epi_Oftalmologia> Epi_Oftalmologia { get; set; }
     }
 }

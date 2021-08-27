@@ -51,5 +51,9 @@ namespace SCT_iCare
         public virtual DbSet<DoctorModulo> DoctorModulo { get; set; }
         public virtual DbSet<Modulos> Modulos { get; set; }
         public virtual DbSet<CarruselMedico> CarruselMedico { get; set; }
+        public virtual DbSet<EPI_Laboratorio> EPI_Laboratorio { get; set; }
+        public virtual DbSet<EPI_SignosVitales> EPI_SignosVitales { get; set; }
+        public virtual DbSet<EPI_Cardiologia> EPI_Cardiologia { get; set; }
+        public virtual DbSet<Epi_Oftalmologia> Epi_Oftalmologia { get; set; }
     }
 }

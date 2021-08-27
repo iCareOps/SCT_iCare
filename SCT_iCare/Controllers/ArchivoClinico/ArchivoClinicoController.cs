@@ -187,8 +187,22 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         //Guardar módulos--------------------------------------------------------------------------------
 
         [HttpPost]
-        public ActionResult Guardar_SignosVitales(int id)
+        public ActionResult Guardar_SignosVitales(int id, double sistolica, double diastolica, double cardiaca, double respiratoria, double temperatura, double peso, double estatura, double imc, double cintura, double cuello,  double grasa)
         {
+            EPI_SignosVitales sv = new EPI_SignosVitales();
+            sv.idPaciente = id;
+            sv.IMC = imc.ToString();
+            sv.Sistolica = sistolica.ToString();
+            sv.Diastolica = diastolica.ToString();
+            sv.Cardiaca = cardiaca.ToString();
+            sv.Respiratoria = respiratoria.ToString();
+            sv.Temperatura = temperatura.ToString();
+            sv.Peso = peso.ToString();
+            sv.Estatura = estatura.ToString();
+            sv.Cintura = cintura.ToString();
+            sv.Cuello = cuello.ToString();
+            sv.Grasa = grasa.ToString();
+
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
             if (revision.Fin_SignosVitales == null)
@@ -198,6 +212,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
 
                 if (ModelState.IsValid)
                 {
+                    db.EPI_SignosVitales.Add(sv);
                     db.Entry(cm).State = EntityState.Modified;
                     db.SaveChanges();
                 }
@@ -292,8 +307,20 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         }
 
         [HttpPost]
-        public ActionResult Guardar_Cardiologia(int id)
+        public ActionResult Guardar_Cardiologia(int id, string ritmo, double frecuencia, double eje, double pr, double qt, double qrs, double ondap, double ondaT)
         {
+            EPI_Cardiologia cardio = new EPI_Cardiologia();
+
+            cardio.Ritmo = ritmo;
+            cardio.Frecuencia = frecuencia.ToString();
+            cardio.Eje = eje.ToString();
+            cardio.PR = pr.ToString();
+            cardio.QT = qt.ToString();
+            cardio.QRS = qrs.ToString();
+            cardio.OndaP = ondap.ToString();
+            cardio.OndaT = ondaT.ToString();
+            cardio.idPaciente = id;
+
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
             if (revision.Fin_Cardiologia == null)
@@ -303,6 +330,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
 
                 if (ModelState.IsValid)
                 {
+                    db.EPI_Cardiologia.Add(cardio);
                     db.Entry(cm).State = EntityState.Modified;
                     db.SaveChanges();
                 }
@@ -313,8 +341,14 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         }
 
         [HttpPost]
-        public ActionResult Guardar_Laboratorio(int id)
+        public ActionResult Guardar_Laboratorio(int id, int glucosa, int hemoglobina)
         {
+            EPI_Laboratorio lab = new EPI_Laboratorio();
+
+            lab.Glucosa = glucosa.ToString();
+            lab.HemoglobinaGlucosilada = hemoglobina.ToString();
+            lab.idPaciente = id;
+
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
             if (revision.Fin_Laboratorio == null)
@@ -324,6 +358,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
 
                 if (ModelState.IsValid)
                 {
+                    db.EPI_Laboratorio.Add(lab);
                     db.Entry(cm).State = EntityState.Modified;
                     db.SaveChanges();
                 }

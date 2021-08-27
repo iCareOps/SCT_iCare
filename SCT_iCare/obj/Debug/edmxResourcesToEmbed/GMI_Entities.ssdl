@@ -151,6 +151,69 @@
     <Property Name="idSucursal" Type="int" />
     <Property Name="idModulo" Type="int" />
   </EntityType>
+  <EntityType Name="EPI_Cardiologia">
+    <Key>
+      <PropertyRef Name="idCardiologia" />
+    </Key>
+    <Property Name="idCardiologia" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Ritmo" Type="varchar" MaxLength="10" />
+    <Property Name="Frecuencia" Type="varchar" MaxLength="10" />
+    <Property Name="Eje" Type="varchar" MaxLength="10" />
+    <Property Name="PR" Type="varchar" MaxLength="10" />
+    <Property Name="QT" Type="varchar" MaxLength="10" />
+    <Property Name="QRS" Type="varchar" MaxLength="10" />
+    <Property Name="OndaP" Type="varchar" MaxLength="10" />
+    <Property Name="OndaT" Type="varchar" MaxLength="10" />
+    <Property Name="idPaciente" Type="int" />
+  </EntityType>
+  <EntityType Name="EPI_Laboratorio">
+    <Key>
+      <PropertyRef Name="idLaboratorio" />
+    </Key>
+    <Property Name="idLaboratorio" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Glucosa" Type="varchar" MaxLength="10" />
+    <Property Name="HemoglobinaGlucosilada" Type="varchar" MaxLength="10" />
+    <Property Name="idPaciente" Type="int" />
+  </EntityType>
+  <EntityType Name="Epi_Oftalmologia">
+    <Key>
+      <PropertyRef Name="idOftalmologia" />
+    </Key>
+    <Property Name="idOftalmologia" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="IzquierdoAVC" Type="varchar" MaxLength="10" />
+    <Property Name="IzquierdoAVM" Type="varchar" MaxLength="10" />
+    <Property Name="IzquierdoAVL" Type="varchar" MaxLength="10" />
+    <Property Name="DerechoAVC" Type="varchar" MaxLength="10" />
+    <Property Name="DerechoAVM" Type="varchar" MaxLength="10" />
+    <Property Name="DerechoAVL" Type="varchar" MaxLength="10" />
+    <Property Name="AgudezaVisual" Type="varchar" MaxLength="10" />
+    <Property Name="Estereopsis" Type="varchar" MaxLength="10" />
+    <Property Name="CartaAccidentes" Type="varchar" MaxLength="10" />
+    <Property Name="MovimientosOculares" Type="varchar" MaxLength="10" />
+    <Property Name="CampoVisual" Type="varchar" MaxLength="10" />
+    <Property Name="DerechoRP" Type="varchar" MaxLength="10" />
+    <Property Name="IzquierdoRP" Type="varchar" MaxLength="10" />
+    <Property Name="Cromatica" Type="varchar" MaxLength="10" />
+    <Property Name="idPaciente" Type="int" />
+  </EntityType>
+  <EntityType Name="EPI_SignosVitales">
+    <Key>
+      <PropertyRef Name="idSignosVitales" />
+    </Key>
+    <Property Name="idSignosVitales" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Sistolica" Type="varchar" MaxLength="10" />
+    <Property Name="Diastolica" Type="varchar" MaxLength="10" />
+    <Property Name="Cardiaca" Type="varchar" MaxLength="10" />
+    <Property Name="Respiratoria" Type="varchar" MaxLength="10" />
+    <Property Name="Temperatura" Type="varchar" MaxLength="10" />
+    <Property Name="Peso" Type="varchar" MaxLength="10" />
+    <Property Name="Estatura" Type="varchar" MaxLength="10" />
+    <Property Name="IMC" Type="varchar" MaxLength="10" />
+    <Property Name="Cintura" Type="varchar" MaxLength="10" />
+    <Property Name="Cuello" Type="varchar" MaxLength="10" />
+    <Property Name="Grasa" Type="varchar" MaxLength="10" />
+    <Property Name="idPaciente" Type="int" />
+  </EntityType>
   <EntityType Name="Expedientes">
     <Key>
       <PropertyRef Name="idExpediente" />
@@ -422,6 +485,54 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_EPI_Cardiologia_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_Cardiologia" Type="Self.EPI_Cardiologia" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_Cardiologia">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EPI_Laboratorio_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_Laboratorio" Type="Self.EPI_Laboratorio" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_Laboratorio">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Epi_Oftalmologia_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="Epi_Oftalmologia" Type="Self.Epi_Oftalmologia" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Epi_Oftalmologia">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EPI_SignosVitales_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_SignosVitales" Type="Self.EPI_SignosVitales" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_SignosVitales">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Expedientes_Paciente">
     <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
     <End Role="Expedientes" Type="Self.Expedientes" Multiplicity="*" />
@@ -567,6 +678,10 @@
     <EntitySet Name="DictamenProblema" EntityType="Self.DictamenProblema" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Doctores" EntityType="Self.Doctores" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="DoctorModulo" EntityType="Self.DoctorModulo" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="EPI_Cardiologia" EntityType="Self.EPI_Cardiologia" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="EPI_Laboratorio" EntityType="Self.EPI_Laboratorio" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Epi_Oftalmologia" EntityType="Self.Epi_Oftalmologia" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="EPI_SignosVitales" EntityType="Self.EPI_SignosVitales" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Expedientes" EntityType="Self.Expedientes" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="IncidenciaDictamen" EntityType="Self.IncidenciaDictamen" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="IncidenciaPaciente" EntityType="Self.IncidenciaPaciente" Schema="dbo" store:Type="Tables" />
@@ -628,6 +743,22 @@
     <AssociationSet Name="FK_DoctorModulo_Usuarios" Association="Self.FK_DoctorModulo_Usuarios">
       <End Role="Usuarios" EntitySet="Usuarios" />
       <End Role="DoctorModulo" EntitySet="DoctorModulo" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_Cardiologia_Paciente" Association="Self.FK_EPI_Cardiologia_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_Cardiologia" EntitySet="EPI_Cardiologia" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_Laboratorio_Paciente" Association="Self.FK_EPI_Laboratorio_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_Laboratorio" EntitySet="EPI_Laboratorio" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Epi_Oftalmologia_Paciente" Association="Self.FK_Epi_Oftalmologia_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Epi_Oftalmologia" EntitySet="Epi_Oftalmologia" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_SignosVitales_Paciente" Association="Self.FK_EPI_SignosVitales_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_SignosVitales" EntitySet="EPI_SignosVitales" />
     </AssociationSet>
     <AssociationSet Name="FK_Expedientes_Paciente" Association="Self.FK_Expedientes_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />

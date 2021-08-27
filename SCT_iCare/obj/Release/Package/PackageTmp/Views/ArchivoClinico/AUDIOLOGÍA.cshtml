@@ -1,0 +1,27 @@
+﻿
+@{
+    ViewBag.Title = "AUDIOLOGÍA";
+
+    GMIEntities db = new GMIEntities();
+
+    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+}
+
+<br />
+<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Examen Audiología: </span>@nombrePaciente </h3>
+<br />
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Audiologia")" style="display:inline-block; margin:0.5%">
+    <input type="hidden" value="@idPaciente" name="id" />
+    <input type="submit" class="btn btn-success" value="Guardar Examen" />
+</form>
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
+    <input type="hidden" value="@idPaciente" name="id" />
+    <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />
+</form>
+
+
+
