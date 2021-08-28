@@ -1,0 +1,100 @@
+﻿
+@{
+    ViewBag.Title = "NoPatologicos";
+    GMIEntities db = new GMIEntities();
+
+    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+}
+
+<br />
+<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Examen Historia Clínica: </span>@nombrePaciente </h3>
+<br />
+
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Antecedentes Heredofamiliares</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="#" style="text-decoration:none; color:goldenrod"><b>ANTECEDNTES PERSONALES NO PATOLÓGICOS</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Antecedentes Personales Patológicos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Interrogatorio por Aparatos y Sistemas</a>
+    </li>
+</ul>
+
+<br />
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_NoPatologicos")" style="display:inline-block; margin:0.5%">
+
+    <div class="form-group">
+        <label style="color:white">¿Cuenta con las vacunas Completas?</label>
+        <input type="checkbox" name="vacunas" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div>
+        <label style="color:white">Estado Civil </label>
+        <select class="form-select" aria-label="Default select example" name="civil">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="Soltero">Soltero</option>
+            <option value="Casado">Casado</option>
+            <option value="Libre">Unión Libre</option>
+            <option value="Viudo">Viudo</option>
+            <option value="Divorciado">Divorciado</option>
+
+        </select>
+    </div>
+    <br />
+    <div class="form-group">
+        <label style="color:white">Religión: </label>
+        <select class="form-select" aria-label="Default select example" name="religion">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="Catolica">Católica</option>
+            <option value="Cristiana">Cristiana</option>
+            <option value="Testigo">Testigo de Jehova</option>
+            <option value="Mormon">Mormón</option>
+            <option value="Otro">Otro</option>
+        </select>
+    </div>
+    <br />
+    
+    <div>
+        <label style="color:white">Escolaridad: </label>
+        <select class="form-select" aria-label="Default select example" name="escolaridad">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="Ninguna">Ninguna</option>
+            <option value="Primaria">Primaria</option>
+            <option value="Secundaria">Secundaria</option>
+            <option value="Bachillerato">Bachilerato</option>
+            <option value="Licenciatura">Licenciatura</option>
+        </select>
+    </div>
+    <br />
+    <div>
+        <label style="color:white">Número de hijos: </label>
+        <select class="form-select" aria-label="Default select example" name="hijos">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="MAS">Más de 3</option>
+        </select>
+    </div>
+    <br />
+
+    <input type="hidden" value="@idPaciente" name="id" />
+    <input type="submit" class="btn btn-success" value="Guardar Examen" />
+</form>
+<br />
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
+    <input type="hidden" value="@idPaciente" name="id" />
+    <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />
+</form>
+
+
+
