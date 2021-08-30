@@ -1327,8 +1327,22 @@ namespace SCT_iCare.Controllers.Recepcion
            string doc = (from d in db.Doctores where d.Nombre == doctor select d.idDoctor).FirstOrDefault().ToString();
 
             //Se obtiene el número del contador desde la base de datos del último registro de Folio incompleto
-            //int? num = (from c in db.Sucursales where c.Nombre == cita.Sucursal select c.Contador).FirstOrDefault() + 1;
-            var num = new string(cita.Folio.Reverse().Take(3).Reverse().ToArray());
+            int? num = (from c in db.Sucursales where c.Nombre == cita.Sucursal select c.Contador).FirstOrDefault() + 1;
+            //var num = new string(cita.Folio.Reverse().Take(3).Reverse().ToArray());
+
+            string contador = "";
+            if (num == null)
+            {
+                contador = "100";
+            }
+            else if (num < 10)
+            {
+                contador = "00" + Convert.ToString(num);
+            }
+            else if (num >= 10 && num < 100)
+            {
+                contador = "0" + Convert.ToString(num);
+            }
 
             string mes = DateTime.Now.Month.ToString();
             string dia = DateTime.Now.Day.ToString();

@@ -7,6 +7,21 @@
     int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
 
     var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+                <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+                <style>
+                    .toggle.ios, .toggle-on.ios, .toggle-off.ios {
+                        border-radius: 20rem;
+                        background-color: white;
+                    }
+
+                        .toggle.ios .toggle-handle {
+                            border-radius: 20rem;
+                            background-color: white;
+                        }
+                </style>
 }
 
 <br />
@@ -14,10 +29,33 @@
 <br />
 
 <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Audiologia")" style="display:inline-block; margin:0.5%">
+
+    <div>
+        <label style="color:white">1. ¿Padece alguna de las siguientes patologías?: </label>
+        <select class="form-select" aria-label="Default select example" name="patologia">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="NORMAL">NORMAL</option>
+            <option value="Media unilateral/severa contralateral">Hipoacusia media unilateral con Hipoacusia severa contralateral</option>
+            <option value="Hipoacusia severa o profunda bilateral">Hipoacusia severa o profunda bilateral</option>
+        </select>
+    </div>
+
+    <br />
+
+    <div class="form-group">
+        <label style="color:white">2. Interpretación de las Gráficas: </label>
+        <input type="checkbox" id="derechorp" name="graficas" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="NORMAL" data-off="ALTERADO">
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">3. Nota Médica: </label>
+        <input type="checkbox" id="derechorp" name="nota" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="NORMAL" data-off="ALTERADO">
+    </div>
+
     <input type="hidden" value="@idPaciente" name="id" />
     <input type="submit" class="btn btn-success" value="Guardar Examen" />
 </form>
-
+<br />
 <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
     <input type="hidden" value="@idPaciente" name="id" />
     <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />

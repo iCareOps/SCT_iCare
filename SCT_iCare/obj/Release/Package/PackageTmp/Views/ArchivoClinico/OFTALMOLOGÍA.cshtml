@@ -1,23 +1,163 @@
-﻿
-@{
-    ViewBag.Title = "OFTALMOLOGÍA";
-    GMIEntities db = new GMIEntities();
+﻿@{
 
-    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
 
-    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
-}
+                <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+                            <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+                                        <style>
+                                            .toggle.ios, .toggle-on.ios, .toggle-off.ios {
+                                                border-radius: 20rem;
+                                                background-color: white;
+                                            }
+
+                                                .toggle.ios .toggle-handle {
+                                                    border-radius: 20rem;
+                                                    background-color: white;
+                                                }
+                                        </style> 
+                                        ViewBag.Title = "OFTALMOLOGÍA";
+                                                    GMIEntities db = new GMIEntities();
+
+                                                    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+                                                    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault(); }
 
 <br />
 <h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Examen Oftalmología: </span>@nombrePaciente </h3>
 <br />
 
 <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Oftalmologia")" style="display:inline-block; margin:0.5%">
+
+    <h4 style="color:white">OJO IZQUIERDO</h4>
+
+    <div class="form-group">
+        <label style="color:white">1. Agudeza Visual Cercana :</label>
+        <input class="form-control" type="number" id="izquierdoavc" name="izquierdoavc" placeholder="" required>
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">2. Agudeza Visual Media :</label>
+        <input class="form-control" type="number" id="izquierdoavm" name="izquierdoavm" placeholder="" required>
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">3. Agudeza Visual Lejana :</label>
+        <input class="form-control" type="number" id="izquierdoavl" name="izquierdoavl" placeholder="" required>
+    </div>
+
+
+    <h4 style="color:white">OJO DERECHO</h4>
+
+
+    <div class="form-group">
+        <label style="color:white">4. Agudeza Visual Cercana :</label>
+        <input class="form-control" type="number" id="derechoavl" name="derechoavc" placeholder="" required>
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">5. Agudeza Visual Media :</label>
+        <input class="form-control" type="number" id="derechoavl" name="derechoavm" placeholder="" required>
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">6. Agudeza Visual Lejana :</label>
+        <input class="form-control" type="number" id="derechoavl" name="derechoavl" placeholder="" required>
+    </div>
+
+
+    <div class="form-group">
+        <label style="color:white">7. ¿Utiliza Lentes para corregir su agudeza visual? </label>
+        <input type="checkbox" id="agudezavisual" name="agudezavisual" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="SI" data-off="NO">
+    </div>
+
+
+    <div>
+        <label style="color:white">8. Sentido de Profundidad o Estereopsis : </label>
+        <select class="form-select" id="estereopsis" name="estereopsis" aria-label="Default select example">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="40">40</option>
+            <option value="50">50</option>
+            <option value="60">60</option>
+            <option value="80">80</option>
+            <option value="100">100</option>
+            <option value="140">140</option>
+            <option value="200">200</option>
+            <option value="400">400</option>
+            <option value="800">800</option>
+        </select>
+    </div>
+
+
+    <div class="form-group">
+        <label style="color:white">9. ¿Presenta carta de no accidentes y evaluación médica del desempeño? </label>
+        <input type="checkbox" id="cartaaccidentes" name="cartaaccidentes" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="SI" data-off="NO" >
+    </div>
+
+
+    <div class="form-group">
+        <label style="color:white">10. Campo Visual </label>
+        <input type="checkbox" id="campovisual" name="campovisual" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="NORMAL" data-off="NO" >
+    </div>
+
+
+    <div class="form-group">
+        <label style="color:white">11. Movimientos Oculares  </label>
+        <input type="checkbox" id="movimientosoculares" name="movimientosoculares" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="NORMAL" data-off="NO" >
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">12. Ojo derecho reflejos pupilares </label>
+        <input type="checkbox" id="derechorp" name="derechorp" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="NORMAL" data-off="NO" >
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">13. Ojo izquierdo reflejos pupilares </label>
+        <input type="checkbox" id="izquierdorp" name="izquierdorp" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="NORMAL" data-off="NO" >
+    </div>
+
+
+    <div>
+        <label style="color:white">14. Test de visión cromática: </label>
+        <select class="form-select" aria-label="Default select example " id="cromatica" name="cromatica">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="Normal">Normal</option>
+            <option value="Deuteranop">Deuteranopia con carta de no accidentes y desempeño</option>
+            <option value="Ir a SCT">Deuteranopia con carta de no accidentes sin carta de desempeño (Ir a SCT)</option>
+            <option value="Protanopia">Protanopia</option>
+        </select>
+    </div>
+
+
     <input type="hidden" value="@idPaciente" name="id" />
     <input type="submit" class="btn btn-success" value="Guardar Examen" />
 </form>
-
+<br />
 <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
     <input type="hidden" value="@idPaciente" name="id" />
     <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />
 </form>
+
+
+
+@*@{
+        ViewBag.Title = "OFTALMOLOGÍA";
+        GMIEntities db = new GMIEntities();
+
+        int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+        var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+    }
+
+    <br />
+    <h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Examen Oftalmología: </span>@nombrePaciente </h3>
+    <br />
+
+    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Oftalmologia")" style="display:inline-block; margin:0.5%">
+        <input type="hidden" value="@idPaciente" name="id" />
+        <input type="submit" class="btn btn-success" value="Guardar Examen" />
+    </form>
+
+    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
+        <input type="hidden" value="@idPaciente" name="id" />
+        <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />
+    </form>*@

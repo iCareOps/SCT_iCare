@@ -18,6 +18,7 @@ namespace SCT_iCare
         public string NotaMedica { get; set; }
         public string Aptitud { get; set; }
         public Nullable<int> idPaciente { get; set; }
+        public string Motivo { get; set; }
     
         public virtual Paciente Paciente { get; set; }
     }

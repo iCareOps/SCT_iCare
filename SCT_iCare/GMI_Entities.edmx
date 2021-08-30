@@ -270,6 +270,7 @@
           <Property Name="NotaMedica" Type="varchar" MaxLength="500" />
           <Property Name="Aptitud" Type="varchar" MaxLength="20" />
           <Property Name="idPaciente" Type="int" />
+          <Property Name="Motivo" Type="varchar" MaxLength="30" />
         </EntityType>
         <EntityType Name="EPI_ExploracionFisica">
           <Key>
@@ -2138,6 +2139,7 @@
           <Property Name="Aptitud" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="idPaciente" Type="Int32" />
           <NavigationProperty Name="Paciente" Relationship="DevModel.FK_EPI_DictamenAptitud_Paciente" FromRole="EPI_DictamenAptitud" ToRole="Paciente" />
+          <Property Name="Motivo" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_EPI_DictamenAptitud_Paciente">
           <End Type="DevModel.Paciente" Role="Paciente" Multiplicity="0..1" />
@@ -2641,6 +2643,7 @@
           <EntitySetMapping Name="EPI_DictamenAptitud">
             <EntityTypeMapping TypeName="DevModel.EPI_DictamenAptitud">
               <MappingFragment StoreEntitySet="EPI_DictamenAptitud">
+                <ScalarProperty Name="Motivo" ColumnName="Motivo" />
                 <ScalarProperty Name="idPaciente" ColumnName="idPaciente" />
                 <ScalarProperty Name="Aptitud" ColumnName="Aptitud" />
                 <ScalarProperty Name="NotaMedica" ColumnName="NotaMedica" />

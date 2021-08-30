@@ -9,14 +9,85 @@
 }
 
 <br />
-<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Examen Historia Clínica: </span>@nombrePaciente </h3>
+<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Antecedentes Heredofamiliares: </span>@nombrePaciente </h3>
 <br />
 
-<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_HistoriaClinica")" style="display:inline-block; margin:0.5%">
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" href="#" style="text-decoration:none; color:goldenrod"><b>HEREDOFAMILIARES</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">No Patológicos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Patológicos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Aparatos y Sistemas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Exploración Física</a>
+    </li>
+</ul>
+
+<br />
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Heredofamiliares")" style="display:inline-block; margin:0.5%">
+
+    <div class="form-group">
+        <label style="color:white">1. ¿Madre Vive? </label>
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="madrevive">
+    </div>
+    <div class="form-group">
+        <label style="color:white">2. ¿Padre Vive? </label>
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="padrevive">
+    </div>
+    <div class="form-group">
+        <label style="color:white">3. ¿Hermanos Viven? </label>
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="hermanosviven">
+    </div>
+    <div class="form-group">
+        <label style="color:white">4. ¿Alguien de su familia : Mamá, Papá, Hermanos o Abuelos padece de una enfermedad grave? </label>
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="familiagrave">
+    </div>
+    <div class="form-group">
+        <label style="color:white">5. Diabetes Mellitus </label>
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="diabetes">
+    </div>
+    <div class="form-group">
+        <label style="color:white">6. Hipertensión Arterial </label>
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="arterial">
+    </div>
+    <div class="form-group">
+        <label style="color:white">7. Obesidad </label>
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="obesidad">
+    </div>
+    <div class="form-group">
+        <label style="color:white">8. Cardiopatía Isquémica </label>
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="isquemica">
+    </div>
+    <div class="form-group">
+        <label style="color:white">9. Enfermedad Vascular Cerebral</label>
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="cerebral">
+    </div>
+    <div class="form-group">
+        <label style="color:white">10. Infarto Agudo Miocardio</label>
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="miocardio">
+    </div>
+    <div class="form-group">
+        <label style="color:white">11. Patología de Tiroides</label>
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="tiroides">
+    </div>
+    <div class="form-group">
+        <label style="color:white" >12. Enfermedades Neoplasicas</label>
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="neoplasticas">
+    </div>
+
     <input type="hidden" value="@idPaciente" name="id" />
     <input type="submit" class="btn btn-success" value="Guardar Examen" />
 </form>
-
+<br />
 <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
     <input type="hidden" value="@idPaciente" name="id" />
     <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />

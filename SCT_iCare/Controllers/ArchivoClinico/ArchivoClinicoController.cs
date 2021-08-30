@@ -477,8 +477,8 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             EPI_Audiologia audio = new EPI_Audiologia();
 
             audio.Patologia = patologia;
-            audio.Grafica = graficas == "on" ? "NORMAL" : "ALTERADO";
-            audio.NotaMedica = nota == "on" ? "NORMAL" : "ALTERADO";
+            audio.Grafica = graficas == "on" ? "ALTERADO" : "NORMAL";
+            audio.NotaMedica = nota == "on" ? "ALTERADO" : "NORMAL";
             audio.idPaciente = id;
 
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
@@ -1030,22 +1030,57 @@ namespace SCT_iCare.Controllers.ArchivoClinico
 
         public ActionResult Guardar_Dictamen(int id, string nota, string accion)
         {
-            EPI_DictamenAptitud aptitud = new EPI_DictamenAptitud();
+            var revisionDictamen = (from r in db.EPI_DictamenAptitud where r.idPaciente == id orderby r.idDictamenAptitud descending select r).FirstOrDefault();
 
-            aptitud.Aptitud = accion;
-            aptitud.NotaMedica = nota;
-            aptitud.idPaciente = id;
-
-            var revision = (from r in db.EPI_DictamenAptitud where r.idPaciente == id select r).FirstOrDefault();
-
-            if(revision == null)
+            if(revisionDictamen == null)
             {
+                EPI_DictamenAptitud aptitud = new EPI_DictamenAptitud();
+
+                aptitud.Motivo = accion;
+                aptitud.NotaMedica = nota;
+                aptitud.idPaciente = id;
+
+                if (accion == "Liberar Dictamen" || accion == "Enviar a Revaloración")
+                {
+                    aptitud.Aptitud = "NO APTO";
+                }
+
+                var revision = (from r in db.EPI_DictamenAptitud where r.idPaciente == id select r).FirstOrDefault();
+
+                if (revision == null)
+                {
+                    if (ModelState.IsValid)
+                    {
+                        db.EPI_DictamenAptitud.Add(aptitud);
+                        db.SaveChanges();
+                    }
+                }
+            }
+            else
+            {
+                EPI_DictamenAptitud aptitud = db.EPI_DictamenAptitud.Find(revisionDictamen.idDictamenAptitud);
+
+                aptitud.Motivo = accion;
+                aptitud.NotaMedica = nota;
+                aptitud.idPaciente = id;
+
+                if (accion == "Liberar como NO APTO")
+                {
+                    aptitud.Aptitud = "NO APTO";
+                }
+                else if (accion == "Liberar Dictamen")
+                {
+                    aptitud.Aptitud = "APTO";
+                }
+
                 if (ModelState.IsValid)
                 {
-                    db.EPI_DictamenAptitud.Add(aptitud);
+                    db.Entry(aptitud).State = EntityState.Modified;
                     db.SaveChanges();
                 }
             }
+
+            
 
             return Redirect("Recepcion");
         }

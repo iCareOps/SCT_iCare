@@ -83,7 +83,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
     }
     else
     {
-        if (idUser != 13)
+        if (idRol == 13)
         {
             <div class="tablaScroll">
                 <table class="table tablas" style="color: #2F2D6B">
@@ -119,6 +119,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             <th>
                                 Historía Clínica
                             </th>
+                            <th>Dictamen</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -253,11 +254,33 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                                 }
                             </td>
                             <td>
+                                @{
+                                    var dictamen = (from d in db.EPI_DictamenAptitud where d.idPaciente == item.N.idPaciente orderby d.idPaciente descending select d).FirstOrDefault();
+
+                                    if (dictamen != null)
+                                    {
+                                        if (dictamen.Motivo == "Enviar a Revaloración")
+                                        {
+                                            <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Revaloración</mark></b>
+                                        }
+                                        else if (dictamen.Motivo == "Liberar como NO APTO")
+                                        {
+                                            <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px">NO APTO</b>
+                                        }
+                            else
+                            {
+                            <b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">APTO</mark></b>
+                            }
+
+                                    }
+                                }
+                            </td>
+                            <td>
                                 @*<a href="~/ArchivoClinico/Index"><button type="button" style="color:white" class="btn btn-info">Iniciar Examen</button></a>*@
                                 @{
                                     <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")">
                                         <input type="hidden" value="@item.N.idPaciente" name="id" />
-                                        <input type="submit" class="btn btn-info" value="Iniciar Examen" />
+                                        <input type="submit" class="btn btn-info" value="Carrusel Médico" />
                                     </form>
                                 }
                             </td>
@@ -286,6 +309,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                 <th>
                     No. Expediente
                 </th>
+                <th></th>
                 <th></th>
             </tr>
         </thead>
@@ -336,11 +360,21 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                     <b>@Html.DisplayFor(modelItem => item.M.NoExpediente)</b>
                 </td>
                 <td>
+                                @{ 
+                                    var dictamen = (from d in db.EPI_DictamenAptitud where d.idPaciente == item.N.idPaciente orderby d.idPaciente descending select d).FirstOrDefault();
+
+                                    if(dictamen != null)
+                        {
+                            <b>Dictaminado</b>
+                        }
+                                }
+                            </td>
+                <td>
                     @*<a href="~/ArchivoClinico/Index"><button type="button" style="color:white" class="btn btn-info">Iniciar Examen</button></a>*@
                     @{
                         <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")">
                             <input type="hidden" value="@item.N.idPaciente" name="id" />
-                            <input type="submit" class="btn btn-info" value="Iniciar Examen" />
+                            <input type="submit" class="btn btn-info" value="Carrusel Médico" />
                         </form>
                     }
                 </td>

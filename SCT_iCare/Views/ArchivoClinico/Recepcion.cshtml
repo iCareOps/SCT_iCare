@@ -119,7 +119,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             <th>
                                 Historía Clínica
                             </th>
-                            <th></th>
+                            <th>Dictamen</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -254,13 +254,25 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                                 }
                             </td>
                             <td>
-                                @{ 
+                                @{
                                     var dictamen = (from d in db.EPI_DictamenAptitud where d.idPaciente == item.N.idPaciente orderby d.idPaciente descending select d).FirstOrDefault();
 
-                                    if(dictamen != null)
-                        {
-                            <b>Dictaminado</b>
-                        }
+                                    if (dictamen != null)
+                                    {
+                                        if (dictamen.Motivo == "Enviar a Revaloración")
+                                        {
+                                            <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Revaloración</mark></b>
+                                        }
+                                        else if (dictamen.Motivo == "Liberar como NO APTO")
+                                        {
+                                            <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px">NO APTO</b>
+                                        }
+                            else
+                            {
+                            <b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">APTO</mark></b>
+                            }
+
+                                    }
                                 }
                             </td>
                             <td>
