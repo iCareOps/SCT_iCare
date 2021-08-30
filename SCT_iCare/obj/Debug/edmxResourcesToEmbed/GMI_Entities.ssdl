@@ -232,6 +232,16 @@
     <Property Name="Extremidades" Type="varchar" MaxLength="10" />
     <Property Name="idPaciente" Type="int" />
   </EntityType>
+  <EntityType Name="EPI_Audiologia">
+    <Key>
+      <PropertyRef Name="idAudiologia" />
+    </Key>
+    <Property Name="idAudiologia" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Patologia" Type="varchar" MaxLength="40" />
+    <Property Name="Grafica" Type="varchar" MaxLength="10" />
+    <Property Name="NotaMedica" Type="varchar" MaxLength="10" />
+    <Property Name="idPaciente" Type="int" />
+  </EntityType>
   <EntityType Name="EPI_Cardiologia">
     <Key>
       <PropertyRef Name="idCardiologia" />
@@ -245,6 +255,28 @@
     <Property Name="QRS" Type="varchar" MaxLength="10" />
     <Property Name="OndaP" Type="varchar" MaxLength="10" />
     <Property Name="OndaT" Type="varchar" MaxLength="10" />
+    <Property Name="idPaciente" Type="int" />
+  </EntityType>
+  <EntityType Name="EPI_DictamenAptitud">
+    <Key>
+      <PropertyRef Name="idDictamenAptitud" />
+    </Key>
+    <Property Name="idDictamenAptitud" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="NotaMedica" Type="varchar" MaxLength="500" />
+    <Property Name="Aptitud" Type="varchar" MaxLength="20" />
+    <Property Name="idPaciente" Type="int" />
+  </EntityType>
+  <EntityType Name="EPI_ExploracionFisica">
+    <Key>
+      <PropertyRef Name="idExploracionFisica" />
+    </Key>
+    <Property Name="idExploracionFisica" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Romberg" Type="varchar" MaxLength="10" />
+    <Property Name="PuntaNariz" Type="varchar" MaxLength="10" />
+    <Property Name="Estrabismo" Type="varchar" MaxLength="10" />
+    <Property Name="Soplo" Type="varchar" MaxLength="10" />
+    <Property Name="Amputaciones" Type="varchar" MaxLength="10" />
+    <Property Name="Protesis" Type="varchar" MaxLength="10" />
     <Property Name="idPaciente" Type="int" />
   </EntityType>
   <EntityType Name="EPI_Laboratorio">
@@ -614,6 +646,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_EPI_Audiologia_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_Audiologia" Type="Self.EPI_Audiologia" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_Audiologia">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_EPI_Cardiologia_Paciente">
     <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
     <End Role="EPI_Cardiologia" Type="Self.EPI_Cardiologia" Multiplicity="*" />
@@ -622,6 +666,30 @@
         <PropertyRef Name="idPaciente" />
       </Principal>
       <Dependent Role="EPI_Cardiologia">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EPI_DictamenAptitud_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_DictamenAptitud" Type="Self.EPI_DictamenAptitud" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_DictamenAptitud">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EPI_ExploracionFisica_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_ExploracionFisica" Type="Self.EPI_ExploracionFisica" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_ExploracionFisica">
         <PropertyRef Name="idPaciente" />
       </Dependent>
     </ReferentialConstraint>
@@ -811,7 +879,10 @@
     <EntitySet Name="EPI_A_NoPatologicos" EntityType="Self.EPI_A_NoPatologicos" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI_A_Patologicos" EntityType="Self.EPI_A_Patologicos" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI_AparatosSistemas" EntityType="Self.EPI_AparatosSistemas" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="EPI_Audiologia" EntityType="Self.EPI_Audiologia" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI_Cardiologia" EntityType="Self.EPI_Cardiologia" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="EPI_DictamenAptitud" EntityType="Self.EPI_DictamenAptitud" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="EPI_ExploracionFisica" EntityType="Self.EPI_ExploracionFisica" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI_Laboratorio" EntityType="Self.EPI_Laboratorio" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Epi_Oftalmologia" EntityType="Self.Epi_Oftalmologia" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI_SignosVitales" EntityType="Self.EPI_SignosVitales" Schema="dbo" store:Type="Tables" />
@@ -893,9 +964,21 @@
       <End Role="Paciente" EntitySet="Paciente" />
       <End Role="EPI_AparatosSistemas" EntitySet="EPI_AparatosSistemas" />
     </AssociationSet>
+    <AssociationSet Name="FK_EPI_Audiologia_Paciente" Association="Self.FK_EPI_Audiologia_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_Audiologia" EntitySet="EPI_Audiologia" />
+    </AssociationSet>
     <AssociationSet Name="FK_EPI_Cardiologia_Paciente" Association="Self.FK_EPI_Cardiologia_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />
       <End Role="EPI_Cardiologia" EntitySet="EPI_Cardiologia" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_DictamenAptitud_Paciente" Association="Self.FK_EPI_DictamenAptitud_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_DictamenAptitud" EntitySet="EPI_DictamenAptitud" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_ExploracionFisica_Paciente" Association="Self.FK_EPI_ExploracionFisica_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_ExploracionFisica" EntitySet="EPI_ExploracionFisica" />
     </AssociationSet>
     <AssociationSet Name="FK_EPI_Laboratorio_Paciente" Association="Self.FK_EPI_Laboratorio_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />

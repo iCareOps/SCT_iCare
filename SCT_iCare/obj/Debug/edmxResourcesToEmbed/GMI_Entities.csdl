@@ -169,6 +169,9 @@
     <NavigationProperty Name="EPI_A_NoPatologicos" Relationship="DevModel.FK_EPI_A_NoPatologicos_Paciente" FromRole="Paciente" ToRole="EPI_A_NoPatologicos" />
     <NavigationProperty Name="EPI_A_Patologicos" Relationship="DevModel.FK_EPI_A_Patologicos_Paciente" FromRole="Paciente" ToRole="EPI_A_Patologicos" />
     <NavigationProperty Name="EPI_AparatosSistemas" Relationship="DevModel.FK_EPI_AparatosSistemas_Paciente" FromRole="Paciente" ToRole="EPI_AparatosSistemas" />
+    <NavigationProperty Name="EPI_Audiologia" Relationship="DevModel.FK_EPI_Audiologia_Paciente" FromRole="Paciente" ToRole="EPI_Audiologia" />
+    <NavigationProperty Name="EPI_ExploracionFisica" Relationship="DevModel.FK_EPI_ExploracionFisica_Paciente" FromRole="Paciente" ToRole="EPI_ExploracionFisica" />
+    <NavigationProperty Name="EPI_DictamenAptitud" Relationship="DevModel.FK_EPI_DictamenAptitud_Paciente" FromRole="Paciente" ToRole="EPI_DictamenAptitud" />
   </EntityType>
   <EntityType Name="Recepcionista">
     <Key>
@@ -565,6 +568,21 @@
     <AssociationSet Name="FK_EPI_AparatosSistemas_Paciente" Association="DevModel.FK_EPI_AparatosSistemas_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />
       <End Role="EPI_AparatosSistemas" EntitySet="EPI_AparatosSistemas" />
+    </AssociationSet>
+    <EntitySet Name="EPI_Audiologia" EntityType="DevModel.EPI_Audiologia" />
+    <EntitySet Name="EPI_ExploracionFisica" EntityType="DevModel.EPI_ExploracionFisica" />
+    <AssociationSet Name="FK_EPI_Audiologia_Paciente" Association="DevModel.FK_EPI_Audiologia_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_Audiologia" EntitySet="EPI_Audiologia" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_ExploracionFisica_Paciente" Association="DevModel.FK_EPI_ExploracionFisica_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_ExploracionFisica" EntitySet="EPI_ExploracionFisica" />
+    </AssociationSet>
+    <EntitySet Name="EPI_DictamenAptitud" EntityType="DevModel.EPI_DictamenAptitud" />
+    <AssociationSet Name="FK_EPI_DictamenAptitud_Paciente" Association="DevModel.FK_EPI_DictamenAptitud_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_DictamenAptitud" EntitySet="EPI_DictamenAptitud" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="CapturaIncidencia">
@@ -1012,6 +1030,77 @@
         <PropertyRef Name="idPaciente" />
       </Principal>
       <Dependent Role="EPI_AparatosSistemas">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="EPI_Audiologia">
+    <Key>
+      <PropertyRef Name="idAudiologia" />
+    </Key>
+    <Property Name="idAudiologia" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Patologia" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="Grafica" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="NotaMedica" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="idPaciente" Type="Int32" />
+    <NavigationProperty Name="Paciente" Relationship="DevModel.FK_EPI_Audiologia_Paciente" FromRole="EPI_Audiologia" ToRole="Paciente" />
+  </EntityType>
+  <EntityType Name="EPI_ExploracionFisica">
+    <Key>
+      <PropertyRef Name="idExploracionFisica" />
+    </Key>
+    <Property Name="idExploracionFisica" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Romberg" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="PuntaNariz" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Estrabismo" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Soplo" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Amputaciones" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Protesis" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="idPaciente" Type="Int32" />
+    <NavigationProperty Name="Paciente" Relationship="DevModel.FK_EPI_ExploracionFisica_Paciente" FromRole="EPI_ExploracionFisica" ToRole="Paciente" />
+  </EntityType>
+  <Association Name="FK_EPI_Audiologia_Paciente">
+    <End Type="DevModel.Paciente" Role="Paciente" Multiplicity="0..1" />
+    <End Type="DevModel.EPI_Audiologia" Role="EPI_Audiologia" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_Audiologia">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EPI_ExploracionFisica_Paciente">
+    <End Type="DevModel.Paciente" Role="Paciente" Multiplicity="0..1" />
+    <End Type="DevModel.EPI_ExploracionFisica" Role="EPI_ExploracionFisica" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_ExploracionFisica">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="EPI_DictamenAptitud">
+    <Key>
+      <PropertyRef Name="idDictamenAptitud" />
+    </Key>
+    <Property Name="idDictamenAptitud" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="NotaMedica" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+    <Property Name="Aptitud" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="idPaciente" Type="Int32" />
+    <NavigationProperty Name="Paciente" Relationship="DevModel.FK_EPI_DictamenAptitud_Paciente" FromRole="EPI_DictamenAptitud" ToRole="Paciente" />
+  </EntityType>
+  <Association Name="FK_EPI_DictamenAptitud_Paciente">
+    <End Type="DevModel.Paciente" Role="Paciente" Multiplicity="0..1" />
+    <End Type="DevModel.EPI_DictamenAptitud" Role="EPI_DictamenAptitud" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_DictamenAptitud">
         <PropertyRef Name="idPaciente" />
       </Dependent>
     </ReferentialConstraint>

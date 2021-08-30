@@ -31,6 +31,9 @@ namespace SCT_iCare
             this.EPI_A_NoPatologicos = new HashSet<EPI_A_NoPatologicos>();
             this.EPI_A_Patologicos = new HashSet<EPI_A_Patologicos>();
             this.EPI_AparatosSistemas = new HashSet<EPI_AparatosSistemas>();
+            this.EPI_Audiologia = new HashSet<EPI_Audiologia>();
+            this.EPI_ExploracionFisica = new HashSet<EPI_ExploracionFisica>();
+            this.EPI_DictamenAptitud = new HashSet<EPI_DictamenAptitud>();
         }
     
         public int idPaciente { get; set; }
@@ -68,5 +71,11 @@ namespace SCT_iCare
         public virtual ICollection<EPI_A_Patologicos> EPI_A_Patologicos { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<EPI_AparatosSistemas> EPI_AparatosSistemas { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<EPI_Audiologia> EPI_Audiologia { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<EPI_ExploracionFisica> EPI_ExploracionFisica { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<EPI_DictamenAptitud> EPI_DictamenAptitud { get; set; }
     }
 }

@@ -31,7 +31,13 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             return View();
         }
 
-        
+        public ActionResult Dictamen(int id)
+        {
+            ViewBag.idPaciente = id;
+            return View();
+        }
+
+
         public ActionResult Recepcion()
         {
             return View();
@@ -107,7 +113,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         {
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
-            if (revision.Oftalmologia == null)
+            if (revision.Odontologia == null)
             {
                 var cm = db.CarruselMedico.Find(revision.idCarruselMedico);
                 cm.Odontologia = DateTime.Now;
@@ -144,6 +150,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             var revision2 = (from r in db.EPI_A_NoPatologicos where r.idPaciente == id select r).FirstOrDefault();
             var revision3 = (from r in db.EPI_A_Patologicos where r.idPaciente == id select r).FirstOrDefault();
             var revision4 = (from r in db.EPI_AparatosSistemas where r.idPaciente == id select r).FirstOrDefault();
+            var revision5 = (from r in db.EPI_ExploracionFisica where r.idPaciente == id select r).FirstOrDefault();
 
             if (revision1 == null)
             {
@@ -164,6 +171,11 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             {
                 ViewBag.idPaciente = id;
                 return RedirectToAction("AparatosSistemas", "ArchivoClinico", new { id = id });
+            }
+            if (revision5 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("ExploracionFisica", "ArchivoClinico", new { id = id });
             }
 
             ViewBag.idPaciente = id;
@@ -215,18 +227,208 @@ namespace SCT_iCare.Controllers.ArchivoClinico
 
         public ActionResult NoPatologicos(int id)
         {
+            var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
+
+            if (revision.HistoriaClinca == null)
+            {
+                var cm = db.CarruselMedico.Find(revision.idCarruselMedico);
+                cm.HistoriaClinca = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(cm).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
+            var revision1 = (from r in db.EPI_A_Heredofamiliares where r.idPaciente == id select r).FirstOrDefault();
+            var revision2 = (from r in db.EPI_A_NoPatologicos where r.idPaciente == id select r).FirstOrDefault();
+            var revision3 = (from r in db.EPI_A_Patologicos where r.idPaciente == id select r).FirstOrDefault();
+            var revision4 = (from r in db.EPI_AparatosSistemas where r.idPaciente == id select r).FirstOrDefault();
+            var revision5 = (from r in db.EPI_ExploracionFisica where r.idPaciente == id select r).FirstOrDefault();
+
+            if (revision1 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("HISTORIA_CLÍNICA", "ArchivoClinico", new { id = id });
+            }
+            if (revision2 == null)
+            {
+                ViewBag.idPaciente = id;
+                return View();
+            }
+            if (revision3 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("Patologicos", "ArchivoClinico", new { id = id });
+            }
+            if (revision4 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("AparatosSistemas", "ArchivoClinico", new { id = id });
+            }
+            if (revision5 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("ExploracionFisica", "ArchivoClinico", new { id = id });
+            }
+
             ViewBag.idPaciente = id;
             return View();
         }
 
         public ActionResult Patologicos(int id)
         {
+            var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
+
+            if (revision.HistoriaClinca == null)
+            {
+                var cm = db.CarruselMedico.Find(revision.idCarruselMedico);
+                cm.HistoriaClinca = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(cm).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
+            var revision1 = (from r in db.EPI_A_Heredofamiliares where r.idPaciente == id select r).FirstOrDefault();
+            var revision2 = (from r in db.EPI_A_NoPatologicos where r.idPaciente == id select r).FirstOrDefault();
+            var revision3 = (from r in db.EPI_A_Patologicos where r.idPaciente == id select r).FirstOrDefault();
+            var revision4 = (from r in db.EPI_AparatosSistemas where r.idPaciente == id select r).FirstOrDefault();
+            var revision5 = (from r in db.EPI_ExploracionFisica where r.idPaciente == id select r).FirstOrDefault();
+
+            if (revision1 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("HISTORIA_CLÍNICA", "ArchivoClinico", new { id = id });
+            }
+            if (revision2 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("NoPatologicos", "ArchivoClinico", new { id = id });
+            }
+            if (revision3 == null)
+            {
+                ViewBag.idPaciente = id;
+                return View();
+            }
+            if (revision4 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("AparatosSistemas", "ArchivoClinico", new { id = id });
+            }
+            if (revision5 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("ExploracionFisica", "ArchivoClinico", new { id = id });
+            }
+
             ViewBag.idPaciente = id;
             return View();
         }
 
         public ActionResult AparatosSistemas(int id)
         {
+            var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
+
+            if (revision.HistoriaClinca == null)
+            {
+                var cm = db.CarruselMedico.Find(revision.idCarruselMedico);
+                cm.HistoriaClinca = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(cm).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
+            var revision1 = (from r in db.EPI_A_Heredofamiliares where r.idPaciente == id select r).FirstOrDefault();
+            var revision2 = (from r in db.EPI_A_NoPatologicos where r.idPaciente == id select r).FirstOrDefault();
+            var revision3 = (from r in db.EPI_A_Patologicos where r.idPaciente == id select r).FirstOrDefault();
+            var revision4 = (from r in db.EPI_AparatosSistemas where r.idPaciente == id select r).FirstOrDefault();
+            var revision5 = (from r in db.EPI_ExploracionFisica where r.idPaciente == id select r).FirstOrDefault();
+
+            if (revision1 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("HISTORIA_CLÍNICA", "ArchivoClinico", new { id = id });
+            }
+            if (revision2 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("NoPatologicos", "ArchivoClinico", new { id = id });
+            }
+            if (revision3 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("Patologicos", "ArchivoClinico", new { id = id });
+            }
+            if (revision4 == null)
+            {
+                ViewBag.idPaciente = id;
+                return View();
+            }
+            if (revision5 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("ExploracionFisica", "ArchivoClinico", new { id = id });
+            }
+
+            ViewBag.idPaciente = id;
+            return View();
+        }
+
+        public ActionResult ExploracionFisica(int id)
+        {
+            var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
+
+            if (revision.HistoriaClinca == null)
+            {
+                var cm = db.CarruselMedico.Find(revision.idCarruselMedico);
+                cm.HistoriaClinca = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(cm).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
+            var revision1 = (from r in db.EPI_A_Heredofamiliares where r.idPaciente == id select r).FirstOrDefault();
+            var revision2 = (from r in db.EPI_A_NoPatologicos where r.idPaciente == id select r).FirstOrDefault();
+            var revision3 = (from r in db.EPI_A_Patologicos where r.idPaciente == id select r).FirstOrDefault();
+            var revision4 = (from r in db.EPI_AparatosSistemas where r.idPaciente == id select r).FirstOrDefault();
+            var revision5 = (from r in db.EPI_ExploracionFisica where r.idPaciente == id select r).FirstOrDefault();
+
+            if (revision1 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("HISTORIA_CLÍNICA", "ArchivoClinico", new { id = id });
+            }
+            if (revision2 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("NoPatologicos", "ArchivoClinico", new { id = id });
+            }
+            if (revision3 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("Patologicos", "ArchivoClinico", new { id = id });
+            }
+            if (revision4 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("AparatosSistemas", "ArchivoClinico", new { id = id });
+            }
+            if (revision5 == null)
+            {
+                ViewBag.idPaciente = id;
+                return View();
+            }
+
             ViewBag.idPaciente = id;
             return View();
         }
@@ -270,8 +472,15 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         }
 
         [HttpPost]
-        public ActionResult Guardar_Audiologia(int id)
+        public ActionResult Guardar_Audiologia(int id, string patologia, string nota, string graficas)
         {
+            EPI_Audiologia audio = new EPI_Audiologia();
+
+            audio.Patologia = patologia;
+            audio.Grafica = graficas == "on" ? "NORMAL" : "ALTERADO";
+            audio.NotaMedica = nota == "on" ? "NORMAL" : "ALTERADO";
+            audio.idPaciente = id;
+
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
             if (revision.Fin_Audiologia == null)
@@ -281,6 +490,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
 
                 if (ModelState.IsValid)
                 {
+                    db.EPI_Audiologia.Add(audio);
                     db.Entry(cm).State = EntityState.Modified;
                     db.SaveChanges();
                 }
@@ -324,12 +534,12 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             oftal.DerechoAVM = derechoavm.ToString();
             oftal.DerechoAVL = derechoavl.ToString();
             oftal.AgudezaVisual = agudezavisual == "on" ? "SI" : "NO";
-            oftal.Estereopsis = estereopsis == "on" ? "SI" : "NO"; ;
-            oftal.CartaAccidentes = cartaaccidentes == "on" ? "SI" : "NO"; ;
-            oftal.MovimientosOculares = movimientosoculares == "on" ? "SI" : "NO"; ;
-            oftal.CampoVisual = campovisual == "on" ? "SI" : "NO"; ;
-            oftal.DerechoRP = derechorp == "on" ? "SI" : "NO"; ;
-            oftal.IzquierdoRP = izquierdorp == "on" ? "SI" : "NO"; ;
+            oftal.Estereopsis = estereopsis.ToString();
+            oftal.CartaAccidentes = cartaaccidentes == "on" ? "SI" : "NO";
+            oftal.MovimientosOculares = movimientosoculares == "on" ? "NORMAL" : "NO";
+            oftal.CampoVisual = campovisual == "on" ? "NORMAL" : "NO";
+            oftal.DerechoRP = derechorp == "on" ? "NORMAL" : "NO";
+            oftal.IzquierdoRP = izquierdorp == "on" ? "NORMAL" : "NO";
             oftal.Cromatica = cromatica;
             oftal.idPaciente = id;
 
@@ -357,7 +567,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         {
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
-            if (revision.Fin_Oftalmologia == null)
+            if (revision.Fin_Odontologia == null)
             {
                 var cm = db.CarruselMedico.Find(revision.idCarruselMedico);
                 cm.Fin_Odontologia = DateTime.Now;
@@ -402,8 +612,9 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             var revision2 = (from r in db.EPI_A_NoPatologicos where r.idPaciente == id select r).FirstOrDefault();
             var revision3 = (from r in db.EPI_A_Patologicos where r.idPaciente == id select r).FirstOrDefault();
             var revision4 = (from r in db.EPI_AparatosSistemas where r.idPaciente == id select r).FirstOrDefault();
+            var revision5 = (from r in db.EPI_ExploracionFisica where r.idPaciente == id select r).FirstOrDefault();
 
-            if(revision1 != null && revision2 != null && revision3 != null && revision4 != null)
+            if (revision1 != null && revision2 != null && revision3 != null && revision4 != null && revision5 != null)
             {
                 var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
@@ -438,6 +649,11 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 ViewBag.idPaciente = id;
                 return RedirectToAction("AparatosSistemas", "ArchivoClinico", new { id = id });
             }
+            if (revision5 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("ExploracionFisica", "ArchivoClinico", new { id = id });
+            }
 
             return View("Recepcion");
         }
@@ -464,8 +680,9 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             var revision2 = (from r in db.EPI_A_NoPatologicos where r.idPaciente == id select r).FirstOrDefault();
             var revision3 = (from r in db.EPI_A_Patologicos where r.idPaciente == id select r).FirstOrDefault();
             var revision4 = (from r in db.EPI_AparatosSistemas where r.idPaciente == id select r).FirstOrDefault();
+            var revision5 = (from r in db.EPI_ExploracionFisica where r.idPaciente == id select r).FirstOrDefault();
 
-            if (revision1 != null && revision2 != null && revision3 != null && revision4 != null)
+            if (revision1 != null && revision2 != null && revision3 != null && revision4 != null && revision5 != null)
             {
                 var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
@@ -499,6 +716,11 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             {
                 ViewBag.idPaciente = id;
                 return RedirectToAction("AparatosSistemas", "ArchivoClinico", new { id = id });
+            }
+            if (revision5 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("ExploracionFisica", "ArchivoClinico", new { id = id });
             }
 
             return View("Recepcion");
@@ -544,8 +766,9 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             var revision2 = (from r in db.EPI_A_NoPatologicos where r.idPaciente == id select r).FirstOrDefault();
             var revision3 = (from r in db.EPI_A_Patologicos where r.idPaciente == id select r).FirstOrDefault();
             var revision4 = (from r in db.EPI_AparatosSistemas where r.idPaciente == id select r).FirstOrDefault();
+            var revision5 = (from r in db.EPI_ExploracionFisica where r.idPaciente == id select r).FirstOrDefault();
 
-            if (revision1 != null && revision2 != null && revision3 != null && revision4 != null)
+            if (revision1 != null && revision2 != null && revision3 != null && revision4 != null && revision5 != null)
             {
                 var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
@@ -579,6 +802,11 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             {
                 ViewBag.idPaciente = id;
                 return RedirectToAction("Patologicos", "ArchivoClinico", new { id = id });
+            }
+            if (revision5 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("ExploracionFisica", "ArchivoClinico", new { id = id });
             }
 
             return View("Recepcion");
@@ -620,8 +848,9 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             var revision2 = (from r in db.EPI_A_NoPatologicos where r.idPaciente == id select r).FirstOrDefault();
             var revision3 = (from r in db.EPI_A_Patologicos where r.idPaciente == id select r).FirstOrDefault();
             var revision4 = (from r in db.EPI_AparatosSistemas where r.idPaciente == id select r).FirstOrDefault();
+            var revision5 = (from r in db.EPI_ExploracionFisica where r.idPaciente == id select r).FirstOrDefault();
 
-            if (revision1 != null && revision2 != null && revision3 != null && revision4 != null)
+            if (revision1 != null && revision2 != null && revision3 != null && revision4 != null && revision5 != null)
             {
                 var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
@@ -650,6 +879,83 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             {
                 ViewBag.idPaciente = id;
                 return RedirectToAction("NoPatologicos", "ArchivoClinico", new { id = id });
+            }
+            if (revision4 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("AparatosSistemas", "ArchivoClinico", new { id = id });
+            }
+            if (revision5 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("ExploracionFisica", "ArchivoClinico", new { id = id });
+            }
+
+            return View("Recepcion");
+        }
+
+
+        [HttpPost]
+        public ActionResult Guardar_ExploracionFisica(int id, string romberg, string nariz, string estrabismo, string soplo, string amputaciones,
+            string protesis)
+        {
+            EPI_ExploracionFisica ef = new EPI_ExploracionFisica();
+
+            ef.Romberg = romberg == "on" ? "SI" : "NO";
+            ef.PuntaNariz = nariz == "on" ? "SI" : "NO";
+            ef.Estrabismo = estrabismo == "on" ? "SI" : "NO";
+            ef.Soplo = soplo == "on" ? "SI" : "NO";
+            ef.Amputaciones = amputaciones == "on" ? "SI" : "NO";
+            ef.Protesis = protesis == "on" ? "SI" : "NO";
+
+            ef.idPaciente = id;
+
+            if (ModelState.IsValid)
+            {
+                db.EPI_ExploracionFisica.Add(ef);
+                db.SaveChanges();
+            }
+
+            var revision1 = (from r in db.EPI_A_Heredofamiliares where r.idPaciente == id select r).FirstOrDefault();
+            var revision2 = (from r in db.EPI_A_NoPatologicos where r.idPaciente == id select r).FirstOrDefault();
+            var revision3 = (from r in db.EPI_A_Patologicos where r.idPaciente == id select r).FirstOrDefault();
+            var revision4 = (from r in db.EPI_AparatosSistemas where r.idPaciente == id select r).FirstOrDefault();
+            var revision5 = (from r in db.EPI_ExploracionFisica where r.idPaciente == id select r).FirstOrDefault();
+
+            if (revision1 != null && revision2 != null && revision3 != null && revision4 != null && revision5 != null)
+            {
+                var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
+
+                if (revision.Fin_HistoriaClinica == null)
+                {
+                    var cm = db.CarruselMedico.Find(revision.idCarruselMedico);
+                    cm.Fin_HistoriaClinica = DateTime.Now;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Entry(cm).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+
+                ViewBag.idPaciente = id;
+                return RedirectToAction("Index", "ArchivoClinico", new { id = id });
+            }
+
+            if (revision1 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("HISTORIA_CLÍNICA", "ArchivoClinico", new { id = id });
+            }
+            if (revision2 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("NoPatologicos", "ArchivoClinico", new { id = id });
+            }
+            if (revision3 == null)
+            {
+                ViewBag.idPaciente = id;
+                return RedirectToAction("Patologicos", "ArchivoClinico", new { id = id });
             }
             if (revision4 == null)
             {
@@ -720,6 +1026,28 @@ namespace SCT_iCare.Controllers.ArchivoClinico
 
             ViewBag.idPaciente = id;
             return RedirectToAction("Index", "ArchivoClinico", new { id = id });
+        }
+
+        public ActionResult Guardar_Dictamen(int id, string nota, string accion)
+        {
+            EPI_DictamenAptitud aptitud = new EPI_DictamenAptitud();
+
+            aptitud.Aptitud = accion;
+            aptitud.NotaMedica = nota;
+            aptitud.idPaciente = id;
+
+            var revision = (from r in db.EPI_DictamenAptitud where r.idPaciente == id select r).FirstOrDefault();
+
+            if(revision == null)
+            {
+                if (ModelState.IsValid)
+                {
+                    db.EPI_DictamenAptitud.Add(aptitud);
+                    db.SaveChanges();
+                }
+            }
+
+            return Redirect("Recepcion");
         }
     }
 }

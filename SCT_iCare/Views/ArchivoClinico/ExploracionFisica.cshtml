@@ -1,0 +1,85 @@
+﻿
+@{
+    ViewBag.Title = "ExploracionFisica";
+    GMIEntities db = new GMIEntities();
+
+    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+}
+
+<br />
+<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Examen Historia Clínica: </span>@nombrePaciente </h3>
+<br />
+
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Antecedentes Heredofamiliares</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Antecedentes Personales No Patológicos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Antecedentes Personales Patológicos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod"><b>Aparatos y Sistemas</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="#" style="text-decoration:none; color:goldenrod"><b>EXPLORACIÓN FÍSICA</b></a>
+    </li>
+</ul>
+
+<br />
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_ExploracionFisica")" style="display:inline-block; margin:0.5%">
+
+
+    <h5 style="color:white">Neurología</h5>
+    <div class="form-group">
+        <label style="color:white">1. Test de Romberg</label>
+        <input type="checkbox" name="romberg" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Positivo" data-off="Negativo">
+    </div>
+
+
+    <div class="form-group">
+        <label style="color:white">2. Punta de Nariz</label>
+        <input type="checkbox" name="nariz" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Positivo" data-off="Negativo">
+    </div>
+
+    <h5 style="color:white">Ojos</h5>
+    <div class="form-group">
+        <label style="color:white">3. Estrabismo</label>
+        <input type="checkbox" name="estrabismo" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Positivo" data-off="Negativo">
+    </div>
+
+    <h5 style="color:white">Área Cardiaca</h5>
+    <div class="form-group">
+        <label style="color:white">4. Soplo</label>
+        <input type="checkbox" name="soplo" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Positivo" data-off="Negativo">
+    </div>
+
+    <h5 style="color:white">Extremidades</h5>
+    <div class="form-group">
+        <label style="color:white">5. Amputaciones</label>
+        <input type="checkbox" name="amputaciones" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Positivo" data-off="Negativo">
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">6. Prótesis</label>
+        <input type="checkbox" name="protesis" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Positivo" data-off="Negativo">
+    </div>
+
+    <input type="hidden" value="@idPaciente" name="id" />
+    <input type="submit" class="btn btn-success" value="Guardar Examen" />
+</form>
+<br />
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
+    <input type="hidden" value="@idPaciente" name="id" />
+    <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />
+</form>
+
+
+
+
