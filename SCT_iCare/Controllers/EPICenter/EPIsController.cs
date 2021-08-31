@@ -655,5 +655,7 @@ namespace SCT_iCare.Controllers.EPICenter
             return Redirect("Captura");
         }
 
+
+
     }
 }

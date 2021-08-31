@@ -1368,9 +1368,23 @@ namespace SCT_iCare.Controllers.Recepcion
             //string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
             //paciente.Folio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
 
-            string numFolio = dia + mes + anio + SUC + doc + num;
-            paciente.Folio = dia + mes + anio + SUC + doc + num;
-            cita.Folio = dia + mes + anio + SUC + doc + num;
+            string numFolio = dia + mes + anio + SUC + doc + contador;
+            paciente.Folio = dia + mes + anio + SUC + doc + contador;
+            cita.Folio = dia + mes + anio + SUC + doc + contador;
+
+            int? idSuc = (from i in db.Sucursales where i.Nombre == cita.Sucursal select i.idSucursal).FirstOrDefault();
+
+            Sucursales suc = db.Sucursales.Find(idSuc);
+
+            suc.Contador = Convert.ToInt32(num);
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(suc).State = EntityState.Modified;
+                db.SaveChanges();
+                //No retorna ya que sigue el proceso
+                //return RedirectToAction("Index");
+            }
 
             //Se crea el número de Folio
             //string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + doc + num;
