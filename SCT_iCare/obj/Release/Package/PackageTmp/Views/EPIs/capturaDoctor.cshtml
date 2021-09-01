@@ -40,7 +40,7 @@
     int day = start.Day;
     DateTime tomorrorDay = DateTime.Now.AddDays(1);
     DateTime thisDate = new DateTime(year, month, day);
-    DateTime tomorrowDate = new DateTime(year, month, tomorrorDay.Day);
+    DateTime tomorrowDate = new DateTime(tomorrorDay.Year, tomorrorDay.Month, tomorrorDay.Day);
 
     var Restriccion1 = db.Captura.Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).ToList();
     //var Restriccion = from r in Restriccion1 orderby r.TipoTramite where r.Sucursal == ViewBag.Sucursal select r;

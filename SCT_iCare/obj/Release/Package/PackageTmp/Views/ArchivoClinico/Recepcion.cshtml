@@ -267,10 +267,10 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                                         {
                                             <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px">NO APTO</b>
                                         }
-                            else
-                            {
-                            <b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">APTO</mark></b>
-                            }
+                                        else
+                                        {
+                                            <b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">APTO</mark></b>
+                                        }
 
                                     }
                                 }
@@ -294,99 +294,110 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
             </div>
 
         }
-                else
-                {
-<div class="tablaScroll">
-    <table class="table tablas" style="color: #2F2D6B">
-        <thead>
-            <tr class="bg-primary" style="border-top-color: black">
-                <th>
-                </th>
-
-                <th>
-                    Paciente
-                </th>
-                <th>
-                    No. Expediente
-                </th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-
-
-        @foreach (var item in modelo)
+        else
         {
+            <div class="tablaScroll">
+                <table class="table tablas" style="color: #2F2D6B">
+                    <thead>
+                        <tr class="bg-primary" style="border-top-color: black">
+                            <th>
+                            </th>
 
-            if (item.M.TipoTramite == "PRIMERA VEZ" && item.M.TipoLicencia != "AEREO")
-            {
-                fila = "#BBDEFB";
-            }
-            else if (item.M.TipoTramite != "PRIMERA VEZ" && item.M.TipoLicencia == "AEREO")
-            {
-                fila = "#D1C4E9";
-            }
-            else if (item.M.TipoTramite == "PRIMERA VEZ" && item.M.TipoLicencia == "AEREO")
-            {
-                fila = "#9575CD";
-            }
-            else
-            {
-                fila = "white";
-            }
+                            <th>
+                                Paciente
+                            </th>
+                            <th>
+                                No. Expediente
+                            </th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
 
-            <tr style="background-color:@fila">
-                <td>
-                    @flag
-                </td>
 
-                <td>
-                    <span class="field-tip">
-                        <b>@Html.DisplayFor(modelItem => item.N.Nombre)</b>
-                        <span class="tip-content">
-                            <h6>
-                                <b>Teléfono:</b><br />
-                                @item.N.Telefono <br />
-                                <b>Email:</b><br />
-                                @item.N.Email <br />
-                                <b>Folio:</b><br />
-                                @item.N.Folio <br />
-                            </h6>
-                        </span>
-                    </span>
-                </td>
+                    @foreach (var item in modelo)
+                    {
 
-                <td>
-                    <b>@Html.DisplayFor(modelItem => item.M.NoExpediente)</b>
-                </td>
-                <td>
-                                @{ 
+                        if (item.M.TipoTramite == "PRIMERA VEZ" && item.M.TipoLicencia != "AEREO")
+                        {
+                            fila = "#BBDEFB";
+                        }
+                        else if (item.M.TipoTramite != "PRIMERA VEZ" && item.M.TipoLicencia == "AEREO")
+                        {
+                            fila = "#D1C4E9";
+                        }
+                        else if (item.M.TipoTramite == "PRIMERA VEZ" && item.M.TipoLicencia == "AEREO")
+                        {
+                            fila = "#9575CD";
+                        }
+                        else
+                        {
+                            fila = "white";
+                        }
+
+                        <tr style="background-color:@fila">
+                            <td>
+                                @flag
+                            </td>
+
+                            <td>
+                                <span class="field-tip">
+                                    <b>@Html.DisplayFor(modelItem => item.N.Nombre)</b>
+                                    <span class="tip-content">
+                                        <h6>
+                                            <b>Teléfono:</b><br />
+                                            @item.N.Telefono <br />
+                                            <b>Email:</b><br />
+                                            @item.N.Email <br />
+                                            <b>Folio:</b><br />
+                                            @item.N.Folio <br />
+                                        </h6>
+                                    </span>
+                                </span>
+                            </td>
+
+                            <td>
+                                <b>@Html.DisplayFor(modelItem => item.M.NoExpediente)</b>
+                            </td>
+                            <td>
+                                @{
                                     var dictamen = (from d in db.EPI_DictamenAptitud where d.idPaciente == item.N.idPaciente orderby d.idPaciente descending select d).FirstOrDefault();
 
-                                    if(dictamen != null)
-                        {
-                            <b>Dictaminado</b>
-                        }
+                                    if (dictamen != null)
+                                    {
+                                        <b>Dictaminado</b>
+                                    }
                                 }
                             </td>
-                <td>
-                    @*<a href="~/ArchivoClinico/Index"><button type="button" style="color:white" class="btn btn-info">Iniciar Examen</button></a>*@
-                    @{
-                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")">
-                            <input type="hidden" value="@item.N.idPaciente" name="id" />
-                            <input type="submit" class="btn btn-info" value="Carrusel Médico" />
-                        </form>
+                            <td>
+                                @*<a href="~/ArchivoClinico/Index"><button type="button" style="color:white" class="btn btn-info">Iniciar Examen</button></a>*@
+                                @{
+                                    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")">
+                                        <input type="hidden" value="@item.N.idPaciente" name="id" />
+                                        <input type="submit" class="btn btn-info" value="Carrusel Médico" />
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+
+                        flag += 1;
+
                     }
-                </td>
-            </tr>
 
-            flag += 1;
-
+                </table>
+            </div>
         }
+    }
+}
 
-    </table>
-</div>
-                }
+
+@section scripts{
+    @if (TempData["ID"] != null)
+    {
+        <script>
+            @*Se setea el id para que genere el mismo PDF por ahora*@
+            window.open('@Url.Action("Descargar","ArchivoClinico", new { id = 1 @*TempData["ID"]*@ })');
+        </script>
     }
 }
 

@@ -376,6 +376,8 @@
                                                 <a href="#" data-toggle="modal" data-target="#Enviado_@item.N.idCaptura"><b>Enviado <span class="glyphicon glyphicon-alert"></span></b></a>
                                                 @*<a href=@Url.Action("CorreoEnviado", "ControlDictamen", new { id = item.N.idCaptura, fecha = fechaControl })><b>Enviado<span class="glyphicon glyphicon-flag"></span></b></a>*@
                                                 <div class="dropdown-divider"></div>
+                                                <a href="#" data-toggle="modal" data-target="#editar_@item.N.idCaptura"><b>Editar</b></a>
+                                                <div class="dropdown-divider"></div>
 
                                             </div>
                                             @*<a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.N.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>*@
@@ -388,6 +390,8 @@
                                                 <div class="dropdown-divider"></div>
                                                 <a href="#" data-toggle="modal" data-target="#Problema_@item.N.idCaptura"><b>Reportar <span class="glyphicon glyphicon-alert"></span></b></a>
                                                 @*<a href=@Url.Action("Problema", "ControlDictamen", new { id = item.N.idCaptura, fecha = fechaControl })><b>Reportar Problema <span class="glyphicon glyphicon-alert"></span></b></a>*@
+                                                <div class="dropdown-divider"></div>
+                                                <a href="#" data-toggle="modal" data-target="#editar_@item.N.idCaptura"><b>Editar</b></a>
                                                 <div class="dropdown-divider"></div>
                                             </div>
                                             @*<a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.N.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>*@
@@ -450,10 +454,48 @@
                                     </div>
                                 </form>
 
+                                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ControlDictamen/EditarDatosDictamen")">
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal fade" id="editar_@item.N.idCaptura" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>Editar Datos</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="id" value="@item.M.idPaciente" />
+                                                    @{
+                                                        var paciente = (from p in db.Paciente where p.idPaciente == item.M.idPaciente select p).FirstOrDefault();
+
+                                                        <div class="form-group" style="width:60%; min-width:320px">
+                                                            <label for="recipient-name" class="col-form-label">Paciente: @paciente.Nombre</label><br />
+                                                            <label for="recipient-name" class="col-form-label">CURP: @paciente.CURP</label><br />
+                                                            <label for="recipient-name" class="col-form-label">Folio: @paciente.Folio</label>
+                                                        </div>
+                                                        <div class="form-group" style="width:60%; min-width:320px">
+                                                            <label for="recipient-name" class="col-form-label">Email:</label>
+                                                            <input type="text" class="form-control" name="email" id="problema" placeholder="@paciente.Email" />
+                                                        </div>
+                                                        <div class="form-group" style="width:60%; min-width:320px">
+                                                            <label for="recipient-name" class="col-form-label">Teléfono:</label>
+                                                            <input type="text" class="form-control" pattern="[0-9]{10}" title="El formato de teléfono debe contener 10 números" name="telefono" id="telefono" placeholder="@paciente.Telefono" />
+                                                        </div>
+                                                    }
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    <input type="submit" value="Enviar" class="btn btn-primary" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
                             </td>
                         </tr>
                         flag++;
-                    }
+                                                        }
 
                     
                 }
