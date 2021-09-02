@@ -17,6 +17,7 @@ namespace SCT_iCare.Controllers.Login
             return View();
         }
 
+
         [HttpPost]
         public ActionResult Inicio(string User, string Pass)
         {

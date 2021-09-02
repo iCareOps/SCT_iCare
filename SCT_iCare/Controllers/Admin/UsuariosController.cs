@@ -228,7 +228,7 @@ namespace SCT_iCare.Controllers.Admin
         [HttpPost]
         public ActionResult AsignarModulo(int modulo, int sucursal, int doctor)
         {
-            DoctorModulo dm = new DoctorModulo();
+            SCT_iCare.DoctorModulo dm = new SCT_iCare.DoctorModulo();
 
             dm.idUsuario = doctor;
             dm.idModulo = modulo;

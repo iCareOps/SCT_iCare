@@ -67,7 +67,6 @@ namespace SCT_iCare.Controllers.CallCenter
 
             string mailSeteado = "referenciasoxxo@medicinagmi.mx";
 
-
             int cantidadN;
             int cantidadA;
 
