@@ -243,8 +243,23 @@ int modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) =
                             }
                         </select>
                     </div>
+                    <div class="form-group" style="width:60%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Referido Por:</label>
+                        <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option selected value="NINGUNO">NINGUNO</option>
+                            @{
+                                var gestores = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
 
-            </div>
+                                foreach (var item in gestores)
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            }
+                            <option value="OTRO">OTRO</option>
+                        </select>
+                    </div>
+
+</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -419,6 +434,21 @@ int modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) =
                         <input type="date" class="form-control" id="fecha" name="fecha" required>
                     </div>
                     <input type="hidden" name="usuario" asp-for="file" class="" required value="Call Center" />
+                    <div class="form-group" style="width:60%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Referido Por:</label>
+                        <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option selected value="NINGUNO">NINGUNO</option>
+                            @{
+                                var gestores1 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
+
+                                foreach (var item in gestores1)
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            }
+                            <option value="OTRO">OTRO</option>
+                        </select>
+                    </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>

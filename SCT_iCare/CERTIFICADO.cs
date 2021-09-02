@@ -21,5 +21,6 @@ namespace SCT_iCare
         public Nullable<System.DateTime> FechaNacimiento { get; set; }
         public Nullable<System.DateTime> FechaToma { get; set; }
         public string Sexo { get; set; }
+        public string Usuario { get; set; }
     }
 }

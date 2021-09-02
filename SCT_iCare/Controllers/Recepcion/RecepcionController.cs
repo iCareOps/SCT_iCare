@@ -70,7 +70,7 @@ namespace SCT_iCare.Controllers.Recepcion
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create1(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, string pago,string referencia)
+        public ActionResult Create1(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, string pago,string referencia, string referido)
         {
             Paciente paciente1 = new Paciente();
 
@@ -196,6 +196,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.Folio = numFolio;
                 cita.Canal = "SITIO";
                 cita.TipoPago = pago;
+                cita.ReferidoPor = referido.ToUpper();
 
                 if (pago != "Referencia Scotiabank")
                 {
@@ -352,6 +353,7 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.Referencia = referencia;
                     cita.Canal = nombre.ToUpper();
                     cita.FechaCita = DateTime.Now;
+                    cita.ReferidoPor = referido.ToUpper();
 
                     if (n > cantidadN)
                     {
@@ -373,7 +375,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Orden(string nombre, string telefono, string email, string usuario, string sucursal,  string cantidad, string cantidadAereo)
+        public ActionResult Orden(string nombre, string telefono, string email, string usuario, string sucursal,  string cantidad, string cantidadAereo, string referido)
         {
             GetApiKey();
 
@@ -555,6 +557,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.Folio = numFolio;
                 cita.Canal = "SITIO";
                 cita.FechaCita = DateTime.Now;
+                cita.ReferidoPor = referido.ToUpper();
 
 
                 int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
@@ -688,6 +691,7 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.Folio = numFolio;
                     cita.Canal = nombre.ToUpper();
                     cita.FechaCita = DateTime.Now;
+                    cita.ReferidoPor = referido.ToUpper();
 
                     if (n > cantidadN)
                     {
@@ -735,7 +739,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult PagoTarjeta(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, int card)
+        public ActionResult PagoTarjeta(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, int card, string referido)
         {
             GetApiKey();
 
@@ -897,6 +901,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.FechaCita = DateTime.Now;
                 cita.NoOrden = link;
                 cita.Referencia = Convert.ToString(card);
+                cita.ReferidoPor = referido.ToUpper();
 
                 string TIPOLIC = null;
                 if (cantidadA != 0)
@@ -1022,6 +1027,7 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.FechaCita = DateTime.Now;
                     cita.NoOrden = link;
                     cita.Referencia = Convert.ToString(card);
+                    cita.ReferidoPor = referido.ToUpper();
 
                     if (ModelState.IsValid)
                     {

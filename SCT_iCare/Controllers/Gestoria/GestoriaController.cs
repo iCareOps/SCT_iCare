@@ -61,7 +61,7 @@ namespace SCT_iCare.Controllers.Gestoria
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Orden(string nombre, string telefono, string sucursal, string usuario, DateTime? fecha, string cantidad, string cantidadAereo)
+        public ActionResult Orden(string nombre, string telefono, string sucursal, string usuario, DateTime? fecha, string cantidad, string cantidadAereo, string referido)
         {
             GetApiKey();
 
@@ -241,6 +241,7 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.Canal = nombre.ToUpper();
                 cita.FechaCita = fecha;
                 cita.CC = "Call Center";
+                cita.ReferidoPor = referido.ToUpper();
 
                 int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
 
@@ -375,8 +376,9 @@ namespace SCT_iCare.Controllers.Gestoria
                     cita.Canal = nombre.ToUpper();
                     cita.TipoPago = "REFERENCIA OXXO";
                     cita.CC = "Call Center";
+                    cita.ReferidoPor = referido.ToUpper();
 
-                    if(n > cantidadN)
+                    if (n > cantidadN)
                     {
                         cita.TipoLicencia = "AEREO";
                     }
@@ -406,7 +408,7 @@ namespace SCT_iCare.Controllers.Gestoria
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult PagoTarjeta(string nombre, string telefono, string sucursal, string usuario, DateTime fecha, string cantidad, string cantidadAereo, string card)
+        public ActionResult PagoTarjeta(string nombre, string telefono, string sucursal, string usuario, DateTime fecha, string cantidad, string cantidadAereo, string card, string referido)
         {
             GetApiKey();
 
@@ -582,6 +584,7 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.NoOrden = link;
                 cita.Referencia = Convert.ToString(card);
                 cita.CC = "Call Center";
+                cita.ReferidoPor = referido.ToUpper();
 
                 string TIPOLIC = null;
                 if (cantidadA != 0)
@@ -708,6 +711,7 @@ namespace SCT_iCare.Controllers.Gestoria
                     cita.NoOrden = link;
                     cita.Referencia = Convert.ToString(card);
                     cita.CC = usuario;
+                    cita.ReferidoPor = referido.ToUpper();
 
                     if (ModelState.IsValid)
                     {
