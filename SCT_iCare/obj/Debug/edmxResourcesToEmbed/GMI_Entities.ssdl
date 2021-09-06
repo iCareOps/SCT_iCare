@@ -291,6 +291,15 @@
     <Property Name="HemoglobinaGlucosilada" Type="varchar" MaxLength="10" />
     <Property Name="idPaciente" Type="int" />
   </EntityType>
+  <EntityType Name="EPI_Odontologia">
+    <Key>
+      <PropertyRef Name="idOdontologia" />
+    </Key>
+    <Property Name="idOdontologia" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Exploracion" Type="varchar" MaxLength="20" />
+    <Property Name="NotaOdontologica" Type="varchar" MaxLength="300" />
+    <Property Name="idPaciente" Type="int" />
+  </EntityType>
   <EntityType Name="Epi_Oftalmologia">
     <Key>
       <PropertyRef Name="idOftalmologia" />
@@ -401,6 +410,7 @@
     <Property Name="Email" Type="varchar" MaxLength="100" />
     <Property Name="Folio" Type="varchar" MaxLength="100" />
     <Property Name="CURP" Type="varchar" MaxLength="20" />
+    <Property Name="HASH" Type="varchar" MaxLength="20" />
   </EntityType>
   <EntityType Name="Recepcionista">
     <Key>
@@ -709,6 +719,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_EPI_Odontologia_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_Odontologia" Type="Self.EPI_Odontologia" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_Odontologia">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Epi_Oftalmologia_Paciente">
     <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
     <End Role="Epi_Oftalmologia" Type="Self.Epi_Oftalmologia" Multiplicity="*" />
@@ -887,6 +909,7 @@
     <EntitySet Name="EPI_DictamenAptitud" EntityType="Self.EPI_DictamenAptitud" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI_ExploracionFisica" EntityType="Self.EPI_ExploracionFisica" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI_Laboratorio" EntityType="Self.EPI_Laboratorio" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="EPI_Odontologia" EntityType="Self.EPI_Odontologia" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Epi_Oftalmologia" EntityType="Self.Epi_Oftalmologia" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI_SignosVitales" EntityType="Self.EPI_SignosVitales" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Expedientes" EntityType="Self.Expedientes" Schema="dbo" store:Type="Tables" />
@@ -986,6 +1009,10 @@
     <AssociationSet Name="FK_EPI_Laboratorio_Paciente" Association="Self.FK_EPI_Laboratorio_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />
       <End Role="EPI_Laboratorio" EntitySet="EPI_Laboratorio" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_Odontologia_Paciente" Association="Self.FK_EPI_Odontologia_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_Odontologia" EntitySet="EPI_Odontologia" />
     </AssociationSet>
     <AssociationSet Name="FK_Epi_Oftalmologia_Paciente" Association="Self.FK_Epi_Oftalmologia_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />

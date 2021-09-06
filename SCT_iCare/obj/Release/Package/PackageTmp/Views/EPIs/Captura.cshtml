@@ -89,20 +89,24 @@
 @{
     if (nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España" || nombreUsuario == "Soporte Captura" || idRol == 2)
     {
+
         <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Captura")">
-            <div style="display:inline-block; padding:10px; background-color:gainsboro; border-radius: 5px">
+            <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px">
                 <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
                 <input type="date" class="form-control" min="2021-08-02" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
-                <input type="date" class="form-control" name="final" max="@fechaMAX" /> &nbsp; &nbsp;
+                <input type="date" class="form-control" name="final" max="@fechaMAX"/> &nbsp; &nbsp;
                 <input type="submit" class="btn btn-primary" value="Enviar" />
                 <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
             </div>
-            <div class="input-group pull-right">
-                <input type="text" class="form-control input-g" id="buscador" name="dato" placeholder="Paciente o Expediente">
-                <span class="input-group-btn">
-                    <button class="btn btn-info buscar" id="buscar" type="button" ><span class="glyphicon glyphicon-search"></span></button>
-                </span>
+
+            <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
+                <div class="input-group">
+                    <input type="text" class="form-control input-g" id="buscador" name="dato" placeholder="Paciente o Expediente">
+                    <span class="input-group-btn">
+                        <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                    </span>
+                </div>
             </div>
         </form>
         <br />
@@ -498,7 +502,7 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                
+
 
 
                 @if (ViewBag.Estado == 1)
@@ -646,22 +650,22 @@
                     foreach (var item in repoCentral)
                     {
 
-                                          if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) != "AEREO")
-                    {
-                        fila = "#BBDEFB";
-                    }
-                    else if (item.TipoTramite != "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
-                    {
-                        fila = "#D1C4E9";
-                    }
-                    else if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
-                    {
-                        fila = "#9575CD";
-                    }
-                    else
-                    {
-                        fila = "white";
-                    }
+                        if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) != "AEREO")
+                        {
+                            fila = "#BBDEFB";
+                        }
+                        else if (item.TipoTramite != "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                        {
+                            fila = "#D1C4E9";
+                        }
+                        else if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                        {
+                            fila = "#9575CD";
+                        }
+                        else
+                        {
+                            fila = "white";
+                        }
 
 
                         <tr tr style="background-color:@fila">
@@ -715,12 +719,12 @@
                                             </h6>
                                         </span>
                                     }
-                        else
-                        {
-                            <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
-                        }
+                                    else
+                                    {
+                                        <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                    }
                                 }
-                                
+
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.InicioCaptura)
@@ -828,22 +832,22 @@
         <br />
 
         @*using (Html.BeginForm("Captura", "EPIs", FormMethod.Post))
-        {
-            <p>
-                <h5 class="labelGral">
-                    Mostrando: <select name="PageSize" id="PageSize" onchange="this.form.submit();">
-                        <option @if ((int)ViewBag.PageSize == 10) { @Html.Raw("selected") } value="10">10</option>
-                        <option @if ((int)ViewBag.PageSize == 20) { @Html.Raw("selected") } value="20">20</option>
-                        <option @if ((int)ViewBag.PageSize == 50) { @Html.Raw("selected") } value="50">50</option>
-                        <option @if ((int)ViewBag.PageSize == 100) { @Html.Raw("selected") } value="100">100</option>
-                    </select> registros
-                </h5>
-            </p>
-        }
+            {
+                <p>
+                    <h5 class="labelGral">
+                        Mostrando: <select name="PageSize" id="PageSize" onchange="this.form.submit();">
+                            <option @if ((int)ViewBag.PageSize == 10) { @Html.Raw("selected") } value="10">10</option>
+                            <option @if ((int)ViewBag.PageSize == 20) { @Html.Raw("selected") } value="20">20</option>
+                            <option @if ((int)ViewBag.PageSize == 50) { @Html.Raw("selected") } value="50">50</option>
+                            <option @if ((int)ViewBag.PageSize == 100) { @Html.Raw("selected") } value="100">100</option>
+                        </select> registros
+                    </h5>
+                </p>
+            }
 
-        <h5 class="labelGral">Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount. Elementos totales: @Model.TotalItemCount</h5>
+            <h5 class="labelGral">Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount. Elementos totales: @Model.TotalItemCount</h5>
 
-        @Html.PagedListPager(Model, page => Url.Action("Captura", "EPIs", new { page, pageSize = ViewBag.PageSize }))*@
+            @Html.PagedListPager(Model, page => Url.Action("Captura", "EPIs", new { page, pageSize = ViewBag.PageSize }))*@
     }
     else
     {
@@ -869,7 +873,7 @@
         </script>
     }
 
-<script>
+    <script>
     $(function () {
         $(".buscar").click(function () {
             var url = "@Url.Action("BuscarTodo", "EPIs")";
@@ -976,7 +980,7 @@
         });
     });
 
-</script>
+    </script>
 
     <script>
         var input = document.getElementById("buscador");
@@ -993,14 +997,13 @@
 
 <div class="modal fade" id="exampleModal10" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document" style="width:60%">
-        <div class="modal-content" >
+        <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
             </div>
             <div class="modal-body">
                 <div class="tablaScroll">
                     <table class="table tablas table-responsive" id="tablaEjemploSS" style="color: #2F2D6B">
-
                     </table>
                 </div>
             </div>

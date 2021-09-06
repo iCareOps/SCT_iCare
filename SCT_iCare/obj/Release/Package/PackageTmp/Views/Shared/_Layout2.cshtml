@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - GMI</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/Scripts/Captura.js")
+
+
+    @{
+        var oUsuario = (Usuarios)HttpContext.Current.Session["User"];
+        string Usuario = null;
+        int? rol = 0;
+
+        if (oUsuario != null)
+        {
+            Usuario = oUsuario.Nombre;
+            rol = oUsuario.idRol;
+        }
+
+
+    }
+
+    @*<link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Manrope&display=swap" rel="stylesheet">*@
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="~/GMI.ico" />
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
+
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+    <link href="~/Content/Chart.min.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+<body style="background-color:white" class="bodyLayout2">
+    <div class="navbar navbar-default navbar-fixed-top bg-info" style="background: linear-gradient(to bottom, #062C94, #337AB7);">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav cerrarSesion">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default dropdown-toggle cerrarSesion " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    @Usuario  <span class="glyphicon glyphicon-chevron-down"></span>
+                                </button>
+                                <div class="dropdown-menu" style="padding: 7px">
+                                    <h5>
+                                        <b>@Html.ActionLink("Cerrar Sesión", "Logoff", "Logoff")</b>
+                                    </h5>
+                                </div>
+                            </div>
+                        </ul>
+                    </div>
+                    
+                    @*<li><img src="~/Imagenes/iCare-01.png" style="width:100px"/></li>
+                      <li>@Html.ActionLink("Acerca de", "About", "Home")</li>
+        <li>@Html.ActionLink("Contacto", "Contact", "Home")</li>*@
+
+                </div>
+            </div>
+            <br />
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        @*<hr />*@
+        <footer class="colorFooter" style="position: fixed; left: 0px; bottom: 0px; height: 30px; width: 100%">
+            <p class="text-right"><img src="~/Images/DevWare-Negro.png" style="width:100px; opacity:0.6" /></p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

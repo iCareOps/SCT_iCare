@@ -62,5 +62,6 @@ namespace SCT_iCare
         public virtual DbSet<EPI_Audiologia> EPI_Audiologia { get; set; }
         public virtual DbSet<EPI_ExploracionFisica> EPI_ExploracionFisica { get; set; }
         public virtual DbSet<EPI_DictamenAptitud> EPI_DictamenAptitud { get; set; }
+        public virtual DbSet<EPI_Odontologia> EPI_Odontologia { get; set; }
     }
 }

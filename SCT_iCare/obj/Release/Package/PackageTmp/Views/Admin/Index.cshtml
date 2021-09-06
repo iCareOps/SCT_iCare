@@ -83,7 +83,7 @@
     var capturistasAnexa = from c in db.Usuarios where c.idRol == 9 select c.Nombre;
 
     int citasEfectuadas = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.CC != null).Count();
-    var citasCompletadas = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.CC != null && w.Asistencia != null && (w.EstatusPago == "Pagado" || w.EstatusPago == "paid")).Count();
+    var citasCompletadas = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.CC != null && w.Asistencia == null && (w.EstatusPago == "Pagado" || w.EstatusPago == "paid")).Count();
     var citasPendientes = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.CC != null && w.Doctor == null && w.Asistencia == null).Count();
     int citasCanceladas = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.CC != null && w.Asistencia != null).Count();
 
@@ -105,11 +105,11 @@
 <h3 style="color:white" class="text-center"><span style="color:#AC9070">Bienvenido</span> @nombreUsuario </h3>
 
 <br />
-@*@if (ViewBag.Estado == 1)
+@if (ViewBag.Estado == 1)
 {
     <h5 style="color:darkgray">Mostrando resultados de: <span style="color:white">@ViewBag.Inicio.ToString("dd-MMMM-yyyy")</span> hasta <span style="color:white">@ViewBag.Final.ToString("dd-MMMM-yyyy")</span></h5>
 }
-<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/Index")">
+@*<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/Index")">
     <div style="display:inline-block; padding:10px; background-color:gainsboro; border-radius: 5px">
         <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
         <input type="date" class="form-control" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
@@ -124,9 +124,30 @@
             <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
         </span>
     </div>
+</form>*@
+
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/Index")">
+    <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px">
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+        <input type="date" class="form-control" min="2021-08-02" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+        <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
+        <input type="submit" class="btn btn-primary" value="Enviar" />
+        <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+    </div>
+
+    <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
+        <div class="input-group">
+            <input type="text" class="form-control input-g" id="buscador" name="dato" placeholder="Paciente o Expediente">
+            <span class="input-group-btn">
+                <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+        </div>
+    </div>
 </form>
+
 <br />
-<br />*@
+<br />
 
 
 @section scripts{

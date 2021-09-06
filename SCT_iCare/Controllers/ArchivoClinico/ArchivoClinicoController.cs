@@ -567,8 +567,14 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         }
 
         [HttpPost]
-        public ActionResult Guardar_Odontologia(int id)
+        public ActionResult Guardar_Odontologia(int id, string exploracion, string nota)
         {
+            EPI_Odontologia odontologia = new EPI_Odontologia();
+
+            odontologia.Exploracion = exploracion == "on" ? "ALTERADO" : "NORMAL";
+            odontologia.NotaOdontologica = nota == "" ? null : nota;
+            odontologia.idPaciente = id;
+
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
             if (revision.Fin_Odontologia == null)
@@ -578,6 +584,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
 
                 if (ModelState.IsValid)
                 {
+                    db.EPI_Odontologia.Add(odontologia);
                     db.Entry(cm).State = EntityState.Modified;
                     db.SaveChanges();
                 }
@@ -1005,7 +1012,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         }
 
         [HttpPost]
-        public ActionResult Guardar_Laboratorio(int id, int glucosa, int hemoglobina)
+        public ActionResult Guardar_Laboratorio(int id, int glucosa, int? hemoglobina)
         {
             EPI_Laboratorio lab = new EPI_Laboratorio();
 
@@ -1047,6 +1054,10 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 if (accion == "Liberar como NO APTO" || accion == "Enviar a Revaloración")
                 {
                     aptitud.Aptitud = "NO APTO";
+                }
+                else
+                {
+                    aptitud.Aptitud = "APTO";
                 }
 
                 var revision = (from r in db.EPI_DictamenAptitud where r.idPaciente == id select r).FirstOrDefault();
@@ -1113,19 +1124,11 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             System.Diagnostics.Debug.WriteLine("Se obtiene la carpeta raiz" + requiredPath);
             System.Console.WriteLine("Se obtiene la carpeta raiz" + requiredPath);
 
-            var img1 = requiredPath + ConfigurationManager.AppSettings["img1"];
-            var img2P = requiredPath + ConfigurationManager.AppSettings["img2P"];
-            var img2N = requiredPath + ConfigurationManager.AppSettings["img2N"];
-            var img3 = requiredPath + ConfigurationManager.AppSettings["img3"];
-            var img4 = requiredPath + ConfigurationManager.AppSettings["img4"];
-            var imgi1 = requiredPath + ConfigurationManager.AppSettings["imgi1"];
-            var imgi2P = requiredPath + ConfigurationManager.AppSettings["imgi2P"];
-            var imgi2N = requiredPath + ConfigurationManager.AppSettings["imgi2N"];
-            var imgi3 = requiredPath + ConfigurationManager.AppSettings["imgi3"];
-            var imgi4 = requiredPath + ConfigurationManager.AppSettings["imgi4"];
+            var headerGMI = requiredPath + ConfigurationManager.AppSettings["headerGMI"];
 
-
-            var cer = (from c in db.CERTIFICADO where c.idCertificado == id select c).FirstOrDefault();
+            var paciente = (from p in db.Paciente where p.idPaciente == id select p).FirstOrDefault();
+            var cita = (from p in db.Cita where p.idPaciente == id select p).FirstOrDefault();
+            var dictamen = (from p in db.EPI_DictamenAptitud where p.idPaciente == id select p).FirstOrDefault();
 
             //List<GetPDFIng_Result> Lista = new List<GetPDFIng_Result>();
             //EntityLayer.Solicitudes.EntSolicitudTM soli = new EntityLayer.Solicitudes.EntSolicitudTM();
@@ -1138,19 +1141,23 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 System.Diagnostics.Debug.WriteLine("Entra al llenado del pdf");
                 System.Console.WriteLine("Entra al llenado del pdf");
 
-                string nombre = cer.Nombre;
-                string fecha = Convert.ToDateTime(cer.FechaToma).ToString("dd-MM-yyyy");
-                string fechanac = Convert.ToDateTime(cer.FechaNacimiento).ToString("dd-MM-yyyy");
-                string res = cer.Respuesta;
-                string sexo = cer.Sexo;
-                string pasaporte = "";
-                string noEstudio = (cer.idCertificado + 1000).ToString();
+                string noEstudio = paciente.idPaciente.ToString();
+                string nombre = paciente.Nombre;
+                string email = paciente.Email;
+                string telefono = paciente.Telefono;
+                string CURP = paciente.CURP;
+                string Folio = paciente.Folio;
+                string HASH = paciente.HASH;
 
-                if (cer.Pasaporte != null)
-                {
-                    pasaporte = cer.Pasaporte;
-                }
+                string noExpediente = cita.NoExpediente;
+                string tipoL = cita.TipoLicencia;
+                string tipoT = cita.TipoTramite;
+                string fechaCita = Convert.ToDateTime(cita.FechaCita).ToString("dd-MMMM-yyyy HH:mm");
+                string sucursal = cita.Sucursal;
+                string doctor = cita.Doctor;
 
+                string dictamenNOTA = dictamen.NotaMedica;
+                string aptitud = dictamen.Aptitud;
 
                 //Comienza el armado del archivo
                 Document doc = new Document(PageSize.A4);
@@ -1162,214 +1169,129 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 System.Diagnostics.Debug.WriteLine("Se prepara para obtener las imagenes");
                 System.Console.WriteLine("Se prepara para obtener las imagenes");
 
-                if (cer.Respuesta == "Negativo")
+                //iTextSharp.text.Image PNG1 = iTextSharp.text.Image.GetInstance(headerGMI);
+
+                //System.Diagnostics.Debug.WriteLine("Se obtienen las imagenes" + PNG1.Url);
+                //System.Console.WriteLine("Se obtienen las imagenes" + PNG1.Url);
+
+                //PNG1.Alignment = Image.ALIGN_CENTER;
+
+                //PNG1.ScaleAbsolute(650, 120);
+
+                var color = new BaseColor(128, 128, 128);
+                var resultado = new BaseColor(0, 0, 255); //apto
+                var resultadoNO = new BaseColor(255, 0, 0); //no apto
+                string coloro = "";
+                iTextSharp.text.Paragraph p = new iTextSharp.text.Paragraph();
+                iTextSharp.text.Paragraph pr = new iTextSharp.text.Paragraph();
+                var font = FontFactory.GetFont(coloro, 11, Font.NORMAL, color);
+                var fontA = FontFactory.GetFont(coloro, 11, Font.NORMAL, resultado);
+                var fontNA = FontFactory.GetFont(coloro, 11, Font.NORMAL, resultadoNO);
+
+                Chunk c01 = new Chunk("\n", font);
+                Chunk c02 = new Chunk("\n", font);
+                Chunk c0 = new Chunk("DATOS DEL PACIENTE\n", font);
+                Chunk c1 = new Chunk("N° de estudio: " + noEstudio + "\n", font);
+                Chunk c2 = new Chunk("Paciente: " + nombre + "\n", font);
+                Chunk c3 = new Chunk("No. Expediente: " + noExpediente + "\n", font);
+                Chunk c4 = new Chunk("Email: " + email + "\n", font);
+                Chunk c5 = new Chunk("Teléfono: " + telefono + "\n", font);
+                Chunk c6 = new Chunk("CURP: " + CURP + "\n", font);
+                Chunk c7 = new Chunk("Folio: " + Folio + "\n", font);
+                Chunk c8 = new Chunk("\n", font);
+                Chunk c81 = new Chunk("Código Hash: " + HASH + "\n", font);
+                Chunk c82 = new Chunk("\n", font);
+
+                Chunk c10 = new Chunk("DATOS DEL EXAMEN\n", font);
+                //Chunk c11 = new Chunk("Sucursal: " + sucursal + "\n", font);
+                //Chunk c12 = new Chunk("Doctor Dictaminador: " + doctor + "\n", font);
+                Chunk c13 = new Chunk("Tipo de Licencia: " + tipoL + "\n", font);
+                Chunk c14 = new Chunk("Tipo de Trámite: " + tipoT + "\n", font);
+                Chunk c15 = new Chunk("Fecha de Examen: " + fechaCita + "\n", font);
+                Chunk c16 = new Chunk("\n", font);
+
+                Chunk c20 = new Chunk("RESULTADOS\n", font);
+                Chunk c201 = new Chunk("APTITUD:\n", font);
+                Chunk c21 = new Chunk();
+
+                if (aptitud == "APTO")
                 {
-                    iTextSharp.text.Image PNG1 = iTextSharp.text.Image.GetInstance(img1);
-                    iTextSharp.text.Image PNG2 = iTextSharp.text.Image.GetInstance(img2N);
-                    iTextSharp.text.Image PNG3 = iTextSharp.text.Image.GetInstance(img3);
-                    iTextSharp.text.Image PNG4 = iTextSharp.text.Image.GetInstance(img4);
-
-                    System.Diagnostics.Debug.WriteLine("Se obtienen las imagenes" + PNG1.Url);
-                    System.Console.WriteLine("Se obtienen las imagenes" + PNG1.Url);
-
-                    PNG1.Alignment = Image.ALIGN_CENTER;
-                    PNG2.Alignment = Image.ALIGN_CENTER;
-                    PNG3.Alignment = Image.ALIGN_CENTER;
-                    PNG4.Alignment = Image.ALIGN_CENTER;
-                    PNG1.ScaleAbsolute(650, 120);
-                    PNG2.ScaleAbsolute(600, 250);
-                    PNG3.ScaleAbsolute(600, 100);
-                    var color = new BaseColor(128, 128, 128);
-                    var resultado = new BaseColor(0, 0, 255);
-                    string coloro = "";
-                    iTextSharp.text.Paragraph p = new iTextSharp.text.Paragraph();
-                    iTextSharp.text.Paragraph pr = new iTextSharp.text.Paragraph();
-                    var font = FontFactory.GetFont(coloro, 11, Font.NORMAL, color);
-                    var fontr = FontFactory.GetFont(coloro, 11, Font.NORMAL, resultado);
-                    Chunk c1 = new Chunk("N° de estudio:" + noEstudio + "                                            " + "Fecha de Toma:" + fecha + "\n", font);
-                    Chunk c2 = new Chunk("Paciente:" + nombre + "\n", font);
-                    Chunk c3 = new Chunk("Fecha de Nacimiento:" + fechanac + "\n", font);
-                    Chunk c4 = new Chunk("Sexo:" + sexo + "                                                          " + "Número de Pasaporte:" + pasaporte + "\n", font);
-                    Chunk c5 = new Chunk("Médico: Dra. Daniela Carolina Navarro Fabila", font);
-                    Chunk cr1 = new Chunk("RESULTADO:  ", font);
-                    Chunk cr2 = new Chunk("Ag SARS COV-2 " + res + "", fontr); //Resultado en azul
-
-                    System.Diagnostics.Debug.WriteLine("Se prepara para generar el QR");
-                    System.Console.WriteLine("Se prepara para generar el QR");
-
-                    iTextSharp.text.pdf.BarcodeQRCode barcodeQRCode = new iTextSharp.text.pdf.BarcodeQRCode("resultados.medicinagmi.mx/Resultados/Resultado?idSol=" + noEstudio, 1000, 1000, null);
-                    Image codeQRImage = barcodeQRCode.GetImage();
-                    codeQRImage.ScaleAbsolute(150, 150);
-                    codeQRImage.Alignment = Image.ALIGN_LEFT;
-                    doc.Add(PNG1);
-                    p.Add(c1);
-                    p.Add(c2);
-                    p.Add(c3);
-                    p.Add(c4);
-                    p.Add(c5);
-                    pr.Add(cr1);
-                    pr.Add(cr2);
-                    doc.Add(p);
-                    doc.Add(PNG2);
-                    doc.Add(pr);
-                    doc.Add(PNG3);
-                    PdfPTable table = new PdfPTable(3);
-                    table.DefaultCell.Border = Rectangle.NO_BORDER;
-                    table.WidthPercentage = 75f;
-                    table.AddCell(codeQRImage);
-                    table.AddCell(PNG4);
-                    table.AddCell("");
-
-                    System.Diagnostics.Debug.WriteLine("Se TERMINA EL DOCUMENTO");
-                    System.Console.WriteLine("Se TERMINA EL DOCUMENTO");
-
-                    doc.Add(table);
-                    doc.Close();
-                    wri.Close();
-
-
-                    var pdf = mem.ToArray();
-                    string file = Convert.ToBase64String(pdf);
-
-                    System.Diagnostics.Debug.WriteLine("Se convierte el documento a base 64");
-                    System.Diagnostics.Debug.WriteLine("Se convierte el documento a base 64");
-
-                    mem.Close();
-
-                    byte[] bytes2 = mem.ToArray();
-
-                    Response.ContentType = "application/pdf";
-                    Response.AddHeader("content-dispotition", "attachment;filename=Certificado-" + nombre + ".pdf");
-                    //HttpContext.Response.Write(mem);
-                    Response.BinaryWrite(bytes2);
-                    //Response.Flush();
-                    Response.End();
-
-                    //return RedirectToAction("Index", "CERTIFICADOes");
-                    return File(bytes2, "application/pdf");
-
-
-                    //var bytesBinary = ePI.Dictamen;
-                    //Response.ContentType = "application/pdf";
-                    //Response.AddHeader("content-disposition", "attachment;filename=" + ePI.NombrePaciente + ".pdf");
-                    //Response.BinaryWrite(bytesBinary);
-                    //Response.End();
-
-                    //    Response.ContentType = "application/pdf";
-                    //    Response.AddHeader("content-disposition", "attachment;filename=" + ePI.NombrePaciente + ".pdf");
-                    //    Response.BinaryWrite(bytesBinary);
-                    //    //Response.End();
-                    //HttpContext.ApplicationInstance.CompleteRequest();
-
-                    //return RedirectToAction("capturaSucursal", "EPIs", new { sucursal = ePI.Sucursal.ToString() });
-
-                    //var bytesBinary = ePI.Dictamen;
-                    //Response.ContentType = "application/pdf";
-                    //Response.AddHeader("content-disposition", "attachment;filename=" + ePI.NombrePaciente + ".pdf");
-                    //Response.BinaryWrite(bytesBinary);
-                    //Response.End();
-
+                    c21 = new Chunk(aptitud + "\n", fontA);
                 }
                 else
                 {
-                    iTextSharp.text.Image PNG1 = iTextSharp.text.Image.GetInstance(img1);
-                    iTextSharp.text.Image PNG2 = iTextSharp.text.Image.GetInstance(img2P);
-                    iTextSharp.text.Image PNG3 = iTextSharp.text.Image.GetInstance(img3);
-                    iTextSharp.text.Image PNG4 = iTextSharp.text.Image.GetInstance(img4);
-
-                    System.Diagnostics.Debug.WriteLine("Se obtienen las imagenes" + PNG1.Url);
-                    System.Console.WriteLine("Se obtienen las imagenes" + PNG1.Url);
-
-                    PNG1.Alignment = Image.ALIGN_CENTER;
-                    PNG2.Alignment = Image.ALIGN_CENTER;
-                    PNG3.Alignment = Image.ALIGN_CENTER;
-                    PNG4.Alignment = Image.ALIGN_CENTER;
-                    PNG1.ScaleAbsolute(650, 120);
-                    PNG2.ScaleAbsolute(600, 250);
-                    PNG3.ScaleAbsolute(600, 100);
-                    var color = new BaseColor(128, 128, 128);
-                    var resultado = new BaseColor(0, 0, 255);
-                    string coloro = "";
-                    iTextSharp.text.Paragraph p = new iTextSharp.text.Paragraph();
-                    iTextSharp.text.Paragraph pr = new iTextSharp.text.Paragraph();
-                    var font = FontFactory.GetFont(coloro, 11, Font.NORMAL, color);
-                    var fontr = FontFactory.GetFont(coloro, 11, Font.NORMAL, resultado);
-                    Chunk c1 = new Chunk("N° de estudio:" + noEstudio + "                                            " + "Fecha de Toma:" + fecha + "\n", font);
-                    Chunk c2 = new Chunk("Paciente:" + nombre + "\n", font);
-                    Chunk c3 = new Chunk("Fecha de Nacimiento:" + fechanac + "\n", font);
-                    Chunk c4 = new Chunk("Sexo:" + sexo + "                                                          " + "Número de Pasaporte:" + pasaporte + "\n", font);
-                    Chunk c5 = new Chunk("Médico: Dra. Daniela Carolina Navarro Fabila", font);
-                    Chunk cr1 = new Chunk("RESULTADO:  ", font);
-                    Chunk cr2 = new Chunk("Ag SARS COV-2 " + res + "", fontr); //Resultado en azul
-
-                    System.Diagnostics.Debug.WriteLine("Se prepara para generar el QR");
-                    System.Console.WriteLine("Se prepara para generar el QR");
-
-                    iTextSharp.text.pdf.BarcodeQRCode barcodeQRCode = new iTextSharp.text.pdf.BarcodeQRCode("resultados.medicinagmi.mx/Resultados/Resultado?idSol=" + noEstudio, 1000, 1000, null);
-                    Image codeQRImage = barcodeQRCode.GetImage();
-                    codeQRImage.ScaleAbsolute(150, 150);
-                    codeQRImage.Alignment = Image.ALIGN_LEFT;
-                    doc.Add(PNG1);
-                    p.Add(c1);
-                    p.Add(c2);
-                    p.Add(c3);
-                    p.Add(c4);
-                    p.Add(c5);
-                    pr.Add(cr1);
-                    pr.Add(cr2);
-                    doc.Add(p);
-                    doc.Add(PNG2);
-                    doc.Add(pr);
-                    doc.Add(PNG3);
-                    PdfPTable table = new PdfPTable(3);
-                    table.DefaultCell.Border = Rectangle.NO_BORDER;
-                    table.WidthPercentage = 75f;
-                    table.AddCell(codeQRImage);
-                    table.AddCell(PNG4);
-                    table.AddCell("");
-
-                    System.Diagnostics.Debug.WriteLine("Se TERMINA EL DOCUMENTO");
-                    System.Console.WriteLine("Se TERMINA EL DOCUMENTO");
-
-                    doc.Add(table);
-                    doc.Close();
-                    wri.Close();
-
-
-                    var pdf = mem.ToArray();
-                    string file = Convert.ToBase64String(pdf);
-
-                    System.Diagnostics.Debug.WriteLine("Se convierte el documento a base 64");
-                    System.Diagnostics.Debug.WriteLine("Se convierte el documento a base 64");
-
-                    mem.Close();
-
-                    byte[] bytes2 = mem.ToArray();
-
-                    //if (file != null && file.ContentLength > 0)
-                    //{
-                    //    var fileName = Path.GetFileName(file.FileName);
-
-                    //    byte[] bytes;
-                    //    using (BinaryReader br = new BinaryReader(file.InputStream))
-                    //    {
-                    //        bytes = br.ReadBytes(file.ContentLength);
-
-                    //        bytes2 = bytes;
-                    //    }
-                    //}
-
-                    Response.ContentType = "application/pdf";
-                    Response.AddHeader("content-dispotition", "attachment;filename=Certificado-" + nombre + ".pdf");
-                    //HttpContext.Response.Write(mem);
-                    Response.BinaryWrite(bytes2);
-                    //Response.Flush();
-                    Response.End();
-
-                    //return RedirectToAction("Index", "CERTIFICADOes");
-                    return File(bytes2, "application/pdf");
+                    c21 = new Chunk(aptitud + "\n", fontNA);
                 }
 
+                Chunk c22 = new Chunk("NOTA MÉDICA: " + dictamenNOTA + "\n", font); //Resultado en azul
+
+                System.Diagnostics.Debug.WriteLine("Se prepara para generar el QR");
+                System.Console.WriteLine("Se prepara para generar el QR");
+
+                iTextSharp.text.pdf.BarcodeQRCode barcodeQRCode = new iTextSharp.text.pdf.BarcodeQRCode("resultados.medicinagmi.mx/Resultados/Resultado?idSol=" + noEstudio, 1000, 1000, null);
+                Image codeQRImage = barcodeQRCode.GetImage();
+                codeQRImage.ScaleAbsolute(150, 150);
+                codeQRImage.Alignment = Image.ALIGN_LEFT;
+                //doc.Add(PNG1);
+                p.Add(c01);
+                p.Add(c02);
+                p.Add(c0);
+                p.Add(c1);
+                p.Add(c2);
+                p.Add(c3);
+                p.Add(c4);
+                p.Add(c5);
+                p.Add(c6);
+                p.Add(c7);
+                p.Add(c8);
+                p.Add(c81);
+                p.Add(c82);
+
+                p.Add(c10);
+                //p.Add(c11);
+                //p.Add(c12);
+                p.Add(c13);
+                p.Add(c14);
+                p.Add(c15);
+                p.Add(c16);
+
+                p.Add(c20);
+                p.Add(c201);
+                p.Add(c21);
+                p.Add(c22);
+
+                doc.Add(p);
+                doc.Add(pr);
+                PdfPTable table = new PdfPTable(3);
+                table.DefaultCell.Border = Rectangle.NO_BORDER;
+                table.WidthPercentage = 75f;
+                table.AddCell(codeQRImage);
+                table.AddCell("");
+
+                System.Diagnostics.Debug.WriteLine("Se TERMINA EL DOCUMENTO");
+                System.Console.WriteLine("Se TERMINA EL DOCUMENTO");
+
+                doc.Add(table);
+                doc.Close();
+                wri.Close();
+
+
+                var pdf = mem.ToArray();
+                string file = Convert.ToBase64String(pdf);
+
+                System.Diagnostics.Debug.WriteLine("Se convierte el documento a base 64");
+                System.Diagnostics.Debug.WriteLine("Se convierte el documento a base 64");
+
+                mem.Close();
+
+                byte[] bytes2 = mem.ToArray();
+
+                Response.ContentType = "application/pdf";
+                Response.AddHeader("content-dispotition", "attachment;filename=Certificado-" + nombre + ".pdf");
+                Response.BinaryWrite(bytes2);
+                Response.End();
+
+                return File(bytes2, "application/pdf");
             }
 
             return Redirect("Index");

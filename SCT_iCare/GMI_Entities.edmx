@@ -296,6 +296,15 @@
           <Property Name="HemoglobinaGlucosilada" Type="varchar" MaxLength="10" />
           <Property Name="idPaciente" Type="int" />
         </EntityType>
+        <EntityType Name="EPI_Odontologia">
+          <Key>
+            <PropertyRef Name="idOdontologia" />
+          </Key>
+          <Property Name="idOdontologia" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Exploracion" Type="varchar" MaxLength="20" />
+          <Property Name="NotaOdontologica" Type="varchar" MaxLength="300" />
+          <Property Name="idPaciente" Type="int" />
+        </EntityType>
         <EntityType Name="Epi_Oftalmologia">
           <Key>
             <PropertyRef Name="idOftalmologia" />
@@ -406,6 +415,7 @@
           <Property Name="Email" Type="varchar" MaxLength="100" />
           <Property Name="Folio" Type="varchar" MaxLength="100" />
           <Property Name="CURP" Type="varchar" MaxLength="20" />
+          <Property Name="HASH" Type="varchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="Recepcionista">
           <Key>
@@ -714,6 +724,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_EPI_Odontologia_Paciente">
+          <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+          <End Role="EPI_Odontologia" Type="Self.EPI_Odontologia" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Paciente">
+              <PropertyRef Name="idPaciente" />
+            </Principal>
+            <Dependent Role="EPI_Odontologia">
+              <PropertyRef Name="idPaciente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Epi_Oftalmologia_Paciente">
           <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
           <End Role="Epi_Oftalmologia" Type="Self.Epi_Oftalmologia" Multiplicity="*" />
@@ -892,6 +914,7 @@
           <EntitySet Name="EPI_DictamenAptitud" EntityType="Self.EPI_DictamenAptitud" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EPI_ExploracionFisica" EntityType="Self.EPI_ExploracionFisica" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EPI_Laboratorio" EntityType="Self.EPI_Laboratorio" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EPI_Odontologia" EntityType="Self.EPI_Odontologia" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Epi_Oftalmologia" EntityType="Self.Epi_Oftalmologia" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EPI_SignosVitales" EntityType="Self.EPI_SignosVitales" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Expedientes" EntityType="Self.Expedientes" Schema="dbo" store:Type="Tables" />
@@ -991,6 +1014,10 @@
           <AssociationSet Name="FK_EPI_Laboratorio_Paciente" Association="Self.FK_EPI_Laboratorio_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
             <End Role="EPI_Laboratorio" EntitySet="EPI_Laboratorio" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EPI_Odontologia_Paciente" Association="Self.FK_EPI_Odontologia_Paciente">
+            <End Role="Paciente" EntitySet="Paciente" />
+            <End Role="EPI_Odontologia" EntitySet="EPI_Odontologia" />
           </AssociationSet>
           <AssociationSet Name="FK_Epi_Oftalmologia_Paciente" Association="Self.FK_Epi_Oftalmologia_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
@@ -1223,6 +1250,8 @@
           <NavigationProperty Name="EPI_Audiologia" Relationship="DevModel.FK_EPI_Audiologia_Paciente" FromRole="Paciente" ToRole="EPI_Audiologia" />
           <NavigationProperty Name="EPI_ExploracionFisica" Relationship="DevModel.FK_EPI_ExploracionFisica_Paciente" FromRole="Paciente" ToRole="EPI_ExploracionFisica" />
           <NavigationProperty Name="EPI_DictamenAptitud" Relationship="DevModel.FK_EPI_DictamenAptitud_Paciente" FromRole="Paciente" ToRole="EPI_DictamenAptitud" />
+          <NavigationProperty Name="EPI_Odontologia" Relationship="DevModel.FK_EPI_Odontologia_Paciente" FromRole="Paciente" ToRole="EPI_Odontologia" />
+          <Property Name="HASH" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Recepcionista">
           <Key>
@@ -1634,6 +1663,11 @@
           <AssociationSet Name="FK_EPI_DictamenAptitud_Paciente" Association="DevModel.FK_EPI_DictamenAptitud_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
             <End Role="EPI_DictamenAptitud" EntitySet="EPI_DictamenAptitud" />
+          </AssociationSet>
+          <EntitySet Name="EPI_Odontologia" EntityType="DevModel.EPI_Odontologia" />
+          <AssociationSet Name="FK_EPI_Odontologia_Paciente" Association="DevModel.FK_EPI_Odontologia_Paciente">
+            <End Role="Paciente" EntitySet="Paciente" />
+            <End Role="EPI_Odontologia" EntitySet="EPI_Odontologia" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="CapturaIncidencia">
@@ -2157,6 +2191,28 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="EPI_Odontologia">
+          <Key>
+            <PropertyRef Name="idOdontologia" />
+          </Key>
+          <Property Name="idOdontologia" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Exploracion" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="NotaOdontologica" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="idPaciente" Type="Int32" />
+          <NavigationProperty Name="Paciente" Relationship="DevModel.FK_EPI_Odontologia_Paciente" FromRole="EPI_Odontologia" ToRole="Paciente" />
+        </EntityType>
+        <Association Name="FK_EPI_Odontologia_Paciente">
+          <End Type="DevModel.Paciente" Role="Paciente" Multiplicity="0..1" />
+          <End Type="DevModel.EPI_Odontologia" Role="EPI_Odontologia" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Paciente">
+              <PropertyRef Name="idPaciente" />
+            </Principal>
+            <Dependent Role="EPI_Odontologia">
+              <PropertyRef Name="idPaciente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2309,6 +2365,7 @@
           <EntitySetMapping Name="Paciente">
             <EntityTypeMapping TypeName="DevModel.Paciente">
               <MappingFragment StoreEntitySet="Paciente">
+                <ScalarProperty Name="HASH" ColumnName="HASH" />
                 <ScalarProperty Name="idPaciente" ColumnName="idPaciente" />
                 <ScalarProperty Name="Nombre" ColumnName="Nombre" />
                 <ScalarProperty Name="Telefono" ColumnName="Telefono" />
@@ -2654,6 +2711,16 @@
                 <ScalarProperty Name="Aptitud" ColumnName="Aptitud" />
                 <ScalarProperty Name="NotaMedica" ColumnName="NotaMedica" />
                 <ScalarProperty Name="idDictamenAptitud" ColumnName="idDictamenAptitud" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EPI_Odontologia">
+            <EntityTypeMapping TypeName="DevModel.EPI_Odontologia">
+              <MappingFragment StoreEntitySet="EPI_Odontologia">
+                <ScalarProperty Name="idPaciente" ColumnName="idPaciente" />
+                <ScalarProperty Name="NotaOdontologica" ColumnName="NotaOdontologica" />
+                <ScalarProperty Name="Exploracion" ColumnName="Exploracion" />
+                <ScalarProperty Name="idOdontologia" ColumnName="idOdontologia" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
