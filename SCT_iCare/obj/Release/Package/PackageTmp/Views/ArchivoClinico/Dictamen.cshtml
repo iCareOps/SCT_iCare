@@ -81,6 +81,18 @@
 
     <hr />
 
+    var consulta6 = (from c in db.EPI_Odontologia where c.idPaciente == idPaciente orderby c.idOdontologia descending select c).FirstOrDefault();
+    <h3 style="text-align:left; color:white">Odontología</h3>
+    <h4 style="text-align:left; color:white"><b>Exploracion Odontológica: </b><span class="text-primary"> @consulta6.Exploracion</span></h4>
+
+    if (consulta6.NotaOdontologica != null)
+    {
+        <h4 style="text-align:left; color:white"><b>Nota: </b><span class="text-primary"> @consulta6.NotaOdontologica</span></h4>
+    }
+
+
+    <hr />
+
     var consulta5 = (from c in db.EPI_Laboratorio where c.idPaciente == idPaciente orderby c.idLaboratorio descending select c).FirstOrDefault();
     <h3 style="text-align:left; color:white">Laboratorio</h3>
     <h4 style="text-align:left; color:white"><b>Glucosa: </b><span class="text-primary"> @consulta5.Glucosa</span></h4>
