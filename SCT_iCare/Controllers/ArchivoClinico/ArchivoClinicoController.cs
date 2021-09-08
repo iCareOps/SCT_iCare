@@ -1051,7 +1051,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 aptitud.NotaMedica = nota;
                 aptitud.idPaciente = id;
 
-                if (accion == "Liberar como NO APTO" || accion == "Enviar a Revaloración")
+                if (accion == "Concluir examen como NO APTO" || accion == "Enviar a Revaloración")
                 {
                     aptitud.Aptitud = "NO APTO";
                 }
@@ -1087,11 +1087,11 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 aptitud.NotaMedica = nota;
                 aptitud.idPaciente = id;
 
-                if (accion == "Liberar como NO APTO")
+                if (accion == "Concluir examen como NO APTO")
                 {
                     aptitud.Aptitud = "NO APTO";
                 }
-                else if (accion == "Liberar Dictamen")
+                else if (accion == "APTO")
                 {
                     aptitud.Aptitud = "APTO";
                 }
