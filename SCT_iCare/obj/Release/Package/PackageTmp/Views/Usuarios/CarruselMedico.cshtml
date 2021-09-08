@@ -30,7 +30,7 @@
                         <label for="recipient-name" class="col-form-label">Doctor:</label>
                         <select name="doctor" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
                             @{
-                                var doctores = from s in db.Usuarios where s.idRol == 12 select s;
+                                var doctores = from s in db.Usuarios where s.idRol == 12 || s.idRol == 15 select s;
 
                                 foreach (var item1 in doctores)
                                 {
@@ -61,6 +61,15 @@
                                 foreach (var item1 in modulo)
                                 {
                                     <option value="@item1.idModulo">@item1.Nombre</option>
+                                    @*if (item1.idModulo > 8)
+                                    {
+                                        <option value="@item1.idModulo">@item1.Nombre</option>
+                                    }
+                else
+                {
+                        <option value="@item1.idModulo">@item1.Nombre</option>
+                }*@
+
                                 }
                             }
                         </select>

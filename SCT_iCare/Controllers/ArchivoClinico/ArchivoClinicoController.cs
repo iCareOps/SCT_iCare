@@ -440,11 +440,11 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         //Guardar módulos--------------------------------------------------------------------------------
 
         [HttpPost]
-        public ActionResult Guardar_SignosVitales(int id, double sistolica, double diastolica, double cardiaca, double respiratoria, double temperatura, double peso, double estatura, double imc, double cintura, double cuello,  double grasa)
+        public ActionResult Guardar_SignosVitales(int id, double sistolica, double diastolica, double cardiaca, double respiratoria, double temperatura, double peso, double estatura, double cintura, double cuello, double grasa)
         {
             EPI_SignosVitales sv = new EPI_SignosVitales();
             sv.idPaciente = id;
-            sv.IMC = imc.ToString();
+            sv.IMC = Math.Round(peso / (Math.Pow((estatura / 100), 2)), 2).ToString();
             sv.Sistolica = sistolica.ToString();
             sv.Diastolica = diastolica.ToString();
             sv.Cardiaca = cardiaca.ToString();

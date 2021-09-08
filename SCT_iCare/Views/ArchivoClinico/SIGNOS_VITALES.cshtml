@@ -50,20 +50,36 @@
 
     <div class="form-group">
         <label style="color:white">6. Peso (kgs):</label>
-        <input type="tel" step="any" name="peso" class="form-control" id="peso" placeholder="" required>
+        <input type="tel" step="any" name="peso" class="form-control" id="peso" onkeyup="myFunction()" placeholder="" required>
 
     </div>
 
 
     <div class="form-group">
         <label style="color:white">7. Estatura (cms):</label>
-        <input type="tel" name="estatura" class="form-control" id="estatura" placeholder="" required>
+        <input type="tel" name="estatura" class="form-control" id="estatura" onkeyup="myFunction()" placeholder="" required>
 
     </div>
 
     <div class="form-group">
         <label style="color:white">8. IMC:</label>
-        <input type="tel" step="any" name="imc" class="form-control" id="imc" placeholder="" required>
+        <number type="tel" step="any" name="imc" class="form-control" id="imc" placeholder="" required>
+
+            <!-- SCRIPT PARA CALCULAR IMC -->
+            <script type="text/javascript">calc = document.getElementById("calc");
+                    kg = document.getElementById("peso");
+                    m = document.getElementById("estatura");
+                    imc_JS = document.getElementById("imc");
+
+                    function myFunction() {
+                        if (kg.value != "" && m.value != "") {
+                            imcx = (kg.value / (Math.pow(m.value / 100, 2)));
+                            imcx_red = imcx.toFixed(2);
+                            imc.innerHTML = imcx_red
+                            console.log(imcx_red);
+                        }
+
+                    };</script>
 
     </div>
 
