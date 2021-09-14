@@ -277,13 +277,58 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                         <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
                             <option selected value="NINGUNO">NINGUNO</option>
                             @{
-                                var gestores = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
+                                //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
+                                var referidosGestor = (from r in db.Referido where r.Tipo == "Gestor" select r).OrderBy(o => o.Nombre);
+                                var referidosGMI = (from r in db.Referido where r.Tipo == "GMI" select r).OrderBy(o => o.Nombre);
+                                var referidosEmpresa = (from r in db.Referido where r.Tipo == "Empresa" select r).OrderBy(o => o.Nombre);
+                                var referidosCanacar = (from r in db.Referido where r.Tipo == "Canacar" select r).OrderBy(o => o.Nombre);
+                                var referidosParticular = (from r in db.Referido where r.Tipo == "Particular" select r).OrderBy(o => o.Nombre);
+                                var referidosSindicato = (from r in db.Referido where r.Tipo == "Sindicato" select r).OrderBy(o => o.Nombre);
+                                var referidosAnexa = (from r in db.Referido where r.Tipo == "Anexa" select r).OrderBy(o => o.Nombre);
 
-                                foreach (var item in gestores)
+                                <option disabled>--------GESTORES--------</option>
+                                foreach (var item in referidosGestor)
                                 {
-                                    <option value="@item">@item</option>
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------GMI--------</b></option>
+                                foreach (var item in referidosGMI)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------EMPRESAS--------</b></option>
+                                foreach (var item in referidosEmpresa)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------CANACAR--------</b></option>
+                                foreach (var item in referidosCanacar)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------PARTICULAR--------</b></option>
+                                foreach (var item in referidosParticular)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------SINDICATOS--------</b></option>
+                                foreach (var item in referidosSindicato)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------ANEXA--------</b></option>
+                                foreach (var item in referidosAnexa)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
                                 }
                             }
+                            <option disabled><b>--------OTROS--------</b></option>
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
@@ -462,13 +507,58 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                         <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
                             <option selected value="NINGUNO">NINGUNO</option>
                             @{
-                                var gestores1 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
+                                //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
+                                var referidosGestor1 = (from r in db.Referido where r.Tipo == "Gestor" select r).OrderBy(o => o.Nombre);
+                                var referidosGMI1 = (from r in db.Referido where r.Tipo == "GMI" select r).OrderBy(o => o.Nombre);
+                                var referidosEmpresa1 = (from r in db.Referido where r.Tipo == "Empresa" select r).OrderBy(o => o.Nombre);
+                                var referidosCanacar1 = (from r in db.Referido where r.Tipo == "Canacar" select r).OrderBy(o => o.Nombre);
+                                var referidosParticular1 = (from r in db.Referido where r.Tipo == "Particular" select r).OrderBy(o => o.Nombre);
+                                var referidosSindicato1 = (from r in db.Referido where r.Tipo == "Sindicato" select r).OrderBy(o => o.Nombre);
+                                var referidosAnexa1 = (from r in db.Referido where r.Tipo == "Anexa" select r).OrderBy(o => o.Nombre);
 
-                                foreach (var item in gestores1)
+                                <option disabled>--------GESTORES--------</option>
+                                foreach (var item in referidosGestor1)
                                 {
-                                    <option value="@item">@item</option>
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------GMI--------</b></option>
+                                foreach (var item in referidosGMI1)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------EMPRESAS--------</b></option>
+                                foreach (var item in referidosEmpresa1)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------CANACAR--------</b></option>
+                                foreach (var item in referidosCanacar1)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------PARTICULAR--------</b></option>
+                                foreach (var item in referidosParticular1)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------SINDICATOS--------</b></option>
+                                foreach (var item in referidosSindicato1)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------ANEXA--------</b></option>
+                                foreach (var item in referidosAnexa1)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
                                 }
                             }
+                            <option disabled><b>--------OTROS--------</b></option>
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
@@ -651,13 +741,58 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                         <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
                             <option selected value="NINGUNO">NINGUNO</option>
                             @{
-                                var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
+                                //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
+                                var referidosGestor2 = (from r in db.Referido where r.Tipo == "Gestor" select r).OrderBy(o => o.Nombre);
+                                var referidosGMI2 = (from r in db.Referido where r.Tipo == "GMI" select r).OrderBy(o => o.Nombre);
+                                var referidosEmpresa2 = (from r in db.Referido where r.Tipo == "Empresa" select r).OrderBy(o => o.Nombre);
+                                var referidosCanacar2 = (from r in db.Referido where r.Tipo == "Canacar" select r).OrderBy(o => o.Nombre);
+                                var referidosParticular2 = (from r in db.Referido where r.Tipo == "Particular" select r).OrderBy(o => o.Nombre);
+                                var referidosSindicato2 = (from r in db.Referido where r.Tipo == "Sindicato" select r).OrderBy(o => o.Nombre);
+                                var referidosAnexa2 = (from r in db.Referido where r.Tipo == "Anexa" select r).OrderBy(o => o.Nombre);
 
-                                foreach (var item in gestores2)
+                                <option disabled>--------GESTORES--------</option>
+                                foreach (var item in referidosGestor2)
                                 {
-                                    <option value="@item">@item</option>
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------GMI--------</b></option>
+                                foreach (var item in referidosGMI2)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------EMPRESAS--------</b></option>
+                                foreach (var item in referidosEmpresa2)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------CANACAR--------</b></option>
+                                foreach (var item in referidosCanacar2)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------PARTICULAR--------</b></option>
+                                foreach (var item in referidosParticular2)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------SINDICATOS--------</b></option>
+                                foreach (var item in referidosSindicato2)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------ANEXA--------</b></option>
+                                foreach (var item in referidosAnexa2)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
                                 }
                             }
+                            <option disabled><b>--------OTROS--------</b></option>
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
@@ -770,7 +905,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
 else
 {
     <div class="tablaScroll">
-        <table class="table tablas" style="color: #2F2D6B">
+        <table class="table tablas" style="color: #2F2D6B;display:">
             <thead>
                 <tr class="bg-primary" style="border-top-color: black">
                     <th>
@@ -898,69 +1033,16 @@ else
                             </td>
                         }
                     }
-                    <td>
-                        @{
-                        if (item.M.CC == null && item.M.Canal == "SITIO" && item.M.Recepcionista != null)
-                        {
-                            <span class="field-tip">
-
-                                <b>SITIO </b>
-                                <span class="tip-content"><b>Recepcionista: </b>@item.M.Recepcionista</span>
-
-                            </span>
-
-                        }
-                        else if (item.M.CC == null && item.M.Canal != null && item.M.Recepcionista != null)
-                        {
-                         <span class="field-tip">
-
-                             <b>SITIO </b>
-                    <span class="tip-content"><b>Recepcionista: </b>@item.M.Recepcionista<br /><b>Gestor: </b>@item.M.Canal</span>
-
-                         </span>
-                        }
-                        else if (item.M.CC != null && item.M.Canal == "Call Center" && item.M.Recepcionista != null)
-                        {
-
-                            <span class="field-tip">
-                                <b>Call Center </b>
-                                <span class="tip-content"><b>Call Center </b>@item.M.CC</span>
-                            </span>
-                        }
-
-                        else if (item.M.CC != null && item.M.Canal != null && item.M.Recepcionista != null)
-                        {
-
-                       <span class="field-tip">
-                        <b>Call Center </b>
-                        <span class="tip-content">    <b>Call Center: </b>@item.M.CC<br /><b>Gestor: </b>@item.M.Canal</span>
+                <td>
+                    <span class="field-tip">
+                        <b>@item.M.Canal</b>
+                        <span class="tip-content">
+                            <b>Realiza la cita: </b>@item.M.Recepcionista <br />
+                            <b>Canal: </b>@item.M.Canal <br />
+                            <b>Referido por: </b>@item.M.ReferidoPor
                         </span>
-                        }
-                        @*else if (item.M.CC == null && item.M.Canal != null && item.M.Recepcionista != null)
-                        {
-
-                         <span class="field-tip">
-                        <b>SITIO </b>
-                        <span class="tip-content"><b>Call Center: </b>@item.M.CC<br /><b>Gestor: </b>@item.M.Canal</span>
-                       </span>
-                        }*@
-
-
-
-
-
-
-
-                        @*else if (item.M.CC == null || item.M.Recepcionista !="Administrador")
-            {
-
-                <span class="field-tip">
-                    <b>Administrador</b>
-                    <span class="tip-content"><b>Gestor: </b>@item.M.Recepcionista</span>
-                </span>
-            }*@
-                    }
-                    </td>
+                    </span>
+                </td>
                     <td>
                         @{
                             if (item.M.TipoPago == "Pago con Tarjeta")
@@ -1044,38 +1126,48 @@ else
 
                             }
 
-                            <div class="dropdown-menu" style="padding:10px">
-                                @if (item.M.EstatusPago == "Pagado" && item.M.Doctor == null)
-                                {
-                                    <a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>Editar</b></a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
-                                    @*@Html.ActionLink("Cancelar Cita", "NoLlego", "Recepcion", new { id = @item.M.idPaciente }, new { style = "color:red; font-weight: bold" })*@
-                                    @*<a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>No llegó</b></a>*@
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
-                                    <div class="dropdown-divider"></div>
-                                }
-                                else if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
-                                {
-                                    <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Pagado</b></a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
-                                    <div class="dropdown-divider"></div>
-                                }
-                                else if (item.M.NoExpediente != null && item.M.EstatusPago == "Pagado")
-                                {
-                                    <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
-                                    <div class="dropdown-divider"></div>
+                        <div class="dropdown-menu" style="padding:10px">
+                            @if (item.M.EstatusPago == "Pagado" && item.M.Doctor == null)
+                            {
+                                var aptitud = (from i in db.EPI_DictamenAptitud where i.idPaciente == item.N.idPaciente orderby i.idDictamenAptitud descending select i).FirstOrDefault();
 
-                                    var entregado = (from e in db.Captura where e.idPaciente == item.M.idPaciente && e.EstatusCaptura == "Terminado" select e.EstatusCaptura).FirstOrDefault();
-                                    if (entregado != null && item.M.Entregado == null)
-                                    {
-                                        <a href="#" data-toggle="modal" data-target="#entregar_@item.M.idPaciente"><b style="color:limegreen">Entregado</b></a>
-                                    }
+                                if (aptitud != null && aptitud.Aptitud == "NO APTO")
+                                {
+                                    <a href="#" data-toggle="modal" data-target="#revaloracion_@item.M.idPaciente"><b>Revaloración</b></a>
+                                    <div class="dropdown-divider"></div>
                                 }
 
-                            </div>
+                                <a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>Editar</b></a>
+                                <div class="dropdown-divider"></div>
+                                <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
+                                @*@Html.ActionLink("Cancelar Cita", "NoLlego", "Recepcion", new { id = @item.M.idPaciente }, new { style = "color:red; font-weight: bold" })*@
+                                @*<a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>No llegó</b></a>*@
+                                <div class="dropdown-divider"></div>
+                                <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
+                                <div class="dropdown-divider"></div>
+                            }
+                            else if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
+                            {
+                                <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Pagado</b></a>
+                                <div class="dropdown-divider"></div>
+                                <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
+                                <div class="dropdown-divider"></div>
+                            }
+                            else if (item.M.NoExpediente != null && item.M.EstatusPago == "Pagado")
+                            {
+
+
+                                <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
+                                <div class="dropdown-divider"></div>
+
+                                var entregado = (from e in db.Captura where e.idPaciente == item.M.idPaciente && e.EstatusCaptura == "Terminado" select e.EstatusCaptura).FirstOrDefault();
+                                if (entregado != null && item.M.Entregado == null)
+                                {
+                                    <a href="#" data-toggle="modal" data-target="#entregar_@item.M.idPaciente"><b style="color:limegreen">Entregado</b></a>
+                                }
+                            }
+
+                        </div>
                         </div>
 
                         <!-- Modal para elegir el método de pago una vez que se concrete el mismo -->
@@ -1457,6 +1549,34 @@ else
                                                         }
                                                     }
                                                 </select>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <input type="submit" value="Guardar" class="btn btn-primary" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Modal para subir REVALORACIÓN-->
+                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/SubirRevaloracion")">
+                            @Html.AntiForgeryToken()
+                            <div class="modal fade" id="revaloracion_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            @{
+                                                var pacienteRevaloracion = (from e in db.Paciente where e.idPaciente == item.M.idPaciente select e).FirstOrDefault();
+                                                <h4 class="modal-title text-primary" id="exampleModalLabel"><b>¿Desea cargar el expediente Revaloración de @pacienteRevaloracion.Nombre?</b></h4>
+                                            }
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="file" class="col-form-label">Archivo de Revaloración:</label>
+                                                <input type="file" name="file" asp-for="file" class="" value="file" />
+                                                <input type="hidden" name="id" value="@item.M.idPaciente" />
                                             </div>
                                         </div>
                                         <div class="modal-footer">

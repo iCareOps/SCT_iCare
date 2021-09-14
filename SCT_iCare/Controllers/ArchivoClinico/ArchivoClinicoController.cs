@@ -525,7 +525,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         //    return RedirectToAction("Index", "ArchivoClinico", new { id = id });
         //}
 
-        public ActionResult Guardar_Oftalmologia(int id, double izquierdoavc, double izquierdoavm, double izquierdoavl, double derechoavc, double derechoavm, double derechoavl,
+        public ActionResult Guardar_Oftalmologia(int id, string izquierdoavc, string izquierdoavm, string izquierdoavl, string derechoavc, string derechoavm, string derechoavl,
         string agudezavisual, string estereopsis, string cartaaccidentes, string campovisual, string movimientosoculares, string derechorp, string izquierdorp,
         string cromatica)
         {
@@ -540,10 +540,10 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             oftal.AgudezaVisual = agudezavisual == "on" ? "SI" : "NO";
             oftal.Estereopsis = estereopsis.ToString();
             oftal.CartaAccidentes = cartaaccidentes == "on" ? "SI" : "NO";
-            oftal.MovimientosOculares = movimientosoculares == "on" ? "NORMAL" : "NO";
-            oftal.CampoVisual = campovisual == "on" ? "NORMAL" : "NO";
-            oftal.DerechoRP = derechorp == "on" ? "NORMAL" : "NO";
-            oftal.IzquierdoRP = izquierdorp == "on" ? "NORMAL" : "NO";
+            oftal.MovimientosOculares = movimientosoculares == "on" ? "NORMAL" : "ALTERADO";
+            oftal.CampoVisual = campovisual == "on" ? "NORMAL" : "ALTERADO";
+            oftal.DerechoRP = derechorp == "on" ? "NORMAL" : "ALTERADO";
+            oftal.IzquierdoRP = izquierdorp == "on" ? "NORMAL" : "ALTERADO";
             oftal.Cromatica = cromatica;
             oftal.idPaciente = id;
 
@@ -1017,7 +1017,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             EPI_Laboratorio lab = new EPI_Laboratorio();
 
             lab.Glucosa = glucosa.ToString();
-            lab.HemoglobinaGlucosilada = hemoglobina.ToString();
+            lab.HemoglobinaGlucosilada = hemoglobina == null ? "0" : hemoglobina.ToString();
             lab.idPaciente = id;
 
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
@@ -1190,7 +1190,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
 
                 Chunk c01 = new Chunk("\n", font);
                 Chunk c02 = new Chunk("\n", font);
-                Chunk c0 = new Chunk("DATOS DEL PACIENTE\n", font);
+                Chunk c0 = new Chunk("DATOS DEL PACIENTE                                                     "+DateTime.Now.ToString("dd-MMMM-yyyy")+"\n", font);
                 Chunk c1 = new Chunk("N° de estudio: " + noEstudio + "\n", font);
                 Chunk c2 = new Chunk("Paciente: " + nombre + "\n", font);
                 Chunk c3 = new Chunk("No. Expediente: " + noExpediente + "\n", font);
@@ -1202,26 +1202,53 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 Chunk c81 = new Chunk("Código Hash: " + HASH + "\n", font);
                 Chunk c82 = new Chunk("\n", font);
 
-                Chunk c10 = new Chunk("DATOS DEL EXAMEN\n", font);
-                //Chunk c11 = new Chunk("Sucursal: " + sucursal + "\n", font);
-                //Chunk c12 = new Chunk("Doctor Dictaminador: " + doctor + "\n", font);
-                Chunk c13 = new Chunk("Tipo de Licencia: " + tipoL + "\n", font);
-                Chunk c14 = new Chunk("Tipo de Trámite: " + tipoT + "\n", font);
+                //Chunk c10 = new Chunk("DATOS DEL EXAMEN\n", font);
+                ////Chunk c11 = new Chunk("Sucursal: " + sucursal + "\n", font);
+                ////Chunk c12 = new Chunk("Doctor Dictaminador: " + doctor + "\n", font);
+                //Chunk c13 = new Chunk("Tipo de Licencia: " + tipoL + "\n", font);
+                //Chunk c14 = new Chunk("Tipo de Trámite: " + tipoT + "\n", font);
                 Chunk c15 = new Chunk("Fecha de Examen: " + fechaCita + "\n", font);
                 Chunk c16 = new Chunk("\n", font);
 
-                Chunk c20 = new Chunk("RESULTADOS\n", font);
-                Chunk c201 = new Chunk("APTITUD:\n", font);
-                Chunk c21 = new Chunk();
+                Chunk c20 = new Chunk("POSIBLES CAUSAS DE REVALORACIÓN\n", font);
+                Chunk c201 = new Chunk("\n", font);
+                //Chunk c21 = new Chunk();
 
-                if (aptitud == "APTO")
-                {
-                    c21 = new Chunk(aptitud + "\n", fontA);
-                }
-                else
-                {
-                    c21 = new Chunk(aptitud + "\n", fontNA);
-                }
+                //if (aptitud == "APTO")
+                //{
+                //    c21 = new Chunk(aptitud + "\n", fontA);
+                //}
+                //else
+                //{
+                //    c21 = new Chunk(aptitud + "\n", fontNA);
+                //}
+
+                var consulta = (from c in db.Epi_Oftalmologia where c.idPaciente == id orderby c.idOftalmologia descending select c).FirstOrDefault();
+                var consulta1 = (from c in db.EPI_SignosVitales where c.idPaciente == id orderby c.idSignosVitales descending select c).FirstOrDefault();
+                var consulta2 = (from c in db.EPI_Cardiologia where c.idPaciente == id orderby c.idCardiologia descending select c).FirstOrDefault();
+                var consulta4 = (from c in db.EPI_Audiologia where c.idPaciente == id orderby c.idAudiologia descending select c).FirstOrDefault();
+                var consulta6 = (from c in db.EPI_Odontologia where c.idPaciente == id orderby c.idOdontologia descending select c).FirstOrDefault();
+                var consulta5 = (from c in db.EPI_Laboratorio where c.idPaciente == id orderby c.idLaboratorio descending select c).FirstOrDefault();
+                var revision1 = (from r in db.EPI_A_Heredofamiliares where r.idPaciente == id orderby r.idHeredofamiliares descending select r).FirstOrDefault();
+                var revision2 = (from r in db.EPI_A_NoPatologicos where r.idPaciente == id orderby r.idNoPatologicos descending select r).FirstOrDefault();
+                var revision3 = (from r in db.EPI_A_Patologicos where r.idPaciente == id orderby r.idPatologicos descending select r).FirstOrDefault();
+                var revision4 = (from r in db.EPI_AparatosSistemas where r.idPaciente == id orderby r.idAparatosSistemas descending select r).FirstOrDefault();
+                var revision5 = (from r in db.EPI_ExploracionFisica where r.idPaciente == id orderby r.idExploracionFisica descending select r).FirstOrDefault();
+
+                Chunk c50 = new Chunk("CIE-10(E-11) Diabetes Mellitus Tipo 2\n", font);
+                Chunk c51 = new Chunk("CIE-10 HIPERTENSIÓN ESCENCIAL\n", font);
+                Chunk c52 = new Chunk("CIE-10(I45) Otros trastornos de la conducción\n", font);
+                Chunk c53 = new Chunk("CIE-10(E66) Obesidad\n", font);
+                Chunk c54 = new Chunk("ALTERACION DE LA VISTA NO ESPECIFICADA\n", font);
+                Chunk c55 = new Chunk("CIE-10(53.32) Estereopsis Defectuosa\n", font);
+                Chunk c56 = new Chunk("CIE-10(H-918) OTRAS HIPOACUSIAS ESPECIFICADAS\n", font);
+                Chunk c57 = new Chunk("I-25 ENFERMEDAD ISQUEMICA CRONICA DEL CORAZON\n", font);
+                Chunk c58 = new Chunk("ALTERACION NEUROLOGICA NO ESPECIFICADA\n", font);
+                Chunk c59 = new Chunk("E-079 TRASTORNO DE LA GLANDULA TIROIDES, NO ESPECIFICADO\n", font);
+                Chunk c60 = new Chunk("H-509 ESTRABISMO, NO ESPECIFICADO\n", font);
+                Chunk c61 = new Chunk("H-918 OTRAS HIPOACUSIAS ESPECIFICADAS\n", font);
+                Chunk c62 = new Chunk("\n", font);
+
 
                 Chunk c22 = new Chunk("NOTA MÉDICA: " + dictamenNOTA + "\n", font); //Resultado en azul
 
@@ -1247,17 +1274,87 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 p.Add(c81);
                 p.Add(c82);
 
-                p.Add(c10);
-                //p.Add(c11);
-                //p.Add(c12);
-                p.Add(c13);
-                p.Add(c14);
+                //p.Add(c10);
+                ////p.Add(c11);
+                ////p.Add(c12);
+                //p.Add(c13);
+                //p.Add(c14);
                 p.Add(c15);
                 p.Add(c16);
 
                 p.Add(c20);
                 p.Add(c201);
-                p.Add(c21);
+
+                if ((Convert.ToInt32(consulta5.Glucosa) > 126 && Convert.ToInt32(consulta5.HemoglobinaGlucosilada) != 0)
+                    || (Convert.ToInt32(consulta5.Glucosa) > 200 && Convert.ToInt32(consulta5.HemoglobinaGlucosilada) == 0)
+                    || (Convert.ToInt32(consulta5.HemoglobinaGlucosilada) > 7))
+                {
+                    p.Add(c50);
+                }
+
+                if (Convert.ToInt32(consulta1.Sistolica) >= 140 || Convert.ToInt32(consulta1.Diastolica) >= 90
+                    || (revision3.Diabetes == "SI" && Convert.ToInt32(consulta1.Sistolica) > 130) || (revision3.Diabetes == "SI" && Convert.ToInt32(consulta1.Diastolica) > 180))
+                {
+                    p.Add(c51);
+                }
+
+                if ((Convert.ToInt32(consulta2.Frecuencia) >= 65 && Convert.ToInt32(consulta2.Frecuencia) <= 99))
+                {
+                    p.Add(c52);
+                }
+
+                if (Convert.ToDouble(consulta1.IMC) >= 30
+                || Convert.ToInt32(consulta1.Grasa) >= 35)
+                {
+                    p.Add(c53);
+                }
+
+                if ((Convert.ToDouble(consulta.DerechoAVC) >= 0.7 && Convert.ToDouble(consulta.DerechoAVC) <= 1) || (Convert.ToDouble(consulta.DerechoAVM) >= 0.7 && Convert.ToDouble(consulta.DerechoAVM) <= 1)
+                || (Convert.ToDouble(consulta.DerechoAVL) >= 0.7 && Convert.ToDouble(consulta.DerechoAVL) <= 1) || (Convert.ToDouble(consulta.IzquierdoAVC) >= 0.7 && Convert.ToDouble(consulta.IzquierdoAVC) <= 1)
+                || (Convert.ToDouble(consulta.IzquierdoAVM) >= 0.7 && Convert.ToDouble(consulta.IzquierdoAVM) <= 1) || (Convert.ToDouble(consulta.IzquierdoAVL) >= 0.7 && Convert.ToDouble(consulta.IzquierdoAVL) <= 1)
+                || consulta.CampoVisual != "NORMAL" || consulta.MovimientosOculares != "NORMAL" || consulta.DerechoRP != "NORMAL"
+                || consulta.IzquierdoRP != "NORMAL" || consulta.Cromatica == "Ir a SCT")
+                {
+                    p.Add(c54);
+                }
+
+                if (Convert.ToInt32(consulta.Estereopsis) > 60)
+                {
+                    p.Add(c55);
+                }
+
+                if (consulta4.Grafica != "NORMAL")
+                {
+                    p.Add(c56);
+                }
+
+                if (revision1.Cardiopatia == "SI" || revision1.Infarto == "SI" || revision3.Cardiopatias == "SI")
+                {
+                    p.Add(c57);
+                }
+
+
+                if (revision5.Romberg == "SI" || revision5.PuntaNariz == "SI")
+                {
+                    p.Add(c58);
+                }
+
+                if (revision1.Tiroides == "SI")
+                {
+                    p.Add(c59);
+                }
+
+                if (revision5.Estrabismo == "SI")
+                {
+                    p.Add(c60);
+                }
+
+                if (consulta4.Patologia == "Media unilateral/severa contralateral")
+                {
+                    p.Add(c61);
+                }
+
+                p.Add(c62);
                 p.Add(c22);
 
                 doc.Add(p);

@@ -339,6 +339,14 @@
     <Property Name="Grasa" Type="varchar" MaxLength="10" />
     <Property Name="idPaciente" Type="int" />
   </EntityType>
+  <EntityType Name="ExpedienteRevaloracion">
+    <Key>
+      <PropertyRef Name="idExpedienteRevaloracion" />
+    </Key>
+    <Property Name="idExpedienteRevaloracion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ExpedienteCompleto" Type="varbinary(max)" />
+    <Property Name="idPaciente" Type="int" />
+  </EntityType>
   <EntityType Name="Expedientes">
     <Key>
       <PropertyRef Name="idExpediente" />
@@ -428,6 +436,14 @@
     <Property Name="ReferenciaSB" Type="varchar" MaxLength="50" />
     <Property Name="EstatusReferencia" Type="varchar" MaxLength="30" />
     <Property Name="idPaciente" Type="int" />
+  </EntityType>
+  <EntityType Name="Referido">
+    <Key>
+      <PropertyRef Name="idReferido" />
+    </Key>
+    <Property Name="idReferido" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre" Type="varchar" MaxLength="50" />
+    <Property Name="Tipo" Type="varchar" MaxLength="50" />
   </EntityType>
   <EntityType Name="Roles">
     <Key>
@@ -755,6 +771,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_ExpedienteRevaloracion_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="ExpedienteRevaloracion" Type="Self.ExpedienteRevaloracion" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="ExpedienteRevaloracion">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Expedientes_Paciente">
     <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
     <End Role="Expedientes" Type="Self.Expedientes" Multiplicity="*" />
@@ -912,6 +940,7 @@
     <EntitySet Name="EPI_Odontologia" EntityType="Self.EPI_Odontologia" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Epi_Oftalmologia" EntityType="Self.Epi_Oftalmologia" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI_SignosVitales" EntityType="Self.EPI_SignosVitales" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ExpedienteRevaloracion" EntityType="Self.ExpedienteRevaloracion" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Expedientes" EntityType="Self.Expedientes" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="IncidenciaDictamen" EntityType="Self.IncidenciaDictamen" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="IncidenciaPaciente" EntityType="Self.IncidenciaPaciente" Schema="dbo" store:Type="Tables" />
@@ -922,6 +951,7 @@
     <EntitySet Name="Paciente" EntityType="Self.Paciente" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Recepcionista" EntityType="Self.Recepcionista" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="ReferenciasSB" EntityType="Self.ReferenciasSB" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Referido" EntityType="Self.Referido" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="RolMenu" EntityType="Self.RolMenu" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Sucursales" EntityType="Self.Sucursales" Schema="dbo" store:Type="Tables" />
@@ -1021,6 +1051,10 @@
     <AssociationSet Name="FK_EPI_SignosVitales_Paciente" Association="Self.FK_EPI_SignosVitales_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />
       <End Role="EPI_SignosVitales" EntitySet="EPI_SignosVitales" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ExpedienteRevaloracion_Paciente" Association="Self.FK_ExpedienteRevaloracion_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="ExpedienteRevaloracion" EntitySet="ExpedienteRevaloracion" />
     </AssociationSet>
     <AssociationSet Name="FK_Expedientes_Paciente" Association="Self.FK_Expedientes_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />

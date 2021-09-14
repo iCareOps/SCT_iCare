@@ -262,10 +262,30 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.Recepcionista = usuario;
                 cita.EstatusPago = orden.payment_status;
                 cita.Folio = numFolio;
-                cita.Canal = nombre.ToUpper();
+                cita.Canal = "Gestoría";
                 cita.FechaCita = fecha;
-                cita.CC = "Call Center";
                 cita.ReferidoPor = referido.ToUpper();
+
+                if (referido == "ELIZABETH")
+                {
+                    cita.Referencia = "E1293749";
+                }
+                if (referido == "PABLO")
+                {
+                    cita.Referencia = "PL1293750";
+                }
+                if (referido == "NATALY FRANCO")
+                {
+                    cita.Referencia = "NF1293751";
+                }
+                if (referido == "LUIS VALENCIA")
+                {
+                    cita.Referencia = "LV1293752";
+                }
+                if (referido == "ROBERTO SALAZAR")
+                {
+                    cita.Referencia = "RS1293753";
+                }
 
                 int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
 
@@ -405,7 +425,6 @@ namespace SCT_iCare.Controllers.Gestoria
 
                     cita.FechaCita = fecha;
                     cita.NoOrden = orden.id;
-                    cita.CC = usuario;
 
                     JavaScriptSerializer js = new JavaScriptSerializer();
                     dynamic datosCargo2 = js.Deserialize<dynamic>(orden.charges.data[0].ToString());
@@ -420,10 +439,32 @@ namespace SCT_iCare.Controllers.Gestoria
                     cita.Recepcionista = usuario;
                     cita.EstatusPago = orden.payment_status;
                     cita.Folio = numFolio;
-                    cita.Canal = nombre.ToUpper();
+                    cita.Canal = "Gestoría";
                     cita.TipoPago = "REFERENCIA OXXO";
-                    cita.CC = "Call Center";
+                    cita.CC = usuario;
                     cita.ReferidoPor = referido.ToUpper();
+
+
+                    if (referido == "ELIZABETH")
+                    {
+                        cita.Referencia = "E1293749";
+                    }
+                    if (referido == "PABLO")
+                    {
+                        cita.Referencia = "PL1293750";
+                    }
+                    if (referido == "NATALY FRANCO")
+                    {
+                        cita.Referencia = "NF1293751";
+                    }
+                    if (referido == "LUIS VALENCIA")
+                    {
+                        cita.Referencia = "LV1293752";
+                    }
+                    if (referido == "ROBERTO SALAZAR")
+                    {
+                        cita.Referencia = "RS1293753";
+                    }
 
                     if (n > cantidadN)
                     {
@@ -630,11 +671,10 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.Recepcionista = usuario;
                 cita.EstatusPago = "Pendiente";
                 cita.Folio = numFolio;
-                cita.Canal = nombre.ToUpper();
+                cita.Canal = "Gestoría";
                 cita.FechaCita = FECHA;
                 cita.NoOrden = link;
                 cita.Referencia = Convert.ToString(card);
-                cita.CC = "Call Center";
                 cita.ReferidoPor = referido.ToUpper();
 
                 string TIPOLIC = null;
@@ -761,11 +801,10 @@ namespace SCT_iCare.Controllers.Gestoria
                     cita.Recepcionista = usuario;
                     cita.EstatusPago = "Pendiente";
                     cita.Folio = numFolio;
-                    cita.Canal = nombre.ToUpper();
+                    cita.Canal = "Gestoría";
                     cita.FechaCita = FECHA;
                     cita.NoOrden = link;
                     cita.Referencia = Convert.ToString(card);
-                    cita.CC = usuario;
                     cita.ReferidoPor = referido.ToUpper();
 
                     if (ModelState.IsValid)
@@ -858,12 +897,6 @@ namespace SCT_iCare.Controllers.Gestoria
                 }
 
                 bytes2 = bytes;
-
-                //var bytesBinary = bytes;
-                //Response.ContentType = "application/pdf";
-                //Response.AddHeader("content-disposition", "attachment;filename=MyPDF.pdf");
-                //Response.BinaryWrite(bytesBinary);
-                //Response.End();
             }
 
             exp.Expediente = bytes2;

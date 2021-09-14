@@ -83,7 +83,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
     }
     else
     {
-        if (idRol == 13)
+        if (idRol == 13 || idRol == 17)
         {
             <div class="tablaScroll">
                 <table class="table tablas" style="color: #2F2D6B">
@@ -98,6 +98,14 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             <th>
                                 No. Expediente
                             </th>
+                            @{ 
+                                if(idRol == 17)
+                    {
+                        <th>
+                            Sucursal
+                            </th>
+                    }
+                            }
                             <th>
                                 Signos Vitales
                             </th>
@@ -169,6 +177,19 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             <td>
                                 <b>@Html.DisplayFor(modelItem => item.M.NoExpediente)</b>
                             </td>
+                            @{ 
+                                if(idRol == 17)
+                                {
+                                                        <td>
+                                                            <span class="field-tip">
+                                                                @item.M.Sucursal
+                                                                <span class="tip-content">
+                                                                    <b>Doctor: </b>@item.M.Doctor <br />
+                                                                </span>
+                                                            </span>
+                                                        </td>
+                                }
+                            }
                             <td>
                                 @{
                                     if ((from c in db.CarruselMedico where c.idPaciente == item.N.idPaciente select c.Fin_SignosVitales).FirstOrDefault() == null)
@@ -263,7 +284,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                                         {
                                             <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Revaloración</mark></b>
                                         }
-                                        else if (dictamen.Motivo == "Liberar como NO APTO")
+                                        else if (dictamen.Motivo == "Concluir examen como NO APTO")
                                         {
                                             <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px">NO APTO</b>
                                         }

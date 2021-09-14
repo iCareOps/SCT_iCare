@@ -176,6 +176,7 @@
     <NavigationProperty Name="EPI_DictamenAptitud" Relationship="DevModel.FK_EPI_DictamenAptitud_Paciente" FromRole="Paciente" ToRole="EPI_DictamenAptitud" />
     <NavigationProperty Name="EPI_Odontologia" Relationship="DevModel.FK_EPI_Odontologia_Paciente" FromRole="Paciente" ToRole="EPI_Odontologia" />
     <Property Name="HASH" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="ExpedienteRevaloracion" Relationship="DevModel.FK_ExpedienteRevaloracion_Paciente" FromRole="Paciente" ToRole="ExpedienteRevaloracion" />
   </EntityType>
   <EntityType Name="Recepcionista">
     <Key>
@@ -592,6 +593,12 @@
     <AssociationSet Name="FK_EPI_Odontologia_Paciente" Association="DevModel.FK_EPI_Odontologia_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />
       <End Role="EPI_Odontologia" EntitySet="EPI_Odontologia" />
+    </AssociationSet>
+    <EntitySet Name="Referido" EntityType="DevModel.Referido" />
+    <EntitySet Name="ExpedienteRevaloracion" EntityType="DevModel.ExpedienteRevaloracion" />
+    <AssociationSet Name="FK_ExpedienteRevaloracion_Paciente" Association="DevModel.FK_ExpedienteRevaloracion_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="ExpedienteRevaloracion" EntitySet="ExpedienteRevaloracion" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="CapturaIncidencia">
@@ -1133,6 +1140,35 @@
         <PropertyRef Name="idPaciente" />
       </Principal>
       <Dependent Role="EPI_Odontologia">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Referido">
+    <Key>
+      <PropertyRef Name="idReferido" />
+    </Key>
+    <Property Name="idReferido" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Tipo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="ExpedienteRevaloracion">
+    <Key>
+      <PropertyRef Name="idExpedienteRevaloracion" />
+    </Key>
+    <Property Name="idExpedienteRevaloracion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ExpedienteCompleto" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="idPaciente" Type="Int32" />
+    <NavigationProperty Name="Paciente" Relationship="DevModel.FK_ExpedienteRevaloracion_Paciente" FromRole="ExpedienteRevaloracion" ToRole="Paciente" />
+  </EntityType>
+  <Association Name="FK_ExpedienteRevaloracion_Paciente">
+    <End Type="DevModel.Paciente" Role="Paciente" Multiplicity="0..1" />
+    <End Type="DevModel.ExpedienteRevaloracion" Role="ExpedienteRevaloracion" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="ExpedienteRevaloracion">
         <PropertyRef Name="idPaciente" />
       </Dependent>
     </ReferentialConstraint>

@@ -35,6 +35,7 @@ namespace SCT_iCare
             this.EPI_ExploracionFisica = new HashSet<EPI_ExploracionFisica>();
             this.EPI_DictamenAptitud = new HashSet<EPI_DictamenAptitud>();
             this.EPI_Odontologia = new HashSet<EPI_Odontologia>();
+            this.ExpedienteRevaloracion = new HashSet<ExpedienteRevaloracion>();
         }
     
         public int idPaciente { get; set; }
@@ -81,5 +82,7 @@ namespace SCT_iCare
         public virtual ICollection<EPI_DictamenAptitud> EPI_DictamenAptitud { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<EPI_Odontologia> EPI_Odontologia { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ExpedienteRevaloracion> ExpedienteRevaloracion { get; set; }
     }
 }

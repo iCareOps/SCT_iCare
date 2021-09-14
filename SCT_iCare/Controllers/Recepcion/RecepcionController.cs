@@ -220,9 +220,30 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.EstatusPago = "Pagado";
                 cita.Referencia = referencia;
                 cita.Folio = numFolio;
-                cita.Canal = "SITIO";
+                cita.Canal = "Recepción";
                 cita.TipoPago = pago;
                 cita.ReferidoPor = referido.ToUpper();
+
+                if(referido == "ELIZABETH")
+                {
+                    cita.Referencia = "E1293749";
+                }
+                if (referido == "PABLO")
+                {
+                    cita.Referencia = "PL1293750";
+                }
+                if (referido == "NATALY FRANCO")
+                {
+                    cita.Referencia = "NF1293751";
+                }
+                if (referido == "LUIS VALENCIA")
+                {
+                    cita.Referencia = "LV1293752";
+                }
+                if (referido == "ROBERTO SALAZAR")
+                {
+                    cita.Referencia = "RS1293753";
+                }
 
                 if (pago != "Referencia Scotiabank")
                 {
@@ -268,6 +289,15 @@ namespace SCT_iCare.Controllers.Recepcion
                 }
                 cita.TipoLicencia = TIPOLIC;
 
+                if (referido == "NINGUNO" || referido == "OTRO")
+                {
+                    cita.CC = "N/A";
+                }
+                else
+                {
+                    var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                    cita.CC = referidoTipo;
+                }
                 //-------------------------------------------------------------
                 if (ModelState.IsValid)
                 {
@@ -400,14 +430,47 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.EstatusPago = "Pagado";
                     cita.Folio = numFolio;
                     cita.Referencia = referencia;
-                    cita.Canal = nombre.ToUpper();
+                    cita.Canal = "Recepción";
                     cita.FechaCita = DateTime.Now;
                     cita.ReferidoPor = referido.ToUpper();
+
+                    if (referido == "ELIZABETH")
+                    {
+                        cita.Referencia = "E1293749";
+                    }
+                    if (referido == "PABLO")
+                    {
+                        cita.Referencia = "PL1293750";
+                    }
+                    if (referido == "NATALY FRANCO")
+                    {
+                        cita.Referencia = "NF1293751";
+                    }
+                    if (referido == "LUIS VALENCIA")
+                    {
+                        cita.Referencia = "LV1293752";
+                    }
+                    if (referido == "ROBERTO SALAZAR")
+                    {
+                        cita.Referencia = "RS1293753";
+                    }
 
                     if (n > cantidadN)
                     {
                         cita.TipoLicencia = "AEREO";
                     }
+
+                    
+                    if (referido == "NINGUNO" || referido == "OTRO")
+                    {
+                        cita.CC = "N/A";
+                    }
+                    else
+                    {
+                        var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                        cita.CC = referidoTipo;
+                    }
+                    
 
                     if (ModelState.IsValid)
                     {
@@ -628,10 +691,30 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.Recepcionista = usuario;
                 cita.EstatusPago = orden.payment_status;
                 cita.Folio = numFolio;
-                cita.Canal = "SITIO";
+                cita.Canal = "Recepción";
                 cita.FechaCita = DateTime.Now;
                 cita.ReferidoPor = referido.ToUpper();
 
+                if (referido == "ELIZABETH")
+                {
+                    cita.Referencia = "E1293749";
+                }
+                if (referido == "PABLO")
+                {
+                    cita.Referencia = "PL1293750";
+                }
+                if (referido == "NATALY FRANCO")
+                {
+                    cita.Referencia = "NF1293751";
+                }
+                if (referido == "LUIS VALENCIA")
+                {
+                    cita.Referencia = "LV1293752";
+                }
+                if (referido == "ROBERTO SALAZAR")
+                {
+                    cita.Referencia = "RS1293753";
+                }
 
                 int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
                 ReferenciasSB refe = db.ReferenciasSB.Find(idRefSB);
@@ -644,6 +727,16 @@ namespace SCT_iCare.Controllers.Recepcion
                     TIPOLIC = "AEREO";
                 }
                 cita.TipoLicencia = TIPOLIC;
+
+                if (referido == "NINGUNO" || referido == "OTRO")
+                {
+                    cita.CC = "N/A";
+                }
+                else
+                {
+                    var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                    cita.CC = referidoTipo;
+                }
 
                 if (ModelState.IsValid)
                 {
@@ -786,9 +879,30 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.Recepcionista = usuario;
                     cita.EstatusPago = orden.payment_status;
                     cita.Folio = numFolio;
-                    cita.Canal = nombre.ToUpper();
+                    cita.Canal = "Recepción";
                     cita.FechaCita = DateTime.Now;
                     cita.ReferidoPor = referido.ToUpper();
+
+                    if (referido == "ELIZABETH")
+                    {
+                        cita.Referencia = "E1293749";
+                    }
+                    if (referido == "PABLO")
+                    {
+                        cita.Referencia = "PL1293750";
+                    }
+                    if (referido == "NATALY FRANCO")
+                    {
+                        cita.Referencia = "NF1293751";
+                    }
+                    if (referido == "LUIS VALENCIA")
+                    {
+                        cita.Referencia = "LV1293752";
+                    }
+                    if (referido == "ROBERTO SALAZAR")
+                    {
+                        cita.Referencia = "RS1293753";
+                    }
 
                     if (n > cantidadN)
                     {
@@ -800,7 +914,15 @@ namespace SCT_iCare.Controllers.Recepcion
                     refe.EstatusReferencia = "PENDIENTE";
                     refe.idPaciente = idPaciente;
 
-                    
+                    if (referido == "NINGUNO" || referido == "OTRO")
+                    {
+                        cita.CC = "N/A";
+                    }
+                    else
+                    {
+                        var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                        cita.CC = referidoTipo;
+                    }
 
                     if (ModelState.IsValid)
                     {
@@ -1018,7 +1140,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.Recepcionista = usuario;
                 cita.EstatusPago = "Pendiente";
                 cita.Folio = numFolio;
-                cita.Canal = "SITIO";
+                cita.Canal = "Recepción";
                 cita.FechaCita = DateTime.Now;
                 cita.NoOrden = link;
                 cita.Referencia = Convert.ToString(card);
@@ -1030,6 +1152,16 @@ namespace SCT_iCare.Controllers.Recepcion
                     TIPOLIC = "AEREO";
                 }
                 cita.TipoLicencia = TIPOLIC;
+
+                if (referido == "NINGUNO" || referido == "OTRO")
+                {
+                    cita.CC = "N/A";
+                }
+                else
+                {
+                    var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                    cita.CC = referidoTipo;
+                }
 
                 if (ModelState.IsValid)
                 {
@@ -1168,11 +1300,21 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.Recepcionista = usuario;
                     cita.EstatusPago = "Pendiente";
                     cita.Folio = numFolio;
-                    cita.Canal = nombre.ToUpper();
+                    cita.Canal = "Recepción";
                     cita.FechaCita = DateTime.Now;
                     cita.NoOrden = link;
                     cita.Referencia = Convert.ToString(card);
                     cita.ReferidoPor = referido.ToUpper();
+
+                    if (referido == "NINGUNO" || referido == "OTRO")
+                    {
+                        cita.CC = "N/A";
+                    }
+                    else
+                    {
+                        var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                        cita.CC = referidoTipo;
+                    }
 
                     if (ModelState.IsValid)
                     {
@@ -1812,6 +1954,43 @@ namespace SCT_iCare.Controllers.Recepcion
                 db.Entry(paciente).State = EntityState.Modified;
                 db.Entry(cita).State = EntityState.Modified;
                 db.Entry(expediente).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return Redirect("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SubirRevaloracion(HttpPostedFileBase file, int id)
+        {
+            int ide = Convert.ToInt32(id);
+
+            Paciente paciente = db.Paciente.Find(ide);
+            ExpedienteRevaloracion exp = new ExpedienteRevaloracion();
+
+            byte[] bytes2 = null;
+
+            if (file != null && file.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(file.FileName);
+
+                byte[] bytes;
+                using (BinaryReader br = new BinaryReader(file.InputStream))
+                {
+                    bytes = br.ReadBytes(file.ContentLength);
+                }
+
+                bytes2 = bytes;
+            }
+
+            exp.ExpedienteCompleto = bytes2;
+            exp.idPaciente = id;
+
+            if (ModelState.IsValid)
+            {
+                db.ExpedienteRevaloracion.Add(exp);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
