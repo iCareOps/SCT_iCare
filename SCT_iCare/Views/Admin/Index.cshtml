@@ -69,6 +69,8 @@
                     S.N.FechaCita
                 }).Count();
 
+    
+
     var mejorSucursal = (from s in db.Cita where s.FechaCita >= dateToday && s.FechaCita < dateTomorrow && s.Doctor != null select s).GroupBy(o => o.Sucursal);
     var mejorS = (from m in mejorSucursal select m).OrderByDescending(o => o.Count());
 

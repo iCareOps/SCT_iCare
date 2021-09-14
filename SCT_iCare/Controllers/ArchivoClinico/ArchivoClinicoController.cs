@@ -1190,7 +1190,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
 
                 Chunk c01 = new Chunk("\n", font);
                 Chunk c02 = new Chunk("\n", font);
-                Chunk c0 = new Chunk("DATOS DEL PACIENTE                                                     "+DateTime.Now.ToString("dd-MMMM-yyyy")+"\n", font);
+                Chunk c0 = new Chunk("DATOS DEL PACIENTE\n", font);
                 Chunk c1 = new Chunk("N° de estudio: " + noEstudio + "\n", font);
                 Chunk c2 = new Chunk("Paciente: " + nombre + "\n", font);
                 Chunk c3 = new Chunk("No. Expediente: " + noExpediente + "\n", font);
@@ -1210,7 +1210,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 Chunk c15 = new Chunk("Fecha de Examen: " + fechaCita + "\n", font);
                 Chunk c16 = new Chunk("\n", font);
 
-                Chunk c20 = new Chunk("POSIBLES CAUSAS DE REVALORACIÓN\n", font);
+                Chunk c20 = new Chunk("DIAGNÓSTICO A REVALORAR\n", font);
                 Chunk c201 = new Chunk("\n", font);
                 //Chunk c21 = new Chunk();
 
@@ -1250,7 +1250,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 Chunk c62 = new Chunk("\n", font);
 
 
-                Chunk c22 = new Chunk("NOTA MÉDICA: " + dictamenNOTA + "\n", font); //Resultado en azul
+                Chunk c22 = new Chunk("NOTA: " + dictamenNOTA + "\n", font); //Resultado en azul
 
                 System.Diagnostics.Debug.WriteLine("Se prepara para generar el QR");
                 System.Console.WriteLine("Se prepara para generar el QR");
@@ -1264,6 +1264,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 p.Add(c02);
                 p.Add(c0);
                 p.Add(c1);
+                p.Add(c15);
                 p.Add(c2);
                 p.Add(c3);
                 p.Add(c4);
@@ -1279,8 +1280,8 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 ////p.Add(c12);
                 //p.Add(c13);
                 //p.Add(c14);
-                p.Add(c15);
-                p.Add(c16);
+                
+                //p.Add(c16);
 
                 p.Add(c20);
                 p.Add(c201);

@@ -43,6 +43,36 @@
     DateTime thisDate = Convert.ToDateTime(ViewBag.Inicio);
     DateTime tomorrowDate = Convert.ToDateTime(ViewBag.Final);
 
+    var tablaFinal = db.Paciente.
+        Join(db.Cita, a => a.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
+        Where(w => w.B.FechaCita >= thisDate && w.B.FechaCita < tomorrowDate).
+        Join(db.Captura, c => c.A.idPaciente, d => d.idPaciente, (c, d) => new { C = c, D = d }).
+        Select(s => new
+        {
+            s.C.A.Nombre,
+            s.C.B.NoExpediente,
+            s.C.A.Telefono,
+            s.C.A.Email,
+            s.C.A.Folio,
+            s.C.A.CURP,
+            s.C.B.TipoTramite,
+            s.C.B.TipoLicencia,
+            s.C.B.Sucursal,
+            s.C.B.Doctor,
+            s.C.B.Recepcionista,
+            s.C.B.Referencia,
+            s.C.B.Canal,
+            s.C.B.Asistencia,
+            s.D.FechaExpdiente,
+            s.D.Capturista,
+            s.D.EstatusCaptura,
+            s.D.InicioCaptura,
+            s.D.FinalCaptura,
+            s.D.Aptitud,
+            s.D.FechaVigencia,
+            s.C.B.ReferidoPor
+        });
+
 
     //var repoCentral = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
     var repoCentral = (from r in db.Captura orderby r.TipoTramite select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").ToList();
@@ -643,7 +673,8 @@
                             </td>
                         </tr>
                         flag++;
-                    }
+                    }                  
+
                 }
                 else
                 {
