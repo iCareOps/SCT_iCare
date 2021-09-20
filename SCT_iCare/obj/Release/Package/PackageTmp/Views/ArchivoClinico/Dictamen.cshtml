@@ -55,7 +55,20 @@
     <h4 style="text-align:left; color:white"><b>Movimientos Oculares: </b><span style="color:aqua"> @consulta.MovimientosOculares</span></h4>
     <h4 style="text-align:left; color:white"><b>Ojo derecho Reflejos Pupilares: </b><span style="color:aqua"> @consulta.DerechoRP</span></h4>
     <h4 style="text-align:left; color:white"><b>Ojo izquierdo Reflejos Pupilares: </b><span style="color:aqua"> @consulta.IzquierdoRP</span></h4>
-    <h4 style="text-align:left; color:white"><b>Tensión de Visión Cromática: </b><span style="color:aqua"> @consulta.Cromatica</span></h4>
+
+    if (consulta.Cromatica == "Deuteranop")
+    {
+        <h4 style="text-align:left; color:white"><b>Tensión de Visión Cromática: </b><span style="color:aqua"> Deuteranopia con carta de no accidentes y desempeño</span></h4>
+    }
+    else if (consulta.Cromatica == "Ir a SCT")
+    {
+        <h4 style="text-align:left; color:white"><b>Tensión de Visión Cromática: </b><span style="color:aqua"> Deuteranopia con carta de no accidentes sin carta de desempeño (Ir a SCT)</span></h4>
+    }
+    else
+    {
+        <h4 style="text-align:left; color:white"><b>Tensión de Visión Cromática: </b><span style="color:aqua"> @consulta.Cromatica</span></h4>
+    }
+
     <hr />
 
     var consulta4 = (from c in db.EPI_Audiologia where c.idPaciente == idPaciente orderby c.idAudiologia descending select c).FirstOrDefault();

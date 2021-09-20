@@ -39,6 +39,11 @@ namespace SCT_iCare.Controllers.Recepcion
             return View(db.Paciente.ToList());
         }
 
+        public ActionResult Dashboard()
+        {
+            return View(db.Paciente.ToList());
+        }
+
         public ActionResult NextDay()
         {
             return View(db.Paciente.ToList());

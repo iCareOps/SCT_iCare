@@ -120,8 +120,8 @@
             {
 
                 string aparecer = "aparicion" + contador.ToString();
-                var modulo = (from m in db.Modulos where m.idModulo == item.idModulo  select m.idModulo).FirstOrDefault();
-                if ((from i in db.DoctorModulo where i.idUsuario == idUser && i.idModulo == modulo  select i).FirstOrDefault() == null && idRol == 12)
+                var modulo = (from m in db.Modulos where m.idModulo == item.idModulo select m.idModulo).FirstOrDefault();
+                if ((from i in db.DoctorModulo where i.idUsuario == idUser && i.idModulo == modulo select i).FirstOrDefault() == null && idRol == 12)
                 {
                     <button class="btn " style="width:25vw; height:25vw; margin:0.5%; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer disabled>@item.Nombre</button>
                 }
@@ -219,49 +219,74 @@
                                 }
                                 else
                                 {
-                                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#revalorado" style="width:25vw; margin:0.5%; height:25vw; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer>DICTAMEN</button>
 
-                                    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Dictamen")">
-                                        <div class="modal fade" id="revalorado" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    var expedienteRevaloracion = (from i in db.ExpedienteRevaloracion where i.idPaciente == idPaciente orderby i.idExpedienteRevaloracion descending select i).FirstOrDefault();
+
+                                    if (expedienteRevaloracion == null)
+                                    {
+                                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#revaloradoSin" style="width:25vw; margin:0.5%; height:25vw; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer>DICTAMEN</button>
+
+                                        <div class="modal fade" id="revaloradoSin" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h4 class="modal-title text-primary" style="text-align:left" id="exampleModalLabel"><b>Paciente dictaminado como <span class="text-danger">NO APTO</span>. ¿Desea cambiar el estatus de Aptitud?</b></h4>
-                                                    </div>
-                                                    <div class="modal-body" id="">
-                                                        @{
-                                                            var paciente = (from p in db.Paciente where p.idPaciente == idPaciente orderby p.idPaciente descending select p).FirstOrDefault();
-                                                            var cita = (from p in db.Cita where p.idPaciente == idPaciente orderby p.idCita descending select p).FirstOrDefault();
-                                                            var revisionDictamen = (from p in db.EPI_DictamenAptitud where p.idPaciente == idPaciente orderby p.idDictamenAptitud descending select p).FirstOrDefault();
-
-                                                            <h4 style="text-align:left">Nombre: <span class="text-primary">@paciente.Nombre</span></h4>
-                                                            <h4 style="text-align:left">No. de Expediente: <span class="text-primary">@cita.NoExpediente</span></h4>
-                                                            <h4 style="text-align:left">CURP: <span class="text-primary">@paciente.CURP</span></h4>
-                                                            <h4 style="text-align:left">Folio: <span class="text-primary">@paciente.Folio</span></h4>
-                                                            <h4 style="text-align:left">Tipo de Licencia: <span class="text-primary">@cita.TipoLicencia</span></h4>
-                                                            <h4 style="text-align:left">Tipo de Trámite: <span class="text-primary">@cita.TipoTramite</span></h4>
-                                                            <h3 style="text-align:left">Aptitud: <span class="text-danger">@revisionDictamen.Aptitud</span></h3>
-
-                                                            <input type="hidden" name="id" value=@idPaciente />
-                                                            <br />
-                                                            <div class="form-group" style="align-items:flex-start">
-                                                                <h4 style="text-align:left">Nota Médica:</h4>
-                                                                <textarea class="form-control pull-left" id="email" name="nota" placeholder="@revisionDictamen.NotaMedica" required></textarea>
-                                                            </div>
-
-                                                            <br />
-                                                            <br />
-                                                            <br />
-                                                        }
+                                                        <h4 class="modal-title text-primary" style="text-align:left" id="exampleModalLabel"><b>El paciente se encuentra en <span class="text-warning">REVALORACIÓN</span>.</b></h4>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <input type="submit" name="accion" class="btn btn-danger" value="Liberar como NO APTO" />
-                                                        <input type="submit" name="accion" class="btn btn-success" value="APTO" />
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </form>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#revalorado" style="width:25vw; margin:0.5%; height:25vw; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer>DICTAMEN</button>
+
+                                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Dictamen")">
+                                            <div class="modal fade" id="revalorado" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title text-primary" style="text-align:left" id="exampleModalLabel"><b>Paciente dictaminado como <span class="text-danger">NO APTO</span>. ¿Desea cambiar el estatus de Aptitud?</b></h4>
+                                                        </div>
+                                                        <div class="modal-body" id="">
+                                                            @{
+                                                                var paciente = (from p in db.Paciente where p.idPaciente == idPaciente orderby p.idPaciente descending select p).FirstOrDefault();
+                                                                var cita = (from p in db.Cita where p.idPaciente == idPaciente orderby p.idCita descending select p).FirstOrDefault();
+                                                                var revisionDictamen = (from p in db.EPI_DictamenAptitud where p.idPaciente == idPaciente orderby p.idDictamenAptitud descending select p).FirstOrDefault();
+
+                                                                <h4 style="text-align:left">Nombre: <span class="text-primary">@paciente.Nombre</span></h4>
+                                                                <h4 style="text-align:left">No. de Expediente: <span class="text-primary">@cita.NoExpediente</span></h4>
+                                                                <h4 style="text-align:left">CURP: <span class="text-primary">@paciente.CURP</span></h4>
+                                                                <h4 style="text-align:left">Folio: <span class="text-primary">@paciente.Folio</span></h4>
+                                                                <h4 style="text-align:left">Tipo de Licencia: <span class="text-primary">@cita.TipoLicencia</span></h4>
+                                                                <h4 style="text-align:left">Tipo de Trámite: <span class="text-primary">@cita.TipoTramite</span></h4>
+                                                                <h3 style="text-align:left">Aptitud: <span class="text-danger">@revisionDictamen.Aptitud</span></h3>
+
+                                                                <input type="hidden" name="id" value=@idPaciente />
+                                                                <br />
+                                                                <div class="form-group" style="align-items:flex-start">
+                                                                    <h4 style="text-align:left">Nota Médica:</h4>
+                                                                    <textarea class="form-control pull-left" id="email" name="nota" placeholder="@revisionDictamen.NotaMedica" required></textarea>
+                                                                </div>
+
+                                                                <br />
+                                                                <br />
+                                                                <br />
+                                                            }
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <input type="submit" name="accion" class="btn btn-danger" value="Liberar como NO APTO" />
+                                                            <input type="submit" name="accion" class="btn btn-success" value="APTO" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    }
+
+
                                 }
                             }
 
@@ -356,7 +381,7 @@
 
                         if (consultaCompleta != null)
                         {
-                            
+
                             <button type="button" class="btn btn-info" style="width:25vw; height:25vw; margin:0.5%; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer data-toggle="modal" data-target="#carrusel_@idPaciente@nombreModulo">@item.Nombre <span style="color:gold">(COMPLETO)</span></button>
 
                             <div class="modal fade" id="carrusel_@idPaciente@nombreModulo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -586,9 +611,9 @@
         }
         <br />
         <br />
-    <div class="enlaceSinBoton">
-        <h4>@Html.ActionLink("<< Volver a Inicio", "Recepcion")</h4>
-    </div>
+        <div class="enlaceSinBoton">
+            <h4>@Html.ActionLink("<< Volver a Inicio", "Recepcion")</h4>
+        </div>
     </center>
 </div>
 
