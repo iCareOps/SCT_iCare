@@ -50,18 +50,87 @@
 
 <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Heredofamiliares")" style="display:inline-block; margin:0.5%">
 
+    <script type="text/javascript">
+        function madrenovive() {
+            element_m = document.getElementById("content_m");
+            check_m = document.getElementById("esp_madre_vive");
+            disabled_m = document.getElementById("required_madre");
+
+            if (check_m.checked) {
+                element_m.style.display = 'none';
+                disabled_m.disabled = true
+            }
+            else {
+                element_m.style.display = 'block';
+                disabled_m.disabled = false
+            }
+        }
+    </script>
+
     <div class="form-group">
         <label style="color:white">1. ¿Madre Vive? </label><br />
-        <input type="checkbox" data-toggle="toggle" checked data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="madrevive">
+        <input type="checkbox" id="esp_madre_vive" onchange="javascript: madrenovive()" data-toggle="toggle" checked data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="madrevive">
     </div>
+
+    <div class="form-group" id="content_m" style="display: none;">
+        <label style="color:white">Especificar causa de defuncion</label><br />
+        <textarea id="required_madre" name="esp_madrevive" required disabled></textarea>
+    </div>
+
+    <script type="text/javascript">
+        function padrenovive() {
+            element_p = document.getElementById("content_p");
+            check_p = document.getElementById("esp_padre_vive");
+            disabled_p = document.getElementById("required_padre");
+
+            if (check_p.checked) {
+                element_p.style.display = 'none';
+                disabled_p.disabled = true
+            }
+            else {
+                element_p.style.display = 'block';
+                disabled_p.disabled = false
+            }
+        }
+    </script>
+
     <div class="form-group">
         <label style="color:white">2. ¿Padre Vive? </label><br />
-        <input type="checkbox" data-toggle="toggle" checked data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="padrevive">
+        <input type="checkbox" id="esp_padre_vive" onchange="javascript: padrenovive()" data-toggle="toggle" checked data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="padrevive">
     </div>
+
+    <div class="form-group" id="content_p" style="display: none;">
+        <label style="color:white">Especificar causa de defuncion</label><br />
+        <textarea id="required_padre" name="esp_padrevive" required disabled></textarea>
+    </div>
+
+    <script type="text/javascript">
+        function hermanosnovive() {
+            element_h = document.getElementById("content_h");
+            check_h = document.getElementById("esp_hermanos_vive");
+            disabled_h = document.getElementById("required_hermanos");
+
+            if (check_h.checked) {
+                element_h.style.display = 'none';
+                disabled_h.disabled = true
+            }
+            else {
+                element_h.style.display = 'block';
+                disabled_h.disabled = false
+            }
+        }
+    </script>
+
     <div class="form-group">
         <label style="color:white">3. ¿Hermanos Viven? </label><br />
-        <input type="checkbox" data-toggle="toggle" checked data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="hermanosviven">
+        <input type="checkbox" id="esp_hermanos_vive" onchange="javascript: hermanosnovive()" data-toggle="toggle" checked data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="hermanosviven">
     </div>
+
+    <div class="form-group" id="content_h" style="display: none;">
+        <label style="color:white">Especificar causa de defuncion</label><br />
+        <textarea id="required_hermanos" name="esp_hermanosvive" required disabled></textarea>
+    </div>
+
     <div class="form-group">
         <label style="color:white">4. ¿Alguien de su familia : Mamá, Papá, Hermanos o Abuelos padece de una enfermedad grave? </label><br />
         <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="familiagrave">
