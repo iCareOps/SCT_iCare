@@ -1451,7 +1451,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CURP_Expediente(string id, string nombre, string numero, string curp, string tel, string email)
+        public ActionResult CURP_Expediente(string id, string nombre, string numero, string curp, string tel, string email, string doctor, string tipoL, string tipoT)
         {
             int ide = Convert.ToInt32(id);
 
@@ -1514,6 +1514,10 @@ namespace SCT_iCare.Controllers.Recepcion
             paciente.Email = EMAIL;
             paciente.Telefono = TELEFONO;
             cita.NoExpediente = NOEXP;
+
+            cita.TipoLicencia = tipoL;
+            cita.Doctor = doctor;
+            cita.TipoTramite = tipoT;
 
             CarruselMedico cm = new CarruselMedico();
             cm.idPaciente = paciente.idPaciente;
