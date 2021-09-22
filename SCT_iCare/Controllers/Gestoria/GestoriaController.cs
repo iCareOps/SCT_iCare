@@ -61,7 +61,7 @@ namespace SCT_iCare.Controllers.Gestoria
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Orden(string nombre, string telefono, string sucursal, string usuario, DateTime? fecha, string cantidad, string cantidadAereo)
+        public ActionResult Orden(string nombre, string telefono, string sucursal, string usuario, DateTime? fecha, string cantidad, string cantidadAereo, string referido)
         {
             GetApiKey();
 
@@ -146,6 +146,26 @@ namespace SCT_iCare.Controllers.Gestoria
                 paciente.Telefono = telefono;
                 paciente.Email = mail;
 
+                string hash;
+                do
+                {
+                    Random numero = new Random();
+                    int randomize = numero.Next(0, 61);
+                    string[] aleatorio = new string[62] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+                    string get_1;
+                    get_1 = aleatorio[randomize];
+                    hash = get_1;
+                    for (int i = 0; i < 9; i++)
+                    {
+                        randomize = numero.Next(0, 61);
+                        get_1 = aleatorio[randomize];
+                        hash += get_1;
+                    }
+                } while ((from i in db.Paciente where i.HASH == hash select i) == null);
+
+                paciente.HASH = hash;
+
+
                 //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
                 string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
                 //string doc = (from d in db.Doctores where d.Nombre == doctor select d.idDoctor).FirstOrDefault().ToString();
@@ -166,6 +186,10 @@ namespace SCT_iCare.Controllers.Gestoria
                 else if (num >= 10 && num < 100)
                 {
                     contador = "0" + Convert.ToString(num);
+                }
+                else
+                {
+                    contador = Convert.ToString(num);
                 }
 
 
@@ -238,9 +262,30 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.Recepcionista = usuario;
                 cita.EstatusPago = orden.payment_status;
                 cita.Folio = numFolio;
-                cita.Canal = nombre.ToUpper();
+                cita.Canal = "Gestoría";
                 cita.FechaCita = fecha;
-                cita.CC = "Call Center";
+                cita.ReferidoPor = referido.ToUpper();
+
+                if (referido == "ELIZABETH")
+                {
+                    cita.Referencia = "E1293749";
+                }
+                if (referido == "PABLO")
+                {
+                    cita.Referencia = "PL1293750";
+                }
+                if (referido == "NATALY FRANCO")
+                {
+                    cita.Referencia = "NF1293751";
+                }
+                if (referido == "LUIS VALENCIA")
+                {
+                    cita.Referencia = "LV1293752";
+                }
+                if (referido == "ROBERTO SALAZAR")
+                {
+                    cita.Referencia = "RS1293753";
+                }
 
                 int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
 
@@ -275,6 +320,25 @@ namespace SCT_iCare.Controllers.Gestoria
                     paciente.Telefono = telefono;
                     paciente.Email = mail;
 
+                    string hash;
+                    do
+                    {
+                        Random numero = new Random();
+                        int randomize = numero.Next(0, 61);
+                        string[] aleatorio = new string[62] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+                        string get_1;
+                        get_1 = aleatorio[randomize];
+                        hash = get_1;
+                        for (int i = 0; i < 9; i++)
+                        {
+                            randomize = numero.Next(0, 61);
+                            get_1 = aleatorio[randomize];
+                            hash += get_1;
+                        }
+                    } while ((from i in db.Paciente where i.HASH == hash select i) == null);
+
+                    paciente.HASH = hash;
+
                     //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
                     string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
                     //string doc = (from d in db.Doctores where d.Nombre == doctor select d.idDoctor).FirstOrDefault().ToString();
@@ -295,6 +359,10 @@ namespace SCT_iCare.Controllers.Gestoria
                     else if (num >= 10 && num < 100)
                     {
                         contador = "0" + Convert.ToString(num);
+                    }
+                    else
+                    {
+                        contador = Convert.ToString(num);
                     }
 
                     //Se asigna el número de ID del doctor
@@ -357,7 +425,6 @@ namespace SCT_iCare.Controllers.Gestoria
 
                     cita.FechaCita = fecha;
                     cita.NoOrden = orden.id;
-                    cita.CC = usuario;
 
                     JavaScriptSerializer js = new JavaScriptSerializer();
                     dynamic datosCargo2 = js.Deserialize<dynamic>(orden.charges.data[0].ToString());
@@ -372,11 +439,34 @@ namespace SCT_iCare.Controllers.Gestoria
                     cita.Recepcionista = usuario;
                     cita.EstatusPago = orden.payment_status;
                     cita.Folio = numFolio;
-                    cita.Canal = nombre.ToUpper();
+                    cita.Canal = "Gestoría";
                     cita.TipoPago = "REFERENCIA OXXO";
-                    cita.CC = "Call Center";
+                    cita.CC = usuario;
+                    cita.ReferidoPor = referido.ToUpper();
 
-                    if(n > cantidadN)
+
+                    if (referido == "ELIZABETH")
+                    {
+                        cita.Referencia = "E1293749";
+                    }
+                    if (referido == "PABLO")
+                    {
+                        cita.Referencia = "PL1293750";
+                    }
+                    if (referido == "NATALY FRANCO")
+                    {
+                        cita.Referencia = "NF1293751";
+                    }
+                    if (referido == "LUIS VALENCIA")
+                    {
+                        cita.Referencia = "LV1293752";
+                    }
+                    if (referido == "ROBERTO SALAZAR")
+                    {
+                        cita.Referencia = "RS1293753";
+                    }
+
+                    if (n > cantidadN)
                     {
                         cita.TipoLicencia = "AEREO";
                     }
@@ -406,7 +496,7 @@ namespace SCT_iCare.Controllers.Gestoria
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult PagoTarjeta(string nombre, string telefono, string sucursal, string usuario, DateTime fecha, string cantidad, string cantidadAereo, string card)
+        public ActionResult PagoTarjeta(string nombre, string telefono, string sucursal, string usuario, DateTime fecha, string cantidad, string cantidadAereo, string card, string referido)
         {
             GetApiKey();
 
@@ -459,7 +549,7 @@ namespace SCT_iCare.Controllers.Gestoria
                       }],
 
                       ""currency"":""MXN"",
-                      ""metadata"":{""my_custom_customer_id"":""202107PEPE""},
+                      ""metadata"":{},
                       ""customer_info"": " + ConvertirCliente(nombre, mail, telefono) + @"
                       }
                     }");
@@ -507,6 +597,10 @@ namespace SCT_iCare.Controllers.Gestoria
                 else if (num >= 10 && num < 100)
                 {
                     contador = "0" + Convert.ToString(num);
+                }
+                else
+                {
+                    contador = Convert.ToString(num);
                 }
 
                 //Se asigna el número de ID del doctor
@@ -577,11 +671,11 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.Recepcionista = usuario;
                 cita.EstatusPago = "Pendiente";
                 cita.Folio = numFolio;
-                cita.Canal = nombre.ToUpper();
+                cita.Canal = "Gestoría";
                 cita.FechaCita = FECHA;
                 cita.NoOrden = link;
                 cita.Referencia = Convert.ToString(card);
-                cita.CC = "Call Center";
+                cita.ReferidoPor = referido.ToUpper();
 
                 string TIPOLIC = null;
                 if (cantidadA != 0)
@@ -629,6 +723,10 @@ namespace SCT_iCare.Controllers.Gestoria
                     else if (num >= 10 && num < 100)
                     {
                         contador = "0" + Convert.ToString(num);
+                    }
+                    else
+                    {
+                        contador = Convert.ToString(num);
                     }
 
                     //Se asigna el número de ID del doctor
@@ -703,11 +801,11 @@ namespace SCT_iCare.Controllers.Gestoria
                     cita.Recepcionista = usuario;
                     cita.EstatusPago = "Pendiente";
                     cita.Folio = numFolio;
-                    cita.Canal = nombre.ToUpper();
+                    cita.Canal = "Gestoría";
                     cita.FechaCita = FECHA;
                     cita.NoOrden = link;
                     cita.Referencia = Convert.ToString(card);
-                    cita.CC = usuario;
+                    cita.ReferidoPor = referido.ToUpper();
 
                     if (ModelState.IsValid)
                     {
@@ -799,12 +897,6 @@ namespace SCT_iCare.Controllers.Gestoria
                 }
 
                 bytes2 = bytes;
-
-                //var bytesBinary = bytes;
-                //Response.ContentType = "application/pdf";
-                //Response.AddHeader("content-disposition", "attachment;filename=MyPDF.pdf");
-                //Response.BinaryWrite(bytesBinary);
-                //Response.End();
             }
 
             exp.Expediente = bytes2;

@@ -39,6 +39,11 @@ namespace SCT_iCare.Controllers.Recepcion
             return View(db.Paciente.ToList());
         }
 
+        public ActionResult Dashboard()
+        {
+            return View(db.Paciente.ToList());
+        }
+
         public ActionResult NextDay()
         {
             return View(db.Paciente.ToList());
@@ -70,7 +75,7 @@ namespace SCT_iCare.Controllers.Recepcion
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create1(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, string pago,string referencia)
+        public ActionResult Create1(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, string pago,string referencia, string referido)
         {
             Paciente paciente1 = new Paciente();
 
@@ -99,12 +104,34 @@ namespace SCT_iCare.Controllers.Recepcion
                 cantidadA = Convert.ToInt32(cantidadAereo);
             }
 
+
             if ((cantidadN + cantidadA) == 1)
             {
                 Paciente paciente = new Paciente();
                 paciente.Nombre = nombre.ToUpper()/*.Normalize(System.Text.NormalizationForm.FormD).Replace(@"´¨", "")*/;
                 paciente.Telefono = telefono;
                 paciente.Email = email;
+
+
+                string hash;
+                do
+                {
+                    Random numero = new Random();
+                    int randomize = numero.Next(0, 61);
+                    string[] aleatorio = new string[62] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+                    string get_1;
+                    get_1 = aleatorio[randomize];
+                    hash = get_1;
+                    for (int i = 0; i < 9; i++)
+                    {
+                        randomize = numero.Next(0, 61);
+                        get_1 = aleatorio[randomize];
+                        hash += get_1;
+                    }
+                } while ((from i in db.Paciente where i.HASH == hash select i) == null);
+
+                paciente.HASH = hash;
+
 
                 //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
                 string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
@@ -126,6 +153,10 @@ namespace SCT_iCare.Controllers.Recepcion
                 else if (num >= 10 && num < 100)
                 {
                     contador = "0" + Convert.ToString(num);
+                }
+                else
+                {
+                    contador = Convert.ToString(num);
                 }
 
                 //Se asigna el número de ID del doctor
@@ -194,8 +225,30 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.EstatusPago = "Pagado";
                 cita.Referencia = referencia;
                 cita.Folio = numFolio;
-                cita.Canal = "SITIO";
+                cita.Canal = "Recepción";
                 cita.TipoPago = pago;
+                cita.ReferidoPor = referido.ToUpper();
+
+                if(referido == "ELIZABETH")
+                {
+                    cita.Referencia = "E1293749";
+                }
+                if (referido == "PABLO")
+                {
+                    cita.Referencia = "PL1293750";
+                }
+                if (referido == "NATALY FRANCO")
+                {
+                    cita.Referencia = "NF1293751";
+                }
+                if (referido == "LUIS VALENCIA")
+                {
+                    cita.Referencia = "LV1293752";
+                }
+                if (referido == "ROBERTO SALAZAR")
+                {
+                    cita.Referencia = "RS1293753";
+                }
 
                 if (pago != "Referencia Scotiabank")
                 {
@@ -241,7 +294,15 @@ namespace SCT_iCare.Controllers.Recepcion
                 }
                 cita.TipoLicencia = TIPOLIC;
 
-
+                if (referido == "NINGUNO" || referido == "OTRO")
+                {
+                    cita.CC = "N/A";
+                }
+                else
+                {
+                    var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                    cita.CC = referidoTipo;
+                }
                 //-------------------------------------------------------------
                 if (ModelState.IsValid)
                 {
@@ -261,6 +322,25 @@ namespace SCT_iCare.Controllers.Recepcion
                     paciente.Nombre = nombre.ToUpper() + " " + n;
                     paciente.Telefono = telefono;
                     paciente.Email = email;
+
+                    string hash;
+                    do
+                    {
+                        Random numero = new Random();
+                        int randomize = numero.Next(0, 61);
+                        string[] aleatorio = new string[62] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+                        string get_1;
+                        get_1 = aleatorio[randomize];
+                        hash = get_1;
+                        for (int i = 0; i < 9; i++)
+                        {
+                            randomize = numero.Next(0, 61);
+                            get_1 = aleatorio[randomize];
+                            hash += get_1;
+                        }
+                    } while ((from i in db.Paciente where i.HASH == hash select i) == null);
+
+                    paciente.HASH = hash;
 
                     //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
                     string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
@@ -282,6 +362,10 @@ namespace SCT_iCare.Controllers.Recepcion
                     else if (num >= 10 && num < 100)
                     {
                         contador = "0" + Convert.ToString(num);
+                    }
+                    else
+                    {
+                        contador = Convert.ToString(num);
                     }
 
                     //Se asigna el número de ID del doctor
@@ -351,13 +435,47 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.EstatusPago = "Pagado";
                     cita.Folio = numFolio;
                     cita.Referencia = referencia;
-                    cita.Canal = nombre.ToUpper();
+                    cita.Canal = "Recepción";
                     cita.FechaCita = DateTime.Now;
+                    cita.ReferidoPor = referido.ToUpper();
+
+                    if (referido == "ELIZABETH")
+                    {
+                        cita.Referencia = "E1293749";
+                    }
+                    if (referido == "PABLO")
+                    {
+                        cita.Referencia = "PL1293750";
+                    }
+                    if (referido == "NATALY FRANCO")
+                    {
+                        cita.Referencia = "NF1293751";
+                    }
+                    if (referido == "LUIS VALENCIA")
+                    {
+                        cita.Referencia = "LV1293752";
+                    }
+                    if (referido == "ROBERTO SALAZAR")
+                    {
+                        cita.Referencia = "RS1293753";
+                    }
 
                     if (n > cantidadN)
                     {
                         cita.TipoLicencia = "AEREO";
                     }
+
+                    
+                    if (referido == "NINGUNO" || referido == "OTRO")
+                    {
+                        cita.CC = "N/A";
+                    }
+                    else
+                    {
+                        var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                        cita.CC = referidoTipo;
+                    }
+                    
 
                     if (ModelState.IsValid)
                     {
@@ -374,7 +492,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Orden(string nombre, string telefono, string email, string usuario, string sucursal,  string cantidad, string cantidadAereo)
+        public ActionResult Orden(string nombre, string telefono, string email, string usuario, string sucursal,  string cantidad, string cantidadAereo, string referido)
         {
             GetApiKey();
 
@@ -457,6 +575,26 @@ namespace SCT_iCare.Controllers.Recepcion
                 paciente.Telefono = telefono;
                 paciente.Email = email;
 
+                string hash;
+                do
+                {
+                    Random numero = new Random();
+                    int randomize = numero.Next(0, 61);
+                    string[] aleatorio = new string[62] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+                    string get_1;
+                    get_1 = aleatorio[randomize];
+                    hash = get_1;
+                    for (int i = 0; i < 9; i++)
+                    {
+                        randomize = numero.Next(0, 61);
+                        get_1 = aleatorio[randomize];
+                        hash += get_1;
+                    }
+                } while ((from i in db.Paciente where i.HASH == hash select i) == null);
+
+                paciente.HASH = hash;
+
+
                 //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
                 string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
                 //string doc = (from d in db.Doctores where d.Nombre == doctor select d.idDoctor).FirstOrDefault().ToString();
@@ -477,6 +615,10 @@ namespace SCT_iCare.Controllers.Recepcion
                 else if (num >= 10 && num < 100)
                 {
                     contador = "0" + Convert.ToString(num);
+                }
+                else
+                {
+                    contador = Convert.ToString(num);
                 }
 
                 //Se asigna el número de ID del doctor
@@ -554,9 +696,30 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.Recepcionista = usuario;
                 cita.EstatusPago = orden.payment_status;
                 cita.Folio = numFolio;
-                cita.Canal = "SITIO";
+                cita.Canal = "Recepción";
                 cita.FechaCita = DateTime.Now;
+                cita.ReferidoPor = referido.ToUpper();
 
+                if (referido == "ELIZABETH")
+                {
+                    cita.Referencia = "E1293749";
+                }
+                if (referido == "PABLO")
+                {
+                    cita.Referencia = "PL1293750";
+                }
+                if (referido == "NATALY FRANCO")
+                {
+                    cita.Referencia = "NF1293751";
+                }
+                if (referido == "LUIS VALENCIA")
+                {
+                    cita.Referencia = "LV1293752";
+                }
+                if (referido == "ROBERTO SALAZAR")
+                {
+                    cita.Referencia = "RS1293753";
+                }
 
                 int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
                 ReferenciasSB refe = db.ReferenciasSB.Find(idRefSB);
@@ -569,6 +732,16 @@ namespace SCT_iCare.Controllers.Recepcion
                     TIPOLIC = "AEREO";
                 }
                 cita.TipoLicencia = TIPOLIC;
+
+                if (referido == "NINGUNO" || referido == "OTRO")
+                {
+                    cita.CC = "N/A";
+                }
+                else
+                {
+                    var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                    cita.CC = referidoTipo;
+                }
 
                 if (ModelState.IsValid)
                 {
@@ -590,6 +763,26 @@ namespace SCT_iCare.Controllers.Recepcion
                     paciente.Telefono = telefono;
                     paciente.Email = email;
 
+                    string hash;
+                    do
+                    {
+                        Random numero = new Random();
+                        int randomize = numero.Next(0, 61);
+                        string[] aleatorio = new string[62] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+                        string get_1;
+                        get_1 = aleatorio[randomize];
+                        hash = get_1;
+                        for (int i = 0; i < 9; i++)
+                        {
+                            randomize = numero.Next(0, 61);
+                            get_1 = aleatorio[randomize];
+                            hash += get_1;
+                        }
+                    } while ((from i in db.Paciente where i.HASH == hash select i) == null);
+
+                    paciente.HASH = hash;
+
+
                     //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
                     string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
                     //string doc = (from d in db.Doctores where d.Nombre == doctor select d.idDoctor).FirstOrDefault().ToString();
@@ -610,6 +803,10 @@ namespace SCT_iCare.Controllers.Recepcion
                     else if (num >= 10 && num < 100)
                     {
                         contador = "0" + Convert.ToString(num);
+                    }
+                    else
+                    {
+                        contador = Convert.ToString(num);
                     }
 
                     //Se asigna el número de ID del doctor
@@ -687,8 +884,30 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.Recepcionista = usuario;
                     cita.EstatusPago = orden.payment_status;
                     cita.Folio = numFolio;
-                    cita.Canal = nombre.ToUpper();
+                    cita.Canal = "Recepción";
                     cita.FechaCita = DateTime.Now;
+                    cita.ReferidoPor = referido.ToUpper();
+
+                    if (referido == "ELIZABETH")
+                    {
+                        cita.Referencia = "E1293749";
+                    }
+                    if (referido == "PABLO")
+                    {
+                        cita.Referencia = "PL1293750";
+                    }
+                    if (referido == "NATALY FRANCO")
+                    {
+                        cita.Referencia = "NF1293751";
+                    }
+                    if (referido == "LUIS VALENCIA")
+                    {
+                        cita.Referencia = "LV1293752";
+                    }
+                    if (referido == "ROBERTO SALAZAR")
+                    {
+                        cita.Referencia = "RS1293753";
+                    }
 
                     if (n > cantidadN)
                     {
@@ -700,7 +919,15 @@ namespace SCT_iCare.Controllers.Recepcion
                     refe.EstatusReferencia = "PENDIENTE";
                     refe.idPaciente = idPaciente;
 
-                    
+                    if (referido == "NINGUNO" || referido == "OTRO")
+                    {
+                        cita.CC = "N/A";
+                    }
+                    else
+                    {
+                        var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                        cita.CC = referidoTipo;
+                    }
 
                     if (ModelState.IsValid)
                     {
@@ -736,7 +963,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult PagoTarjeta(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, int card)
+        public ActionResult PagoTarjeta(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, int card, string referido)
         {
             GetApiKey();
 
@@ -787,7 +1014,7 @@ namespace SCT_iCare.Controllers.Recepcion
                       }],
 
                       ""currency"":""MXN"",
-                      ""metadata"":{""my_custom_customer_id"":""202107PEPE""},
+                      ""metadata"":{},
                       ""customer_info"": " + ConvertirCliente(nombre, email, telefono) + @"
                       }
                     }");
@@ -803,6 +1030,26 @@ namespace SCT_iCare.Controllers.Recepcion
                 paciente.Nombre = nombre.ToUpper();
                 paciente.Telefono = telefono;
                 paciente.Email = email;
+
+                string hash;
+                do
+                {
+                    Random numero = new Random();
+                    int randomize = numero.Next(0, 61);
+                    string[] aleatorio = new string[62] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+                    string get_1;
+                    get_1 = aleatorio[randomize];
+                    hash = get_1;
+                    for (int i = 0; i < 9; i++)
+                    {
+                        randomize = numero.Next(0, 61);
+                        get_1 = aleatorio[randomize];
+                        hash += get_1;
+                    }
+                } while ((from i in db.Paciente where i.HASH == hash select i) == null);
+
+                paciente.HASH = hash;
+
 
                 //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
                 string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
@@ -824,6 +1071,10 @@ namespace SCT_iCare.Controllers.Recepcion
                 else if (num >= 10 && num < 100)
                 {
                     contador = "0" + Convert.ToString(num);
+                }
+                else
+                {
+                    contador = Convert.ToString(num);
                 }
 
                 //Se asigna el número de ID del doctor
@@ -894,10 +1145,11 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.Recepcionista = usuario;
                 cita.EstatusPago = "Pendiente";
                 cita.Folio = numFolio;
-                cita.Canal = "SITIO";
+                cita.Canal = "Recepción";
                 cita.FechaCita = DateTime.Now;
                 cita.NoOrden = link;
                 cita.Referencia = Convert.ToString(card);
+                cita.ReferidoPor = referido.ToUpper();
 
                 string TIPOLIC = null;
                 if (cantidadA != 0)
@@ -905,6 +1157,16 @@ namespace SCT_iCare.Controllers.Recepcion
                     TIPOLIC = "AEREO";
                 }
                 cita.TipoLicencia = TIPOLIC;
+
+                if (referido == "NINGUNO" || referido == "OTRO")
+                {
+                    cita.CC = "N/A";
+                }
+                else
+                {
+                    var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                    cita.CC = referidoTipo;
+                }
 
                 if (ModelState.IsValid)
                 {
@@ -924,6 +1186,26 @@ namespace SCT_iCare.Controllers.Recepcion
                     paciente.Nombre = nombre.ToUpper() + " " + n;
                     paciente.Telefono = telefono;
                     paciente.Email = email;
+
+
+                    string hash;
+                    do
+                    {
+                        Random numero = new Random();
+                        int randomize = numero.Next(0, 61);
+                        string[] aleatorio = new string[62] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+                        string get_1;
+                        get_1 = aleatorio[randomize];
+                        hash = get_1;
+                        for (int i = 0; i < 9; i++)
+                        {
+                            randomize = numero.Next(0, 61);
+                            get_1 = aleatorio[randomize];
+                            hash += get_1;
+                        }
+                    } while ((from i in db.Paciente where i.HASH == hash select i) == null);
+
+                    paciente.HASH = hash;
 
                     //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
                     string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
@@ -945,6 +1227,10 @@ namespace SCT_iCare.Controllers.Recepcion
                     else if (num >= 10 && num < 100)
                     {
                         contador = "0" + Convert.ToString(num);
+                    }
+                    else
+                    {
+                        contador = Convert.ToString(num);
                     }
 
                     //Se asigna el número de ID del doctor
@@ -1019,10 +1305,21 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.Recepcionista = usuario;
                     cita.EstatusPago = "Pendiente";
                     cita.Folio = numFolio;
-                    cita.Canal = nombre.ToUpper();
+                    cita.Canal = "Recepción";
                     cita.FechaCita = DateTime.Now;
                     cita.NoOrden = link;
                     cita.Referencia = Convert.ToString(card);
+                    cita.ReferidoPor = referido.ToUpper();
+
+                    if (referido == "NINGUNO" || referido == "OTRO")
+                    {
+                        cita.CC = "N/A";
+                    }
+                    else
+                    {
+                        var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                        cita.CC = referidoTipo;
+                    }
 
                     if (ModelState.IsValid)
                     {
@@ -1136,6 +1433,24 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public ActionResult Entregado(int? id)
+        {
+            var idCita = (from i in db.Cita where i.idPaciente == id select i.idCita).FirstOrDefault();
+            Cita cita = db.Cita.Find(idCita);
+
+            cita.Entregado = "SI";
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(cita).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            return Redirect("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult CURP_Expediente(string id, string nombre, string numero, string curp, string tel, string email)
         {
             int ide = Convert.ToInt32(id);
@@ -1200,8 +1515,12 @@ namespace SCT_iCare.Controllers.Recepcion
             paciente.Telefono = TELEFONO;
             cita.NoExpediente = NOEXP;
 
+            CarruselMedico cm = new CarruselMedico();
+            cm.idPaciente = paciente.idPaciente;
+
             if (ModelState.IsValid)
             {
+                db.CarruselMedico.Add(cm);
                 db.Entry(paciente).State = EntityState.Modified;
                 db.Entry(cita).State = EntityState.Modified;
                 db.SaveChanges();
@@ -1306,8 +1625,26 @@ namespace SCT_iCare.Controllers.Recepcion
            string doc = (from d in db.Doctores where d.Nombre == doctor select d.idDoctor).FirstOrDefault().ToString();
 
             //Se obtiene el número del contador desde la base de datos del último registro de Folio incompleto
-            //int? num = (from c in db.Sucursales where c.Nombre == cita.Sucursal select c.Contador).FirstOrDefault() + 1;
-            var num = new string(cita.Folio.Reverse().Take(3).Reverse().ToArray());
+            int? num = (from c in db.Sucursales where c.Nombre == cita.Sucursal select c.Contador).FirstOrDefault() + 1;
+            //var num = new string(cita.Folio.Reverse().Take(3).Reverse().ToArray());
+
+            string contador = "";
+            if (num == null)
+            {
+                contador = "100";
+            }
+            else if (num < 10)
+            {
+                contador = "00" + Convert.ToString(num);
+            }
+            else if (num >= 10 && num < 100)
+            {
+                contador = "0" + Convert.ToString(num);
+            }
+            else
+            {
+                contador = Convert.ToString(num);
+            }
 
             string mes = DateTime.Now.Month.ToString();
             string dia = DateTime.Now.Day.ToString();
@@ -1333,9 +1670,23 @@ namespace SCT_iCare.Controllers.Recepcion
             //string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
             //paciente.Folio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
 
-            string numFolio = dia + mes + anio + SUC + doc + num;
-            paciente.Folio = dia + mes + anio + SUC + doc + num;
-            cita.Folio = dia + mes + anio + SUC + doc + num;
+            string numFolio = dia + mes + anio + SUC + doc + contador;
+            paciente.Folio = dia + mes + anio + SUC + doc + contador;
+            cita.Folio = dia + mes + anio + SUC + doc + contador;
+
+            int? idSuc = (from i in db.Sucursales where i.Nombre == cita.Sucursal select i.idSucursal).FirstOrDefault();
+
+            Sucursales suc = db.Sucursales.Find(idSuc);
+
+            suc.Contador = Convert.ToInt32(num);
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(suc).State = EntityState.Modified;
+                db.SaveChanges();
+                //No retorna ya que sigue el proceso
+                //return RedirectToAction("Index");
+            }
 
             //Se crea el número de Folio
             //string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + doc + num;
@@ -1615,6 +1966,43 @@ namespace SCT_iCare.Controllers.Recepcion
             return Redirect("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SubirRevaloracion(HttpPostedFileBase file, int id)
+        {
+            int ide = Convert.ToInt32(id);
+
+            Paciente paciente = db.Paciente.Find(ide);
+            ExpedienteRevaloracion exp = new ExpedienteRevaloracion();
+
+            byte[] bytes2 = null;
+
+            if (file != null && file.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(file.FileName);
+
+                byte[] bytes;
+                using (BinaryReader br = new BinaryReader(file.InputStream))
+                {
+                    bytes = br.ReadBytes(file.ContentLength);
+                }
+
+                bytes2 = bytes;
+            }
+
+            exp.ExpedienteCompleto = bytes2;
+            exp.idPaciente = id;
+
+            if (ModelState.IsValid)
+            {
+                db.ExpedienteRevaloracion.Add(exp);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return Redirect("Index");
+        }
+
         public ActionResult NoLlego(int id, string comentario)
         {
             var cita = (from c in db.Cita where c.idPaciente == id select c).FirstOrDefault();
@@ -1647,11 +2035,20 @@ namespace SCT_iCare.Controllers.Recepcion
 
             List<Paciente> data = db.Paciente.ToList();
             JavaScriptSerializer js = new JavaScriptSerializer();
-            var selected = data.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m } )
+            var selected = data.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
                 .Where(r => r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro)
-                .Select(S => new { S.N.idPaciente, S.N.Nombre, S.N.Telefono, S.N.Email, S.N.Folio, S.N.CURP,
-                    S.M.TipoPago, FechaCita = S.M.FechaCita.ToString(), S.M.NoOrden, S.M.EstatusPago, S.M.TipoLicencia, S.M.NoExpediente,
-                    FechaReferencia  = S.M.FechaReferencia.ToString(), S.M.Referencia, S.M.Sucursal, S.M.Doctor, S.M.TipoTramite });
+                .Join(db.Captura, o => o.N.idPaciente, p => p.idPaciente, (o, p) => new { O = o, P = p })
+                .Select(S => new {
+                    S.O.N.idPaciente,
+                    S.O.N.Nombre,
+                    S.O.M.TipoPago,
+                    FechaCita = Convert.ToDateTime(S.O.M.FechaCita).ToString("dd-MMMM-yyyy"),
+                    S.O.M.TipoLicencia,
+                    S.O.M.NoExpediente,
+                    S.O.M.Sucursal,
+                    S.O.M.TipoTramite,
+                    S.P.EstatusCaptura
+                });
 
             //var joinSelected = selected.Join(db.Captura, n => n.idPaciente, d => d.idPaciente, (n, d) => new { N = n, D = d })
             //    .Select(S => new {

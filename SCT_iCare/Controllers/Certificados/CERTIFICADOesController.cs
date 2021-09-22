@@ -53,7 +53,7 @@ namespace SCT_iCare.Controllers.Certificados
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(string nombre, string paterno, string materno, DateTime nacimiento, string resultado, string sexo, string pasaporte/*[Bind(Include = "idCertificado,Nombre,Pasaporte,Respuesta,FechaNacimiento,FechaToma,Sexo")] CERTIFICADO cERTIFICADO*/)
+        public ActionResult Create(string usuario, string nombre, string paterno, string materno, DateTime nacimiento, string resultado, string sexo, string pasaporte/*[Bind(Include = "idCertificado,Nombre,Pasaporte,Respuesta,FechaNacimiento,FechaToma,Sexo")] CERTIFICADO cERTIFICADO*/)
         {
             CERTIFICADO cer = new CERTIFICADO();
 
@@ -63,6 +63,7 @@ namespace SCT_iCare.Controllers.Certificados
             cer.FechaToma = DateTime.Now;
             cer.Respuesta = resultado;
             cer.Pasaporte = pasaporte;
+            cer.Usuario = usuario;
 
             if (ModelState.IsValid)
             {

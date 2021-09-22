@@ -1,0 +1,117 @@
+﻿
+@{
+    ViewBag.Title = "ExploracionFisica";
+    GMIEntities db = new GMIEntities();
+
+    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+    <style>
+        .toggle.ios, .toggle-on.ios, .toggle-off.ios {
+            border-radius: 20rem;
+            background-color: white;
+        }
+
+            .toggle.ios .toggle-handle {
+                border-radius: 20rem;
+                background-color: white;
+            }
+    </style>
+}
+
+<br />
+<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Examen Historia Clínica: </span>@nombrePaciente </h3>
+<br />
+
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Antecedentes Heredofamiliares</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Antecedentes Personales No Patológicos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Antecedentes Personales Patológicos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Aparatos y Sistemas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="#" style="text-decoration:none; color:goldenrod"><b>EXPLORACIÓN FÍSICA</b></a>
+    </li>
+</ul>
+
+<br />
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_ExploracionFisica")" style="display:inline-block; margin:0.5%">
+
+
+    <h5 style="color:white">Neurología</h5>
+    <div class="form-group">
+        <label style="color:white">1. Test de Romberg</label><br />
+        <input type="checkbox" name="romberg" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Positivo" data-off="Negativo">
+    </div>
+
+
+    <div class="form-group">
+        <label style="color:white">2. Punta de Nariz</label><br />
+        <input type="checkbox" name="nariz" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Positivo" data-off="Negativo">
+    </div>
+    <br />
+    <h5 style="color:white">Ojos</h5>
+    <div class="form-group">
+        <label style="color:white">3. Estrabismo</label><br />
+        <input type="checkbox" name="estrabismo" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Positivo" data-off="Negativo">
+    </div>
+    <br />
+    <h5 style="color:white">Área Cardiaca</h5>
+    <div class="form-group">
+        <label style="color:white">4. Soplo</label><br />
+        <input type="checkbox" name="soplo" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Positivo" data-off="Negativo">
+    </div>
+    <br />
+    <h5 style="color:white">Extremidades</h5>
+    <div class="form-group">
+        <label style="color:white">5. Amputaciones</label><br />
+        <input type="checkbox" name="amputaciones" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Positivo" data-off="Negativo">
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">6. Prótesis</label><br />
+        <input type="checkbox" name="protesis" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Positivo" data-off="Negativo">
+    </div>
+    <br />
+    <input type="hidden" value="@idPaciente" name="id" />
+    @*<input type="submit" class="btn btn-success" value="Guardar Examen" />*@
+
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmacion">Guardar Examen</button>
+
+    <div class="modal fade" id="confirmacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>¿Desea guardar lo datos del examen médico?</b></h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input type="submit" class="btn btn-success" value="Guardar Examen" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>
+<br />
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
+    <input type="hidden" value="@idPaciente" name="id" />
+    <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />
+</form>
+
+
+
+

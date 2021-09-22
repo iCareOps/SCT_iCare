@@ -380,6 +380,26 @@ namespace SCT_iCare.Controllers.ControlDictamen
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditarDatosDictamen(int id, string email, string telefono)
+        {
+            var idpaciente = (from p in db.Paciente where p.idPaciente == id select p.idPaciente).FirstOrDefault();
+
+            var paciente = db.Paciente.Find(idpaciente);
+
+            paciente.Email = email != "" ? email : paciente.Email;
+            paciente.Telefono = telefono != "" ? telefono : paciente.Telefono;
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(paciente).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            return Redirect("Index");
+        }
+
         public JsonResult Buscar(string dato)
         {
             string parametro;

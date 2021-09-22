@@ -1,0 +1,150 @@
+﻿
+@{
+    ViewBag.Title = "Patologicos";
+
+    GMIEntities db = new GMIEntities();
+
+    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+    <style>
+        .toggle.ios, .toggle-on.ios, .toggle-off.ios {
+            border-radius: 20rem;
+            background-color: white;
+        }
+
+            .toggle.ios .toggle-handle {
+                border-radius: 20rem;
+                background-color: white;
+            }
+    </style>
+
+
+}
+
+<br />
+<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Antecedentes Personales Patológicos: </span>@nombrePaciente </h3>
+<br />
+
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Heredofamiliares</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Patológicos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="#" style="text-decoration:none; color:goldenrod"><b>PATOLÓGICOS</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Aparatos y Sistemas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Exploración Física</a>
+    </li>
+</ul>
+
+<br />
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Patologicos")" style="display:inline-block; margin:0.5%">
+
+    <div class="form-group">
+        <label style="color:white">1. ¿Enfermedad congenita?:</label><br />
+        <input type="checkbox" name="congenita" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">2. ¿Historia de Alergias?:</label><br />
+        <input type="checkbox" name="alergias" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">3. ¿Tiene Transtornos de la Memoria?:</label><br />
+        <input type="checkbox" name="memoria" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">4. ¿Historia de Enfermedad Pulmonar Obstructiva?:</label><br />
+        <input type="checkbox" name="obstructiva" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">5. ¿Antecedentes Quirurgicos?:</label><br />
+        <input type="checkbox" name="quirurgicos" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">6. ¿Antecedentes Transfusionales?</label><br />
+        <input type="checkbox" name="transfuncionales" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">7. ¿Padece Diabetes?:</label><br />
+        <input type="checkbox" name="diabetes" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <!-- apartado de insulina    -->
+    <div class="form-group">
+        <label style="color:white">8. ¿Antecedentes de traumatismo?:</label><br />
+        <input type="checkbox" name="traumatismo" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">9. ¿Padece Crisis Convulsivas?:</label><br />
+        <input type="checkbox" name="convulsivas" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">10. ¿Antecedentes Oncológicos?:</label><br />
+        <input type="checkbox" name="oncologicos" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">11. ¿Antecedentes de Cardiopatías?:</label><br />
+        <input type="checkbox" name="cardiopatias" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">12. ¿Padece de Hipertensión?:</label><br />
+        <input type="checkbox" name="hipertension" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">13. ¿Consume Bebidas Alcoholicas?:</label><br />
+        <input type="checkbox" name="alcoholicas" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">14. ¿Fuma?</label><br />
+        <input type="checkbox" name="fuma" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">15. ¿Consume Drogas?:</label><br />
+        <input type="checkbox" name="drogas" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <br />
+    <input type="hidden" value="@idPaciente" name="id" />
+    @*<input type="submit" class="btn btn-success" value="Guardar Examen" />*@
+
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmacion">Guardar Examen</button>
+
+    <div class="modal fade" id="confirmacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>¿Desea guardar lo datos del examen médico?</b></h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input type="submit" class="btn btn-success" value="Guardar Examen" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>
+<br />
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
+    <input type="hidden" value="@idPaciente" name="id" />
+    <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />
+</form>
+
+

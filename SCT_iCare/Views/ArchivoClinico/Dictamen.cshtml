@@ -1,0 +1,395 @@
+﻿
+@{
+    ViewBag.Title = "Dictamen";
+    GMIEntities db = new GMIEntities();
+
+    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+}
+
+<br />
+<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Dictaminar al paciente: </span>@nombrePaciente </h3>
+<br />
+
+@{
+    var consulta1 = (from c in db.EPI_SignosVitales where c.idPaciente == idPaciente orderby c.idSignosVitales descending select c).FirstOrDefault();
+    <h3 style="text-align:left; color:white">Signos Vitales</h3>
+    <h4 style="text-align:left; color:white"><b>Presion Arterial Sistólica: </b><span style="color:aqua"> @consulta1.Sistolica</span></h4>
+    <h4 style="text-align:left; color:white"><b>Presion Arterial Diastólica: </b><span style="color:aqua"> @consulta1.Diastolica</span></h4>
+    <h4 style="text-align:left; color:white"><b>Frecuencia Cardiaca: </b><span style="color:aqua"> @consulta1.Cardiaca</span></h4>
+    <h4 style="text-align:left; color:white"><b>Frecuencia Respiratoria: </b><span style="color:aqua"> @consulta1.Respiratoria</span></h4>
+    <h4 style="text-align:left; color:white"><b>Temperatura: </b><span style="color:aqua"> @consulta1.Temperatura °</span></h4>
+    <h4 style="text-align:left; color:white"><b>Peso: </b><span style="color:aqua"> @consulta1.Peso kgs</span></h4>
+    <h4 style="text-align:left; color:white"><b>Estatura: </b><span style="color:aqua"> @consulta1.Estatura cms</span></h4>
+    <h4 style="text-align:left; color:white"><b>IMC: </b><span style="color:aqua"> @consulta1.IMC</span></h4>
+    <h4 style="text-align:left; color:white"><b>Cintura: </b><span style="color:aqua"> @consulta1.Cintura cms</span></h4>
+    <h4 style="text-align:left; color:white"><b>Cuello: </b><span style="color:aqua"> @consulta1.Cuello cms</span></h4>
+    <h4 style="text-align:left; color:white"><b>% de Grasa: </b><span style="color:aqua"> @consulta1.Grasa %</span></h4>
+    <hr />
+
+    var consulta2 = (from c in db.EPI_Cardiologia where c.idPaciente == idPaciente orderby c.idCardiologia descending select c).FirstOrDefault();
+    <h3 style="text-align:left; color:white">Cardiología</h3>
+    <h4 style="text-align:left; color:white"><b>Ritmo: </b><span style="color:aqua"> @consulta2.Ritmo</span></h4>
+    <h4 style="text-align:left; color:white"><b>Frecuencia: </b><span style="color:aqua"> @consulta2.Frecuencia</span></h4>
+    <h4 style="text-align:left; color:white"><b>Eje: </b><span style="color:aqua"> @consulta2.Eje</span></h4>
+    <h4 style="text-align:left; color:white"><b>Intervalo PR: </b><span style="color:aqua"> @consulta2.PR</span></h4>
+    <h4 style="text-align:left; color:white"><b>Intervalo QT: </b><span style="color:aqua"> @consulta2.QT</span></h4>
+    <h4 style="text-align:left; color:white"><b>Intervalo QRS: </b><span style="color:aqua"> @consulta2.QRS</span></h4>
+    <h4 style="text-align:left; color:white"><b>Onda P: </b><span style="color:aqua"> @consulta2.OndaP</span></h4>
+    <h4 style="text-align:left; color:white"><b>Onda T: </b><span style="color:aqua"> @consulta2.OndaT</span></h4>
+    <hr />
+
+    var consulta = (from c in db.Epi_Oftalmologia where c.idPaciente == idPaciente orderby c.idOftalmologia descending select c).FirstOrDefault();
+    <h3 style="text-align:left; color:white">Oftalmología</h3>
+    <h4 style="text-align:left; color:white"><b>Agudeza Visual Cercana (Derecho): </b><span style="color:aqua"> @consulta.DerechoAVC</span></h4>
+    <h4 style="text-align:left; color:white"><b>Agudeza Visual Media (Derecho): </b><span style="color:aqua"> @consulta.DerechoAVM</span></h4>
+    <h4 style="text-align:left; color:white"><b>Agudeza Visual Lejana (Derecho): </b><span style="color:aqua"> @consulta.DerechoAVL</span></h4>
+    <h4 style="text-align:left; color:white"><b>Agudeza Visual Cercana (Izquierdo): </b><span style="color:aqua"> @consulta.IzquierdoAVC</span></h4>
+    <h4 style="text-align:left; color:white"><b>Agudeza Visual Media (Izquierdo): </b><span style="color:aqua"> @consulta.IzquierdoAVM</span></h4>
+    <h4 style="text-align:left; color:white"><b>Agudeza Visual Lejana (Izquierdo): </b><span style="color:aqua"> @consulta.IzquierdoAVL</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Utiliza lentes para corregir su agudeza visual?: </b><span style="color:aqua"> @consulta.AgudezaVisual</span></h4>
+    <h4 style="text-align:left; color:white"><b>Sentida de Profundidad o Estereopsis: </b><span style="color:aqua"> @consulta.Estereopsis</span></h4>
+    <h4 style="text-align:left; color:white"><b>Presencia de carta de no accidentes: </b><span style="color:aqua"> @consulta.CartaAccidentes</span></h4>
+    <h4 style="text-align:left; color:white"><b>Campo Visual: </b><span style="color:aqua"> @consulta.CampoVisual</span></h4>
+    <h4 style="text-align:left; color:white"><b>Movimientos Oculares: </b><span style="color:aqua"> @consulta.MovimientosOculares</span></h4>
+    <h4 style="text-align:left; color:white"><b>Ojo derecho Reflejos Pupilares: </b><span style="color:aqua"> @consulta.DerechoRP</span></h4>
+    <h4 style="text-align:left; color:white"><b>Ojo izquierdo Reflejos Pupilares: </b><span style="color:aqua"> @consulta.IzquierdoRP</span></h4>
+
+    if (consulta.Cromatica == "Deuteranop")
+    {
+        <h4 style="text-align:left; color:white"><b>Tensión de Visión Cromática: </b><span style="color:aqua"> Deuteranopia con carta de no accidentes y desempeño</span></h4>
+    }
+    else if (consulta.Cromatica == "Ir a SCT")
+    {
+        <h4 style="text-align:left; color:white"><b>Tensión de Visión Cromática: </b><span style="color:aqua"> Deuteranopia con carta de no accidentes sin carta de desempeño (Ir a SCT)</span></h4>
+    }
+    else
+    {
+        <h4 style="text-align:left; color:white"><b>Tensión de Visión Cromática: </b><span style="color:aqua"> @consulta.Cromatica</span></h4>
+    }
+
+    <hr />
+
+    var consulta4 = (from c in db.EPI_Audiologia where c.idPaciente == idPaciente orderby c.idAudiologia descending select c).FirstOrDefault();
+    <h3 style="text-align:left; color:white">Audiología</h3>
+    <h4 style="text-align:left; color:white"><b>¿Padece alguna patología?: </b><span style="color:aqua"> @consulta4.Patologia</span></h4>
+    <h4 style="text-align:left; color:white"><b>Interpretación de las gráficas: </b><span style="color:aqua"> @consulta4.Grafica</span></h4>
+    <h4 style="text-align:left; color:white"><b>Nota Médica: </b><span style="color:aqua"> @consulta4.NotaMedica</span></h4>
+    <hr />
+
+    var consulta6 = (from c in db.EPI_Odontologia where c.idPaciente == idPaciente orderby c.idOdontologia descending select c).FirstOrDefault();
+    <h3 style="text-align:left; color:white">Odontología</h3>
+    <h4 style="text-align:left; color:white"><b>Exploracion Odontológica: </b><span style="color:aqua"> @consulta6.Exploracion</span></h4>
+    if (consulta6.NotaOdontologica != null)
+    {
+        <h4 style="text-align:left; color:white"><b>Nota: </b><span cstyle="color:aqua"> @consulta6.NotaOdontologica</span></h4>
+    }
+    <hr />
+
+    var consulta5 = (from c in db.EPI_Laboratorio where c.idPaciente == idPaciente orderby c.idLaboratorio descending select c).FirstOrDefault();
+    <h3 style="text-align:left; color:white">Laboratorio</h3>
+    <h4 style="text-align:left; color:white"><b>Glucosa: </b><span style="color:aqua"> @consulta5.Glucosa</span></h4>
+    <h4 style="text-align:left; color:white"><b>Hemoglobina Glucosilada: </b><span style="color:aqua"> @consulta5.HemoglobinaGlucosilada</span></h4>
+    <hr />
+
+    var revision1 = (from r in db.EPI_A_Heredofamiliares where r.idPaciente == idPaciente orderby r.idHeredofamiliares descending select r).FirstOrDefault();
+    var revision2 = (from r in db.EPI_A_NoPatologicos where r.idPaciente == idPaciente orderby r.idNoPatologicos descending select r).FirstOrDefault();
+    var revision3 = (from r in db.EPI_A_Patologicos where r.idPaciente == idPaciente orderby r.idPatologicos descending select r).FirstOrDefault();
+    var revision4 = (from r in db.EPI_AparatosSistemas where r.idPaciente == idPaciente orderby r.idAparatosSistemas descending select r).FirstOrDefault();
+    var revision5 = (from r in db.EPI_ExploracionFisica where r.idPaciente == idPaciente orderby r.idExploracionFisica descending select r).FirstOrDefault();
+
+    <h3 style="text-align:left; color:white">Antecedentes Heredofamiliares</h3>
+    <h4 style="text-align:left; color:white"><b>¿Madre Vive?: </b><span style="color:aqua"> @revision1.MadreVive</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Padre Vive?: </b><span style="color:aqua"> @revision1.PadreVive</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Hermanos Viven?: </b><span style="color:aqua"> @revision1.HermanosViven</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Alguien de su familia padece una enfermedad grave?: </b><span style="color:aqua"> @revision1.FamiliaGrave</span></h4>
+    <h4 style="text-align:left; color:white"><b>Diabetes Melitus: </b><span style="color:aqua"> @revision1.Diabetes</span></h4>
+    <h4 style="text-align:left; color:white"><b>Hipertensión Arterial: </b><span style="color:aqua"> @revision1.Hipertension</span></h4>
+    <h4 style="text-align:left; color:white"><b>Obesidad: </b><span style="color:aqua"> @revision1.Obesidad</span></h4>
+    <h4 style="text-align:left; color:white"><b>Cardiopatía Isquémica: </b><span style="color:aqua"> @revision1.Cardiopatia</span></h4>
+    <h4 style="text-align:left; color:white"><b>Enfermedad vascular cerebral: </b><span style="color:aqua"> @revision1.VascularCerebral</span></h4>
+    <h4 style="text-align:left; color:white"><b>Infarto Agudo al Miocardio: </b><span style="color:aqua"> @revision1.Infarto</span></h4>
+    <h4 style="text-align:left; color:white"><b>Patología de Tiroides: </b><span style="color:aqua"> @revision1.Tiroides</span></h4>
+    <h4 style="text-align:left; color:white"><b>Enfermedades Neoplásticas: </b><span style="color:aqua"> @revision1.Neoplasticas</span></h4>
+
+    <h3 style="text-align:left; color:white">Antecedentes Personales No Patológicos</h3>
+    <h4 style="text-align:left; color:white"><b>Vacunas completas: </b><span style="color:aqua"> @revision2.VacunasCompletas</span></h4>
+    <h4 style="text-align:left; color:white"><b>Estado Civil: </b><span style="color:aqua"> @revision2.EstadoCivil</span></h4>
+    <h4 style="text-align:left; color:white"><b>Religión: </b><span style="color:aqua"> @revision2.Religion</span></h4>
+    <h4 style="text-align:left; color:white"><b>Escolaridad: </b><span style="color:aqua"> @revision2.Escolaridad</span></h4>
+    <h4 style="text-align:left; color:white"><b>Número de hijos: </b><span style="color:aqua"> @revision2.Hijos</span></h4>
+
+    <h3 style="text-align:left; color:white">Antecedentes Personales Patológicos</h3>
+    <h4 style="text-align:left; color:white"><b>¿Nació con alguna enfermedad congénita?: </b><span style="color:aqua"> @revision3.EnfermedadCongenita</span></h4>
+    <h4 style="text-align:left; color:white"><b>Historia de Alergias: </b><span style="color:aqua"> @revision3.Alergias</span></h4>
+    <h4 style="text-align:left; color:white"><b>Transtornos de la memoria: </b><span style="color:aqua"> @revision3.TranstornoMemoria</span></h4>
+    <h4 style="text-align:left; color:white"><b>Historia de enfermedad pulmonar obstructiva crónica: </b><span style="color:aqua"> @revision3.Pulmonar</span></h4>
+    <h4 style="text-align:left; color:white"><b>Antecedentes Quirúrgicos: </b><span style="color:aqua"> @revision3.Quirurgicos</span></h4>
+    <h4 style="text-align:left; color:white"><b>Antecedentes Transfuncionales: </b><span style="color:aqua"> @revision3.Transfuncionales</span></h4>
+    <h4 style="text-align:left; color:white"><b>Padece Diabetes: </b><span style="color:aqua"> @revision3.Diabetes</span></h4>
+    <h4 style="text-align:left; color:white"><b>Antecedentes de Traumatismo: </b><span style="color:aqua"> @revision3.Traumatismo</span></h4>
+    <h4 style="text-align:left; color:white"><b>Padece Crisis Convulsivas: </b><span style="color:aqua"> @revision3.Convulsivas</span></h4>
+    <h4 style="text-align:left; color:white"><b>Antecedentes Oncológicos: </b><span style="color:aqua"> @revision3.Oncologicos</span></h4>
+    <h4 style="text-align:left; color:white"><b>Antecedentes de Cardiopatias: </b><span style="color:aqua"> @revision3.Cardiopatias</span></h4>
+    <h4 style="text-align:left; color:white"><b>Padece de Hipertensión: </b><span style="color:aqua"> @revision3.Hipertension</span></h4>
+    <h4 style="text-align:left; color:white"><b>Consume Bebidas Alcohólicas: </b><span style="color:aqua"> @revision3.Alcoholismo</span></h4>
+    <h4 style="text-align:left; color:white"><b>Fuma: </b><span style="color:aqua"> @revision3.Fuma</span></h4>
+    <h4 style="text-align:left; color:white"><b>Consume Drogas: </b><span style="color:aqua"> @revision3.Drogas</span></h4>
+
+    <h3 style="text-align:left; color:white">Interrogatorio por Aparatos y Sistemas</h3>
+    <h4 style="text-align:left; color:white"><b>¿Tiene algún síntoma?: </b><span style="color:aqua"> @revision4.Sintoma</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en la vista?: </b><span style="color:aqua"> @revision4.AlteracionVista</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Utiliza lentes?: </b><span style="color:aqua"> @revision4.Lentes</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en la audición?: </b><span style="color:aqua"> @revision4.Audicion</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Utiliza aparato auditivo?: </b><span style="color:aqua"> @revision4.Auditivo</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en la nariz?: </b><span style="color:aqua"> @revision4.Nariz</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en la boca o el gusto?: </b><span style="color:aqua"> @revision4.Gusto</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración cardiaca?: </b><span style="color:aqua"> @revision4.Cardiaca</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración respiratoria?: </b><span style="color:aqua"> @revision4.Respiratoria</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración endocrinológica?: </b><span style="color:aqua"> @revision4.Endocrinologica</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración urinaria?: </b><span style="color:aqua"> @revision4.Urinaria</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en las venas?: </b><span style="color:aqua"> @revision4.Venas</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración intestinal?: </b><span style="color:aqua"> @revision4.Intestinal</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración de cáncer en la sangre?: </b><span style="color:aqua"> @revision4.CancerSangre</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en las articulaciones?: </b><span style="color:aqua"> @revision4.Articulaciones</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración del sueño?: </b><span style="color:aqua"> @revision4.Suenio</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración con apnea del sueño?: </b><span style="color:aqua"> @revision4.Apnea</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración neurológica?: </b><span style="color:aqua"> @revision4.Neurologica</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en la cabeza o cuello?: </b><span style="color:aqua"> @revision4.CabezaCuello</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en el abdomen?: </b><span style="color:aqua"> @revision4.Abdomen</span></h4>
+    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en las extremidades?: </b><span style="color:aqua"> @revision4.Extremidades</span></h4>
+
+    <h3 style="text-align:left; color:white">Exploración Física</h3>
+    <h4 style="text-align:left; color:white"><b>Test de Romberg: </b><span style="color:aqua"> @revision5.Romberg</span></h4>
+    <h4 style="text-align:left; color:white"><b>Punta Nariz: </b><span style="color:aqua"> @revision5.PuntaNariz</span></h4>
+    <h4 style="text-align:left; color:white"><b>Estrabismo: </b><span style="color:aqua"> @revision5.Estrabismo</span></h4>
+    <h4 style="text-align:left; color:white"><b>Soplo: </b><span style="color:aqua"> @revision5.Soplo</span></h4>
+    <h4 style="text-align:left; color:white"><b>Amputaciones: </b><span style="color:aqua"> @revision5.Amputaciones</span></h4>
+    <h4 style="text-align:left; color:white"><b>Prótesis: </b><span style="color:aqua"> @revision5.Protesis</span></h4>
+}
+
+<hr />
+
+@{
+    if (Convert.ToInt32(consulta1.Sistolica) >= 140 || Convert.ToInt32(consulta1.Diastolica) >= 90 || (Convert.ToInt32(consulta1.Cardiaca) >= 65 && Convert.ToInt32(consulta1.Cardiaca) <= 99)
+        || (Convert.ToInt32(consulta1.Respiratoria) >= 15 && Convert.ToInt32(consulta1.Respiratoria) <= 19) || Convert.ToDouble(consulta1.IMC) >= 30
+        || Convert.ToInt32(consulta1.Grasa) >= 35 || (Convert.ToInt32(consulta2.Frecuencia) >= 65 && Convert.ToInt32(consulta2.Frecuencia) <= 99)
+        || (Convert.ToDouble(consulta.DerechoAVC) >= 0.7 && Convert.ToDouble(consulta.DerechoAVC) <= 1) || (Convert.ToDouble(consulta.DerechoAVM) >= 0.7 && Convert.ToDouble(consulta.DerechoAVM) <= 1)
+        || (Convert.ToDouble(consulta.DerechoAVL) >= 0.7 && Convert.ToDouble(consulta.DerechoAVL) <= 1) || (Convert.ToDouble(consulta.IzquierdoAVC) >= 0.7 && Convert.ToDouble(consulta.IzquierdoAVC) <= 1)
+        || (Convert.ToDouble(consulta.IzquierdoAVM) >= 0.7 && Convert.ToDouble(consulta.IzquierdoAVM) <= 1) || (Convert.ToDouble(consulta.IzquierdoAVL) >= 0.7 && Convert.ToDouble(consulta.IzquierdoAVL) <= 1)
+        || Convert.ToInt32(consulta.Estereopsis) > 60 || consulta.CampoVisual != "NORMAL" || consulta.MovimientosOculares != "NORMAL" || consulta.DerechoRP != "NORMAL"
+        || consulta.IzquierdoRP != "NORMAL" || consulta.Cromatica == "Ir a SCT" || consulta4.Patologia == "Media unilateral/severa contralateral"
+        || consulta4.Grafica != "NORMAL" || revision1.Cardiopatia == "SI" || revision1.VascularCerebral == "SI" || revision1.Infarto == "SI"
+        || revision1.Tiroides == "SI" || revision3.Cardiopatias == "SI" || revision5.Romberg == "SI" || revision5.PuntaNariz == "SI" || revision5.Estrabismo == "SI"
+        || revision5.Soplo == "SI" || revision5.Amputaciones == "SI"
+        || (revision3.Diabetes == "SI" && Convert.ToInt32(consulta1.Sistolica) > 130) || (revision3.Diabetes == "SI" && Convert.ToInt32(consulta1.Diastolica) > 180)
+        || (Convert.ToInt32(consulta5.Glucosa) > 126 && Convert.ToInt32(consulta5.HemoglobinaGlucosilada) != 0)
+        || (Convert.ToInt32(consulta5.Glucosa) > 200 && Convert.ToInt32(consulta5.HemoglobinaGlucosilada) == 0)
+        || (Convert.ToInt32(consulta5.HemoglobinaGlucosilada) > 7))
+    {
+        <h3 style="text-align:left; color:white">Posibles causas de REVALORACIÓN</h3>
+        <br />
+
+        if (Convert.ToInt32(consulta1.Sistolica) >= 140 || Convert.ToInt32(consulta1.Diastolica) >= 90
+            || (revision3.Diabetes == "SI" && Convert.ToInt32(consulta1.Sistolica) > 130) || (revision3.Diabetes == "SI" && Convert.ToInt32(consulta1.Diastolica) > 180))
+        {
+            <h4 style="text-align:left; color:white"><b>CIE-10 HIPERTENSIÓN ESCENCIAL</b></h4>
+        }
+
+        if ((Convert.ToInt32(consulta5.Glucosa) > 126 && Convert.ToInt32(consulta5.HemoglobinaGlucosilada) != 0)
+        || (Convert.ToInt32(consulta5.Glucosa) > 200 && Convert.ToInt32(consulta5.HemoglobinaGlucosilada) == 0)
+        || (Convert.ToInt32(consulta5.HemoglobinaGlucosilada) > 7))
+        {
+            <h4 style="text-align:left; color:white"><b>CIE-10 (E-11) Diabetes Mellitus Tipo 2</b></h4>
+        }
+
+        if ((Convert.ToInt32(consulta2.Frecuencia) >= 65 && Convert.ToInt32(consulta2.Frecuencia) <= 99))
+        {
+            <h4 style="text-align:left; color:white"><b>CIE-10 (I45) Otros trastornos de la conducción</b></h4>
+        }
+
+        if (Convert.ToDouble(consulta1.IMC) >= 30
+        || Convert.ToInt32(consulta1.Grasa) >= 35)
+        {
+            <h4 style="text-align:left; color:white"><b>CIE-10 (E66) Obesidad</b></h4>
+        }
+
+        if ((Convert.ToDouble(consulta.DerechoAVC) >= 0.7 && Convert.ToDouble(consulta.DerechoAVC) <= 1) || (Convert.ToDouble(consulta.DerechoAVM) >= 0.7 && Convert.ToDouble(consulta.DerechoAVM) <= 1)
+        || (Convert.ToDouble(consulta.DerechoAVL) >= 0.7 && Convert.ToDouble(consulta.DerechoAVL) <= 1) || (Convert.ToDouble(consulta.IzquierdoAVC) >= 0.7 && Convert.ToDouble(consulta.IzquierdoAVC) <= 1)
+        || (Convert.ToDouble(consulta.IzquierdoAVM) >= 0.7 && Convert.ToDouble(consulta.IzquierdoAVM) <= 1) || (Convert.ToDouble(consulta.IzquierdoAVL) >= 0.7 && Convert.ToDouble(consulta.IzquierdoAVL) <= 1)
+        || consulta.CampoVisual != "NORMAL" || consulta.MovimientosOculares != "NORMAL" || consulta.DerechoRP != "NORMAL"
+        || consulta.IzquierdoRP != "NORMAL" || consulta.Cromatica == "Ir a SCT")
+        {
+            <h4 style="text-align:left; color:white"><b>ALTERACION DE LA VISTA NO ESPECIFICADA</b></h4>
+        }
+
+        if (Convert.ToInt32(consulta.Estereopsis) > 60)
+        {
+            <h4 style="text-align:left; color:white"><b>CIE-10 (53.32) Estereopsis Defectuosa</b></h4>
+        }
+
+        if (consulta4.Grafica != "NORMAL")
+        {
+            <h4 style="text-align:left; color:white"><b>CIE-10 (H-918) OTRAS HIPOACUSIAS ESPECIFICADAS</b></h4>
+        }
+
+        if (revision1.Cardiopatia == "SI" || revision1.Infarto == "SI" || revision3.Cardiopatias == "SI")
+        {
+            <h4 style="text-align:left; color:white"><b>I-25 ENFERMEDAD ISQUEMICA CRONICA DEL CORAZON</b></h4>
+        }
+
+
+        if (revision5.Romberg == "SI" || revision5.PuntaNariz == "SI")
+        {
+            <h4 style="text-align:left; color:white"><b>ALTERACION NEUROLOGICA NO ESPECIFICADA</b></h4>
+        }
+
+        if (revision1.Tiroides == "SI")
+        {
+            <h4 style="text-align:left; color:white"><b>E-079 TRASTORNO DE LA GLANDULA TIROIDES, NO ESPECIFICADO</b></h4>
+        }
+
+        if (revision5.Estrabismo == "SI")
+        {
+            <h4 style="text-align:left; color:white"><b>H-509 ESTRABISMO, NO ESPECIFICADO</b></h4>
+        }
+
+        if (consulta4.Patologia == "Media unilateral/severa contralateral")
+        {
+            <h4 style="text-align:left; color:white"><b>H-918 OTRAS HIPOACUSIAS ESPECIFICADAS</b></h4>
+        }
+
+        <hr />
+    }
+
+}
+@{
+    if (consulta.Cromatica == "Pronatopia" || consulta4.Patologia == "Hipoacusia severa o profunda bilateral" || revision1.VascularCerebral == "SI"
+|| revision4.Suenio == "SI" || revision4.Apnea == "SI" || revision5.Protesis == "SI")
+    {
+        <h3 style="text-align:left; color:white">Posibles causas de NO APTITUD</h3>
+        <br />
+
+        if (consulta.Cromatica == "Pronatopia")
+        {
+            <h4 style="text-align:left; color:white"><b>CIE-10 (H53.5) Deficiencia en la percepción de colores</b></h4>
+        }
+
+        if (consulta4.Patologia == "Hipoacusia severa o profunda bilateral")
+        {
+            <h4 style="text-align:left; color:white"><b>H-918 OTRAS HIPOACUSIAS ESPECIFICADAS</b></h4>
+        }
+
+        if (revision1.VascularCerebral == "SI")
+        {
+            <h4 style="text-align:left; color:white"><b>ALTERACION NEUROLOGICA NO ESPECIFICADA</b></h4>
+        }
+
+        if (revision4.Suenio == "SI" || revision4.Apnea == "SI")
+        {
+            <h4 style="text-align:left; color:white"><b>ALTERACION DEL SUEÑO NO ESPECIFICADA</b></h4>
+        }
+
+        if (revision5.Protesis == "SI")
+        {
+            <h4 style="text-align:left; color:white"><b>PROTESIS</b></h4>
+        }
+
+        <hr />
+    }
+}
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Dictamen")" style="display:inline-block; margin:0.5%">
+
+    <h4 style="text-align:left; color:white">Nota Médica:</h4>
+    <textarea style="width:300vw" name="nota"></textarea>
+
+    <br />
+    <br />
+
+    <input type="hidden" value="@idPaciente" name="id" />
+    @{
+        if (revision1.VascularCerebral != "SI" && revision4.Suenio != "SI" && revision4.Apnea != "SI"
+            && revision5.Protesis != "SI" && consulta4.Patologia != "Hipoacusia severa o profunda bilateral" && consulta.Cromatica != "Protanopia")
+        {
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#apto">Concluir examen como APTO</button>
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#revaloracion">Enviar a Revaloración</button>
+            @*<input type="submit" name="accion" class="btn btn-success" value="Concluir examen como APTO" />
+                <input type="submit" name="accion" class="btn btn-warning" value="Enviar a Revaloración" />*@
+        }
+        else if (revision1.VascularCerebral == "SI" || revision4.Suenio == "SI" || revision4.Apnea == "SI"
+            || revision5.Protesis == "SI" || consulta4.Patologia == "Hipoacusia severa o profunda bilateral" || consulta.Cromatica == "Protanopia")
+        {
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#noapto">Concluir examen como NO APTO</button>
+            @*<input type="submit" name="accion" class="btn btn-danger" value="Concluir examen como NO APTO*" />*@
+        }
+        else
+        {
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#noapto">Concluir examen como NO APTO</button>
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#revaloracion">Enviar a Revaloración</button>
+            @*<input type="submit" name="accion" class="btn btn-danger" value="Concluir examen como NO APTO" />
+                <input type="submit" name="accion" class="btn btn-warning" value="Enviar a Revaloración" />*@
+        }
+    }
+
+
+    @*<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#noapto">Concluir examen como NO APTO</button>*@
+
+    <div class="modal fade" id="noapto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-primary" id="exampleModalLabel">Está a punto de dictaminar como <b class="text-danger">NO APTO</b> este examen. ¿Quiere confirmar esta acción?</h4>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" name="accion" class="btn btn-danger" value="Concluir examen como NO APTO" />
+                    @*<input type="submit" name="accion" class="btn btn-danger" value="Liberar como NO APTO" />
+                        <input type="submit" name="accion" class="btn btn-warning" value="Enviar a Revaloración" />*@
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="apto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-primary" id="exampleModalLabel">Está a punto de dictaminar como <b class="text-success">APTO</b> este examen. ¿Quiere confirmar esta acción?</h4>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" name="accion" class="btn btn-success" value="Concluir examen como APTO" />
+                    @*<input type="submit" name="accion" class="btn btn-danger" value="Liberar como NO APTO" />
+                        <input type="submit" name="accion" class="btn btn-warning" value="Enviar a Revaloración" />*@
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="revaloracion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-primary" id="exampleModalLabel">Está a punto de enviar a <b class="text-warning">REVALORACIÓN</b> este paciente. ¿Quiere confirmar esta acción?</h4>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" name="accion" class="btn btn-warning" value="Enviar a Revaloración" />
+                    @*<input type="submit" name="accion" class="btn btn-danger" value="Liberar como NO APTO" />
+                        <input type="submit" name="accion" class="btn btn-warning" value="Enviar a Revaloración" />*@
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<br />
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
+    <input type="hidden" value="@idPaciente" name="id" />
+    <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />
+</form>
+
+
+@*<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
+        <input type="hidden" value="@idPaciente" name="id" />
+        <input type="submit" class="btn btn-danger" value="NO APTO" />
+    </form>*@
+

@@ -37,6 +37,10 @@ namespace SCT_iCare
         public Nullable<System.DateTime> PausaInicio { get; set; }
         public Nullable<System.DateTime> PausaFinal { get; set; }
         public Nullable<int> Duracion { get; set; }
+        public string Aptitud { get; set; }
+        public string ComentarioAptitud { get; set; }
+        public Nullable<System.DateTime> FechaVigencia { get; set; }
+        public string CarruselMedico { get; set; }
     
         public virtual Paciente Paciente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

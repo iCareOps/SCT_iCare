@@ -104,7 +104,7 @@
             <h4 style="color:white">@Html.DisplayFor(model => model.Doctor)</h4>
         </dd>
 
-        <dt>
+        @*<dt>
             <h4>Sucursal:</h4>
         </dt>
 
@@ -113,10 +113,36 @@
         </dd>
         <dt>
             <h4></h4>
-        </dt>
+        </dt>*@
         <br />
         <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Dictaminar")">
             @Html.AntiForgeryToken()
+            <dt>
+                <h4>Aptitud:</h4>
+            </dt>
+
+            <dd>
+                <select name="aptitud" style="width:50%; min-height:5vh; font-size:2vh" class="form-select">
+                    <option value="APTO">APTO</option>
+                    <option value="NO APTO">NO APTO</option>
+                </select>
+            </dd>
+            <br />
+            <dt>
+                <h4>Comentario de Aptitud:</h4>
+            </dt>
+
+            <dd>
+                <input type="text" maxlength="200" class="form-control" id="comentario" name="comentario">
+            </dd>
+            <dt>
+                <h4>Fecha de Vigencia Dictamen:</h4>
+            </dt>
+
+            <dd>
+                <input type="date" class="form-control" id="comentario" name="vigencia" required>
+            </dd>
+            <br />
             <dd>
                 <div class=" labelGral">
                     <input type="file" name="file" asp-for="file" class="labelGral" required value="file" />

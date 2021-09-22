@@ -17,6 +17,7 @@ namespace SCT_iCare.Controllers.Login
             return View();
         }
 
+
         [HttpPost]
         public ActionResult Inicio(string User, string Pass)
         {
@@ -63,8 +64,17 @@ namespace SCT_iCare.Controllers.Login
                     switch (oUser.idRol)
                     {
                         case 2:
-                            ViewBag.Nombre = oUser.Nombre.ToString();
-                            return Redirect("~/Admin/Index");
+                            if(oUser.Nombre.ToString() == "Andrés Anduaga" || oUser.Nombre.ToString() == "Teresa Lozano")
+                            {
+                                ViewBag.Nombre = oUser.Nombre.ToString();
+                                return Redirect("~/Admin/Dashboard");
+                            }
+                            else
+                            {
+                                ViewBag.Nombre = oUser.Nombre.ToString();
+                                return Redirect("~/Admin/Index");
+                            }
+                            
                         case 1:
                             ViewBag.Nombre = oUser.Nombre.ToString();
                             return Redirect("~/CallCenter/Index");
@@ -89,6 +99,15 @@ namespace SCT_iCare.Controllers.Login
                         case 11:
                             ViewBag.Nombre = oUser.Nombre.ToString();
                             return Redirect("~/GestorVenta/Index");
+                        case 12:
+                            ViewBag.Nombre = oUser.Nombre.ToString();
+                            return Redirect("~/ArchivoClinico/Recepcion");
+                        case 13:
+                            ViewBag.Nombre = oUser.Nombre.ToString();
+                            return Redirect("~/ArchivoClinico/Recepcion");
+                        case 17:
+                            ViewBag.Nombre = oUser.Nombre.ToString();
+                            return Redirect("~/ArchivoClinico/Recepcion");
                         case 10:
                             ViewBag.Nombre = oUser.Nombre.ToString();
 

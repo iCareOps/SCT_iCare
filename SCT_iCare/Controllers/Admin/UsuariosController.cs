@@ -216,5 +216,33 @@ namespace SCT_iCare.Controllers.Admin
             }
             base.Dispose(disposing);
         }
+
+
+        /*-----------------------Sección de Carrusel Médico para Usuarios-----------------------------*/
+
+        public ActionResult CarruselMedico()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult AsignarModulo(int modulo, int sucursal, int doctor)
+        {
+            SCT_iCare.DoctorModulo dm = new SCT_iCare.DoctorModulo();
+
+            dm.idUsuario = doctor;
+            dm.idModulo = modulo;
+            dm.idSucursal = sucursal;
+
+            if (ModelState.IsValid)
+            {
+                db.DoctorModulo.Add(dm);
+                db.SaveChanges();
+            }
+
+            return Redirect("CarruselMedico");
+        }
+
+
     }
 }

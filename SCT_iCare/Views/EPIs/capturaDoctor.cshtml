@@ -38,9 +38,9 @@
     int year = start.Year;
     int month = start.Month;
     int day = start.Day;
-    int tomorrorDay = day + 1;
+    DateTime tomorrorDay = DateTime.Now.AddDays(1);
     DateTime thisDate = new DateTime(year, month, day);
-    DateTime tomorrowDate = new DateTime(year, month, tomorrorDay);
+    DateTime tomorrowDate = new DateTime(tomorrorDay.Year, tomorrorDay.Month, tomorrorDay.Day);
 
     var Restriccion1 = db.Captura.Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).ToList();
     //var Restriccion = from r in Restriccion1 orderby r.TipoTramite where r.Sucursal == ViewBag.Sucursal select r;
@@ -168,11 +168,11 @@
                     }
                     else if (item.TipoTramite != "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
                     {
-                        fila = "#FFF9C4";
+                        fila = "#D1C4E9";
                     }
                     else if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
                     {
-                        fila = "#D1C4E9";
+                        fila = "#9575CD";
                     }
                     else
                     {

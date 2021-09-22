@@ -17,6 +17,7 @@
     int registros;
 
     int flag = 1; //contador de la tabla
+    int flag2 = 1;
 
     DateTime start = DateTime.Now;
     DateTime finish = DateTime.Now.AddDays(1);
@@ -34,34 +35,81 @@
     DateTime tomorrowDate = new DateTime(year1, month1, day1);
 
     var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+    int modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate).Count()@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+
+    var modelo2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+    int modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate).Count()@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 
 
-if (oUser != null)
-{
-idUser = oUser.idUsuario;
-nombreUsuario = oUser.Nombre;
+    int? idRol = 0;
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
 
 
-Hospital = "GENERAL";
-Sucursal = Hospital.ToString();
+        Hospital = "GENERAL";
+        Sucursal = Hospital.ToString();
 
-modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && s.M.CC == "Call Center")@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+        if (oUser.idRol == 2 || nombreUsuario == "Royer Plata" || nombreUsuario == "Pamela Rodriguez Saucedo")
+        {
+            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC != null) && (s.M.Recepcionista != "Cristian Airaldi"));
 
-registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && s.M.CC == "Call Center").Count();
-}
+            modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+.Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC != null) && (s.M.Recepcionista != "Cristian Airaldi")).Count();
+
+            modelo2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC != null ) && (s.M.Recepcionista != "Cristian Airaldi"));
+
+            modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC != null) && (s.M.Recepcionista != "Cristian Airaldi")).Count();
+        }
+        else
+        {
+            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC == nombreUsuario));
+
+            modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC == nombreUsuario)).Count();
+
+            modelo2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+    .Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC == nombreUsuario));
+
+            modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+    .Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC == nombreUsuario)).Count();
+        }
+
+
+        registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC == "Call Center" || s.M.CC == "Administrador")).Count();
+    }
+
+    int noEnviados = db.DictamenProblema.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaExpdiente >= thisDate && s.M.FechaExpdiente < tomorrowDate && s.N.EstatusEnvio == "SI").Count();
+    int cita = (from c in db.Captura select c).Where(s => s.FechaExpdiente >= thisDate && s.FechaExpdiente < tomorrowDate).Count();
 
 }
 
 <br />
 <br />
+
 <h3 style="color:white" class="text-center">Call Center</h3>
 @*<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>*@
 <div class="form-inline">
     @*<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>*@
     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal3"><span class="glyphicon glyphicon-credit-card"></span> Pago con Tarjeta</button>&nbsp;&nbsp;&nbsp;
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal3"><span class="glyphicon glyphicon-credit"></span> Pago con Tarjeta</button>&nbsp;&nbsp;&nbsp;
 
     <a href=@Url.Action("Index", "ControlDictamen")><button style="color:white" type="button" class="btn btn-info"><span class="glyphicon glyphicon-th-list"></span> &nbsp; &nbsp;Dictámenes</button></a>
+    @{
+        if (idRol == 2 || idUser == 93 || idUser == 83)
+        {
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#crearCC"><span class="glyphicon glyphicon-plus"></span> Crear Usuario</button>
+            <button type="button" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> No Enviados: <b>@(cita - noEnviados)</b></button>
+        }
+    }
+
 
     <div class="input-group pull-right">
         <input type="text" class="form-control" id="buscador" name="dato" placeholder="Paciente o Expediente">
@@ -161,15 +209,71 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                     miResultado = "<h3>No se encontraron registros.</h3>"
                 }
                 else {
-                    miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>Expediente</th><th>Email</th><th>Teléfono</th><th>Fecha Cita</th><th>Sucursal</th></tr>"
+                    miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>No Expediente</th><th>Email</th><th>Teléfono</th><th>Referencia</th><th>Fecha Cita</th><th>Sucursal</th><th></th></tr>"
                     for (let i = 0; i < data.length; i++) {
+                        var url = '<div class="btn-group">'+
+                            '<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
+                                'Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>'+
+                            '</button>'+
+
+                            '<div class="dropdown-menu" style="padding:10px">'+
+                                '<a href="#" data-toggle="modal"  onclick=\"$(\'#ModalEdit2_'+data[i].idPaciente+'\').modal(\'show\');\"><b>Editar Datos</b></a>'+
+                                '<div class="dropdown-divider"></div>'+
+                            '</div>'+
+                            '</div>'+
+
+
+                            '<form method="post" enctype="multipart/form-data" action="@Url.Content("~/CallCenter/EditarCompleto")">'+
+                            '<div class="modal fade" id="ModalEdit2_'+data[i].idPaciente+'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">'+
+                                '<div class="modal-dialog" role="document">'+
+                                    '<div class="modal-content">'+
+                                        '<div class="modal-header">'+
+                                        '</div>'+
+                                        '<div class="modal-body">'+
+                                            '<div class="form-group">'+
+                                                '<label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>'+
+                                                '<input type="text" class="form-control" id="nombre" name="nombre" placeholder="'+data[i].Nombre+'">'+
+                                                '<input type="hidden" class="form-control" id="id" name="id" value="'+data[i].idPaciente+'">'+
+                                            '</div>'+
+                                            '<div class="form-group">'+
+                                                '<label for="recipient-name" class="col-form-label">Teléfono:</label>'+
+                                                '<input type="text" class="form-control" id="telefono" name="telefono" placeholder="'+data[i].Telefono+'" />'+
+                                            '</div>'+
+                                            '<div class="form-group">'+
+                                                '<label for="recipient-name" class="col-form-label">Email:</label>'+
+                                                '<input type="email" class="form-control" id="email" name="email" placeholder="'+data[i].Email+'" />'+
+                                            '</div>'+
+                                            '<div class="form-group">'+
+                                                '<label for="recipient-name" class="col-form-label">Fecha de Cita:</label>'+
+                                                '<input type="date" class="form-control" id="fecha" name="fecha"/>'+
+                                            '</div>'+
+                                        '</div>'+
+                                        '<div class="modal-footer">'+
+                                            '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>'+
+                                            '<input type="submit" value="Guardar" class="btn btn-primary" />'+
+                                        '</div>'+
+                                    '</div>'+
+                                '</div>'+
+                            '</div>'+
+                        '</form>';
+
+                        url = url.replace("XXXXX", data[i].idPaciente);
+
+                        $(document).on('hidden.bs.modal', function (event) {
+                            if ($('.modal:visible').length) {
+                                $('body').addClass('modal-open');
+                            }
+                        });
+
                         miResultado += "<tr style=\"border:1px solid gray\">" +
                             "<td><b>" + data[i].Nombre + "</b></td>" +
                             "<td><b>" + data[i].NoExpediente + "</b></td>" +
                             "<td><b>" + data[i].Email + "</b></td>" +
                             "<td><b>" + data[i].Telefono + "</b></td>" +
+                            "<td><b>" + data[i].Referencia + "</b></td>" +
                             "<td><b>" + data[i].FechaReferencia + "</b></td>" +
                             "<td><b>" + data[i].Sucursal + "</b></td>" +
+                            "<td><b>" + url + "</b></td>" +
                             "</tr>"
                     }
                 }
@@ -213,7 +317,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
     </div>*@
 
 <div class="modal fade" id="exampleModal10" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog" role="document" style="width:70%">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
@@ -231,6 +335,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
 
     </div>
 </div>
+
 
 
 <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -300,8 +405,67 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             }
                         </select>
                     </div>
+                    <div class="form-group" style="width:60%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Referido Por:</label>
+                        <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option selected value="NINGUNO">NINGUNO</option>
+                            @{
+                                //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
+                                var referidosGestor = (from r in db.Referido where r.Tipo == "Gestor" select r).OrderBy(o => o.Nombre);
+                                var referidosGMI = (from r in db.Referido where r.Tipo == "GMI" select r).OrderBy(o => o.Nombre);
+                                var referidosEmpresa = (from r in db.Referido where r.Tipo == "Empresa" select r).OrderBy(o => o.Nombre);
+                                var referidosCanacar = (from r in db.Referido where r.Tipo == "Canacar" select r).OrderBy(o => o.Nombre);
+                                var referidosParticular = (from r in db.Referido where r.Tipo == "Particular" select r).OrderBy(o => o.Nombre);
+                                var referidosSindicato = (from r in db.Referido where r.Tipo == "Sindicato" select r).OrderBy(o => o.Nombre);
+                                var referidosAnexa = (from r in db.Referido where r.Tipo == "Anexa" select r).OrderBy(o => o.Nombre);
 
-                </div>
+                                <option disabled>--------GESTORES--------</option>
+                                foreach (var item in referidosGestor)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------GMI--------</b></option>
+                                foreach (var item in referidosGMI)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------EMPRESAS--------</b></option>
+                                foreach (var item in referidosEmpresa)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------CANACAR--------</b></option>
+                                foreach (var item in referidosCanacar)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------PARTICULAR--------</b></option>
+                                foreach (var item in referidosParticular)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------SINDICATOS--------</b></option>
+                                foreach (var item in referidosSindicato)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------ANEXA--------</b></option>
+                                foreach (var item in referidosAnexa)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+                            }
+                            <option disabled><b>--------OTROS--------</b></option>
+                            <option value="OTRO">OTRO</option>
+                        </select>
+                    </div>
+</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -471,6 +635,66 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                         <input type="date" class="form-control" id="fecha" name="fecha" required>
                     </div>
                     <input type="hidden" name="usuario" asp-for="file" class="" required value="Call Center" />
+                    <div class="form-group" style="width:60%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Referido Por:</label>
+                        <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option selected value="NINGUNO">NINGUNO</option>
+                            @{
+                                //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
+                                var referidosGestor1 = (from r in db.Referido where r.Tipo == "Gestor" select r).OrderBy(o => o.Nombre);
+                                var referidosGMI1 = (from r in db.Referido where r.Tipo == "GMI" select r).OrderBy(o => o.Nombre);
+                                var referidosEmpresa1 = (from r in db.Referido where r.Tipo == "Empresa" select r).OrderBy(o => o.Nombre);
+                                var referidosCanacar1 = (from r in db.Referido where r.Tipo == "Canacar" select r).OrderBy(o => o.Nombre);
+                                var referidosParticular1 = (from r in db.Referido where r.Tipo == "Particular" select r).OrderBy(o => o.Nombre);
+                                var referidosSindicato1 = (from r in db.Referido where r.Tipo == "Sindicato" select r).OrderBy(o => o.Nombre);
+                                var referidosAnexa1 = (from r in db.Referido where r.Tipo == "Anexa" select r).OrderBy(o => o.Nombre);
+
+                                <option disabled>--------GESTORES--------</option>
+                                foreach (var item in referidosGestor1)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------GMI--------</b></option>
+                                foreach (var item in referidosGMI1)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------EMPRESAS--------</b></option>
+                                foreach (var item in referidosEmpresa1)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------CANACAR--------</b></option>
+                                foreach (var item in referidosCanacar1)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------PARTICULAR--------</b></option>
+                                foreach (var item in referidosParticular1)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------SINDICATOS--------</b></option>
+                                foreach (var item in referidosSindicato1)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------ANEXA--------</b></option>
+                                foreach (var item in referidosAnexa1)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+                            }
+                            <option disabled><b>--------OTROS--------</b></option>
+                            <option value="OTRO">OTRO</option>
+                        </select>
+                    </div>
 </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -572,13 +796,14 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
 
 
 
-@if (modelo.FirstOrDefault() == null)
+@if (modeloCount == 0)
 {
-    <h1 style="color:white">No tienes Referencias de Pago el día de hoy!</h1>
+    <h1 style="color:white">No tienes referencias creadas para el día de hoy!</h1>
 }
 else
 {
-    <div class="tablaScroll">
+    <h3 style="color:white">REFERENCIAS CREADAS HOY: @modeloCount</h3>
+    <div class="tablaScroll2">
         <table class="table tablas" style="color: #2F2D6B">
             <thead>
                 <tr style="background-color:#62E3C9">
@@ -602,24 +827,50 @@ else
                         Sucursal
                     </th>
                     <th>
+                        Usuario
+                    </th>
+                    <th>
                         Fecha Cita
                     </th>
                     <th></th>
                 </tr>
             </thead>
-            
+
 
             @foreach (var item in modelo)
             {
 
+                if (item.M.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.N.idPaciente select i.TipoLicencia).FirstOrDefault()) != "AEREO")
+                {
+                    fila = "#BBDEFB";
+                }
+                else if (item.M.TipoTramite != "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.N.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                {
+                    fila = "#D1C4E9";
+                }
+                else if (item.M.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.N.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                {
+                    fila = "#9575CD";
+                }
+                else
+                {
+                    fila = "white";
+                }
 
-                <tr>
+
+                <tr style="background-color:@fila">
                     <td>
                         @flag
                     </td>
 
                     <td>
-                        <b>@Html.DisplayFor(modelItem => item.N.Nombre)</b>
+                        @{ var entregado = (from e in db.Cita where e.idPaciente == item.M.idPaciente select e.Entregado).FirstOrDefault(); }
+                        <b>@Html.DisplayFor(modelItem => item.N.Nombre)</b> &nbsp;
+                        @{ if (entregado != null)
+                            {
+                                <span class="glyphicon glyphicon-thumbs-up text-danger"></span>
+                            }
+                        }
                     </td>
 
                     <td>
@@ -651,7 +902,21 @@ else
                         <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.M.FechaCita)
+                        @{
+                            if (item.M.CC == "Cristian Airaldi")
+                            {
+                                @Html.DisplayFor(modelItem => item.M.Recepcionista)
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(modelItem => item.M.CC)
+                            }
+                        }
+
+                    </td>
+                    <td>
+                        @*@Html.DisplayFor(modelItem => item.M.FechaCita)*@
+                        @Convert.ToDateTime(item.M.FechaCita).ToString("dd-MMMM-yyyy")
                     </td>
                     <td>
                         <div class="btn-group">
@@ -705,6 +970,19 @@ else
                                                 <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
                                                 <input type="date" class="form-control" id="fecha" name="fecha" required />
                                             </div>
+                                            <div class="form-group" style="width:60%; min-width:320px">
+                                                <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                                                <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                    <option value="@item.M.Sucursal">@item.M.Sucursal</option>
+                                                    @{
+                                                        var sucursalesOpciones = from s in db.Sucursales select s.Nombre;
+                                                        foreach (var opcion in sucursalesOpciones)
+                                                        {
+                                                            <option value="@opcion">@opcion</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -725,6 +1003,238 @@ else
         </table>
     </div>
 }
+
+@if (modeloCount2 == 0)
+{
+    <h1 style="color:white">No citas generadas el día de hoy!</h1>
+}
+else
+{
+    <h3 style="color:white">CITAS PROGRAMADAS PARA HOY: @modeloCount2</h3>
+    <div class="tablaScroll2">
+        <table class="table tablas" style="color: #2F2D6B">
+            <thead>
+                <tr style="background-color:#62E3C9">
+                    <th>
+                    </th>
+
+                    <th>
+                        Nombre
+                    </th>
+
+                    <th>
+                        Email
+                    </th>
+                    <th>
+                        Teléfono
+                    </th>
+                    <th>
+                        Referencia
+                    </th>
+                    <th>
+                        Sucursal
+                    </th>
+                    <th>
+                        Usuario
+                    </th>
+                    <th>
+                        Fecha Cita
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+
+
+            @foreach (var item in modelo2)
+            {
+
+                if (item.M.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.N.idPaciente select i.TipoLicencia).FirstOrDefault()) != "AEREO")
+                {
+                    fila = "#BBDEFB";
+                }
+                else if (item.M.TipoTramite != "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.N.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                {
+                    fila = "#D1C4E9";
+                }
+                else if (item.M.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.N.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                {
+                    fila = "#9575CD";
+                }
+                else
+                {
+                    fila = "white";
+                }
+
+
+                <tr style="background-color:@fila">
+                    <td>
+                        @flag2
+                    </td>
+
+                    <td>
+                        @{ var entregado = (from e in db.Cita where e.idPaciente == item.M.idPaciente select e.Entregado).FirstOrDefault(); }
+                        <b>@Html.DisplayFor(modelItem => item.N.Nombre)</b> &nbsp;
+                        @{ if (entregado != null)
+                            {
+                                <span class="glyphicon glyphicon-thumbs-up text-danger"></span>
+                            }
+                        }
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.N.Email)
+                    </td>
+
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.N.Telefono)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.N.Email)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.N.Telefono)
+                    </td>
+                    <td>
+                        @{
+                            if (item.M.TipoPago == "Pago con Tarjeta")
+                            {
+                                <b><a href=@item.M.NoOrden target="_blank">Terminación: @item.M.Referencia</a></b>
+                            }
+                            else
+                            {
+                                <b>@Html.DisplayFor(modelItem => item.M.Referencia)</b>
+                            }
+                        }
+                    </td>
+                    <td>
+                        <span class="field-tip">
+                            <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
+                            <span class="tip-content">@item.M.Doctor</span>
+                        </span>
+                    </td>
+                                        <td>
+                        @{
+                            if (item.M.CC == "Cristian Airaldi")
+                            {
+                                @Html.DisplayFor(modelItem => item.M.Recepcionista)
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(modelItem => item.M.CC)
+                            }
+                        }
+
+                    </td>
+                    <td>
+                        @*@Html.DisplayFor(modelItem => item.M.FechaCita)*@
+                        @Convert.ToDateTime(item.M.FechaCita).ToString("dd-MMMM-yyyy")
+                    </td>
+                    <td>
+                        <div class="btn-group">
+
+                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                            </button>
+
+
+
+                            <div class="dropdown-menu" style="padding:10px">
+                                <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                        </div>
+
+                        <!-- Modal para editar-->
+                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/CallCenter/EditarCompleto")">
+                            <div class="modal fade" id="ModalEdit2_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            @{
+                                                if ((from i in db.Cita where i.Referencia == item.M.Referencia select i).Count() < 2)
+                                                {
+                                                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Editar Datos</b></h4>
+                                                }
+                                                else
+                                                {
+                                                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Editar Datos</b></h4>
+                                                    <h5 class="modal-title text-danger" id="exampleModalLabel"><b>Este registro pertenece a un grupo de gestoría. Al modificar datos se aplicarán los cambios para todo el bloque.</b></h5>
+                                                }
+                                            }
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
+                                                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.N.Nombre">
+                                                <input type="hidden" class="form-control" id="id" name="id" value="@item.N.idPaciente">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Teléfono:</label>
+                                                <input type="text" class="form-control" id="telefono" name="telefono" placeholder="@item.N.Telefono" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Email:</label>
+                                                <input type="email" class="form-control" id="email" name="email" placeholder="@item.N.Email" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
+                                                <input type="date" class="form-control" id="fecha" name="fecha" required />
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <input type="submit" value="Guardar" class="btn btn-primary" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </td>
+                </tr>
+
+                flag2 += 1;
+
+            }
+
+        </table>
+    </div>
+}
+
+<!-- Modal para editar-->
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Usuarios/CreateCallCenter")">
+    @Html.AntiForgeryToken()
+    <div class="modal fade" id="crearCC" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Crear Usuario de Call Center:</b></h3>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Nombre:</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Email:</label>
+                        <input type="text" class="form-control" id="email" name="email" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Contraseña:</label>
+                        <input type="password" class="form-control" id="password" name="password" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
 
 
 

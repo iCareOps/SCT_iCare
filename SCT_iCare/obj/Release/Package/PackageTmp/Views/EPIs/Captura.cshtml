@@ -28,7 +28,9 @@
         Query = TempData["ERROR"].ToString();
     }
 
+    DateTime maxDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
+    string fechaMAX = Convert.ToDateTime(maxDate).ToString("yyyy-MM-dd");
 
     string parameter = ViewBag.Parameter;
     DateTime rango = Convert.ToDateTime(ViewBag.Fecha);
@@ -40,6 +42,36 @@
     int tomorrorDay = day + 1;
     DateTime thisDate = Convert.ToDateTime(ViewBag.Inicio);
     DateTime tomorrowDate = Convert.ToDateTime(ViewBag.Final);
+
+    var tablaFinal = db.Paciente.
+        Join(db.Cita, a => a.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
+        Where(w => w.B.FechaCita >= thisDate && w.B.FechaCita < tomorrowDate).
+        Join(db.Captura, c => c.A.idPaciente, d => d.idPaciente, (c, d) => new { C = c, D = d }).
+        Select(s => new
+        {
+            s.C.A.Nombre,
+            s.C.B.NoExpediente,
+            s.C.A.Telefono,
+            s.C.A.Email,
+            s.C.A.Folio,
+            s.C.A.CURP,
+            s.C.B.TipoTramite,
+            s.C.B.TipoLicencia,
+            s.C.B.Sucursal,
+            s.C.B.Doctor,
+            s.C.B.Recepcionista,
+            s.C.B.Referencia,
+            s.C.B.Canal,
+            s.C.B.Asistencia,
+            s.D.FechaExpdiente,
+            s.D.Capturista,
+            s.D.EstatusCaptura,
+            s.D.InicioCaptura,
+            s.D.FinalCaptura,
+            s.D.Aptitud,
+            s.D.FechaVigencia,
+            s.C.B.ReferidoPor
+        });
 
 
     //var repoCentral = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
@@ -76,10 +108,10 @@
 <br />
 <br />
 @*<h5 style="color:white" class="text-right">@fecha</h5>*@
-<h3 style="color:white" class="text-center">EPI Center &nbsp; &nbsp; &nbsp;<span class="h4" style="color:#AC9070"><b>@fecha</b></span></h3>
+<h3 style="color:white" class="text-center">EPI Center !! &nbsp; &nbsp; &nbsp;<span class="h4" style="color:#AC9070"><b>@fecha</b></span></h3>
 @if (ViewBag.Estado == 1)
 {
-    <h5 style="color:darkgray">Mostrando resultados de <span style="color:white">@ViewBag.Inicio.ToString("dd-MMMM-yyyy")</span> hasta <span style="color:white">@ViewBag.Final.ToString("dd-MMMM-yyyy")</span></h5>
+    <h5 style="color:darkgray">Mostrando resultados de: <span style="color:white">@ViewBag.Inicio.ToString("dd-MMMM-yyyy")</span> hasta <span style="color:white">@ViewBag.Final.ToString("dd-MMMM-yyyy")</span></h5>
 }
 
 
@@ -87,20 +119,24 @@
 @{
     if (nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España" || nombreUsuario == "Soporte Captura" || idRol == 2)
     {
+
         <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Captura")">
-            <div style="display:inline-block; padding:10px; background-color:gainsboro; border-radius: 5px">
+            <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px">
                 <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
-                <input type="date" class="form-control" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <input type="date" class="form-control" min="2021-08-02" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
-                <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
+                <input type="date" class="form-control" name="final" max="@fechaMAX"/> &nbsp; &nbsp;
                 <input type="submit" class="btn btn-primary" value="Enviar" />
                 <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
             </div>
-            <div class="input-group pull-right">
-                <input type="text" class="form-control" id="buscador" name="dato" placeholder="Paciente o Expediente">
-                <span class="input-group-btn">
-                    <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
-                </span>
+
+            <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
+                <div class="input-group">
+                    <input type="text" class="form-control input-g" id="buscador" name="dato" placeholder="Paciente o Expediente">
+                    <span class="input-group-btn">
+                        <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                    </span>
+                </div>
             </div>
         </form>
         <br />
@@ -496,7 +532,7 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                
+
 
 
                 @if (ViewBag.Estado == 1)
@@ -506,37 +542,48 @@
                     foreach (var item in repoCompleta)
                     {
 
-                        if (item.TipoTramite == "PRIMERA VEZ")
+                        if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) != "AEREO")
                         {
-                            fila = "bg-info";
+                            fila = "#BBDEFB";
+                        }
+                        else if (item.TipoTramite != "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                        {
+                            fila = "#D1C4E9";
+                        }
+                        else if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                        {
+                            fila = "#9575CD";
                         }
                         else
                         {
-                            fila = "bg-default";
-                        }
-
-                        var Licencia = (from l in db.Cita where l.idPaciente == item.idPaciente select l).FirstOrDefault();
-
-                        if (Licencia.TipoLicencia == "AEREO")
-                        {
-                            fila = "bg-warning";
+                            fila = "white";
                         }
 
 
-                        <tr class=@fila>
+                        <tr style="background-color:@fila">
                             <td>
                                 @flag
                             </td>
                             <td>
                                 @{
-                                    if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 2 && idUser != 3 && idUser != 13 && idUser != 25 && nombreUsuario == "Viridiana España"))
+
+                                    if (item.CarruselMedico == null)
                                     {
-                                        @Html.DisplayFor(modelItem => item.NombrePaciente)
+                                        if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 2 && idUser != 3 && idUser != 13 && idUser != 25 && nombreUsuario == "Viridiana España"))
+                                        {
+                                            @Html.DisplayFor(modelItem => item.NombrePaciente)
+                                        }
+                                        else
+                                        {
+                                            <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_EC", new { id = item.idCaptura }, new { style = "color: black; text-decoration: none" })</b>
+                                        }
                                     }
                                     else
                                     {
-                                        <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_EC", new { id = item.idCaptura }, new { style = "color: black; text-decoration: none" })</b>
+                                        <b>@Html.ActionLink(item.NombrePaciente, "PreDictamen", new { id = item.idPaciente}, new { style = "color: black; text-decoration: none" })</b>
                                     }
+
+
                                 }
                             </td>
 
@@ -547,7 +594,34 @@
                                 @Html.DisplayFor(modelItem => item.TipoTramite)
                             </td>
                             <td>
-                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                @{
+                                    if (item.EstatusCaptura == "Pausado")
+                                    {
+                                        var comentario = (from c in db.CapturaIncidencia where c.idCaptura == item.idCaptura orderby c.idCapturaIncidencia descending select c.Comentario).FirstOrDefault();
+
+                                        <span class="field-tip">
+                                            <h6>
+                                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                                <span class="tip-content">@comentario</span>
+                                            </h6>
+                                        </span>
+                                    }
+                                    else if (item.EstatusCaptura == "Pendiente")
+                                    {
+                                        var comentario = (from c in db.IncidenciaDictamen where c.idCaptura == item.idCaptura orderby c.idIncidencia descending select c.Incidencia).FirstOrDefault();
+
+                                        <span class="field-tip">
+                                            <h6>
+                                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                                <span class="tip-content">@comentario</span>
+                                            </h6>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                    }
+                                }
                             </td>
                             <td>
 
@@ -575,13 +649,18 @@
                             </td>
                             <td>
                                 @{
-                                    if (item.EstatusCaptura == "No iniciado")
+                                    if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico == null)
                                     {
                                         using (Html.BeginForm("EditExpediente", "EPIs"))
                                         {
                                             @Html.AntiForgeryToken()
                                             <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
                                         }
+                                    }
+                                    else if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico != null)
+                                    {
+                                        <b>@Html.ActionLink("Abrir EPI", "PreDictamen", new { id = item.idPaciente })</b>
+                                        <div class="dropdown-divider"></div>
                                     }
                                     else if (item.EstatusCaptura == "En captura..." || item.EstatusCaptura == "Pendiente")
                                     {
@@ -592,8 +671,16 @@
                                             </button>
 
                                             <div class="dropdown-menu" style="padding:10px">
-                                                <b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = item.idCaptura })</b>
-                                                <div class="dropdown-divider"></div>
+                                                @if (item.CarruselMedico == null)
+                                                {
+                                                    <b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = item.idCaptura })</b>
+                                                    <div class="dropdown-divider"></div>
+                                                }
+                                                else
+                                                {
+                                                    <b>@Html.ActionLink("Abrir EPI", "PreDictamen", new { id = item.idPaciente })</b>
+                                                    <div class="dropdown-divider"></div>
+                                                }
                                                 <b>@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = item.idCaptura })</b>
                                                 <div class="dropdown-divider"></div>
                                             </div>
@@ -609,36 +696,52 @@
                             </td>
                         </tr>
                         flag++;
-                    }
+                    }                  
+
                 }
                 else
                 {
                     foreach (var item in repoCentral)
                     {
 
-                        if (item.TipoTramite == "PRIMERA VEZ")
+                        if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) != "AEREO")
                         {
-                            fila = "bg-info";
+                            fila = "#BBDEFB";
+                        }
+                        else if (item.TipoTramite != "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                        {
+                            fila = "#D1C4E9";
+                        }
+                        else if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                        {
+                            fila = "#9575CD";
                         }
                         else
                         {
-                            fila = "bg-default";
+                            fila = "white";
                         }
 
 
-                        <tr class=@fila>
+                        <tr tr style="background-color:@fila">
                             <td>
                                 @flag
                             </td>
                             <td>
                                 @{
-                                    if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 2 && idUser != 3 && idUser != 13 && idUser != 25 && idRol != 2))
+                                    if (item.CarruselMedico == null)
                                     {
-                                        @Html.DisplayFor(modelItem => item.NombrePaciente)
+                                        if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 2 && idUser != 3 && idUser != 13 && idUser != 25 && nombreUsuario == "Viridiana España"))
+                                        {
+                                            @Html.DisplayFor(modelItem => item.NombrePaciente)
+                                        }
+                                        else
+                                        {
+                                            <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_EC", new { id = item.idCaptura }, new { style = "color: black; text-decoration: none" })</b>
+                                        }
                                     }
                                     else
                                     {
-                                        <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_EC", new { id = item.idCaptura }, new { style = "color: black; text-decoration: none" })</b>
+                                        <b>@Html.ActionLink(item.NombrePaciente, "PreDictamen", new { id = item.idPaciente}, new { style = "color: black; text-decoration: none" })</b>
                                     }
                                 }
                             </td>
@@ -647,10 +750,42 @@
                                 @Html.DisplayFor(modelItem => item.NoExpediente)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.TipoTramite)
+                                @*@Html.DisplayFor(modelItem => item.TipoTramite)*@
+                                @{
+                                    var licencia = (from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault();
+                                }
+                                @item.TipoTramite (<b>@licencia</b>)
                             </td>
                             <td>
-                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                @{
+                                    if (item.EstatusCaptura == "Pausado")
+                                    {
+                                        var comentario = (from c in db.CapturaIncidencia where c.idCaptura == item.idCaptura orderby c.idCapturaIncidencia descending select c.Comentario).FirstOrDefault();
+
+                                        <span class="field-tip">
+                                            <h6>
+                                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                                <span class="tip-content">@comentario</span>
+                                            </h6>
+                                        </span>
+                                    }
+                                    else if (item.EstatusCaptura == "Pendiente")
+                                    {
+                                        var comentario = (from c in db.IncidenciaDictamen where c.idCaptura == item.idCaptura orderby c.idIncidencia descending select c.Incidencia).FirstOrDefault();
+
+                                        <span class="field-tip">
+                                            <h6>
+                                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                                <span class="tip-content">@comentario</span>
+                                            </h6>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                    }
+                                }
+
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.InicioCaptura)
@@ -669,13 +804,17 @@
                             </td>
                             <td>
                                 @{
-                                    if (item.EstatusCaptura == "No iniciado")
+                                    if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico == null)
                                     {
                                         using (Html.BeginForm("EditExpediente", "EPIs"))
                                         {
                                             @Html.AntiForgeryToken()
                                             <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
                                         }
+                                    }
+                                    else if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico != null)
+                                    {
+                                        <a href=@Url.Action("PreDictamen", "EPIs", new { id = item.idPaciente, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
                                     }
                                     else if (item.EstatusCaptura == "En captura..." || item.EstatusCaptura == "Pausado" || item.EstatusCaptura == "Pendiente")
                                     {
@@ -687,8 +826,16 @@
                                             <div class="dropdown-menu" style="padding:10px">
                                                 @if (item.EstatusCaptura != "Pausado")
                                                 {
-                                                    <b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = item.idCaptura })</b>
-                                                    <div class="dropdown-divider"></div>
+                                                    if (item.CarruselMedico == null)
+                                                    {
+                                                        <b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = item.idCaptura })</b>
+                                                        <div class="dropdown-divider"></div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <b>@Html.ActionLink("Abrir EPI", "Predictamen", new { id = item.idPaciente })</b>
+                                                        <div class="dropdown-divider"></div>
+                                                    }
                                                     <b>@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = item.idCaptura })</b>
                                                     <div class="dropdown-divider"></div>
                                                 }
@@ -704,10 +851,7 @@
 
                                                         //using (Html.BeginForm("Reanudar", "EPIs"))
                                                         //{
-                                                        <span class="glyphicon glyphicon-play text-success"></span><b>
-                                                            @*@Url.Action("Reanudar", "Reanudar", new { idCaptura = item.idCaptura })*@
-                                                            @Html.ActionLink("Reanudar", "Reanudar", new { idCaptura = item.idCaptura })
-                                                        </b>
+                                                        <span class="glyphicon glyphicon-play text-success"></span><b>@Html.ActionLink("Reanudar", "Reanudar", new { idCaptura = item.idCaptura })</b>
                                                         <div class="dropdown-divider"></div>
                                                         //}
                                                     }
@@ -737,7 +881,6 @@
                                                     </div>
                                                 </div>
                                             </form>
-
                                         </div>
 
                                     }
@@ -762,22 +905,22 @@
         <br />
 
         @*using (Html.BeginForm("Captura", "EPIs", FormMethod.Post))
-        {
-            <p>
-                <h5 class="labelGral">
-                    Mostrando: <select name="PageSize" id="PageSize" onchange="this.form.submit();">
-                        <option @if ((int)ViewBag.PageSize == 10) { @Html.Raw("selected") } value="10">10</option>
-                        <option @if ((int)ViewBag.PageSize == 20) { @Html.Raw("selected") } value="20">20</option>
-                        <option @if ((int)ViewBag.PageSize == 50) { @Html.Raw("selected") } value="50">50</option>
-                        <option @if ((int)ViewBag.PageSize == 100) { @Html.Raw("selected") } value="100">100</option>
-                    </select> registros
-                </h5>
-            </p>
-        }
+            {
+                <p>
+                    <h5 class="labelGral">
+                        Mostrando: <select name="PageSize" id="PageSize" onchange="this.form.submit();">
+                            <option @if ((int)ViewBag.PageSize == 10) { @Html.Raw("selected") } value="10">10</option>
+                            <option @if ((int)ViewBag.PageSize == 20) { @Html.Raw("selected") } value="20">20</option>
+                            <option @if ((int)ViewBag.PageSize == 50) { @Html.Raw("selected") } value="50">50</option>
+                            <option @if ((int)ViewBag.PageSize == 100) { @Html.Raw("selected") } value="100">100</option>
+                        </select> registros
+                    </h5>
+                </p>
+            }
 
-        <h5 class="labelGral">Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount. Elementos totales: @Model.TotalItemCount</h5>
+            <h5 class="labelGral">Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount. Elementos totales: @Model.TotalItemCount</h5>
 
-        @Html.PagedListPager(Model, page => Url.Action("Captura", "EPIs", new { page, pageSize = ViewBag.PageSize }))*@
+            @Html.PagedListPager(Model, page => Url.Action("Captura", "EPIs", new { page, pageSize = ViewBag.PageSize }))*@
     }
     else
     {
@@ -817,16 +960,87 @@
                     miResultado = "<h3>No se encontraron registros.</h3>"
                 }
                 else {
-                    miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>Expediente</th><th>Email</th><th>Teléfono</th><th>Fecha Cita</th><th>Sucursal</th></tr>"
+                    miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>Estatus Captura</th><th>Tipo Trámite</th><th>Fecha Captura</th><th>Sucursal</th><th></th></tr>"
                     for (let i = 0; i < data.length; i++) {
-                        miResultado += "<tr style=\"border:1px solid gray\">" +
-                            "<td><b>" + data[i].Nombre + "</b></td>" +
-                            "<td><b>" + data[i].NoExpediente + "</b></td>" +
-                            "<td><b>" + data[i].Email + "</b></td>" +
-                            "<td><b>" + data[i].Telefono + "</b></td>" +
-                            "<td><b>" + data[i].FechaReferencia + "</b></td>" +
-                            "<td><b>" + data[i].Sucursal + "</b></td>" +
-                            "</tr>"
+                        if (data[i].EstatusCaptura === "No iniciado" || data[i].EstatusCaptura === "Pausado") {
+
+                            var epi = '<b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = "xxxxx" }, new { style = "color: black; text-decoration: none" })</b>';
+                            epi = epi.replace("xxxxx", data[i].idCaptura);
+                            miResultado += "<tr style=\"border:1px solid gray\">" +
+                                "<td><b>" + data[i].Nombre + "</b></td>" +
+                                "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                "<td><b>" + data[i].TipoTramite + " (" + data[i].TipoLicencia + ")</b></td>" +
+                                "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                                "<td><b>" + data[i].Sucursal + " (" + data[i].Doctor + ")</b></td>" +
+                                "<td><div class=\"btn-group\">" +
+                                "<button type=\"button\" class=\"btn btn-info dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">" +
+                                "Acciones <span class=\"glyphicon glyphicon-triangle-bottom\"></span>" +
+                                "</button>" +
+
+                                "<div class=\"dropdown-menu\" style=\"padding:10px\">" +
+                                "<b>" + epi + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "</div>" +
+
+                                "</td> " +
+                                "</tr>"
+                        }
+                        else if (data[i].EstatusCaptura === "Pendiente" || data[i].EstatusCaptura === "En captura...") {
+                            var url = '@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = "xxxx" })';
+                            url = url.replace("xxxx", data[i].idCaptura);
+
+                            var epi = '<b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = "xxxxx" }, new { style = "color: black; text-decoration: none" })</b>';
+                            epi = epi.replace("xxxxx", data[i].idCaptura);
+
+                            miResultado += "<tr style=\"border:1px solid gray\">" +
+                                "<td><b>" + data[i].Nombre + "</b></td>" +
+                                "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                "<td><b>" + data[i].TipoTramite + " (" + data[i].TipoLicencia + ")</b></td>" +
+                                "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                                "<td><b>" + data[i].Sucursal + " (" + data[i].Doctor + ")</b></td>" +
+                                "<td><div class=\"btn-group\">" +
+                                "<button type=\"button\" class=\"btn btn-info dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">" +
+                                "Acciones <span class=\"glyphicon glyphicon-triangle-bottom\"></span>" +
+                                "</button>" +
+
+                                "<div class=\"dropdown-menu\" style=\"padding:10px\">" +
+                                "<b>" + url + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "<b>" + epi + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "</div>" +
+
+                                "</td> " +
+                                "</tr>"
+                        }
+                        else if (data[i].EstatusCaptura === "Terminado") {
+                            var url = '@Html.ActionLink("Descargar", "DescargarPDF", new { id = "xxxx" })';
+                            url = url.replace("xxxx", data[i].idCaptura);
+
+                            var epi = '<b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = "xxxxx" }, new { style = "color: black; text-decoration: none" })</b>';
+                            epi = epi.replace("xxxxx", data[i].idCaptura);
+
+                            miResultado += "<tr style=\"border:1px solid gray\">" +
+                                "<td><b>" + data[i].Nombre + "</b></td>" +
+                                "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                "<td><b>" + data[i].TipoTramite + " (" + data[i].TipoLicencia + ")</b></td>" +
+                                "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                                "<td><b>" + data[i].Sucursal + " (" + data[i].Doctor + ")</b></td>" +
+                                "<td><div class=\"btn-group\">" +
+                                "<button type=\"button\" class=\"btn btn-info dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">" +
+                                "Acciones <span class=\"glyphicon glyphicon-triangle-bottom\"></span>" +
+                                "</button>" +
+
+                                "<div class=\"dropdown-menu\" style=\"padding:10px\">" +
+                                "<b>" + url + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "<b>" + epi + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "</div>" +
+
+                                "</td> " +
+                                "</tr>"
+                        }
                     }
                 }
 
@@ -849,14 +1063,13 @@
                 document.getElementById("buscar").click();
             }
         });
-
     </script>
 
 }
 
 
 <div class="modal fade" id="exampleModal10" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog" role="document" style="width:60%">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
