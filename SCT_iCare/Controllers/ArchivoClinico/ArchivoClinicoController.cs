@@ -52,6 +52,21 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         {
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
+            //Inserción para verificación de Carrusel Médico
+            var revisionCM = (from r in db.Cita where r.idPaciente == id select r).FirstOrDefault();
+            if (revisionCM.CarruselMedico == null)
+            {
+                var cita = db.Cita.Find(revisionCM.idCita);
+                cita.CarruselMedico = "SI";
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(cita).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            //-----------------------------------------------
+
             if (revision.SignosVitales == null)
             {
                 var cm = db.CarruselMedico.Find(revision.idCarruselMedico);
@@ -73,6 +88,21 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         {
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
+            //Inserción para verificación de Carrusel Médico
+            var revisionCM = (from r in db.Cita where r.idPaciente == id select r).FirstOrDefault();
+            if (revisionCM.CarruselMedico == null)
+            {
+                var cita = db.Cita.Find(revisionCM.idCita);
+                cita.CarruselMedico = "SI";
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(cita).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            //-----------------------------------------------
+
             if (revision.Audiologia == null)
             {
                 var cm = db.CarruselMedico.Find(revision.idCarruselMedico);
@@ -93,6 +123,21 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         public ActionResult OFTALMOLOGÍA(int id)
         {
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
+
+            //Inserción para verificación de Carrusel Médico
+            var revisionCM = (from r in db.Cita where r.idPaciente == id select r).FirstOrDefault();
+            if (revisionCM.CarruselMedico == null)
+            {
+                var cita = db.Cita.Find(revisionCM.idCita);
+                cita.CarruselMedico = "SI";
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(cita).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            //-----------------------------------------------
 
             if (revision.Oftalmologia == null)
             {
@@ -117,6 +162,21 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         {
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
+            //Inserción para verificación de Carrusel Médico
+            var revisionCM = (from r in db.Cita where r.idPaciente == id select r).FirstOrDefault();
+            if (revisionCM.CarruselMedico == null)
+            {
+                var cita = db.Cita.Find(revisionCM.idCita);
+                cita.CarruselMedico = "SI";
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(cita).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            //-----------------------------------------------
+
             if (revision.Odontologia == null)
             {
                 var cm = db.CarruselMedico.Find(revision.idCarruselMedico);
@@ -137,6 +197,21 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         public ActionResult HISTORIA_CLÍNICA(int id)
         {
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
+
+            //Inserción para verificación de Carrusel Médico
+            var revisionCM = (from r in db.Cita where r.idPaciente == id select r).FirstOrDefault();
+            if (revisionCM.CarruselMedico == null)
+            {
+                var cita = db.Cita.Find(revisionCM.idCita);
+                cita.CarruselMedico = "SI";
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(cita).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            //-----------------------------------------------
 
             if (revision.HistoriaClinca == null)
             {
@@ -191,6 +266,21 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         {
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
+            //Inserción para verificación de Carrusel Médico
+            var revisionCM = (from r in db.Cita where r.idPaciente == id select r).FirstOrDefault();
+            if (revisionCM.CarruselMedico == null)
+            {
+                var cita = db.Cita.Find(revisionCM.idCita);
+                cita.CarruselMedico = "SI";
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(cita).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            //-----------------------------------------------
+
             if (revision.Cardiologia == null)
             {
                 var cm = db.CarruselMedico.Find(revision.idCarruselMedico);
@@ -212,6 +302,21 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         {
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
+            //Inserción para verificación de Carrusel Médico
+            var revisionCM = (from r in db.Cita where r.idPaciente == id select r).FirstOrDefault();
+            if (revisionCM.CarruselMedico == null)
+            {
+                var cita = db.Cita.Find(revisionCM.idCita);
+                cita.CarruselMedico = "SI";
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(cita).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            //-----------------------------------------------
+
             if (revision.Laboratorio == null)
             {
                 var cm = db.CarruselMedico.Find(revision.idCarruselMedico);
@@ -232,6 +337,21 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         public ActionResult NoPatologicos(int id)
         {
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
+
+            //Inserción para verificación de Carrusel Médico
+            var revisionCM = (from r in db.Cita where r.idPaciente == id select r).FirstOrDefault();
+            if (revisionCM.CarruselMedico == null)
+            {
+                var cita = db.Cita.Find(revisionCM.idCita);
+                cita.CarruselMedico = "SI";
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(cita).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            //-----------------------------------------------
 
             if (revision.HistoriaClinca == null)
             {
@@ -285,6 +405,21 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         {
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
+            //Inserción para verificación de Carrusel Médico
+            var revisionCM = (from r in db.Cita where r.idPaciente == id select r).FirstOrDefault();
+            if (revisionCM.CarruselMedico == null)
+            {
+                var cita = db.Cita.Find(revisionCM.idCita);
+                cita.CarruselMedico = "SI";
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(cita).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            //-----------------------------------------------
+
             if (revision.HistoriaClinca == null)
             {
                 var cm = db.CarruselMedico.Find(revision.idCarruselMedico);
@@ -337,6 +472,21 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         {
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
+            //Inserción para verificación de Carrusel Médico
+            var revisionCM = (from r in db.Cita where r.idPaciente == id select r).FirstOrDefault();
+            if (revisionCM.CarruselMedico == null)
+            {
+                var cita = db.Cita.Find(revisionCM.idCita);
+                cita.CarruselMedico = "SI";
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(cita).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            //-----------------------------------------------
+
             if (revision.HistoriaClinca == null)
             {
                 var cm = db.CarruselMedico.Find(revision.idCarruselMedico);
@@ -388,6 +538,21 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         public ActionResult ExploracionFisica(int id)
         {
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
+
+            //Inserción para verificación de Carrusel Médico
+            var revisionCM = (from r in db.Cita where r.idPaciente == id select r).FirstOrDefault();
+            if (revisionCM.CarruselMedico == null)
+            {
+                var cita = db.Cita.Find(revisionCM.idCita);
+                cita.CarruselMedico = "SI";
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(cita).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            //-----------------------------------------------
 
             if (revision.HistoriaClinca == null)
             {
@@ -1051,7 +1216,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 aptitud.NotaMedica = nota;
                 aptitud.idPaciente = id;
 
-                if (accion == "Concluir examen como NO APTO" || accion == "Enviar a Revaloración")
+                if (accion == "Concluir examen como NO APTO" || accion == "Enviar a Revaloración" || accion == "Revalorado NO APTO")
                 {
                     aptitud.Aptitud = "NO APTO";
                 }
@@ -1067,6 +1232,30 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                     if (ModelState.IsValid)
                     {
                         db.EPI_DictamenAptitud.Add(aptitud);
+                        db.SaveChanges();
+                    }
+                }
+
+                if (accion != "Enviar a Revaloración")
+                {
+                    var pacienteCaptura = (from c in db.Cita where c.idPaciente == id select c).FirstOrDefault();
+                    var pacienteCaptura2 = (from c in db.Paciente where c.idPaciente == id select c).FirstOrDefault();
+
+                    Captura captura = new Captura();
+
+                    captura.idPaciente = id;
+                    captura.NombrePaciente = pacienteCaptura2.Nombre;
+                    captura.NoExpediente = pacienteCaptura.NoExpediente;
+                    captura.TipoTramite = pacienteCaptura.TipoTramite;
+                    captura.EstatusCaptura = "No iniciado";
+                    captura.Doctor = pacienteCaptura.Doctor;
+                    captura.Sucursal = pacienteCaptura.Sucursal;
+                    captura.FechaExpdiente = DateTime.Now;
+                    captura.CarruselMedico = "SI";
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Captura.Add(captura);
                         db.SaveChanges();
                     }
                 }
@@ -1100,6 +1289,30 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 {
                     db.Entry(aptitud).State = EntityState.Modified;
                     db.SaveChanges();
+                }
+
+                if (accion != "Enviar a Revaloración")
+                {
+                    var pacienteCaptura = (from c in db.Cita where c.idPaciente == id select c).FirstOrDefault();
+                    var pacienteCaptura2 = (from c in db.Paciente where c.idPaciente == id select c).FirstOrDefault();
+
+                    Captura captura = new Captura();
+
+                    captura.idPaciente = id;
+                    captura.NombrePaciente = pacienteCaptura2.Nombre;
+                    captura.NoExpediente = pacienteCaptura.NoExpediente;
+                    captura.TipoTramite = pacienteCaptura.TipoTramite;
+                    captura.EstatusCaptura = "No iniciado";
+                    captura.Doctor = pacienteCaptura.Doctor;
+                    captura.Sucursal = pacienteCaptura.Sucursal;
+                    captura.FechaExpdiente = DateTime.Now;
+                    captura.CarruselMedico = "SI";
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Captura.Add(captura);
+                        db.SaveChanges();
+                    }
                 }
             }
 
@@ -1188,12 +1401,12 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 var fontA = FontFactory.GetFont(coloro, 11, Font.NORMAL, resultado);
                 var fontNA = FontFactory.GetFont(coloro, 11, Font.NORMAL, resultadoNO);
 
-                Chunk c01 = new Chunk("\n", font);
+                //Chunk c01 = new Chunk("\n", font);
                 Chunk c02 = new Chunk("\n", font);
                 Chunk c0 = new Chunk("DATOS DEL PACIENTE\n", font);
                 Chunk c1 = new Chunk("N° de estudio: " + noEstudio + "\n", font);
                 Chunk c2 = new Chunk("Paciente: " + nombre + "\n", font);
-                Chunk c3 = new Chunk("No. Expediente: " + noExpediente + "\n", font);
+                //Chunk c3 = new Chunk("No. Expediente: " + noExpediente + "\n", font);
                 Chunk c4 = new Chunk("Email: " + email + "\n", font);
                 Chunk c5 = new Chunk("Teléfono: " + telefono + "\n", font);
                 Chunk c6 = new Chunk("CURP: " + CURP + "\n", font);
@@ -1260,13 +1473,13 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 codeQRImage.ScaleAbsolute(150, 150);
                 codeQRImage.Alignment = Image.ALIGN_LEFT;
                 //doc.Add(PNG1);
-                p.Add(c01);
+                //p.Add(c01);
                 p.Add(c02);
                 p.Add(c0);
                 p.Add(c1);
                 p.Add(c15);
                 p.Add(c2);
-                p.Add(c3);
+                //p.Add(c3);
                 p.Add(c4);
                 p.Add(c5);
                 p.Add(c6);

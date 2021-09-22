@@ -36,6 +36,7 @@ namespace SCT_iCare
         public string CancelaComentario { get; set; }
         public string Entregado { get; set; }
         public string ReferidoPor { get; set; }
+        public string CarruselMedico { get; set; }
     
         public virtual Canal Canal1 { get; set; }
         public virtual Paciente Paciente { get; set; }

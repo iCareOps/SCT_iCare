@@ -905,9 +905,9 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
 else
 {
     <div class="tablaScroll">
-        <table class="table tablas" style="color: #2F2D6B;display:">
+        <table class="table tablas" style="color: #2F2D6B">
             <thead>
-                <tr class="bg-primary" style="border-top-color: black">
+                <tr class="bg-primary" style="border-top-color: black; font-size:smaller">
                     <th>
                     </th>
 
@@ -916,7 +916,7 @@ else
                     </th>
 
                     <th>
-                        No. Expediente
+                        No. Exp.
                     </th>
                     @{
                         if (idRol == 2)
@@ -945,10 +945,13 @@ else
                         Estatus Pago
                     </th>
                     <th>
-                        Estatus EPI
+                        Administración
                     </th>
                     <th>
-                        Estatus Dictamen
+                        Estatus Médico
+                    </th>
+                    <th>
+                        Dictamen
                     </th>
                     <th></th>
                 </tr>
@@ -1011,9 +1014,9 @@ else
                                                 @{
                                                     if (item.M.Doctor != null)
                                                     {
-                                                        <span class="field-tip"><h6>
+                                                        <span class="field-tip">
                                                             <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
-                                                            <span class="tip-content">@item.M.Doctor</span></h6>
+                                                            <span class="tip-content">@item.M.Doctor</span>
                                                         </span>
                                                     }
                         else
@@ -1047,11 +1050,11 @@ else
                         @{
                             if (item.M.TipoPago == "Pago con Tarjeta")
                             {
-                                <b><a href=@item.M.NoOrden target="_blank">Terminación: @item.M.Referencia</a></b>
+                                <b style="font-size:xx-small"><a href=@item.M.NoOrden target="_blank">Terminación: @item.M.Referencia</a></b>
                             }
                             else
                             {
-                                <b>@Html.DisplayFor(modelItem => item.M.Referencia)</b>
+                                <b style="font-size:x-small">@Html.DisplayFor(modelItem => item.M.Referencia)</b>
                             }
                         }
                     </td>
@@ -1060,32 +1063,131 @@ else
                     <td>
                         <b>@Html.DisplayFor(modelItem => item.M.TipoTramite)</b>
                     </td>
-                    <td>
+                    <td style="font-size: smaller">
                         @if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
                         {
-                            <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Pendiente</mark></b>
+                            <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Pendiente</mark></b>
                         }
                         else if (item.M.EstatusPago == "paid" || item.M.EstatusPago == "Pagado")
                         {
-                            <b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">Pagado</mark></b>
+                            <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Pagado</mark></b>
                         }
                     </td>
-                    <td>
+                    <td style="font-size: smaller">
+                        @{
+                            var revisionEPI2 = (from e in db.Expedientes where e.idPaciente == item.N.idPaciente select e).FirstOrDefault();
+                            var revisionDictamen2 = (from e in db.EPI_DictamenAptitud where e.idPaciente == item.N.idPaciente select e).FirstOrDefault();
 
-                        @if (item.M.Doctor == null && item.M.Asistencia != "NO")
-                        {
-                            <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Pendiente</mark></b>
-                        }
-                        else if ((item.M.EstatusPago == "paid" || item.M.EstatusPago == "Pagado") && item.M.Asistencia != "NO")
-                        {
-                            <b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">Digitalizado</mark></b>
-                        }
-                        else if (item.M.Asistencia == "NO")
-                        {
-                            <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px">Cancelado</mark></b>
+                            if (item.M.Asistencia == "NO")
+                            {
+                                <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">Cancelado</mark></b>
+                            }
+                            else if (revisionEPI2 == null)
+                            {
+                                if (revisionDictamen2 == null)
+                                {
+                                    if (item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico == null)
+                                    {
+                                        <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Pendiente</mark></b>
+                                    }
+                                    else if (item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico != null)
+                                    {
+                                        <b><mark style="background-color: dodgerblue; padding:5px; border-radius:7px">En proceso</mark></b>
+                                    }
+                                    else if (item.M.Asistencia != "NO" && item.M.Entregado != null && item.M.CarruselMedico == null)
+                                    {
+                                        <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Entregado</mark></b>
+                                    }
+                                }
+                                else
+                                {
+                                    if (item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico != null && (revisionDictamen2.Motivo != "Revalorado NO APTO" || revisionDictamen2.Motivo != "Revalorado APTO"))
+                                    {
+                                        <b><mark style="background-color: greenyellow; padding:5px; border-radius:7px">Terminado</mark></b>
+                                    }
+                                    else
+                                    {
+                                        <b><mark style="background-color: greenyellow; padding:5px; border-radius:7px">Revalorado</mark></b>
+                                    }
+                                }
+                            }
+                            else if (revisionEPI2 != null)
+                            {
+                                if (revisionEPI2 != null && item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico == null)
+                                {
+                                    <b><mark style="background-color: greenyellow; padding:5px; border-radius:7px">Digitalizado</mark></b>
+                                }
+                                else if (item.M.Entregado != null)
+                                {
+                                    <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Entregado</mark></b>
+                                }
+                            }
+
+
                         }
                     </td>
-                    <td>
+                    <td style="font-size: smaller">
+                        @{
+                            var revisionEPI = (from e in db.Expedientes where e.idPaciente == item.N.idPaciente select e).FirstOrDefault();
+                            var revisionDictamen = (from e in db.EPI_DictamenAptitud where e.idPaciente == item.N.idPaciente select e).FirstOrDefault();
+
+                            if (revisionEPI != null)
+                            {
+                                if (revisionEPI != null && item.M.CarruselMedico == null)
+                                {
+                                    <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Digitalizado</mark></b>
+                                }
+                            }
+                            else
+                            {
+                                if (item.M.CarruselMedico == null)
+                                {
+                                    <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Pendiente</mark></b>
+                                }
+                                else if (item.M.CarruselMedico != null && revisionDictamen == null)
+                                {
+                                    <b><mark style="background-color: dodgerblue; padding:5px; border-radius:7px">En proceso</mark></b>
+                                }
+                                else if (revisionDictamen != null && (revisionDictamen.Motivo == "APTO" || revisionDictamen.Motivo == "Concluir examen como APTO"))
+                                {
+                                    <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">APTO</mark></b>
+                                }
+                                else if (revisionDictamen != null && revisionDictamen.Motivo == "Conluir examen como NO APTO")
+                                {
+                                    <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">NO APTO</mark></b>
+                                }
+                                else if (revisionDictamen != null && revisionDictamen.Motivo == "Enviar a Revaloración")
+                                {
+                                    <b><mark style="background-color: orange; padding:5px; border-radius:7px">En Revaloración</mark></b>
+                                }
+                                else if (revisionDictamen != null && revisionDictamen.Motivo == "Revalorado APTO")
+                                {
+                                    <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Rev APTO</mark></b>
+                                }
+                                else if (revisionDictamen != null && revisionDictamen.Motivo == "Revalorado NO APTO")
+                                {
+                                    <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">Rev NO APTO</mark></b>
+                                }
+                            }
+
+
+                        }
+
+
+                        @*@if (item.M.Doctor == null && item.M.Asistencia != "NO")
+        {
+            <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Pendiente</mark></b>
+        }
+        else if ((item.M.EstatusPago == "paid" || item.M.EstatusPago == "Pagado") && item.M.Asistencia != "NO")
+        {
+            <b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">Digitalizado</mark></b>
+        }
+        else if (item.M.Asistencia == "NO")
+        {
+            <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px">Cancelado</mark></b>
+        }*@
+                    </td>
+                    <td style="font-size: smaller">
                         @{
                             var estatusDictamen = (from e in db.Captura where e.idPaciente == item.M.idPaciente select e).FirstOrDefault();
 
@@ -1093,22 +1195,23 @@ else
                             {
                                 <b>@*<mark style="background-color: darkgray; padding:5px; border-radius:10px">Sin EPI</mark>*@</b>
                             }
-                            else if (estatusDictamen.EstatusCaptura == "Pendiente")
+                            else if (estatusDictamen.EstatusCaptura == "Pendiente" || estatusDictamen.EstatusCaptura == "Pausado")
                             {
-                                <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px"><span class="glyphicon glyphicon-alert"></span> Error</mark></b>
-                            }
-                            else if (estatusDictamen.EstatusCaptura == "Pausado")
-                            {
-                                <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Pendiente</mark></b>
+                                <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px"><span class="glyphicon glyphicon-alert"></span> Error</mark></b>
                             }
                             else if (estatusDictamen.EstatusCaptura == "En captura..." || estatusDictamen.EstatusCaptura == "No iniciado")
                             {
-                                <b><mark style="background-color: dodgerblue; padding:5px; border-radius:10px">En proceso</mark></b>
+                                <b><mark style="background-color: dodgerblue; padding:5px; border-radius:7px">En proceso</mark></b>
                             }
-                            else if (estatusDictamen.EstatusCaptura == "Terminado")
+                            else if (estatusDictamen.EstatusCaptura == "Terminado" && estatusDictamen.Aptitud == "APTO")
                             {
                                 var idCaptura = (from i in db.Captura where i.idPaciente == item.M.idPaciente select i.idCaptura).FirstOrDefault();
-                                <a href=@Url.Action("DescargarPDF", "EPIs", new { id = idCaptura })><b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">Dictaminado</mark></b></a>
+                                <a href=@Url.Action("DescargarPDF", "EPIs", new { id = idCaptura })><b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">APTO</mark></b></a>
+                            }
+                            else if (estatusDictamen.EstatusCaptura == "Terminado" && estatusDictamen.Aptitud == "NO APTO")
+                            {
+                                var idCaptura = (from i in db.Captura where i.idPaciente == item.M.idPaciente select i.idCaptura).FirstOrDefault();
+                                <a href=@Url.Action("DescargarPDF", "EPIs", new { id = idCaptura })><b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">NO APTO</mark></b></a>
                             }
 
                         }

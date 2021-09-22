@@ -65,6 +65,40 @@ namespace SCT_iCare.Controllers.EPICenter
             return View(db.Paciente.ToList());
         }
 
+        public ActionResult PreDictamen(int id, string usuario)
+        {
+            if(usuario == null)
+            {
+                ViewBag.idPaciente = id;
+                return View();
+            }
+            else
+            {
+                var captura = (from i in db.Captura where i.idPaciente == id select i).FirstOrDefault();
+
+                if (captura.EstatusCaptura == "En captura...")
+                {
+                    TempData["ERROR"] = "ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO";
+                    return RedirectToAction("Captura");
+                }
+
+                captura.EstatusCaptura = "En captura...";
+                captura.InicioCaptura = DateTime.Now;
+                captura.Capturista = usuario;
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(captura).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+
+                ViewBag.idPaciente = id;
+                ViewBag.ID = captura.idCaptura;
+                return View();
+            }
+            
+        }
+
         public ActionResult AbrirEPI_EC(int? id)
         {
             Captura captura = db.Captura.Find(id);
