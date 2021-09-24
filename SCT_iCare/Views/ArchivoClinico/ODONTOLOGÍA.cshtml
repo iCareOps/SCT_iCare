@@ -29,14 +29,33 @@
 <h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Examen Odontología: </span>@nombrePaciente </h3>
 <br />
 
+@*Seccion de Scripts*@
+
+<script type="text/javascript">
+    function f_Diente_18() {
+        element_Diente_18 = document.getElementById("c_Diente_18");
+        check_Diente_18 = document.getElementById("s_Diente_18");
+        disabled_Diente_18 = document.getElementById("r_Diente_18");
+
+        if (check_Diente_18.checked) {
+            element_Diente_18.style.display = 'block';
+            disabled_Diente_18.disabled = false
+        }
+        else {
+            element_Diente_18.style.display = 'none';
+            disabled_Diente_18.disabled = true
+        }
+    }
+</script>
+
 <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Odontologia")" style="display:inline-block; margin:0.5%">
 
-    <div class="tablaScroll2" >
+    <div class="tablaScroll2">
         <table class="table tablas" style="color: #2F2D6B; min-width:1000px">
 
             <tr style="background-color:white">
                 <td style="">
-                    <img width="100%" src="~/Images/Diente 18.png" />
+                    <img width="100%" src="~/Images/Diente 18.png" onclick="javascript: f_Diente_18()" />
                 </td>
                 <td style="max-width:2; min-width:2">
                     <img width="100%" src="~/Images/Diente 17.png" />
@@ -147,6 +166,16 @@
 
     <h4 style="text-align:left; color:white">Nota:</h4>
     <textarea style="width:300vw" name="nota"></textarea>
+
+    <div class="form-group">
+        <label style="color:white">Diente 18:</label><br />
+        <input type="checkbox" id="s_Diente_18" onchange="javascript: f_Diente_18()" name="NDiente_18">
+    </div>
+
+    <div class="form-group" id="c_Diente_18" style="display: none;">
+        <label style="color:white">Especificar Alteracion</label><br />
+        <textarea id="r_Diente_18" name="req_Diente_18" required disabled></textarea>
+    </div>
 
     <br />
     <br />
