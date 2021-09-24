@@ -760,7 +760,9 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         }
 
         [HttpPost]
-        public ActionResult Guardar_Heredofamiliares(int id, string madrevive, string padrevive, string hermanosviven, string familiagrave, string diabetes, string arterial, string obesidad, string isquemica, string cerebral, string miocardio, string tiroides, string neoplastica)
+        public ActionResult Guardar_Heredofamiliares(int id, string madrevive, string padrevive, string hermanosviven, string familiagrave, 
+            string diabetes, string arterial, string obesidad, string isquemica, string cerebral, string miocardio, string tiroides, string neoplastica,
+            string esp_madrevive, string esp_padrevive, string esp_hermanosviven)
         {
             EPI_A_Heredofamiliares heredo = new EPI_A_Heredofamiliares();
 
@@ -776,6 +778,11 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             heredo.Infarto = miocardio == "on" ? "SI" : "NO";
             heredo.Tiroides = tiroides == "on" ? "SI" : "NO";
             heredo.Neoplasticas = neoplastica == "on" ? "SI" : "NO";
+
+            heredo.MadreVive_ESP = esp_madrevive != null ? esp_madrevive : null;
+            heredo.PadreVive_ESP = esp_padrevive != null ? esp_madrevive : null;
+            heredo.HermanosViven_ESP = esp_hermanosviven != null ? esp_hermanosviven : null;
+
             heredo.idPaciente = id;
 
             if (ModelState.IsValid)
@@ -991,7 +998,8 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         [HttpPost]
         public ActionResult Guardar_Patologicos(int id, string congenita, string alergias, string memoria, string obstructiva, string quirurgicos, string transfuncionales,
             string diabetes, string convunsivas, string traumatismo, string oncologicos, string cardiopatias, string hipertension, string fuma, string alcoholicas,
-            string drogas)
+            string drogas, string congenita_esp, string alergias_esp, string memoria_esp, string obstructiva_esp, string quirurgicos_esp, string transfuncionales_esp,
+            string diabetes_esp, string convulsivas_esp, string traumatismo_esp, string oncologicos_esp, string cardiopatias_esp, string hipertension_esp)
         {
             EPI_A_Patologicos patologicos = new EPI_A_Patologicos();
 
@@ -1010,6 +1018,19 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             patologicos.Fuma = fuma == "on" ? "SI" : "NO";
             patologicos.Alcoholismo = alcoholicas == "on" ? "SI" : "NO";
             patologicos.Drogas = drogas == "on" ? "SI" : "NO";
+            
+            patologicos.EnfermedadCongenita_ESP = congenita_esp != null ? congenita_esp : null;
+            patologicos.Alergias_ASP = alergias_esp != null ? alergias_esp : null;
+            patologicos.TrastornoMemoria_ESP = memoria_esp != null ? memoria_esp : null;
+            patologicos.Pulmonar_ESP = obstructiva_esp != null ? obstructiva_esp : null;
+            patologicos.Quirurgicos_ESP = quirurgicos_esp != null ? quirurgicos_esp : null;
+            patologicos.Transfuncionales_ESP = transfuncionales_esp != null ? transfuncionales_esp : null;
+            patologicos.Diabetes_ESP = diabetes_esp != null ? diabetes_esp : null;
+            patologicos.Convulsivas_ESP = convulsivas_esp != null ? convulsivas_esp : null;
+            patologicos.Traumatismo_ESP = traumatismo_esp != null ? traumatismo_esp : null;
+            patologicos.Oncologicos_ESP = oncologicos_esp != null ? oncologicos_esp : null;
+            patologicos.Cardiopatias_ESP = cardiopatias_esp != null ? cardiopatias_esp : null;
+            patologicos.Hipertension_ESP = hipertension_esp != null ? hipertension_esp : null;
 
 
             patologicos.idPaciente = id;
@@ -1448,18 +1469,18 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 var revision4 = (from r in db.EPI_AparatosSistemas where r.idPaciente == id orderby r.idAparatosSistemas descending select r).FirstOrDefault();
                 var revision5 = (from r in db.EPI_ExploracionFisica where r.idPaciente == id orderby r.idExploracionFisica descending select r).FirstOrDefault();
 
-                Chunk c50 = new Chunk("CIE-10(E-11) Diabetes Mellitus Tipo 2\n", font);
-                Chunk c51 = new Chunk("CIE-10 HIPERTENSIÓN ESCENCIAL\n", font);
-                Chunk c52 = new Chunk("CIE-10(I45) Otros trastornos de la conducción\n", font);
-                Chunk c53 = new Chunk("CIE-10(E66) Obesidad\n", font);
-                Chunk c54 = new Chunk("ALTERACION DE LA VISTA NO ESPECIFICADA\n", font);
-                Chunk c55 = new Chunk("CIE-10(53.32) Estereopsis Defectuosa\n", font);
-                Chunk c56 = new Chunk("CIE-10(H-918) OTRAS HIPOACUSIAS ESPECIFICADAS\n", font);
-                Chunk c57 = new Chunk("I-25 ENFERMEDAD ISQUEMICA CRONICA DEL CORAZON\n", font);
-                Chunk c58 = new Chunk("ALTERACION NEUROLOGICA NO ESPECIFICADA\n", font);
-                Chunk c59 = new Chunk("E-079 TRASTORNO DE LA GLANDULA TIROIDES, NO ESPECIFICADO\n", font);
-                Chunk c60 = new Chunk("H-509 ESTRABISMO, NO ESPECIFICADO\n", font);
-                Chunk c61 = new Chunk("H-918 OTRAS HIPOACUSIAS ESPECIFICADAS\n", font);
+                Chunk c50 = new Chunk("CIE-10(E-11) Diabetes Mellitus Tipo 2 - MEDICINA INTERNA\n", font);
+                Chunk c51 = new Chunk("CIE-10 HIPERTENSIÓN ESCENCIAL - MEDICINA INTERNA\n", font);
+                Chunk c52 = new Chunk("CIE-10(I45) Otros trastornos de la conducción - CARDIÓLOGO\n", font);
+                Chunk c53 = new Chunk("CIE-10(E66) Obesidad - NUTRICIÓN\n", font);
+                Chunk c54 = new Chunk("ALTERACION DE LA VISTA NO ESPECIFICADA - OFTALMÓLOGO\n", font);
+                Chunk c55 = new Chunk("CIE-10(53.32) Estereopsis Defectuosa - OFTALMÓLOGO\n", font);
+                Chunk c56 = new Chunk("CIE-10(H-918) OTRAS HIPOACUSIAS ESPECIFICADAS - MEDICINA INTERNA\n", font);
+                Chunk c57 = new Chunk("I-25 ENFERMEDAD ISQUEMICA CRONICA DEL CORAZON - CARDIÓLOGO\n", font);
+                Chunk c58 = new Chunk("ALTERACION NEUROLOGICA NO ESPECIFICADA - CARDIÓLOGO\n", font);
+                Chunk c59 = new Chunk("E-079 TRASTORNO DE LA GLANDULA TIROIDES, NO ESPECIFICADO - MEDICINA INTERNA\n", font);
+                Chunk c60 = new Chunk("H-509 ESTRABISMO, NO ESPECIFICADO - OFTALMÓLOGO\n", font);
+                Chunk c61 = new Chunk("H-918 OTRAS HIPOACUSIAS ESPECIFICADAS - MEDICINA INTERNA\n", font);
                 Chunk c62 = new Chunk("\n", font);
 
 

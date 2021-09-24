@@ -84,10 +84,10 @@
 
     var capturistasAnexa = from c in db.Usuarios where c.idRol == 9 select c.Nombre;
 
-    int citasEfectuadas = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.CC != null).Count();
-    var citasCompletadas = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.CC != null && w.Asistencia == null && (w.EstatusPago == "Pagado" || w.EstatusPago == "paid")).Count();
-    var citasPendientes = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.CC != null && w.Doctor == null && w.Asistencia == null).Count();
-    int citasCanceladas = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.CC != null && w.Asistencia != null).Count();
+    int citasEfectuadas = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.Canal == "Call Center").Count();
+    var citasCompletadas = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.Canal == "Call Center" && w.Asistencia == null && (w.EstatusPago == "Pagado" || w.EstatusPago == "paid")).Count();
+    var citasPendientes = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.Canal == "Call Center" && w.Doctor == null && w.Asistencia == null).Count();
+    int citasCanceladas = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.Canal == "Call Center" && w.Asistencia != null).Count();
 
     int efectividad = 0;
 

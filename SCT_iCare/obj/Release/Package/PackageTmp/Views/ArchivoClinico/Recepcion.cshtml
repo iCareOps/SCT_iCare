@@ -36,37 +36,37 @@
     DateTime tomorrowDate = new DateTime(year1, month1, day1);
 
     var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
-int? idRol = 0;
+    int? idRol = 0;
 
-if (oUser != null)
-{
-idUser = oUser.idUsuario;
-nombreUsuario = oUser.Nombre;
-idRol = oUser.idRol;
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
 
-if (idRol == 13 || idRol == 12)
-{
-Recepcion = (from r in db.DoctorModulo where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
-Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
-idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
-Sucursal = Hospital.ToString();
+        if (idRol == 13 || idRol == 12)
+        {
+            Recepcion = (from r in db.DoctorModulo where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
+            Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
+            idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
+            Sucursal = Hospital.ToString();
 
-modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal && s.M.EstatusPago == "Pagado" && s.M.NoExpediente != null)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal && s.M.EstatusPago == "Pagado"/* && s.M.NoExpediente != null*/)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 
-registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal && s.M.EstatusPago == "Pagado" && s.M.NoExpediente != null).Count();
+            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal && s.M.EstatusPago == "Pagado"/* && s.M.NoExpediente != null*/).Count();
 
-}
-else
-{
-Hospital = "GENERAL";
-Sucursal = Hospital.ToString();
+        }
+        else
+        {
+            Hospital = "GENERAL";
+            Sucursal = Hospital.ToString();
 
-modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.EstatusPago == "Pagado" && s.M.NoExpediente != null)/*.OrderByDescending(o => o.M.TipoTramite)*/;
+            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.EstatusPago == "Pagado" && s.M.NoExpediente != null)/*.OrderByDescending(o => o.M.TipoTramite)*/;
 
-registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.EstatusPago == "Pagado" && s.M.NoExpediente != null).Count();
+            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.EstatusPago == "Pagado" && s.M.NoExpediente != null).Count();
 
-}
-}
+        }
+    }
 
 
 }

@@ -1390,6 +1390,8 @@ namespace SCT_iCare.Controllers.Recepcion
                         db.SaveChanges();
                     }
                 }
+
+
             }
             else
             {
@@ -1414,9 +1416,14 @@ namespace SCT_iCare.Controllers.Recepcion
             var consulta = from c in db.Cita where c.Referencia == referencia select c;
             if (ModelState.IsValid)
             {
+                CarruselMedico cm = new CarruselMedico();
+
                 foreach (var item in consulta)
                 {
                     Cita cita = db.Cita.Find(item.idCita);
+
+                    cm.idPaciente = item.idPaciente;
+                    db.CarruselMedico.Add(cm);
 
                     cita.EstatusPago = "Pagado";
                     cita.TipoPago = pago;
@@ -1425,7 +1432,6 @@ namespace SCT_iCare.Controllers.Recepcion
                     
                 }
                 db.SaveChanges();
-
             }
             
             return Redirect("Index");
@@ -1519,12 +1525,12 @@ namespace SCT_iCare.Controllers.Recepcion
             cita.Doctor = doctor;
             cita.TipoTramite = tipoT;
 
-            CarruselMedico cm = new CarruselMedico();
-            cm.idPaciente = paciente.idPaciente;
+            //CarruselMedico cm = new CarruselMedico();
+            //cm.idPaciente = paciente.idPaciente;
 
             if (ModelState.IsValid)
             {
-                db.CarruselMedico.Add(cm);
+                //db.CarruselMedico.Add(cm);
                 db.Entry(paciente).State = EntityState.Modified;
                 db.Entry(cita).State = EntityState.Modified;
                 db.SaveChanges();

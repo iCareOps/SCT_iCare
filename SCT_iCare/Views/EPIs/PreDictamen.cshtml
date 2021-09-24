@@ -178,19 +178,24 @@
     <h4 style="text-align:left; color:white"><b>Soplo: </b><span style="color:aqua"> @revision5.Soplo</span></h4>
     <h4 style="text-align:left; color:white"><b>Amputaciones: </b><span style="color:aqua"> @revision5.Amputaciones</span></h4>
     <h4 style="text-align:left; color:white"><b>Prótesis: </b><span style="color:aqua"> @revision5.Protesis</span></h4>
+
+    <br />
+    <br />
+    var nota = (from i in db.EPI_DictamenAptitud where i.idPaciente == idPaciente orderby i.idDictamenAptitud descending select i.NotaMedica).FirstOrDefault();
+    <h4 style="text-align:left; color:white"><b>Nota Médica: </b><span style="color:aqua"> @nota</span></h4>
 }
 
 <hr />
-
+<button class="btn btn-primary botonCaptura">@Html.ActionLink("Regresar a EPI Center", "Captura", null, new { style = "text-decoration:none; color:white;" })</button>
 @{
     if (id != 0)
     {
         var pacienteCaptura = (from e in db.Captura where e.idPaciente == idPaciente select e).FirstOrDefault();
 
-        <button class="btn btn-primary" style="text-decoration:none">@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = pacienteCaptura.idCaptura })</button>
+        <button class="btn btn-success" style="text-decoration:none">@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = pacienteCaptura.idCaptura }, new { style = "text-decoration:none; color:white;" })</button>
     }
 
 }
 
-<button class="btn btn-primary" style="text-decoration:none">@Html.ActionLink("Regresar a EPI Center", "Captura")</button>
+
 

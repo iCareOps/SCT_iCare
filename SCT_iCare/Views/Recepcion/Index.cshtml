@@ -1243,7 +1243,10 @@ else
                                     <a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>Completar Datos</b></a>
                                     <div class="dropdown-divider"></div>
 
-                                    if ((from i in db.Cita where i.idPaciente == item.M.idPaciente && i.CarruselMedico != "SI" select i.CarruselMedico).FirstOrDefault() == null &&
+                                    var carruselActivo = (from i in db.Cita where i.idPaciente == item.M.idPaciente && i.CarruselMedico != "SI" select i.CarruselMedico).FirstOrDefault();
+                                    var expedienteActivo = (from i in db.Expedientes where i.idPaciente == item.M.idPaciente select i.idPaciente).FirstOrDefault();
+
+                                    if ((from i in db.Cita where i.idPaciente == item.M.idPaciente && i.CarruselMedico == "SI" select i.CarruselMedico).FirstOrDefault() == null &&
                                         (from i in db.Expedientes where i.idPaciente == item.M.idPaciente select i.idPaciente).FirstOrDefault() == null)
                                     {
                                         <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>

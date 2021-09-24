@@ -75,9 +75,9 @@
 
 
     //var repoCentral = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
-    var repoCentral = (from r in db.Captura orderby r.TipoTramite select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").ToList();
+    var repoCentral = (from r in db.Captura orderby r.TipoTramite select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado" && w.NoExpediente != null).ToList();
 
-    var repoCentral2 = (from r in db.Captura select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").Count();
+    var repoCentral2 = (from r in db.Captura select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado" && w.NoExpediente != null).Count();
 
 
     int epis = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).Count();
@@ -108,7 +108,7 @@
 <br />
 <br />
 @*<h5 style="color:white" class="text-right">@fecha</h5>*@
-<h3 style="color:white" class="text-center">EPI Center !!!!!! &nbsp; &nbsp; &nbsp;<span class="h4" style="color:#AC9070"><b>@fecha</b></span></h3>
+<h3 style="color:white" class="text-center">EPI Center &nbsp; &nbsp; &nbsp;<span class="h4" style="color:#AC9070"><b>@fecha</b></span></h3>
 @if (ViewBag.Estado == 1)
 {
     <h5 style="color:darkgray">Mostrando resultados de: <span style="color:white">@ViewBag.Inicio.ToString("dd-MMMM-yyyy")</span> hasta <span style="color:white">@ViewBag.Final.ToString("dd-MMMM-yyyy")</span></h5>
@@ -537,7 +537,7 @@
 
                 @if (ViewBag.Estado == 1)
                 {
-                    var repoCompleta = (from r in db.Captura select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).OrderBy(o => o.FechaExpdiente).ThenBy(t => t.NombrePaciente).ToList();
+                    var repoCompleta = (from r in db.Captura select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.NoExpediente != null).OrderBy(o => o.FechaExpdiente).ThenBy(t => t.NombrePaciente).ToList();
 
                     foreach (var item in repoCompleta)
                     {

@@ -31,6 +31,18 @@ namespace SCT_iCare
         public string Fuma { get; set; }
         public string Drogas { get; set; }
         public Nullable<int> idPaciente { get; set; }
+        public string EnfermedadCongenita_ESP { get; set; }
+        public string Alergias_ASP { get; set; }
+        public string TrastornoMemoria_ESP { get; set; }
+        public string Pulmonar_ESP { get; set; }
+        public string Quirurgicos_ESP { get; set; }
+        public string Transfuncionales_ESP { get; set; }
+        public string Diabetes_ESP { get; set; }
+        public string Traumatismo_ESP { get; set; }
+        public string Convulsivas_ESP { get; set; }
+        public string Oncologicos_ESP { get; set; }
+        public string Cardiopatias_ESP { get; set; }
+        public string Hipertension_ESP { get; set; }
     
         public virtual Paciente Paciente { get; set; }
     }
