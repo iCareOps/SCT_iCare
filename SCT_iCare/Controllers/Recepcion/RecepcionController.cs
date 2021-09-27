@@ -195,6 +195,17 @@ namespace SCT_iCare.Controllers.Recepcion
                 if (ModelState.IsValid)
                 {
                     db.Paciente.Add(paciente);
+                    
+                    db.SaveChanges();
+                    //return RedirectToAction("Index");
+                }
+
+                CarruselMedico cm = new CarruselMedico();
+                cm.idPaciente = paciente.idPaciente;
+
+                if (ModelState.IsValid)
+                {
+                    db.CarruselMedico.Add(cm);
                     db.SaveChanges();
                     //return RedirectToAction("Index");
                 }
@@ -408,6 +419,16 @@ namespace SCT_iCare.Controllers.Recepcion
                         //return RedirectToAction("Index");
                     }
 
+                    CarruselMedico cm = new CarruselMedico();
+                    cm.idPaciente = paciente.idPaciente;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.CarruselMedico.Add(cm);
+                        db.SaveChanges();
+                        //return RedirectToAction("Index");
+                    }
+
                     int? idSuc = (from i in db.Sucursales where i.Nombre == sucursal select i.idSucursal).FirstOrDefault();
 
                     Sucursales suc = db.Sucursales.Find(idSuc);
@@ -475,6 +496,8 @@ namespace SCT_iCare.Controllers.Recepcion
                         var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
                         cita.CC = referidoTipo;
                     }
+
+
                     
 
                     if (ModelState.IsValid)
