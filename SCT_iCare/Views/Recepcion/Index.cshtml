@@ -985,7 +985,7 @@ else
 
                     <td>
                         <span class="field-tip">
-                            <b>@Html.DisplayFor(modelItem => item.N.Nombre)</b>
+                            <b>@Html.DisplayFor(modelItem => item.N.Nombre) </b>
                             <span class="tip-content"><h6>
                                 <b>Teléfono:</b><br />
                                 @item.N.Telefono <br />
@@ -1046,18 +1046,27 @@ else
                         </span>
                     </span>
                 </td>
-                    <td>
-                        @{
-                            if (item.M.TipoPago == "Pago con Tarjeta")
-                            {
-                                <b style="font-size:xx-small"><a href=@item.M.NoOrden target="_blank">Terminación: @item.M.Referencia</a></b>
-                            }
-                            else
-                            {
-                                <b style="font-size:x-small">@Html.DisplayFor(modelItem => item.M.Referencia)</b>
+                <td>
+                    @{
+                        if (item.M.TipoPago == "Pago con Tarjeta")
+                        {
+                            <b style="font-size:xx-small"><a href=@item.M.NoOrden target="_blank">Terminación: @item.M.Referencia</a></b>
+                        }
+                        else
+                        {
+                            <b style="font-size:x-small">@Html.DisplayFor(modelItem => item.M.Referencia)</b>
+
+                                        var referenciaNormal = (from i in db.Cita where i.Referencia == item.M.Referencia orderby i.idCita descending select i.idPaciente).FirstOrDefault();
+                                        var referenciaSB = (from i in db.ReferenciasSB where i.idPaciente == referenciaNormal select i).FirstOrDefault();
+                                        if (referenciaSB != null)
+                                        {
+                                            <br />
+            
+                                            <b style="font-size:x-small" class="text-primary">SB: @referenciaSB.ReferenciaSB</b>
                             }
                         }
-                    </td>
+                    }
+                </td>
 
 
                     <td>
@@ -1131,45 +1140,51 @@ else
                             var revisionEPI = (from e in db.Expedientes where e.idPaciente == item.N.idPaciente select e).FirstOrDefault();
                             var revisionDictamen = (from e in db.EPI_DictamenAptitud where e.idPaciente == item.N.idPaciente select e).FirstOrDefault();
 
-                            if (revisionEPI != null)
+                            if (item.M.Asistencia == "NO")
                             {
-                                if (revisionEPI != null && item.M.CarruselMedico == null)
-                                {
-                                    <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Digitalizado</mark></b>
-                                }
+                                <b class="text-danger">- - - - - - - -</b>
                             }
                             else
                             {
-                                if (item.M.CarruselMedico == null)
+                                if (revisionEPI != null)
                                 {
-                                    <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Pendiente</mark></b>
+                                    if (revisionEPI != null && item.M.CarruselMedico == null)
+                                    {
+                                        <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Digitalizado</mark></b>
+                                    }
                                 }
-                                else if (item.M.CarruselMedico != null && revisionDictamen == null)
+                                else
                                 {
-                                    <b><mark style="background-color: dodgerblue; padding:5px; border-radius:7px">En proceso</mark></b>
-                                }
-                                else if (revisionDictamen != null && (revisionDictamen.Motivo == "APTO" || revisionDictamen.Motivo == "Concluir examen como APTO"))
-                                {
-                                    <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">APTO</mark></b>
-                                }
-                                else if (revisionDictamen != null && revisionDictamen.Motivo == "Conluir examen como NO APTO")
-                                {
-                                    <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">NO APTO</mark></b>
-                                }
-                                else if (revisionDictamen != null && revisionDictamen.Motivo == "Enviar a Revaloración")
-                                {
-                                    <b><mark style="background-color: orange; padding:5px; border-radius:7px">En Revaloración</mark></b>
-                                }
-                                else if (revisionDictamen != null && revisionDictamen.Motivo == "Revalorado APTO")
-                                {
-                                    <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Rev APTO</mark></b>
-                                }
-                                else if (revisionDictamen != null && revisionDictamen.Motivo == "Revalorado NO APTO")
-                                {
-                                    <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">Rev NO APTO</mark></b>
+                                    if (item.M.CarruselMedico == null)
+                                    {
+                                        <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Pendiente</mark></b>
+                                    }
+                                    else if (item.M.CarruselMedico != null && revisionDictamen == null)
+                                    {
+                                        <b><mark style="background-color: dodgerblue; padding:5px; border-radius:7px">En proceso</mark></b>
+                                    }
+                                    else if (revisionDictamen != null && (revisionDictamen.Motivo == "APTO" || revisionDictamen.Motivo == "Concluir examen como APTO"))
+                                    {
+                                        <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">APTO</mark></b>
+                                    }
+                                    else if (revisionDictamen != null && revisionDictamen.Motivo == "Conluir examen como NO APTO")
+                                    {
+                                        <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">NO APTO</mark></b>
+                                    }
+                                    else if (revisionDictamen != null && revisionDictamen.Motivo == "Enviar a Revaloración")
+                                    {
+                                        <b><mark style="background-color: orange; padding:5px; border-radius:7px">En Revaloración</mark></b>
+                                    }
+                                    else if (revisionDictamen != null && revisionDictamen.Motivo == "Revalorado APTO")
+                                    {
+                                        <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Rev APTO</mark></b>
+                                    }
+                                    else if (revisionDictamen != null && revisionDictamen.Motivo == "Revalorado NO APTO")
+                                    {
+                                        <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">Rev NO APTO</mark></b>
+                                    }
                                 }
                             }
-
 
                         }
 

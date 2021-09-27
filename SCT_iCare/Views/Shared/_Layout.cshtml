@@ -69,7 +69,7 @@
                                 </button>
                                 <div class="dropdown-menu" style="padding: 7px">
                                     @{
-                                        if (rol == 2 && Usuario != "Andrés Anduaga" && Usuario != "Teresa Lozano" && Usuario != "Jorge Rodriguez" && Usuario != "Héctor Peña")
+                                        if (rol == 2 && (Usuario != "Andrés Anduaga" || Usuario != "Teresa Lozano" || Usuario != "Jorge Rodriguez" || Usuario != "Héctor Peña"))
                                         {
                                             <h5>@Html.ActionLink("Inicio", "Index", "Admin")</h5>
                                             <h5>@Html.ActionLink("Reportes", "DescargasReporte", "EPIs")</h5>
@@ -83,11 +83,16 @@
                                             <h5>@Html.ActionLink("Log Gestores", "Index", "LogGestores")</h5>
                                             <h5>@Html.ActionLink("Usuarios", "Index", "Usuarios")</h5>
                                         }
-                                        else if (Usuario == "Jorge Rodriguez" && Usuario == "Héctor Peña")
+                                        else if (Usuario == "Jorge Rodriguez" || Usuario == "Héctor Peña")
                                         {
                                             <h5>@Html.ActionLink("Inicio", "Index", "Admin")</h5>
                                             <h5>@Html.ActionLink("Reportes", "DescargasReporte", "EPIs")</h5>
                                             <h5>@Html.ActionLink("Gestoría", "Index", "GestorVenta")</h5>
+                                        }
+                                        else if (Usuario == "Teresa Lozano")
+                                        {
+                                            <h5>@Html.ActionLink("Inicio", "Dashboard", "Admin")</h5>
+                                            <h5>@Html.ActionLink("Reportes", "DescargasReporte", "EPIs")</h5>
                                         }
                                         else if (rol == 1)
                                         {
