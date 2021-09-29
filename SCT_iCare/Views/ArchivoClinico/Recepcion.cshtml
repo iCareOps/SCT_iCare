@@ -52,10 +52,10 @@
             Sucursal = Hospital.ToString();
 
             modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).
-                Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal && s.M.EstatusPago == "Pagado" && s.M.Asistencia != "NO");
+                Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal && s.M.EstatusPago == "Pagado" && s.M.Asistencia != "NO" && s.M.idCanal != null);
 
             registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).
-                Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal && s.M.EstatusPago == "Pagado" && s.M.Asistencia != "NO").Count();
+                Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal && s.M.EstatusPago == "Pagado" && s.M.Asistencia != "NO" && s.M.idCanal != null).Count();
 
         }
         else
@@ -63,9 +63,9 @@
             Hospital = "GENERAL";
             Sucursal = Hospital.ToString();
 
-            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.EstatusPago == "Pagado" && s.M.Asistencia != "NO"/* && s.M.NoExpediente != null*/)/*.OrderByDescending(o => o.M.TipoTramite)*/;
+            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.EstatusPago == "Pagado" && s.M.Asistencia != "NO" && s.M.idCanal != null/* && s.M.NoExpediente != null*/)/*.OrderByDescending(o => o.M.TipoTramite)*/;
 
-            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.EstatusPago == "Pagado" && s.M.Asistencia != "NO"/* && s.M.NoExpediente != null*/).Count();
+            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.EstatusPago == "Pagado" && s.M.Asistencia != "NO" && s.M.idCanal != null/* && s.M.NoExpediente != null*/).Count();
 
         }
     }
@@ -282,11 +282,16 @@
                                 </td>
                                 <td>
                                     @{
-                                        var dictamen = (from d in db.EPI_DictamenAptitud where d.idPaciente == item.N.idPaciente orderby d.idPaciente descending select d).FirstOrDefault();
+                                        var dictamen = (from d in db.EPI_DictamenAptitud where d.idPaciente == item.N.idPaciente orderby d.idDictamenAptitud descending select d).FirstOrDefault();
+                                        var revaloracionLista = (from d in db.ExpedienteRevaloracion where d.idPaciente == item.M.idPaciente orderby d.idExpedienteRevaloracion descending select d).FirstOrDefault();
 
                                         if (dictamen != null)
                                         {
-                                            if (dictamen.Motivo == "Enviar a Revaloración")
+                                            if (revaloracionLista != null)
+                                            {
+                                                <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Revalorado</mark></b>
+                                            }
+                                            else if (dictamen.Motivo == "Enviar a Revaloración")
                                             {
                                                 <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Revaloración</mark></b>
                                             }

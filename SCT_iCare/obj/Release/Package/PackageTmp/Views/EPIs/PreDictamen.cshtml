@@ -26,82 +26,406 @@
 @{
     var consulta1 = (from c in db.EPI_SignosVitales where c.idPaciente == idPaciente orderby c.idSignosVitales descending select c).FirstOrDefault();
     <h3 style="text-align:left; color:white">Signos Vitales</h3>
-    <h4 style="text-align:left; color:white"><b>Presion Arterial Sistólica: </b><span style="color:aqua"> @consulta1.Sistolica</span></h4>
-    <h4 style="text-align:left; color:white"><b>Presion Arterial Diastólica: </b><span style="color:aqua"> @consulta1.Diastolica</span></h4>
-    <h4 style="text-align:left; color:white"><b>Frecuencia Cardiaca: </b><span style="color:aqua"> @consulta1.Cardiaca</span></h4>
-    <h4 style="text-align:left; color:white"><b>Frecuencia Respiratoria: </b><span style="color:aqua"> @consulta1.Respiratoria</span></h4>
-    <h4 style="text-align:left; color:white"><b>Temperatura: </b><span style="color:aqua"> @consulta1.Temperatura °</span></h4>
-    <h4 style="text-align:left; color:white"><b>Peso: </b><span style="color:aqua"> @consulta1.Peso kgs</span></h4>
-    <h4 style="text-align:left; color:white"><b>Estatura: </b><span style="color:aqua"> @consulta1.Estatura cms</span></h4>
-    <h4 style="text-align:left; color:white"><b>IMC: </b><span style="color:aqua"> @consulta1.IMC</span></h4>
-    <h4 style="text-align:left; color:white"><b>Cintura: </b><span style="color:aqua"> @consulta1.Cintura cms</span></h4>
-    <h4 style="text-align:left; color:white"><b>Cuello: </b><span style="color:aqua"> @consulta1.Cuello cms</span></h4>
-    <h4 style="text-align:left; color:white"><b>% de Grasa: </b><span style="color:aqua"> @consulta1.Grasa %</span></h4>
+
+    <table class="table tablas2 table-bordered" style="width:400px; font-size:large">
+        <tr>
+            <td class="bg-primary">
+                <b>Presión Arterial Sistólica</b>
+            </td>
+            <td>
+                @consulta1.Sistolica
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Presión Arterial Diastólica</b>
+            </td>
+            <td>
+                @consulta1.Diastolica
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Frecuencia Cardiaca</b>
+            </td>
+            <td>
+                @consulta1.Cardiaca
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Frecuencia Respiratoria</b>
+            </td>
+            <td>
+                @consulta1.Respiratoria
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Temperatura</b>
+            </td>
+            <td>
+                @consulta1.Temperatura°
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Peso</b>
+            </td>
+            <td>
+                @consulta1.Peso kgs
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Estatura</b>
+            </td>
+            <td>
+                @consulta1.Estatura cms
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>IMC</b>
+            </td>
+            <td>
+                @consulta1.IMC
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Cintura</b>
+            </td>
+            <td>
+                @consulta1.Cintura cms
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Cuello</b>
+            </td>
+            <td>
+                @consulta1.Cuello cms
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Porcentaje de Grasa</b>
+            </td>
+            <td>
+                @consulta1.Grasa %
+            </td>
+        </tr>
+    </table>
     <hr />
 
     var consulta2 = (from c in db.EPI_Cardiologia where c.idPaciente == idPaciente orderby c.idCardiologia descending select c).FirstOrDefault();
     <h3 style="text-align:left; color:white">Cardiología</h3>
-    <h4 style="text-align:left; color:white"><b>Ritmo: </b><span style="color:aqua"> @consulta2.Ritmo</span></h4>
-    <h4 style="text-align:left; color:white"><b>Frecuencia: </b><span style="color:aqua"> @consulta2.Frecuencia</span></h4>
-    <h4 style="text-align:left; color:white"><b>Eje: </b><span style="color:aqua"> @consulta2.Eje</span></h4>
-    <h4 style="text-align:left; color:white"><b>Intervalo PR: </b><span style="color:aqua"> @consulta2.PR</span></h4>
-    <h4 style="text-align:left; color:white"><b>Intervalo QT: </b><span style="color:aqua"> @consulta2.QT</span></h4>
-    <h4 style="text-align:left; color:white"><b>Intervalo QRS: </b><span style="color:aqua"> @consulta2.QRS</span></h4>
-    <h4 style="text-align:left; color:white"><b>Onda P: </b><span style="color:aqua"> @consulta2.OndaP</span></h4>
-    <h4 style="text-align:left; color:white"><b>Onda T: </b><span style="color:aqua"> @consulta2.OndaT</span></h4>
+
+    <table class="table tablas2 table-bordered" style="width:400px; font-size:large">
+        <tr>
+            <td class="bg-primary">
+                <b>Ritmo</b>
+            </td>
+            <td>
+                @consulta2.Ritmo
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Frecuencia</b>
+            </td>
+            <td>
+                @consulta2.Frecuencia
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Eje</b>
+            </td>
+            <td>
+                @consulta2.Eje
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Intervalo PR</b>
+            </td>
+            <td>
+                @consulta2.PR
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Intervalo QT</b>
+            </td>
+            <td>
+                @consulta2.QT
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Intervalo QRS</b>
+            </td>
+            <td>
+                @consulta2.QRS
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Onda P</b>
+            </td>
+            <td>
+                @consulta2.OndaP
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Onda T</b>
+            </td>
+            <td>
+                @consulta2.OndaT
+            </td>
+        </tr>
+    </table>
     <hr />
 
     var consulta = (from c in db.Epi_Oftalmologia where c.idPaciente == idPaciente orderby c.idOftalmologia descending select c).FirstOrDefault();
     <h3 style="text-align:left; color:white">Oftalmología</h3>
-    <h4 style="text-align:left; color:white"><b>Agudeza Visual Cercana (Derecho): </b><span style="color:aqua"> @consulta.DerechoAVC</span></h4>
-    <h4 style="text-align:left; color:white"><b>Agudeza Visual Media (Derecho): </b><span style="color:aqua"> @consulta.DerechoAVM</span></h4>
-    <h4 style="text-align:left; color:white"><b>Agudeza Visual Lejana (Derecho): </b><span style="color:aqua"> @consulta.DerechoAVL</span></h4>
-    <h4 style="text-align:left; color:white"><b>Agudeza Visual Cercana (Izquierdo): </b><span style="color:aqua"> @consulta.IzquierdoAVC</span></h4>
-    <h4 style="text-align:left; color:white"><b>Agudeza Visual Media (Izquierdo): </b><span style="color:aqua"> @consulta.IzquierdoAVM</span></h4>
-    <h4 style="text-align:left; color:white"><b>Agudeza Visual Lejana (Izquierdo): </b><span style="color:aqua"> @consulta.IzquierdoAVL</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Utiliza lentes para corregir su agudeza visual?: </b><span style="color:aqua"> @consulta.AgudezaVisual</span></h4>
-    <h4 style="text-align:left; color:white"><b>Sentida de Profundidad o Estereopsis: </b><span style="color:aqua"> @consulta.Estereopsis</span></h4>
-    <h4 style="text-align:left; color:white"><b>Presencia de carta de no accidentes: </b><span style="color:aqua"> @consulta.CartaAccidentes</span></h4>
-    <h4 style="text-align:left; color:white"><b>Campo Visual: </b><span style="color:aqua"> @consulta.CampoVisual</span></h4>
-    <h4 style="text-align:left; color:white"><b>Movimientos Oculares: </b><span style="color:aqua"> @consulta.MovimientosOculares</span></h4>
-    <h4 style="text-align:left; color:white"><b>Ojo derecho Reflejos Pupilares: </b><span style="color:aqua"> @consulta.DerechoRP</span></h4>
-    <h4 style="text-align:left; color:white"><b>Ojo izquierdo Reflejos Pupilares: </b><span style="color:aqua"> @consulta.IzquierdoRP</span></h4>
 
-    if (consulta.Cromatica == "Deuteranop")
-    {
-        <h4 style="text-align:left; color:white"><b>Tensión de Visión Cromática: </b><span style="color:aqua"> Deuteranopia con carta de no accidentes y desempeño</span></h4>
-    }
-    else if (consulta.Cromatica == "Ir a SCT")
-    {
-        <h4 style="text-align:left; color:white"><b>Tensión de Visión Cromática: </b><span style="color:aqua"> Deuteranopia con carta de no accidentes sin carta de desempeño (Ir a SCT)</span></h4>
-    }
-    else
-    {
-        <h4 style="text-align:left; color:white"><b>Tensión de Visión Cromática: </b><span style="color:aqua"> @consulta.Cromatica</span></h4>
-    }
+    <table class="table tablas2 table-bordered" style="width:400px; font-size:large">
+        <tr>
+            <td class="bg-primary">
+                <b>Agudeza Visual Cercana (Derecho)</b>
+            </td>
+            <td>
+                @consulta.DerechoAVC
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Agudeza Visual Media (Derecho)</b>
+            </td>
+            <td>
+                @consulta.DerechoAVM
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Agudeza Visual Lejana (Derecho)</b>
+            </td>
+            <td>
+                @consulta.DerechoAVL
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Agudeza Visual Cercana (Izquierdo)</b>
+            </td>
+            <td>
+                @consulta.IzquierdoAVC
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Agudeza Visual Media (Izquierdo)</b>
+            </td>
+            <td>
+                @consulta.IzquierdoAVM
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Agudeza Visual Lejana (Izquierdo)</b>
+            </td>
+            <td>
+                @consulta.IzquierdoAVL
+            </td>
+        </tr>
+
+        <tr>
+            <td class="bg-primary">
+                <b>¿Utiliza Lentes?</b>
+            </td>
+            <td>
+                @consulta.AgudezaVisual
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Sentido de Profundidad o Estereopsis</b>
+            </td>
+            <td>
+                @consulta.Estereopsis
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Carta de No Accidentes</b>
+            </td>
+            <td>
+                @consulta.CartaAccidentes
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Campo Visual</b>
+            </td>
+            <td>
+                @consulta.CampoVisual
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Movimientos Oculares</b>
+            </td>
+            <td>
+                @consulta.MovimientosOculares
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Reflejos Pupilares (Derecho)</b>
+            </td>
+            <td>
+                @consulta.DerechoRP
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Reflejos Pupilares (Izquierdo)</b>
+            </td>
+            <td>
+                @consulta.IzquierdoRP
+            </td>
+        </tr>
+
+        @{
+            if (consulta.Cromatica == "Deuteranop")
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Tensión de Visión Cromática</b>
+                    </td>
+                    <td>
+                        Deuteranopia con carta de no accidentes y desempeño
+                    </td>
+                </tr>
+            }
+            else if (consulta.Cromatica == "Ir a SCT")
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Tensión de Visión Cromática</b>
+                    </td>
+                    <td>
+                        Deuteranopia con carta de no accidentes sin carta de desempeño (Ir a SCT)
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Tensión de Visión Cromática</b>
+                    </td>
+                    <td>
+                        @consulta.Cromatica
+                    </td>
+                </tr>
+            }
+        }
+
+    </table>
 
     <hr />
 
     var consulta4 = (from c in db.EPI_Audiologia where c.idPaciente == idPaciente orderby c.idAudiologia descending select c).FirstOrDefault();
     <h3 style="text-align:left; color:white">Audiología</h3>
-    <h4 style="text-align:left; color:white"><b>¿Padece alguna patología?: </b><span style="color:aqua"> @consulta4.Patologia</span></h4>
-    <h4 style="text-align:left; color:white"><b>Interpretación de las gráficas: </b><span style="color:aqua"> @consulta4.Grafica</span></h4>
-    <h4 style="text-align:left; color:white"><b>Nota Médica: </b><span style="color:aqua"> @consulta4.NotaMedica</span></h4>
+
+    <table class="table tablas2 table-bordered" style="width:400px; font-size:large">
+        <tr>
+            <td class="bg-primary">
+                <b>¿Padece una patología?</b>
+            </td>
+            <td>
+                @consulta4.Patologia
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Interpretación de las gráficas</b>
+            </td>
+            <td>
+                @consulta4.Grafica
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Nota Médica</b>
+            </td>
+            <td>
+                @consulta4.NotaMedica
+            </td>
+        </tr>
+    </table>
     <hr />
 
     var consulta6 = (from c in db.EPI_Odontologia where c.idPaciente == idPaciente orderby c.idOdontologia descending select c).FirstOrDefault();
     <h3 style="text-align:left; color:white">Odontología</h3>
-    <h4 style="text-align:left; color:white"><b>Exploracion Odontológica: </b><span style="color:aqua"> @consulta6.Exploracion</span></h4>
-    if (consulta6.NotaOdontologica != null)
-    {
-        <h4 style="text-align:left; color:white"><b>Nota: </b><span cstyle="color:aqua"> @consulta6.NotaOdontologica</span></h4>
-    }
+
+    <table class="table tablas2 table-bordered" style="width:400px; font-size:large">
+        <tr>
+            <td class="bg-primary">
+                <b>Exploración Odontológica</b>
+            </td>
+            <td>
+                @consulta6.Exploracion
+            </td>
+        </tr>
+        @{
+            if (consulta6.NotaOdontologica != null)
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Nota:</b>
+                    </td>
+                    <td>
+                        @consulta6.NotaOdontologica
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+
     <hr />
 
     var consulta5 = (from c in db.EPI_Laboratorio where c.idPaciente == idPaciente orderby c.idLaboratorio descending select c).FirstOrDefault();
     <h3 style="text-align:left; color:white">Laboratorio</h3>
-    <h4 style="text-align:left; color:white"><b>Glucosa: </b><span style="color:aqua"> @consulta5.Glucosa</span></h4>
-    <h4 style="text-align:left; color:white"><b>Hemoglobina Glucosilada: </b><span style="color:aqua"> @consulta5.HemoglobinaGlucosilada</span></h4>
+
+    <table class="table tablas2 table-bordered" style="width:400px; font-size:large">
+        <tr>
+            <td class="bg-primary">
+                <b>Glucosa</b>
+            </td>
+            <td>
+                @consulta5.Glucosa
+            </td>
+        </tr>
+        @{
+            if (Convert.ToDouble(consulta5.HemoglobinaGlucosilada) != 0)
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Hemoglobina Glucosilada</b>
+                    </td>
+                    <td>
+                        @consulta5.HemoglobinaGlucosilada
+                    </td>
+                </tr>
+            }
+        }
+    </table>
     <hr />
 
     var revision1 = (from r in db.EPI_A_Heredofamiliares where r.idPaciente == idPaciente orderby r.idHeredofamiliares descending select r).FirstOrDefault();
@@ -111,78 +435,724 @@
     var revision5 = (from r in db.EPI_ExploracionFisica where r.idPaciente == idPaciente orderby r.idExploracionFisica descending select r).FirstOrDefault();
 
     <h3 style="text-align:left; color:white">Antecedentes Heredofamiliares</h3>
-    <h4 style="text-align:left; color:white"><b>¿Madre Vive?: </b><span style="color:aqua"> @revision1.MadreVive</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Padre Vive?: </b><span style="color:aqua"> @revision1.PadreVive</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Hermanos Viven?: </b><span style="color:aqua"> @revision1.HermanosViven</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Alguien de su familia padece una enfermedad grave?: </b><span style="color:aqua"> @revision1.FamiliaGrave</span></h4>
-    <h4 style="text-align:left; color:white"><b>Diabetes Melitus: </b><span style="color:aqua"> @revision1.Diabetes</span></h4>
-    <h4 style="text-align:left; color:white"><b>Hipertensión Arterial: </b><span style="color:aqua"> @revision1.Hipertension</span></h4>
-    <h4 style="text-align:left; color:white"><b>Obesidad: </b><span style="color:aqua"> @revision1.Obesidad</span></h4>
-    <h4 style="text-align:left; color:white"><b>Cardiopatía Isquémica: </b><span style="color:aqua"> @revision1.Cardiopatia</span></h4>
-    <h4 style="text-align:left; color:white"><b>Enfermedad vascular cerebral: </b><span style="color:aqua"> @revision1.VascularCerebral</span></h4>
-    <h4 style="text-align:left; color:white"><b>Infarto Agudo al Miocardio: </b><span style="color:aqua"> @revision1.Infarto</span></h4>
-    <h4 style="text-align:left; color:white"><b>Patología de Tiroides: </b><span style="color:aqua"> @revision1.Tiroides</span></h4>
-    <h4 style="text-align:left; color:white"><b>Enfermedades Neoplásticas: </b><span style="color:aqua"> @revision1.Neoplasticas</span></h4>
+
+    <table class="table tablas2 table-bordered" style="width:400px; font-size:large">
+        <tr>
+            <td class="bg-primary">
+                <b>¿Madre Vive?</b>
+            </td>
+            <td>
+                @revision1.MadreVive
+            </td>
+        </tr>
+        @{
+            if (revision1.MadreVive_ESP != null)
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Causa:</b>
+                    </td>
+                    <td>
+                        @revision1.MadreVive_ESP
+                    </td>
+                </tr>
+            }
+        }
+
+        <tr>
+            <td class="bg-primary">
+                <b>¿Padre Vive?</b>
+            </td>
+            <td>
+                @revision1.PadreVive
+            </td>
+        </tr>
+        @{
+            if (revision1.PadreVive_ESP != null)
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Causa:</b>
+                    </td>
+                    <td>
+                        @revision1.PadreVive_ESP
+                    </td>
+                </tr>
+            }
+        }
+
+        <tr>
+            <td class="bg-primary">
+                <b>¿Hermanos Viven?</b>
+            </td>
+            <td>
+                @revision1.HermanosViven
+            </td>
+        </tr>
+        @{
+            if (revision1.HermanosViven_ESP != null)
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Causa:</b>
+                    </td>
+                    <td>
+                        @revision1.HermanosViven_ESP
+                    </td>
+                </tr>
+            }
+        }
+
+        <tr>
+            <td class="bg-primary">
+                <b>¿Alguien de su familia padece alguna enfermedas grave?</b>
+            </td>
+            <td>
+                @revision1.FamiliaGrave
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Diabetes Melitus</b>
+            </td>
+            <td>
+                @revision1.Diabetes
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Hipertensión Arterial</b>
+            </td>
+            <td>
+                @revision1.Hipertension
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Obesidad</b>
+            </td>
+            <td>
+                @revision1.Obesidad
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Cardiopatía Isquémica</b>
+            </td>
+            <td>
+                @revision1.Cardiopatia
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Enfermedad Vascular Cerebral</b>
+            </td>
+            <td>
+                @revision1.VascularCerebral
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Infarto Agudo al Miocardio</b>
+            </td>
+            <td>
+                @revision1.Infarto
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Patología de Tiroides</b>
+            </td>
+            <td>
+                @revision1.Tiroides
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Enfermedades Neoplásticas</b>
+            </td>
+            <td>
+                @revision1.Neoplasticas
+            </td>
+        </tr>
+    </table>
 
     <h3 style="text-align:left; color:white">Antecedentes Personales No Patológicos</h3>
-    <h4 style="text-align:left; color:white"><b>Vacunas completas: </b><span style="color:aqua"> @revision2.VacunasCompletas</span></h4>
-    <h4 style="text-align:left; color:white"><b>Estado Civil: </b><span style="color:aqua"> @revision2.EstadoCivil</span></h4>
-    <h4 style="text-align:left; color:white"><b>Religión: </b><span style="color:aqua"> @revision2.Religion</span></h4>
-    <h4 style="text-align:left; color:white"><b>Escolaridad: </b><span style="color:aqua"> @revision2.Escolaridad</span></h4>
-    <h4 style="text-align:left; color:white"><b>Número de hijos: </b><span style="color:aqua"> @revision2.Hijos</span></h4>
+
+    <table class="table tablas2 table-bordered" style="width:400px; font-size:large">
+        <tr>
+            <td class="bg-primary">
+                <b>Vacunas Completas</b>
+            </td>
+            <td>
+                @revision2.VacunasCompletas
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Estado Civil</b>
+            </td>
+            <td>
+                @revision2.EstadoCivil
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Religión</b>
+            </td>
+            <td>
+                @revision2.Religion
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Escolaridad</b>
+            </td>
+            <td>
+                @revision2.Escolaridad
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Número de Hijos</b>
+            </td>
+            <td>
+                @revision2.Hijos
+            </td>
+        </tr>
+    </table>
 
     <h3 style="text-align:left; color:white">Antecedentes Personales Patológicos</h3>
-    <h4 style="text-align:left; color:white"><b>¿Nació con alguna enfermedad congénita?: </b><span style="color:aqua"> @revision3.EnfermedadCongenita</span></h4>
-    <h4 style="text-align:left; color:white"><b>Historia de Alergias: </b><span style="color:aqua"> @revision3.Alergias</span></h4>
-    <h4 style="text-align:left; color:white"><b>Transtornos de la memoria: </b><span style="color:aqua"> @revision3.TranstornoMemoria</span></h4>
-    <h4 style="text-align:left; color:white"><b>Historia de enfermedad pulmonar obstructiva crónica: </b><span style="color:aqua"> @revision3.Pulmonar</span></h4>
-    <h4 style="text-align:left; color:white"><b>Antecedentes Quirúrgicos: </b><span style="color:aqua"> @revision3.Quirurgicos</span></h4>
-    <h4 style="text-align:left; color:white"><b>Antecedentes Transfuncionales: </b><span style="color:aqua"> @revision3.Transfuncionales</span></h4>
-    <h4 style="text-align:left; color:white"><b>Padece Diabetes: </b><span style="color:aqua"> @revision3.Diabetes</span></h4>
-    <h4 style="text-align:left; color:white"><b>Antecedentes de Traumatismo: </b><span style="color:aqua"> @revision3.Traumatismo</span></h4>
-    <h4 style="text-align:left; color:white"><b>Padece Crisis Convulsivas: </b><span style="color:aqua"> @revision3.Convulsivas</span></h4>
-    <h4 style="text-align:left; color:white"><b>Antecedentes Oncológicos: </b><span style="color:aqua"> @revision3.Oncologicos</span></h4>
-    <h4 style="text-align:left; color:white"><b>Antecedentes de Cardiopatias: </b><span style="color:aqua"> @revision3.Cardiopatias</span></h4>
-    <h4 style="text-align:left; color:white"><b>Padece de Hipertensión: </b><span style="color:aqua"> @revision3.Hipertension</span></h4>
-    <h4 style="text-align:left; color:white"><b>Consume Bebidas Alcohólicas: </b><span style="color:aqua"> @revision3.Alcoholismo</span></h4>
-    <h4 style="text-align:left; color:white"><b>Fuma: </b><span style="color:aqua"> @revision3.Fuma</span></h4>
-    <h4 style="text-align:left; color:white"><b>Consume Drogas: </b><span style="color:aqua"> @revision3.Drogas</span></h4>
+
+    <table class="table tablas2 table-bordered" style="width:400px; font-size:large">
+
+        @{
+            if (revision3.EnfermedadCongenita_ESP != null)
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>¿Nació con alguna enfermedad congénita?</b>
+                    </td>
+                    <td>
+                        @revision3.EnfermedadCongenita_ESP
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>¿Nació con alguna enfermedad congénita?</b>
+                    </td>
+                    <td>
+                        @revision3.EnfermedadCongenita
+                    </td>
+                </tr>
+            }
+
+            if (revision3.Alergias_ASP != null)
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Historia de Alergias</b>
+                    </td>
+                    <td>
+                        @revision3.Alergias_ASP
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Historia de Alergias</b>
+                    </td>
+                    <td>
+                        @revision3.Alergias
+                    </td>
+                </tr>
+            }
+
+            if (revision3.Pulmonar_ESP != null)
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Historia de enfermedad pulmonar obstructiva crónica</b>
+                    </td>
+                    <td>
+                        @revision3.Pulmonar_ESP
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Historia de enfermedad pulmonar obstructiva crónica</b>
+                    </td>
+                    <td>
+                        @revision3.Pulmonar
+                    </td>
+                </tr>
+            }
+
+            if (revision3.Quirurgicos_ESP != null)
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Antecedentes Quirúrgicos</b>
+                    </td>
+                    <td>
+                        @revision3.Quirurgicos_ESP
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Antecedentes Quirúrgicos</b>
+                    </td>
+                    <td>
+                        @revision3.Quirurgicos
+                    </td>
+                </tr>
+            }
+
+            if (revision3.Transfuncionales_ESP != null)
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Antecedentes Transfuncionales</b>
+                    </td>
+                    <td>
+                        @revision3.Transfuncionales_ESP
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Antecedentes Transfuncionales</b>
+                    </td>
+                    <td>
+                        @revision3.Transfuncionales
+                    </td>
+                </tr>
+            }
+
+            if (revision3.Diabetes_ESP != null)
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>¿Padece Diabetes?</b>
+                    </td>
+                    <td>
+                        @revision3.Diabetes_ESP
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>¿Padece Diabetes?</b>
+                    </td>
+                    <td>
+                        @revision3.Diabetes
+                    </td>
+                </tr>
+            }
+
+            if (revision3.Traumatismo_ESP != null)
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Antecedentes de Traumatismo</b>
+                    </td>
+                    <td>
+                        @revision3.Traumatismo_ESP
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Antecedentes de Traumatismo</b>
+                    </td>
+                    <td>
+                        @revision3.Traumatismo
+                    </td>
+                </tr>
+            }
+
+            if (revision3.Convulsivas_ESP != null)
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Padece crisis Convulsivas</b>
+                    </td>
+                    <td>
+                        @revision3.Convulsivas_ESP
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Padece crisis Convulsivas</b>
+                    </td>
+                    <td>
+                        @revision3.Convulsivas
+                    </td>
+                </tr>
+            }
+
+            if (revision3.Oncologicos_ESP != null)
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Antecedentes Oncológicos</b>
+                    </td>
+                    <td>
+                        @revision3.Oncologicos_ESP
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Antecedentes Oncológicos</b>
+                    </td>
+                    <td>
+                        @revision3.Oncologicos
+                    </td>
+                </tr>
+            }
+
+            if (revision3.Cardiopatias_ESP != null)
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Antecedentes de Cardiopatías</b>
+                    </td>
+                    <td>
+                        @revision3.Cardiopatias_ESP
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>Antecedentes de Cardiopatías</b>
+                    </td>
+                    <td>
+                        @revision3.Cardiopatias
+                    </td>
+                </tr>
+            }
+
+            if (revision3.Hipertension_ESP != null)
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>¿Padece de Hipertensión?</b>
+                    </td>
+                    <td>
+                        @revision3.Hipertension_ESP
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td class="bg-primary">
+                        <b>¿Padece de Hipertensión?</b>
+                    </td>
+                    <td>
+                        @revision3.Hipertension
+                    </td>
+                </tr>
+            }
+
+            <tr>
+                <td class="bg-primary">
+                    <b>¿Consume Bebidas Alcohólicas?</b>
+                </td>
+                <td>
+                    @revision3.Alcoholismo
+                </td>
+            </tr>
+            <tr>
+                <td class="bg-primary">
+                    <b>¿Fuma?</b>
+                </td>
+                <td>
+                    @revision3.Fuma
+                </td>
+            </tr>
+            <tr>
+                <td class="bg-primary">
+                    <b>¿Consume Drogas?</b>
+                </td>
+                <td>
+                    @revision3.Drogas
+                </td>
+            </tr>
+
+        }
+    </table>
+
+
 
     <h3 style="text-align:left; color:white">Interrogatorio por Aparatos y Sistemas</h3>
-    <h4 style="text-align:left; color:white"><b>¿Tiene algún síntoma?: </b><span style="color:aqua"> @revision4.Sintoma</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en la vista?: </b><span style="color:aqua"> @revision4.AlteracionVista</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Utiliza lentes?: </b><span style="color:aqua"> @revision4.Lentes</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en la audición?: </b><span style="color:aqua"> @revision4.Audicion</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Utiliza aparato auditivo?: </b><span style="color:aqua"> @revision4.Auditivo</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en la nariz?: </b><span style="color:aqua"> @revision4.Nariz</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en la boca o el gusto?: </b><span style="color:aqua"> @revision4.Gusto</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración cardiaca?: </b><span style="color:aqua"> @revision4.Cardiaca</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración respiratoria?: </b><span style="color:aqua"> @revision4.Respiratoria</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración endocrinológica?: </b><span style="color:aqua"> @revision4.Endocrinologica</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración urinaria?: </b><span style="color:aqua"> @revision4.Urinaria</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en las venas?: </b><span style="color:aqua"> @revision4.Venas</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración intestinal?: </b><span style="color:aqua"> @revision4.Intestinal</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración de cáncer en la sangre?: </b><span style="color:aqua"> @revision4.CancerSangre</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en las articulaciones?: </b><span style="color:aqua"> @revision4.Articulaciones</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración del sueño?: </b><span style="color:aqua"> @revision4.Suenio</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración con apnea del sueño?: </b><span style="color:aqua"> @revision4.Apnea</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración neurológica?: </b><span style="color:aqua"> @revision4.Neurologica</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en la cabeza o cuello?: </b><span style="color:aqua"> @revision4.CabezaCuello</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en el abdomen?: </b><span style="color:aqua"> @revision4.Abdomen</span></h4>
-    <h4 style="text-align:left; color:white"><b>¿Tiene alguna alteración en las extremidades?: </b><span style="color:aqua"> @revision4.Extremidades</span></h4>
+
+    <table class="table tablas2 table-bordered" style="width:400px; font-size:large">
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene algún síntoma?</b>
+            </td>
+            <td>
+                @revision4.Sintoma
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración en la vista?</b>
+            </td>
+            <td>
+                @revision4.AlteracionVista
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Utiliza Lentes?</b>
+            </td>
+            <td>
+                @revision4.Lentes
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración en la audición?</b>
+            </td>
+            <td>
+                @revision4.Audicion
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Utiliza aparato auditivo?</b>
+            </td>
+            <td>
+                @revision4.Auditivo
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración en la nariz?</b>
+            </td>
+            <td>
+                @revision4.Nariz
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración en la boca o el gusto?</b>
+            </td>
+            <td>
+                @revision4.Gusto
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración cardiaca?</b>
+            </td>
+            <td>
+                @revision4.Cardiaca
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración respiratoria?</b>
+            </td>
+            <td>
+                @revision4.Respiratoria
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración endocrinológica?</b>
+            </td>
+            <td>
+                @revision4.Endocrinologica
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración urinaria?</b>
+            </td>
+            <td>
+                @revision4.Urinaria
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración en las venas?</b>
+            </td>
+            <td>
+                @revision4.Venas
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración intestinal?</b>
+            </td>
+            <td>
+                @revision4.Intestinal
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración de cáncer en la sangre?</b>
+            </td>
+            <td>
+                @revision4.CancerSangre
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración en las articulaciones?</b>
+            </td>
+            <td>
+                @revision4.Articulaciones
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración del sueño?</b>
+            </td>
+            <td>
+                @revision4.Suenio
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración con Apnea del Sueño?</b>
+            </td>
+            <td>
+                @revision4.Apnea
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración neurológica?</b>
+            </td>
+            <td>
+                @revision4.Neurologica
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración en la cabeza o cuello?</b>
+            </td>
+            <td>
+                @revision4.CabezaCuello
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración en el abdomen?</b>
+            </td>
+            <td>
+                @revision4.Abdomen
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>¿Tiene alguna alteración en las extremidades?</b>
+            </td>
+            <td>
+                @revision4.Extremidades
+            </td>
+        </tr>
+    </table>
 
     <h3 style="text-align:left; color:white">Exploración Física</h3>
-    <h4 style="text-align:left; color:white"><b>Test de Romberg: </b><span style="color:aqua"> @revision5.Romberg</span></h4>
-    <h4 style="text-align:left; color:white"><b>Punta Nariz: </b><span style="color:aqua"> @revision5.PuntaNariz</span></h4>
-    <h4 style="text-align:left; color:white"><b>Estrabismo: </b><span style="color:aqua"> @revision5.Estrabismo</span></h4>
-    <h4 style="text-align:left; color:white"><b>Soplo: </b><span style="color:aqua"> @revision5.Soplo</span></h4>
-    <h4 style="text-align:left; color:white"><b>Amputaciones: </b><span style="color:aqua"> @revision5.Amputaciones</span></h4>
-    <h4 style="text-align:left; color:white"><b>Prótesis: </b><span style="color:aqua"> @revision5.Protesis</span></h4>
+
+    <table class="table tablas2 table-bordered" style="width:400px; font-size:large">
+        <tr>
+            <td class="bg-primary">
+                <b>Test de Romberg</b>
+            </td>
+            <td>
+                @revision5.Romberg
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Punta Nariz</b>
+            </td>
+            <td>
+                @revision5.PuntaNariz
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Estrabismo</b>
+            </td>
+            <td>
+                @revision5.Estrabismo
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Soplo</b>
+            </td>
+            <td>
+                @revision5.Soplo
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Amputaciones</b>
+            </td>
+            <td>
+                @revision5.Amputaciones
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Prótesis</b>
+            </td>
+            <td>
+                @revision5.Protesis
+            </td>
+        </tr>
+    </table>
 
     <br />
-    <br />
+    @*<br />*@
     var nota = (from i in db.EPI_DictamenAptitud where i.idPaciente == idPaciente orderby i.idDictamenAptitud descending select i.NotaMedica).FirstOrDefault();
-    <h4 style="text-align:left; color:white"><b>Nota Médica: </b><span style="color:aqua"> @nota</span></h4>
+    @*<h4 style="text-align:left; color:white"><b>Nota Médica: </b><span style="color:aqua"> @nota</span></h4>*@
+
+    <h3 style="text-align:left; color:white">Pre-Dictamen</h3>
+
+    <table class="table tablas2 table-bordered" style="width:400px; font-size:large">
+        <tr>
+            <td class="bg-primary">
+                <b>Nota Médica</b>
+            </td>
+            <td>
+                @nota
+            </td>
+        </tr>
+    </table>
+
 }
 
 <hr />

@@ -74,7 +74,7 @@
     var mejorSucursal = (from s in db.Cita where s.FechaCita >= dateToday && s.FechaCita < dateTomorrow && s.Doctor != null select s).GroupBy(o => o.Sucursal);
     var mejorS = (from m in mejorSucursal select m).OrderByDescending(o => o.Count());
 
-    var mejorGestor = (from s in db.Cita where s.FechaCita >= dateToday && s.FechaCita < dateTomorrow && (s.Canal != "SITIO" && s.Canal != "Call Center") select s).GroupBy(o => o.Canal);
+    var mejorGestor = (from s in db.Cita where s.FechaCita >= dateToday && s.FechaCita < dateTomorrow && (s.CC == "GESTOR") select s).GroupBy(o => o.ReferidoPor);
     var mejorG = (from m in mejorGestor select m).OrderByDescending(o => o.Count());
 
     var mejorCapturista = (from s in db.Captura where s.FechaExpdiente >= dateToday && s.FechaExpdiente < dateTomorrow && s.EstatusCaptura == "Terminado" select s).GroupBy(o => o.Capturista);
@@ -99,7 +99,6 @@
     int flag = 1;
     int flag2 = 1;
     int flag3 = 1;
-
 }
 
 <br />
@@ -567,7 +566,7 @@
                 </td>
                 <td>
                     @{
-                        var elemento = (from v in db.Cita where v.Doctor != null && v.FechaCita >= dateToday && v.FechaCita < dateTomorrow && v.Canal == item.Key select v).Count();
+                        var elemento = (from v in db.Cita where v.Doctor != null && v.FechaCita >= dateToday && v.FechaCita < dateTomorrow && v.ReferidoPor == item.Key select v).Count();
 
                         <b>@elemento EPIs concretados </b>
                     }
@@ -626,3 +625,4 @@
 
     </table>
 </div>
+

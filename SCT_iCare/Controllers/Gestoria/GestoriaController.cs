@@ -266,6 +266,9 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.FechaCita = fecha;
                 cita.ReferidoPor = referido.ToUpper();
 
+                //Se usa el idCanal para poder hacer que en Recepción se tenga que editar el nombre si viene de gestor
+                cita.idCanal = 1;
+
                 if (referido == "ELIZABETH")
                 {
                     cita.Referencia = "E1293749";
@@ -676,6 +679,9 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.NoOrden = link;
                 cita.Referencia = Convert.ToString(card);
                 cita.ReferidoPor = referido.ToUpper();
+
+                //Se usa el idCanal para poder hacer que en Recepción se tenga que editar el nombre si viene de gestor
+                cita.idCanal = 1;
 
                 string TIPOLIC = null;
                 if (cantidadA != 0)

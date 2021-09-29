@@ -240,6 +240,9 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.TipoPago = pago;
                 cita.ReferidoPor = referido.ToUpper();
 
+                //Se usa el idCanal para poder hacer que en Recepción se tenga que editar el nombre si viene de gestor
+                cita.idCanal = 1;
+
                 if(referido == "ELIZABETH")
                 {
                     cita.Referencia = "E1293749";
@@ -723,6 +726,9 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.FechaCita = DateTime.Now;
                 cita.ReferidoPor = referido.ToUpper();
 
+                //Se usa el idCanal para poder hacer que en Recepción se tenga que editar el nombre si viene de gestor
+                cita.idCanal = 1;
+
                 if (referido == "ELIZABETH")
                 {
                     cita.Referencia = "E1293749";
@@ -1174,6 +1180,9 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.Referencia = Convert.ToString(card);
                 cita.ReferidoPor = referido.ToUpper();
 
+                //Se usa el idCanal para poder hacer que en Recepción se tenga que editar el nombre si viene de gestor
+                cita.idCanal = 1;
+
                 string TIPOLIC = null;
                 if (cantidadA != 0)
                 {
@@ -1389,6 +1398,25 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public ActionResult EditarNombre(int id, string nombre)
+        {
+            var paciente = (from i in db.Paciente where i.idPaciente == id select i).FirstOrDefault();
+            var cita = (from i in db.Cita where i.idPaciente == id select i).FirstOrDefault();
+            paciente.Nombre = nombre.ToUpper();
+            cita.idCanal = 1;
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(paciente).State = EntityState.Modified;
+                db.Entry(cita).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(paciente);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult CambiarEstatus(int? id, string pago)
         {
             string referenciaNueva = "";
@@ -1550,6 +1578,30 @@ namespace SCT_iCare.Controllers.Recepcion
 
             //CarruselMedico cm = new CarruselMedico();
             //cm.idPaciente = paciente.idPaciente;
+
+            var capturaExistente = (from i in db.Captura where i.idPaciente == ide select i).FirstOrDefault();
+            var epivirtual = (from i in db.EPI_DictamenAptitud where i.idPaciente == ide select i).FirstOrDefault();
+
+            if (capturaExistente == null && epivirtual != null)
+            {
+                Captura captura = new Captura();
+
+                captura.idPaciente = ide;
+                captura.NombrePaciente = NOMBRE.ToUpper();
+                captura.NoExpediente = NOEXP;
+                captura.TipoTramite = tipoT;
+                captura.EstatusCaptura = "No iniciado";
+                captura.Doctor = doctor;
+                captura.Sucursal = cita.Sucursal;
+                captura.FechaExpdiente = DateTime.Now;
+                captura.CarruselMedico = "SI";
+
+                if (ModelState.IsValid)
+                {
+                    db.Captura.Add(captura);
+                    db.SaveChanges();
+                }
+            }
 
             if (ModelState.IsValid)
             {
@@ -1946,26 +1998,32 @@ namespace SCT_iCare.Controllers.Recepcion
                 FECHA = Convert.ToDateTime(cita.FechaCita);
             }
 
-            byte[] bytes2 = expediente.Expediente;
-
-            if (file != null && file.ContentLength > 0)
+            if (expediente != null)
             {
-                var fileName = Path.GetFileName(file.FileName);
+                byte[] bytes2 = expediente.Expediente;
 
-                byte[] bytes;
-                using (BinaryReader br = new BinaryReader(file.InputStream))
+                if (file != null && file.ContentLength > 0)
                 {
-                    bytes = br.ReadBytes(file.ContentLength);
+                    var fileName = Path.GetFileName(file.FileName);
+
+                    byte[] bytes;
+                    using (BinaryReader br = new BinaryReader(file.InputStream))
+                    {
+                        bytes = br.ReadBytes(file.ContentLength);
+                    }
+
+                    bytes2 = bytes;
+                    expediente.Expediente = bytes2;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Entry(expediente).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
                 }
-
-                bytes2 = bytes;
-
-                //var bytesBinary = bytes;
-                //Response.ContentType = "application/pdf";
-                //Response.AddHeader("content-disposition", "attachment;filename=MyPDF.pdf");
-                //Response.BinaryWrite(bytesBinary);
-                //Response.End();
             }
+
+            
 
             paciente.Nombre = NOMBRE;
             paciente.Telefono = TELEFONO;
@@ -1979,8 +2037,6 @@ namespace SCT_iCare.Controllers.Recepcion
             //cita.Referencia = REFERENCIA;
             cita.Doctor = DOCTOR;
 
-            expediente.Expediente = bytes2;
-
             captura.TipoTramite = TIPOT;
             captura.NombrePaciente = NOMBRE;
             captura.NoExpediente = NUMERO;
@@ -1991,7 +2047,6 @@ namespace SCT_iCare.Controllers.Recepcion
             {
                 db.Entry(paciente).State = EntityState.Modified;
                 db.Entry(cita).State = EntityState.Modified;
-                db.Entry(expediente).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

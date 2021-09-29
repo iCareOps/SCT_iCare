@@ -1261,26 +1261,33 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 {
                     var pacienteCaptura = (from c in db.Cita where c.idPaciente == id select c).FirstOrDefault();
                     var pacienteCaptura2 = (from c in db.Paciente where c.idPaciente == id select c).FirstOrDefault();
+                    var capturaExistente = (from i in db.Captura where i.idPaciente == id select i).FirstOrDefault();
 
-                    Captura captura = new Captura();
-
-                    captura.idPaciente = id;
-                    captura.NombrePaciente = pacienteCaptura2.Nombre;
-                    captura.NoExpediente = pacienteCaptura.NoExpediente;
-                    captura.TipoTramite = pacienteCaptura.TipoTramite;
-                    captura.EstatusCaptura = "No iniciado";
-                    captura.Doctor = pacienteCaptura.Doctor;
-                    captura.Sucursal = pacienteCaptura.Sucursal;
-                    captura.FechaExpdiente = DateTime.Now;
-                    captura.CarruselMedico = "SI";
-
-                    if (ModelState.IsValid)
+                    if (pacienteCaptura.NoExpediente != null && pacienteCaptura.Doctor != null && capturaExistente == null)
                     {
-                        db.Captura.Add(captura);
-                        db.SaveChanges();
+                        Captura captura = new Captura();
+
+                        captura.idPaciente = id;
+                        captura.NombrePaciente = pacienteCaptura2.Nombre;
+                        captura.NoExpediente = pacienteCaptura.NoExpediente;
+                        captura.TipoTramite = pacienteCaptura.TipoTramite;
+                        captura.EstatusCaptura = "No iniciado";
+                        captura.Doctor = pacienteCaptura.Doctor;
+                        captura.Sucursal = pacienteCaptura.Sucursal;
+                        captura.FechaExpdiente = DateTime.Now;
+                        captura.CarruselMedico = "SI";
+
+                        if (ModelState.IsValid)
+                        {
+                            db.Captura.Add(captura);
+                            db.SaveChanges();
+                        }
                     }
+
+                    
                 }
 
+ 
                 if(accion == "Enviar a Revaloración")
                 {
                     TempData["ID"] = id;
@@ -1311,6 +1318,234 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                     db.Entry(aptitud).State = EntityState.Modified;
                     db.SaveChanges();
                 }
+
+
+                if (accion == "Revalorado APTO")
+                {
+                    EPI_A_Heredofamiliares heredo = new EPI_A_Heredofamiliares();
+                    var anteriorHEREDO = (from i in db.EPI_A_Heredofamiliares where i.idPaciente == id orderby i.idHeredofamiliares descending select i).FirstOrDefault();
+                    heredo.idPaciente = id;
+                    heredo.MadreVive = anteriorHEREDO.MadreVive;
+                    heredo.MadreVive_ESP = anteriorHEREDO.MadreVive_ESP;
+                    heredo.PadreVive = anteriorHEREDO.PadreVive;
+                    heredo.PadreVive_ESP = anteriorHEREDO.PadreVive_ESP;
+                    heredo.HermanosViven = anteriorHEREDO.HermanosViven;
+                    heredo.HermanosViven_ESP = anteriorHEREDO.HermanosViven_ESP;
+                    heredo.FamiliaGrave = anteriorHEREDO.FamiliaGrave;
+                    heredo.Diabetes = anteriorHEREDO.Diabetes;
+                    heredo.Hipertension = anteriorHEREDO.Hipertension;
+                    heredo.Obesidad = anteriorHEREDO.Obesidad;
+                    heredo.Cardiopatia = anteriorHEREDO.Cardiopatia;
+                    heredo.VascularCerebral = anteriorHEREDO.VascularCerebral;
+                    heredo.Infarto = anteriorHEREDO.Infarto;
+                    heredo.Tiroides = anteriorHEREDO.Tiroides;
+                    heredo.Neoplasticas = anteriorHEREDO.Neoplasticas;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.EPI_A_Heredofamiliares.Add(heredo);
+                        db.SaveChanges();
+                    }
+
+                    //----------------------------------------------------------------------------------------------
+                    EPI_A_NoPatologicos nopato = new EPI_A_NoPatologicos();
+                    var anteriorNOPATO = (from i in db.EPI_A_NoPatologicos where i.idPaciente == id orderby i.idNoPatologicos descending select i).FirstOrDefault();
+                    nopato.idPaciente = id;
+                    nopato.VacunasCompletas = anteriorNOPATO.VacunasCompletas;
+                    nopato.EstadoCivil = anteriorNOPATO.EstadoCivil;
+                    nopato.Religion = anteriorNOPATO.Religion;
+                    nopato.Escolaridad = anteriorNOPATO.Escolaridad;
+                    nopato.Hijos = anteriorNOPATO.Hijos;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.EPI_A_NoPatologicos.Add(nopato);
+                        db.SaveChanges();
+                    }
+
+                    //----------------------------------------------------------------------------------------------
+                    EPI_A_Patologicos pato = new EPI_A_Patologicos();
+                    var anteriorPATO = (from i in db.EPI_A_Patologicos where i.idPaciente == id orderby i.idPatologicos descending select i).FirstOrDefault();
+                    pato.idPaciente = id;
+                    pato.EnfermedadCongenita = "NO";
+                    pato.Alergias = "NO";
+                    pato.TranstornoMemoria = "NO";
+                    pato.Pulmonar = "NO";
+                    pato.Quirurgicos = "NO";
+                    pato.Transfuncionales = "NO";
+                    pato.Diabetes = "NO";
+                    pato.Traumatismo = "NO";
+                    pato.Convulsivas = "NO";
+                    pato.Oncologicos = "NO";
+                    pato.Cardiopatias = "NO";
+                    pato.Hipertension = "NO";
+                    pato.Alcoholismo = "NO";
+                    pato.Fuma = "NO";
+                    pato.Drogas = "NO";
+
+                    if (ModelState.IsValid)
+                    {
+                        db.EPI_A_Patologicos.Add(pato);
+                        db.SaveChanges();
+                    }
+
+                    //----------------------------------------------------------------------------------------------
+                    EPI_AparatosSistemas aparatos = new EPI_AparatosSistemas();
+                    var anteriorAPARATOS = (from i in db.EPI_AparatosSistemas where i.idPaciente == id orderby i.idAparatosSistemas descending select i).FirstOrDefault();
+                    aparatos.idPaciente = id;
+                    aparatos.Sintoma = "NO";
+                    aparatos.AlteracionVista = "NO";
+                    aparatos.Lentes = anteriorAPARATOS.Lentes;
+                    aparatos.Audicion = "NO";
+                    aparatos.Auditivo = "NO";
+                    aparatos.Nariz = "NO";
+                    aparatos.Gusto = "NO";
+                    aparatos.Cardiaca = "NO";
+                    aparatos.Respiratoria = "NO";
+                    aparatos.Endocrinologica = "NO";
+                    aparatos.Urinaria = "NO";
+                    aparatos.Venas = "NO";
+                    aparatos.Intestinal = "NO";
+                    aparatos.CancerSangre = "NO";
+                    aparatos.Articulaciones = "NO";
+                    aparatos.Suenio = "NO";
+                    aparatos.Apnea = "NO";
+                    aparatos.Neurologica = "NO";
+                    aparatos.CabezaCuello = "NO";
+                    aparatos.Abdomen = "NO";
+                    aparatos.Extremidades = "NO";
+
+                    if (ModelState.IsValid)
+                    {
+                        db.EPI_AparatosSistemas.Add(aparatos);
+                        db.SaveChanges();
+                    }
+
+                    //----------------------------------------------------------------------------------------------
+                    EPI_Audiologia audio = new EPI_Audiologia();
+                    var anteriorAUDIO = (from i in db.EPI_Audiologia where i.idPaciente == id orderby i.idAudiologia descending select i).FirstOrDefault();
+                    audio.idPaciente = id;
+                    audio.Patologia = "NORMAL";
+                    audio.Grafica = "NORMAL";
+                    audio.NotaMedica = "NORMAL";
+
+                    if (ModelState.IsValid)
+                    {
+                        db.EPI_Audiologia.Add(audio);
+                        db.SaveChanges();
+                    }
+
+                    //----------------------------------------------------------------------------------------------
+                    EPI_Cardiologia cardi = new EPI_Cardiologia();
+                    var anteriorCARDI = (from i in db.EPI_Cardiologia where i.idPaciente == id orderby i.idCardiologia descending select i).FirstOrDefault();
+                    cardi.idPaciente = id;
+                    cardi.Ritmo = "Sinusal";
+                    cardi.Frecuencia = "70";
+                    cardi.Eje = "45";
+                    cardi.PR = "180";
+                    cardi.QT = "194";
+                    cardi.QRS = "330";
+                    cardi.OndaP = "120";
+                    cardi.OndaT = "200";
+
+                    if (ModelState.IsValid)
+                    {
+                        db.EPI_Cardiologia.Add(cardi);
+                        db.SaveChanges();
+                    }
+
+                    //----------------------------------------------------------------------------------------------
+                    EPI_ExploracionFisica explo = new EPI_ExploracionFisica();
+                    var anteriorEXPLO = (from i in db.EPI_ExploracionFisica where i.idPaciente == id orderby i.idExploracionFisica descending select i).FirstOrDefault();
+                    explo.idPaciente = id;
+                    explo.Romberg = "NO";
+                    explo.PuntaNariz = "NO";
+                    explo.Estrabismo = "NO";
+                    explo.Soplo = "NO";
+                    explo.Amputaciones = "NO";
+                    explo.Protesis = "NO";
+
+                    if (ModelState.IsValid)
+                    {
+                        db.EPI_ExploracionFisica.Add(explo);
+                        db.SaveChanges();
+                    }
+
+                    //----------------------------------------------------------------------------------------------
+                    EPI_Laboratorio lab = new EPI_Laboratorio();
+                    var anteriorLAB = (from i in db.EPI_Laboratorio where i.idPaciente == id orderby i.idLaboratorio descending select i).FirstOrDefault();
+                    lab.idPaciente = id;
+                    lab.Glucosa = "70";
+                    lab.HemoglobinaGlucosilada = "0";
+
+                    if (ModelState.IsValid)
+                    {
+                        db.EPI_Laboratorio.Add(lab);
+                        db.SaveChanges();
+                    }
+
+                    //----------------------------------------------------------------------------------------------
+                    EPI_Odontologia odon = new EPI_Odontologia();
+                    var anteriorODON = (from i in db.EPI_Odontologia where i.idPaciente == id orderby i.idOdontologia descending select i).FirstOrDefault();
+                    odon.idPaciente = id;
+                    odon.Exploracion = "NORMAL";
+                    odon.NotaOdontologica = "Todo Normal";
+
+                    if (ModelState.IsValid)
+                    {
+                        db.EPI_Odontologia.Add(odon);
+                        db.SaveChanges();
+                    }
+
+                    //----------------------------------------------------------------------------------------------
+                    Epi_Oftalmologia oft = new Epi_Oftalmologia();
+                    var anteriorOFT = (from i in db.Epi_Oftalmologia where i.idPaciente == id orderby i.idOftalmologia descending select i).FirstOrDefault();
+                    oft.idPaciente = id;
+                    oft.IzquierdoAVC = "1";
+                    oft.IzquierdoAVM = "1";
+                    oft.IzquierdoAVL = "1";
+                    oft.DerechoAVC = "1";
+                    oft.DerechoAVM = "1";
+                    oft.DerechoAVL = "1";
+                    oft.AgudezaVisual = anteriorOFT.AgudezaVisual;
+                    oft.Estereopsis = "40";
+                    oft.CartaAccidentes = anteriorOFT.CartaAccidentes;
+                    oft.MovimientosOculares = "NORMAL";
+                    oft.CampoVisual = "NORMAL";
+                    oft.DerechoRP = "NORMAL";
+                    oft.IzquierdoRP = "NORMAL";
+                    oft.Cromatica = "Normal";
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Epi_Oftalmologia.Add(oft);
+                        db.SaveChanges();
+                    }
+
+                    //----------------------------------------------------------------------------------------------
+                    EPI_SignosVitales sig = new EPI_SignosVitales();
+                    var anteriorSIG = (from i in db.EPI_SignosVitales where i.idPaciente == id orderby i.idPaciente descending select i).FirstOrDefault();
+                    sig.idPaciente = id;
+                    sig.Sistolica = "120";
+                    sig.Diastolica = "80";
+                    sig.Cardiaca = "70";
+                    sig.Respiratoria = "16";
+                    sig.Cintura = "80";
+                    sig.Cuello = "35";
+                    sig.Estatura = "170";
+                    sig.Peso = "70";
+                    sig.Temperatura = "36";
+                    sig.IMC = "24";
+                    sig.Grasa = "30";
+
+                    if (ModelState.IsValid)
+                    {
+                        db.EPI_SignosVitales.Add(sig);
+                        db.SaveChanges();
+                    }
+
+                }
+
 
                 if (accion != "Enviar a Revaloración")
                 {
@@ -1417,7 +1652,9 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 var resultadoNO = new BaseColor(255, 0, 0); //no apto
                 string coloro = "";
                 iTextSharp.text.Paragraph p = new iTextSharp.text.Paragraph();
+
                 iTextSharp.text.Paragraph pr = new iTextSharp.text.Paragraph();
+
                 var font = FontFactory.GetFont(coloro, 11, Font.NORMAL, color);
                 var fontA = FontFactory.GetFont(coloro, 11, Font.NORMAL, resultado);
                 var fontNA = FontFactory.GetFont(coloro, 11, Font.NORMAL, resultadoNO);
@@ -1435,6 +1672,13 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                 Chunk c8 = new Chunk("\n", font);
                 Chunk c81 = new Chunk("Código Hash: " + HASH + "\n", font);
                 Chunk c82 = new Chunk("\n", font);
+
+                //PdfContentByte cb = wri.DirectContent;
+                //cb.BeginText();
+                //cb.SetFontAndSize(BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, false), 18);
+                //cb.SetTextMatrix(46, 175);
+                //cb.ShowText("text");
+                //cb.EndText();
 
                 //Chunk c10 = new Chunk("DATOS DEL EXAMEN\n", font);
                 ////Chunk c11 = new Chunk("Sucursal: " + sucursal + "\n", font);
