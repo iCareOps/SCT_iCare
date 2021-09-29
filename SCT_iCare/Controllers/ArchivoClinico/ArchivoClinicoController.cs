@@ -732,7 +732,11 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         }
 
         [HttpPost]
-        public ActionResult Guardar_Odontologia(int id, string exploracion, string nota)
+        public ActionResult Guardar_Odontologia(int id, string exploracion, string nota,
+        string tc_Diente_18, string tr_Diente_18, string to_Diente_18, string tc_Diente_17, string tr_Diente_17, string to_Diente_17, string tc_Diente_16, string tr_Diente_16, string to_Diente_16, string tc_Diente_15, string tr_Diente_15, string to_Diente_15, string tc_Diente_14, string tr_Diente_14, string to_Diente_14, string tc_Diente_13, string tr_Diente_13, string to_Diente_13, string tc_Diente_12, string tr_Diente_12, string to_Diente_12, string tc_Diente_11, string tr_Diente_11, string to_Diente_11,
+        string tc_Diente_28, string tr_Diente_28, string to_Diente_28, string tc_Diente_27, string tr_Diente_27, string to_Diente_27, string tc_Diente_26, string tr_Diente_26, string to_Diente_26, string tc_Diente_25, string tr_Diente_25, string to_Diente_25, string tc_Diente_24, string tr_Diente_24, string to_Diente_24, string tc_Diente_23, string tr_Diente_23, string to_Diente_23, string tc_Diente_22, string tr_Diente_22, string to_Diente_22, string tc_Diente_21, string tr_Diente_21, string to_Diente_21,
+        string tc_Diente_38, string tr_Diente_38, string to_Diente_38, string tc_Diente_37, string tr_Diente_37, string to_Diente_37, string tc_Diente_36, string tr_Diente_36, string to_Diente_36, string tc_Diente_35, string tr_Diente_35, string to_Diente_35, string tc_Diente_34, string tr_Diente_34, string to_Diente_34, string tc_Diente_33, string tr_Diente_33, string to_Diente_33, string tc_Diente_32, string tr_Diente_32, string to_Diente_32, string tc_Diente_31, string tr_Diente_31, string to_Diente_31,
+        string tc_Diente_48, string tr_Diente_48, string to_Diente_48, string tc_Diente_47, string tr_Diente_47, string to_Diente_47, string tc_Diente_46, string tr_Diente_46, string to_Diente_46, string tc_Diente_45, string tr_Diente_45, string to_Diente_45, string tc_Diente_44, string tr_Diente_44, string to_Diente_44, string tc_Diente_43, string tr_Diente_43, string to_Diente_43, string tc_Diente_42, string tr_Diente_42, string to_Diente_42, string tc_Diente_41, string tr_Diente_41, string to_Diente_41)
         {
             EPI_Odontologia odontologia = new EPI_Odontologia();
 
