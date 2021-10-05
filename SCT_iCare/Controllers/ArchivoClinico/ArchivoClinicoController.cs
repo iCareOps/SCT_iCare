@@ -1,6 +1,7 @@
 ﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System;
+using System.Timers;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
@@ -1878,3 +1879,4 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         }
     }
 }
+

@@ -17,5 +17,9 @@ namespace SCT_iCare
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
+      
     }
+
 }
+
+
