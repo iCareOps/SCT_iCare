@@ -35,37 +35,64 @@
     DateTime tomorrowDate = new DateTime(year1, month1, day1);
 
     var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
-int? idRol = 0;
+    int? idRol = 0;
 
-if (oUser != null)
-{
-idUser = oUser.idUsuario;
-nombreUsuario = oUser.Nombre;
-idRol = oUser.idRol;
+    int citasHoyConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Sucursal == Sucursal).Count();
+    int episHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.Sucursal == Sucursal).Count();
+    int dictamenHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Terminado" && w.Sucursal == Sucursal).Count();
+    int enProcesoHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && (w.EstatusCaptura == "En captura..." || w.EstatusCaptura == "No iniciado") && w.Sucursal == Sucursal).Count();
+    int entregadosConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Entregado == "SI" && w.Sucursal == Sucursal).Count();
+    int enviadosCount = db.Cita.Join(db.DictamenProblema, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+                .Where(w => w.N.FechaCita >= thisDate && w.N.FechaCita < tomorrowDate && w.M.EstatusEnvio == "SI" && w.N.Sucursal == Sucursal)
+                .Select(S => new
+                {
+                    S.N.Sucursal,
+                    S.N.FechaCita
+                }).Count();
 
-if (idUser != 14 && oUser.idRol != 2)
-{
-Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
-Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
-idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
-Sucursal = Hospital.ToString();
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
 
-modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+        if (idUser != 14 && oUser.idRol != 2)
+        {
+            Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
+            Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
+            idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
+            Sucursal = Hospital.ToString();
 
-registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal).Count();
+            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 
-}
-else
-{
-Hospital = "GENERAL";
-Sucursal = Hospital.ToString();
+            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal).Count();
 
-modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate)/*.OrderByDescending(o => o.M.TipoTramite)*/;
+            citasHoyConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Sucursal == Sucursal).Count();
+            episHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.Sucursal == Sucursal).Count();
+            dictamenHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Terminado" && w.Sucursal == Sucursal).Count();
+            enProcesoHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && (w.EstatusCaptura == "En captura..." || w.EstatusCaptura == "No iniciado") && w.Sucursal == Sucursal).Count();
+            entregadosConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Entregado == "SI" && w.Sucursal == Sucursal).Count();
+            enviadosCount = db.Cita.Join(db.DictamenProblema, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+                        .Where(w => w.N.FechaCita >= thisDate && w.N.FechaCita < tomorrowDate && w.M.EstatusEnvio == "SI" && w.N.Sucursal == Sucursal)
+                        .Select(S => new
+                        {
+                            S.N.Sucursal,
+                            S.N.FechaCita
+                        }).Count();
 
-registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
+        }
+        else
+        {
+            Hospital = "GENERAL";
+            Sucursal = Hospital.ToString();
 
-}
-}
+            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate)/*.OrderByDescending(o => o.M.TipoTramite)*/;
+
+            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
+
+        }
+    }
+
 
 
 }
@@ -332,7 +359,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
-</div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -562,7 +589,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
-</div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -796,7 +823,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
-</div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -897,14 +924,183 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
     calcular22();
 </script>
 
+@if (idRol == 21)
+{
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-outline-warning boton-transparenteIndicador1 botonesGral col-md-4" data-toggle="modal" data-target="#citasHoy" style="color:white">
+        <h4><span class="glyphicon glyphicon-list-alt"></span> &nbsp; &nbsp;Citas: <b>@citasHoyConteo</b></h4>
+    </button>
+
+    <!-- Modal -->
+    @*<div class="modal fade" id="citasHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aquamarine">
+                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-list-alt"></span> &nbsp; &nbsp;Citas generadas: <b>@citasHoyConteo</b></h3>
+                </div>
+                <div class="modal-body">
+                    @{
+                        foreach (var item in sucursalesLista)
+                        {
+                            var elemento = (from e in db.Cita where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow select e).Count();
+
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-outline-warning boton-transparenteIndicador2 botonesGral col-md-4" data-toggle="modal" data-target="#episHoy" style="color:white">
+        <h4><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs: <b>@episHoyConteo</b></h4>
+    </button>
+
+    <!-- Modal -->
+    @*<div class="modal fade" id="episHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aquamarine">
+                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs digitalizados: <b>@episHoyConteo</b></h3>
+                </div>
+                <div class="modal-body">
+                    @{
+                        foreach (var item in sucursalesLista)
+                        {
+                            var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow select e).Count();
+
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-outline-warning boton-transparenteIndicador3 botonesGral col-md-4" data-toggle="modal" data-target="#dictamenesHoy" style="color:white">
+        <h4><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;Dictámenes: <b>@dictamenHoyConteo</b></h4>
+    </button>
+
+    <!-- Modal -->
+    @*<div class="modal fade" id="dictamenesHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aquamarine">
+                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;Dictámenes generados: <b>@dictamenHoyConteo</b></h3>
+                </div>
+                <div class="modal-body">
+                    @{
+                        foreach (var item in sucursalesLista)
+                        {
+                            var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.EstatusCaptura == "Terminado" select e).Count();
+
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-outline-warning boton-transparenteIndicador4 botonesGral col-md-4" data-toggle="modal" data-target="#enProcesoHoy" style="color:white">
+        <h4><span class="glyphicon glyphicon-copy"></span> &nbsp; &nbsp;Dictámenes en Proceso: <b>@enProcesoHoyConteo</b></h4>
+    </button>
+
+    <!-- Modal -->
+    @*<div class="modal fade" id="enProcesoHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:gold">
+                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-copy"></span> &nbsp; &nbsp;Dictámenes en Proceso: <b>@enProcesoHoyConteo</b></h3>
+                </div>
+                <div class="modal-body">
+                    @{
+                        foreach (var item in sucursalesLista)
+                        {
+                            var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && (e.EstatusCaptura == "En captura..." || e.EstatusCaptura == "No iniciado") select e).Count();
+
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-outline-warning boton-transparenteIndicador6 botonesGral col-md-4" data-toggle="modal" data-target="#entregados" style="color:white">
+        <h4><span class="glyphicon glyphicon-thumbs-up"></span> &nbsp; &nbsp;Dictámenes Entregados: <b>@entregadosConteo</b></h4>
+    </button>
+
+    <!-- Modal -->
+    @*<div class="modal fade" id="entregados" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aquamarine">
+                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-thumbs-up"></span> &nbsp; &nbsp;Dictámenes Entregados: <b>@entregadosConteo</b></h3>
+                </div>
+                <div class="modal-body">
+                    @{
+                        foreach (var item in sucursalesLista)
+                        {
+                            var elemento = (from e in db.Cita where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && (e.Entregado == "SI") select e).Count();
+
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-outline-warning boton-transparenteIndicador7 botonesGral col-md-4" data-toggle="modal" data-target="#enviados" style="color:white">
+        <h4><span class="glyphicon glyphicon-send"></span> &nbsp; &nbsp;Dictámenes Enviados: <b>@enviadosCount</b></h4>
+    </button>
+
+    <!-- Modal -->
+    @*<div class="modal fade" id="enviados" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:aquamarine">
+                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-send"></span> &nbsp; &nbsp;Dictámenes Enviados: <b>@enviadosCount</b></h3>
+                </div>
+                <div class="modal-body">
+                    @{
+                        foreach (var item in sucursalesLista)
+                        {
+                            var elemento = (from e in enviados where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusEnvio == "SI" select e).Count();
+
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+
+    <br />
+    <br />
+    <br />
+}
+
 
 @if (modelo.FirstOrDefault() == null)
 {
+    <br />
     <h1 style="color:white">No existen citas registradas el día de hoy</h1>
 }
 else
 {
     <div class="tablaScroll">
+        <br />
         <table class="table tablas" style="color: #2F2D6B">
             <thead>
                 <tr class="bg-primary" style="border-top-color: black; font-size:smaller">
@@ -960,7 +1156,7 @@ else
 
             @foreach (var item in modelo)
             {
-               
+
                 if (item.M.TipoTramite == "PRIMERA VEZ" && item.M.TipoLicencia != "AEREO")
                 {
                     fila = "#BBDEFB";
@@ -986,13 +1182,15 @@ else
                     <td>
                         <span class="field-tip">
                             <b>@Html.DisplayFor(modelItem => item.N.Nombre) </b>
-                            <span class="tip-content"><h6>
-                                <b>Teléfono:</b><br />
-                                @item.N.Telefono <br />
-                                <b>Email:</b><br />
-                                @item.N.Email <br />
-                                <b>Folio:</b><br />
-                                @item.N.Folio <br /></h6>
+                            <span class="tip-content">
+                                <h6>
+                                    <b>Teléfono:</b><br />
+                                    @item.N.Telefono <br />
+                                    <b>Email:</b><br />
+                                    @item.N.Email <br />
+                                    <b>Folio:</b><br />
+                                    @item.N.Folio <br />
+                                </h6>
                             </span>
                         </span>
 
@@ -1007,27 +1205,27 @@ else
                     <td>
                         <b>@Html.DisplayFor(modelItem => item.M.NoExpediente)</b>
                     </td>
-                        @{
+                    @{
                         if (idRol == 2)
                         {
-                                            <th>
-                                                @{
-                                                    if (item.M.Doctor != null)
-                                                    {
-                                                        <span class="field-tip">
-                                                            <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
-                                                            <span class="tip-content">@item.M.Doctor</span>
-                                                        </span>
-                                                    }
-                        else
-                        {
+                            <th>
+                                @{
+                                    if (item.M.Doctor != null)
+                                    {
+                                        <span class="field-tip">
                                             <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
-                        }
-                                                }
+                                            <span class="tip-content">@item.M.Doctor</span>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
+                                    }
+                                }
 
-                                            </th>
-                            
-                        
+                            </th>
+
+
                         }
                         else
                         {
@@ -1036,37 +1234,37 @@ else
                             </td>
                         }
                     }
-                <td>
-                    <span class="field-tip">
-                        <b>@item.M.Canal</b>
-                        <span class="tip-content">
-                            <b>Realiza la cita: </b>@item.M.Recepcionista <br />
-                            <b>Canal: </b>@item.M.Canal <br />
-                            <b>Referido por: </b>@item.M.ReferidoPor
+                    <td>
+                        <span class="field-tip">
+                            <b>@item.M.Canal</b>
+                            <span class="tip-content">
+                                <b>Realiza la cita: </b>@item.M.Recepcionista <br />
+                                <b>Canal: </b>@item.M.Canal <br />
+                                <b>Referido por: </b>@item.M.ReferidoPor
+                            </span>
                         </span>
-                    </span>
-                </td>
-                <td>
-                    @{
-                        if (item.M.TipoPago == "Pago con Tarjeta")
-                        {
-                            <b style="font-size:xx-small"><a href=@item.M.NoOrden target="_blank">Terminación: @item.M.Referencia</a></b>
-                        }
-                        else
-                        {
-                            <b style="font-size:x-small">@Html.DisplayFor(modelItem => item.M.Referencia)</b>
+                    </td>
+                    <td>
+                        @{
+                            if (item.M.TipoPago == "Pago con Tarjeta")
+                            {
+                                <b style="font-size:xx-small"><a href=@item.M.NoOrden target="_blank">Terminación: @item.M.Referencia</a></b>
+                            }
+                            else
+                            {
+                                <b style="font-size:x-small">@Html.DisplayFor(modelItem => item.M.Referencia)</b>
 
-                                        var referenciaNormal = (from i in db.Cita where i.Referencia == item.M.Referencia orderby i.idCita descending select i.idPaciente).FirstOrDefault();
-                                        var referenciaSB = (from i in db.ReferenciasSB where i.idPaciente == referenciaNormal select i).FirstOrDefault();
-                                        if (referenciaSB != null)
-                                        {
-                                            <br />
-            
-                                            <b style="font-size:x-small" class="text-primary">SB: @referenciaSB.ReferenciaSB</b>
+                                var referenciaNormal = (from i in db.Cita where i.Referencia == item.M.Referencia orderby i.idCita descending select i.idPaciente).FirstOrDefault();
+                                var referenciaSB = (from i in db.ReferenciasSB where i.idPaciente == referenciaNormal select i).FirstOrDefault();
+                                if (referenciaSB != null)
+                                {
+                                    <br />
+
+                                    <b style="font-size:x-small" class="text-primary">SB: @referenciaSB.ReferenciaSB</b>
+                                }
                             }
                         }
-                    }
-                </td>
+                    </td>
 
 
                     <td>
@@ -1190,17 +1388,17 @@ else
 
 
                         @*@if (item.M.Doctor == null && item.M.Asistencia != "NO")
-        {
-            <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Pendiente</mark></b>
-        }
-        else if ((item.M.EstatusPago == "paid" || item.M.EstatusPago == "Pagado") && item.M.Asistencia != "NO")
-        {
-            <b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">Digitalizado</mark></b>
-        }
-        else if (item.M.Asistencia == "NO")
-        {
-            <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px">Cancelado</mark></b>
-        }*@
+                            {
+                                <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Pendiente</mark></b>
+                            }
+                            else if ((item.M.EstatusPago == "paid" || item.M.EstatusPago == "Pagado") && item.M.Asistencia != "NO")
+                            {
+                                <b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">Digitalizado</mark></b>
+                            }
+                            else if (item.M.Asistencia == "NO")
+                            {
+                                <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px">Cancelado</mark></b>
+                            }*@
                     </td>
                     <td style="font-size: smaller">
                         @{
@@ -1302,42 +1500,42 @@ else
                                 }
 
                                 @*@if (item.M.EstatusPago == "Pagado")
-                {
-                    var aptitud = (from i in db.EPI_DictamenAptitud where i.idPaciente == item.N.idPaciente orderby i.idDictamenAptitud descending select i).FirstOrDefault();
+                                    {
+                                        var aptitud = (from i in db.EPI_DictamenAptitud where i.idPaciente == item.N.idPaciente orderby i.idDictamenAptitud descending select i).FirstOrDefault();
 
-                    if (aptitud != null && aptitud.Aptitud == "NO APTO")
-                    {
-                        <a href="#" data-toggle="modal" data-target="#revaloracion_@item.M.idPaciente"><b>Revaloración</b></a>
-                        <div class="dropdown-divider"></div>
-                    }
+                                        if (aptitud != null && aptitud.Aptitud == "NO APTO")
+                                        {
+                                            <a href="#" data-toggle="modal" data-target="#revaloracion_@item.M.idPaciente"><b>Revaloración</b></a>
+                                            <div class="dropdown-divider"></div>
+                                        }
 
-                    <a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>Completar Datos</b></a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
-                    <div class="dropdown-divider"></div>
-                }
-                else if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
-                {
-                    <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Pagado</b></a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
-                    <div class="dropdown-divider"></div>
-                }
-                else if (item.M.NoExpediente != null && item.M.EstatusPago == "Pagado")
-                {
+                                        <a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>Completar Datos</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
+                                        <div class="dropdown-divider"></div>
+                                    }
+                                    else if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
+                                    {
+                                        <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Pagado</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
+                                        <div class="dropdown-divider"></div>
+                                    }
+                                    else if (item.M.NoExpediente != null && item.M.EstatusPago == "Pagado")
+                                    {
 
 
-                    <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
-                    <div class="dropdown-divider"></div>
+                                        <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
+                                        <div class="dropdown-divider"></div>
 
-                    var entregado = (from e in db.Captura where e.idPaciente == item.M.idPaciente && e.EstatusCaptura == "Terminado" select e.EstatusCaptura).FirstOrDefault();
-                    if (entregado != null && item.M.Entregado == null)
-                    {
-                        <a href="#" data-toggle="modal" data-target="#entregar_@item.M.idPaciente"><b style="color:limegreen">Entregado</b></a>
-                    }
-                }*@
+                                        var entregado = (from e in db.Captura where e.idPaciente == item.M.idPaciente && e.EstatusCaptura == "Terminado" select e.EstatusCaptura).FirstOrDefault();
+                                        if (entregado != null && item.M.Entregado == null)
+                                        {
+                                            <a href="#" data-toggle="modal" data-target="#entregar_@item.M.idPaciente"><b style="color:limegreen">Entregado</b></a>
+                                        }
+                                    }*@
 
                             </div>
                         </div>

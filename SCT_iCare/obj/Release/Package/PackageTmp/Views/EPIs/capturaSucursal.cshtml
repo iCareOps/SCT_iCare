@@ -179,14 +179,32 @@
                     <tr style="background-color:@fila">
                         <td>@flag</td>
                         <td>
+                            @*@{
+            if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 11 && idUser != 16 && idRol != 2 && nombreUsuario != "Viridiana España"))
+            {
+                @Html.DisplayFor(modelItem => item.NombrePaciente)
+            }
+            else
+            {
+                <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_S", new { id = item.idCaptura, sucursal = Sucursal }, new { style = "color: black; text-decoration: none" })</b>
+            }
+        }*@
+
                             @{
-                                if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 11 && idUser != 16 && idRol != 2 && nombreUsuario != "Viridiana España"))
+                                if (item.CarruselMedico == null)
                                 {
-                                    @Html.DisplayFor(modelItem => item.NombrePaciente)
+                                    if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 11 && idUser != 16 && idRol != 2 && nombreUsuario != "Viridiana España"))
+                                    {
+                                        @Html.DisplayFor(modelItem => item.NombrePaciente)
+                                    }
+                                    else
+                                    {
+                                        <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_S", new { id = item.idCaptura, sucursal = Sucursal }, new { style = "color: black; text-decoration: none" })</b>
+                                    }
                                 }
                                 else
                                 {
-                                    <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_S", new { id = item.idCaptura, sucursal = Sucursal }, new { style = "color: black; text-decoration: none" })</b>
+                                    <b>@Html.ActionLink(item.NombrePaciente, "PreDictamen", new { id = item.idPaciente }, new { style = "color: black; text-decoration: none" })</b>
                                 }
                             }
                         </td>
@@ -233,12 +251,19 @@
                         </td>
                         <td>
                             @{
-                                if (item.EstatusCaptura == "No iniciado")
+                                if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico == null)
                                 {
-                                    @*<input type="submit" value="Capturar" class="btn btn-outline-warning boton-transparente botonesGral" />*@
-                                    @*@Html.ActionLink("Capturar", "EditExpediente", new { id = item.idEPI })*@
-                                    <a href=@Url.Action("EditExpedienteS", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario, sucursal = Sucursal }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                    using (Html.BeginForm("EditExpedienteS", "EPIs"))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <a href=@Url.Action("EditExpedienteS", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario, sucursal = Sucursal }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                    }
                                 }
+                                else if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico != null)
+                                {
+                                    <a href=@Url.Action("PreDictamen", "EPIs", new { id = item.idPaciente, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                }
+
                                 else if (item.EstatusCaptura == "En captura...")
                                 {
                                     @*<a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idCaptura})><button type="button" class="btn btn-warning">Dictaminar</button></a>*@
@@ -248,9 +273,20 @@
                                             Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
                                         </button>
 
+                                        
+
                                         <div class="dropdown-menu" style="padding:10px">
-                                            <b>@Html.ActionLink("Abrir EPI", "AbrirEPI_S", new { id = item.idCaptura, sucursal = Sucursal })</b>
-                                            <div class="dropdown-divider"></div>
+
+                                            @if (item.CarruselMedico == null)
+                                            {
+                                                <b>@Html.ActionLink("Abrir EPI", "AbrirEPI_S", new { id = item.idCaptura })</b>
+                                                <div class="dropdown-divider"></div>
+                                            }
+                                            else
+                                            {
+                                                <b>@Html.ActionLink("Abrir EPI", "Predictamen", new { id = item.idPaciente })</b>
+                                                <div class="dropdown-divider"></div>
+                                            }
                                             <b>@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = item.idCaptura })</b>
                                             <div class="dropdown-divider"></div>
                                         </div>
@@ -264,11 +300,11 @@
                             }
 
                             @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1" data-id="@item.idEPI">Open modal for @item.idEPI</button>
-                                @Html.ActionLink("Editar", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#modalEdit" }) |
-                                @Html.ActionLink("Detalles", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#YourModalId" })*@
+        @Html.ActionLink("Editar", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#modalEdit" }) |
+        @Html.ActionLink("Detalles", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#YourModalId" })*@
                             @*@Html.ActionLink("Edit", "Edit", new { id = item.idEPI }) |
-                                @Html.ActionLink("Details", "Details", new { id = item.idEPI }) |
-                                @Html.ActionLink("Delete", "Delete", new { id = item.idEPI })*@
+        @Html.ActionLink("Details", "Details", new { id = item.idEPI }) |
+        @Html.ActionLink("Delete", "Delete", new { id = item.idEPI })*@
                         </td>
                     </tr>
 

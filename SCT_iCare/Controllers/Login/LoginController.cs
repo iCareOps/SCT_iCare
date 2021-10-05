@@ -81,6 +81,9 @@ namespace SCT_iCare.Controllers.Login
                         case 3:
                             ViewBag.Nombre = oUser.Nombre.ToString();
                             return Redirect("~/Recepcion/Index");
+                        case 21:
+                            ViewBag.Nombre = oUser.Nombre.ToString();
+                            return Redirect("~/Recepcion/Index");
                         case 9:
                             ViewBag.Nombre = oUser.Nombre.ToString();
                             return Redirect("~/EPIs/Captura");
