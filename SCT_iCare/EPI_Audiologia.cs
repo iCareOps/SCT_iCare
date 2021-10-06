@@ -19,6 +19,20 @@ namespace SCT_iCare
         public string Grafica { get; set; }
         public string NotaMedica { get; set; }
         public Nullable<int> idPaciente { get; set; }
+        public string D125 { get; set; }
+        public string D250 { get; set; }
+        public string D500 { get; set; }
+        public string D1000 { get; set; }
+        public string D2000 { get; set; }
+        public string D4000 { get; set; }
+        public string D8000 { get; set; }
+        public string I125 { get; set; }
+        public string I250 { get; set; }
+        public string I500 { get; set; }
+        public string I1000 { get; set; }
+        public string I2000 { get; set; }
+        public string I4000 { get; set; }
+        public string I8000 { get; set; }
     
         public virtual Paciente Paciente { get; set; }
     }

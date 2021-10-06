@@ -1344,7 +1344,7 @@ else
                             }
                             else
                             {
-                                <span class="field-tip">
+                                <span class="field-tip field-tip2">
                                     
 
                                 @if (revisionEPI != null)
@@ -1388,17 +1388,73 @@ else
 
                                     @if(item.M.CarruselMedico == "SI")
                                     {
-                                        var SV = (from i in db.CarruselMedico where i.idPaciente == item.M.idPaciente select i).FirstOrDefault();
+                                        var CM = (from i in db.CarruselMedico where i.idPaciente == item.M.idPaciente select i).FirstOrDefault();
 
-                                        <span class="tip-content">
-                                        <b>Signos Vitales: </b>@item.M.Recepcionista <br />
-                                        <b>Laboratorio: </b>@item.M.Canal <br />
-                                        <b>Cardiología: </b>@item.M.Canal <br />
-                                        <b>Oftalmología: </b>@item.M.Canal <br />
-                                        <b>Odontología: </b>@item.M.Canal <br />
-                                        <b>Historia Clínica: </b>@item.M.Canal <br />
-                                        <b>Audiología: </b>@item.M.Canal
-                                    </span>
+                                <span class="tip-content">
+                                    @if (CM.Fin_SignosVitales != null)
+                                    {
+                                        <b>S.Vitales: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                    }
+                                    else
+                                    {
+                                        <b>S.Vitales: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                    }
+
+                                    @if (CM.Fin_Laboratorio != null)
+                                    {
+                                        <b>Laboratorio: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                    }
+                                    else
+                                    {
+                                        <b>Laboratorio: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                    }
+
+                                    @if (CM.Fin_Cardiologia != null)
+                                    {
+                                        <b>Cardiología: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                    }
+                                    else
+                                    {
+                                        <b>Cardiología: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                    }
+
+                                    @if (CM.Fin_Oftalmologia != null)
+                                    {
+                                        <b>Oftalmología: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                    }
+                                    else
+                                    {
+                                        <b>Oftalmología: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                    }
+
+                                    @if (CM.Fin_Odontologia != null)
+                                    {
+                                        <b>Odontología: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                    }
+                                    else
+                                    {
+                                        <b>Odontología: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                    }
+
+                                    @if (CM.Fin_HistoriaClinica != null)
+                                    {
+                                        <b>H. Clínica: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                    }
+                                    else
+                                    {
+                                        <b>H. Clínica: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                    }
+
+                                    @if (CM.Fin_Audiologia != null)
+                                    {
+                                        <b>Audiología: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                    }
+                                    else
+                                    {
+                                        <b>Audiología: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                    }
+
+                                </span>
                                     }
 
                                     
