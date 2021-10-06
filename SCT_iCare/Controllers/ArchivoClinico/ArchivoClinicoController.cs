@@ -641,7 +641,9 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         }
 
         [HttpPost]
-        public ActionResult Guardar_Audiologia(int id, string patologia, string nota, string graficas)
+        public ActionResult Guardar_Audiologia(int id, string patologia, string nota, string graficas, 
+            string D125, string D250, string D500, string D1000, string D2000, string D4000, string D8000,
+            string I125, string I250, string I500, string I1000, string I2000, string I4000, string I8000)
         {
             EPI_Audiologia audio = new EPI_Audiologia();
 
@@ -649,6 +651,22 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             audio.Grafica = graficas == "on" ? "ALTERADO" : "NORMAL";
             audio.NotaMedica = nota == "on" ? "ALTERADO" : "NORMAL";
             audio.idPaciente = id;
+
+            audio.D125 = D125;
+            audio.D250 = D250;
+            audio.D500 = D500;
+            audio.D1000 = D1000;
+            audio.D2000 = D2000;
+            audio.D4000 = D4000;
+            audio.D8000 = D8000;
+
+            audio.I125 = I125;
+            audio.I250 = I250;
+            audio.I500 = I500;
+            audio.I1000 = I1000;
+            audio.I2000 = I2000;
+            audio.I4000 = I4000;
+            audio.I8000 = I8000;
 
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
@@ -732,16 +750,155 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         }
 
         [HttpPost]
-        public ActionResult Guardar_Odontologia(int id, string exploracion, string nota,
+        public ActionResult Guardar_Odontologia(int id, string exploracion,
         string tc_Diente_18, string tr_Diente_18, string to_Diente_18, string tc_Diente_17, string tr_Diente_17, string to_Diente_17, string tc_Diente_16, string tr_Diente_16, string to_Diente_16, string tc_Diente_15, string tr_Diente_15, string to_Diente_15, string tc_Diente_14, string tr_Diente_14, string to_Diente_14, string tc_Diente_13, string tr_Diente_13, string to_Diente_13, string tc_Diente_12, string tr_Diente_12, string to_Diente_12, string tc_Diente_11, string tr_Diente_11, string to_Diente_11,
         string tc_Diente_28, string tr_Diente_28, string to_Diente_28, string tc_Diente_27, string tr_Diente_27, string to_Diente_27, string tc_Diente_26, string tr_Diente_26, string to_Diente_26, string tc_Diente_25, string tr_Diente_25, string to_Diente_25, string tc_Diente_24, string tr_Diente_24, string to_Diente_24, string tc_Diente_23, string tr_Diente_23, string to_Diente_23, string tc_Diente_22, string tr_Diente_22, string to_Diente_22, string tc_Diente_21, string tr_Diente_21, string to_Diente_21,
         string tc_Diente_38, string tr_Diente_38, string to_Diente_38, string tc_Diente_37, string tr_Diente_37, string to_Diente_37, string tc_Diente_36, string tr_Diente_36, string to_Diente_36, string tc_Diente_35, string tr_Diente_35, string to_Diente_35, string tc_Diente_34, string tr_Diente_34, string to_Diente_34, string tc_Diente_33, string tr_Diente_33, string to_Diente_33, string tc_Diente_32, string tr_Diente_32, string to_Diente_32, string tc_Diente_31, string tr_Diente_31, string to_Diente_31,
         string tc_Diente_48, string tr_Diente_48, string to_Diente_48, string tc_Diente_47, string tr_Diente_47, string to_Diente_47, string tc_Diente_46, string tr_Diente_46, string to_Diente_46, string tc_Diente_45, string tr_Diente_45, string to_Diente_45, string tc_Diente_44, string tr_Diente_44, string to_Diente_44, string tc_Diente_43, string tr_Diente_43, string to_Diente_43, string tc_Diente_42, string tr_Diente_42, string to_Diente_42, string tc_Diente_41, string tr_Diente_41, string to_Diente_41)
         {
+            string NotaMedica = "";
+            //Inicia el proceso de llenado de dientes (operadores ternarios)-----------------------------
+
+            NotaMedica = tc_Diente_18 != "" ? NotaMedica += tc_Diente_18 + " #18, " : NotaMedica += "";
+            NotaMedica = to_Diente_18 != "" ? NotaMedica += to_Diente_18 + " #18, " : NotaMedica += "";
+            NotaMedica = tr_Diente_18 != "" ? NotaMedica += tr_Diente_18 + " #18, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_17 != "" ? NotaMedica += tc_Diente_17 + " #17, " : NotaMedica += "";
+            NotaMedica = to_Diente_17 != "" ? NotaMedica += to_Diente_17 + " #17, " : NotaMedica += "";
+            NotaMedica = tr_Diente_17 != "" ? NotaMedica += tr_Diente_17 + " #17, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_16 != "" ? NotaMedica += tc_Diente_16 + " #16, " : NotaMedica += "";
+            NotaMedica = to_Diente_16 != "" ? NotaMedica += to_Diente_16 + " #16, " : NotaMedica += "";
+            NotaMedica = tr_Diente_16 != "" ? NotaMedica += tr_Diente_16 + " #16, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_15 != "" ? NotaMedica += tc_Diente_15 + " #15, " : NotaMedica += "";
+            NotaMedica = to_Diente_15 != "" ? NotaMedica += to_Diente_15 + " #15, " : NotaMedica += "";
+            NotaMedica = tr_Diente_15 != "" ? NotaMedica += tr_Diente_15 + " #15, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_14 != "" ? NotaMedica += tc_Diente_14 + " #14, " : NotaMedica += "";
+            NotaMedica = to_Diente_14 != "" ? NotaMedica += to_Diente_14 + " #14, " : NotaMedica += "";
+            NotaMedica = tr_Diente_14 != "" ? NotaMedica += tr_Diente_14 + " #14, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_13 != "" ? NotaMedica += tc_Diente_13 + " #13, " : NotaMedica += "";
+            NotaMedica = to_Diente_13 != "" ? NotaMedica += to_Diente_13 + " #13, " : NotaMedica += "";
+            NotaMedica = tr_Diente_13 != "" ? NotaMedica += tr_Diente_13 + " #13, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_12 != "" ? NotaMedica += tc_Diente_12 + " #12, " : NotaMedica += "";
+            NotaMedica = to_Diente_12 != "" ? NotaMedica += to_Diente_12 + " #12, " : NotaMedica += "";
+            NotaMedica = tr_Diente_12 != "" ? NotaMedica += tr_Diente_12 + " #12, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_11 != "" ? NotaMedica += tc_Diente_11 + " #11, " : NotaMedica += "";
+            NotaMedica = to_Diente_11 != "" ? NotaMedica += to_Diente_11 + " #11, " : NotaMedica += "";
+            NotaMedica = tr_Diente_11 != "" ? NotaMedica += tr_Diente_11 + " #11, " : NotaMedica += "";
+
+
+
+            NotaMedica = tc_Diente_28 != "" ? NotaMedica += tc_Diente_28 + " #28, " : NotaMedica += "";
+            NotaMedica = to_Diente_28 != "" ? NotaMedica += to_Diente_28 + " #28, " : NotaMedica += "";
+            NotaMedica = tr_Diente_28 != "" ? NotaMedica += tr_Diente_28 + " #28, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_27 != "" ? NotaMedica += tc_Diente_27 + " #27, " : NotaMedica += "";
+            NotaMedica = to_Diente_27 != "" ? NotaMedica += to_Diente_27 + " #27, " : NotaMedica += "";
+            NotaMedica = tr_Diente_27 != "" ? NotaMedica += tr_Diente_27 + " #27, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_26 != "" ? NotaMedica += tc_Diente_26 + " #26, " : NotaMedica += "";
+            NotaMedica = to_Diente_26 != "" ? NotaMedica += to_Diente_26 + " #26, " : NotaMedica += "";
+            NotaMedica = tr_Diente_26 != "" ? NotaMedica += tr_Diente_26 + " #26, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_25 != "" ? NotaMedica += tc_Diente_25 + " #25, " : NotaMedica += "";
+            NotaMedica = to_Diente_25 != "" ? NotaMedica += to_Diente_25 + " #25, " : NotaMedica += "";
+            NotaMedica = tr_Diente_25 != "" ? NotaMedica += tr_Diente_25 + " #25, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_24 != "" ? NotaMedica += tc_Diente_24 + " #24, " : NotaMedica += "";
+            NotaMedica = to_Diente_24 != "" ? NotaMedica += to_Diente_24 + " #24, " : NotaMedica += "";
+            NotaMedica = tr_Diente_24 != "" ? NotaMedica += tr_Diente_24 + " #24, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_23 != "" ? NotaMedica += tc_Diente_23 + " #23, " : NotaMedica += "";
+            NotaMedica = to_Diente_23 != "" ? NotaMedica += to_Diente_23 + " #23, " : NotaMedica += "";
+            NotaMedica = tr_Diente_23 != "" ? NotaMedica += tr_Diente_23 + " #23, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_22 != "" ? NotaMedica += tc_Diente_22 + " #22, " : NotaMedica += "";
+            NotaMedica = to_Diente_22 != "" ? NotaMedica += to_Diente_22 + " #22, " : NotaMedica += "";
+            NotaMedica = tr_Diente_22 != "" ? NotaMedica += tr_Diente_22 + " #22, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_21 != "" ? NotaMedica += tc_Diente_21 + " #21, " : NotaMedica += "";
+            NotaMedica = to_Diente_21 != "" ? NotaMedica += to_Diente_21 + " #21, " : NotaMedica += "";
+            NotaMedica = tr_Diente_21 != "" ? NotaMedica += tr_Diente_21 + " #21, " : NotaMedica += "";
+
+
+
+            NotaMedica = tc_Diente_38 != "" ? NotaMedica += tc_Diente_38 + " #38, " : NotaMedica += "";
+            NotaMedica = to_Diente_38 != "" ? NotaMedica += to_Diente_38 + " #38, " : NotaMedica += "";
+            NotaMedica = tr_Diente_38 != "" ? NotaMedica += tr_Diente_38 + " #38, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_37 != "" ? NotaMedica += tc_Diente_37 + " #37, " : NotaMedica += "";
+            NotaMedica = to_Diente_37 != "" ? NotaMedica += to_Diente_37 + " #37, " : NotaMedica += "";
+            NotaMedica = tr_Diente_37 != "" ? NotaMedica += tr_Diente_37 + " #37, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_36 != "" ? NotaMedica += tc_Diente_36 + " #36, " : NotaMedica += "";
+            NotaMedica = to_Diente_36 != "" ? NotaMedica += to_Diente_36 + " #36, " : NotaMedica += "";
+            NotaMedica = tr_Diente_36 != "" ? NotaMedica += tr_Diente_36 + " #36, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_35 != "" ? NotaMedica += tc_Diente_35 + " #35, " : NotaMedica += "";
+            NotaMedica = to_Diente_35 != "" ? NotaMedica += to_Diente_35 + " #35, " : NotaMedica += "";
+            NotaMedica = tr_Diente_35 != "" ? NotaMedica += tr_Diente_35 + " #35, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_34 != "" ? NotaMedica += tc_Diente_34 + " #34, " : NotaMedica += "";
+            NotaMedica = to_Diente_34 != "" ? NotaMedica += to_Diente_34 + " #34, " : NotaMedica += "";
+            NotaMedica = tr_Diente_34 != "" ? NotaMedica += tr_Diente_34 + " #34, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_33 != "" ? NotaMedica += tc_Diente_33 + " #33, " : NotaMedica += "";
+            NotaMedica = to_Diente_33 != "" ? NotaMedica += to_Diente_33 + " #33, " : NotaMedica += "";
+            NotaMedica = tr_Diente_33 != "" ? NotaMedica += tr_Diente_33 + " #33, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_32 != "" ? NotaMedica += tc_Diente_32 + " #32, " : NotaMedica += "";
+            NotaMedica = to_Diente_32 != "" ? NotaMedica += to_Diente_32 + " #32, " : NotaMedica += "";
+            NotaMedica = tr_Diente_32 != "" ? NotaMedica += tr_Diente_32 + " #32, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_31 != "" ? NotaMedica += tc_Diente_31 + " #31, " : NotaMedica += "";
+            NotaMedica = to_Diente_31 != "" ? NotaMedica += to_Diente_31 + " #31, " : NotaMedica += "";
+            NotaMedica = tr_Diente_31 != "" ? NotaMedica += tr_Diente_31 + " #31, " : NotaMedica += "";
+
+
+            NotaMedica = tc_Diente_48 != "" ? NotaMedica += tc_Diente_48 + " #48, " : NotaMedica += "";
+            NotaMedica = to_Diente_48 != "" ? NotaMedica += to_Diente_48 + " #48, " : NotaMedica += "";
+            NotaMedica = tr_Diente_48 != "" ? NotaMedica += tr_Diente_48 + " #48, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_47 != "" ? NotaMedica += tc_Diente_47 + " #47, " : NotaMedica += "";
+            NotaMedica = to_Diente_47 != "" ? NotaMedica += to_Diente_47 + " #47, " : NotaMedica += "";
+            NotaMedica = tr_Diente_47 != "" ? NotaMedica += tr_Diente_47 + " #47, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_46 != "" ? NotaMedica += tc_Diente_46 + " #46, " : NotaMedica += "";
+            NotaMedica = to_Diente_46 != "" ? NotaMedica += to_Diente_46 + " #46, " : NotaMedica += "";
+            NotaMedica = tr_Diente_46 != "" ? NotaMedica += tr_Diente_46 + " #46, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_45 != "" ? NotaMedica += tc_Diente_45 + " #45, " : NotaMedica += "";
+            NotaMedica = to_Diente_45 != "" ? NotaMedica += to_Diente_45 + " #45, " : NotaMedica += "";
+            NotaMedica = tr_Diente_45 != "" ? NotaMedica += tr_Diente_45 + " #45, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_44 != "" ? NotaMedica += tc_Diente_44 + " #44, " : NotaMedica += "";
+            NotaMedica = to_Diente_44 != "" ? NotaMedica += to_Diente_44 + " #44, " : NotaMedica += "";
+            NotaMedica = tr_Diente_44 != "" ? NotaMedica += tr_Diente_44 + " #44, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_43 != "" ? NotaMedica += tc_Diente_43 + " #43, " : NotaMedica += "";
+            NotaMedica = to_Diente_43 != "" ? NotaMedica += to_Diente_43 + " #43, " : NotaMedica += "";
+            NotaMedica = tr_Diente_43 != "" ? NotaMedica += tr_Diente_43 + " #43, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_42 != "" ? NotaMedica += tc_Diente_42 + " #42, " : NotaMedica += "";
+            NotaMedica = to_Diente_42 != "" ? NotaMedica += to_Diente_42 + " #42, " : NotaMedica += "";
+            NotaMedica = tr_Diente_42 != "" ? NotaMedica += tr_Diente_42 + " #42, " : NotaMedica += "";
+
+            NotaMedica = tc_Diente_41 != "" ? NotaMedica += tc_Diente_41 + " #41, " : NotaMedica += "";
+            NotaMedica = to_Diente_41 != "" ? NotaMedica += to_Diente_41 + " #41, " : NotaMedica += "";
+            NotaMedica = tr_Diente_41 != "" ? NotaMedica += tr_Diente_41 + " #41, " : NotaMedica += "";
+
+            //Acaba el proceso de llenado de dientes------------------------------------------------
+
+
             EPI_Odontologia odontologia = new EPI_Odontologia();
 
             odontologia.Exploracion = exploracion == "on" ? "ALTERADO" : "NORMAL";
-            odontologia.NotaOdontologica = nota == "" ? null : nota;
+            odontologia.NotaOdontologica = NotaMedica == "" ? null : NotaMedica;
             odontologia.idPaciente = id;
 
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
