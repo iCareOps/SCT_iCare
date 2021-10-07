@@ -65,5 +65,6 @@ namespace SCT_iCare
         public virtual DbSet<EPI_Odontologia> EPI_Odontologia { get; set; }
         public virtual DbSet<Referido> Referido { get; set; }
         public virtual DbSet<ExpedienteRevaloracion> ExpedienteRevaloracion { get; set; }
+        public virtual DbSet<Archivos> Archivos { get; set; }
     }
 }

@@ -13,6 +13,17 @@
           <Property Name="Aptitud" Type="varchar" MaxLength="50" />
           <Property Name="MotivoAptitud" Type="varchar" MaxLength="200" />
         </EntityType>
+        <EntityType Name="Archivos">
+          <Key>
+            <PropertyRef Name="idArchivos" />
+          </Key>
+          <Property Name="idArchivos" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ElectroCardiograma" Type="varbinary(max)" />
+          <Property Name="NoAccidentes" Type="varbinary(max)" />
+          <Property Name="HGlucosilada" Type="varbinary(max)" />
+          <Property Name="ArchivosExtra" Type="varbinary(max)" />
+          <Property Name="idPaciente" Type="int" />
+        </EntityType>
         <EntityType Name="Canal">
           <Key>
             <PropertyRef Name="idCanal" />
@@ -519,6 +530,18 @@
           <Property Name="Password" Type="varchar" MaxLength="100" />
           <Property Name="idRol" Type="int" />
         </EntityType>
+        <Association Name="FK_Archivos_Paciente">
+          <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+          <End Role="Archivos" Type="Self.Archivos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Paciente">
+              <PropertyRef Name="idPaciente" />
+            </Principal>
+            <Dependent Role="Archivos">
+              <PropertyRef Name="idPaciente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Captura_Paciente">
           <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
           <End Role="Captura" Type="Self.Captura" Multiplicity="*" />
@@ -953,6 +976,7 @@
         </Association>
         <EntityContainer Name="DevModelStoreContainer">
           <EntitySet Name="Aptitud" EntityType="Self.Aptitud" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Archivos" EntityType="Self.Archivos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Canal" EntityType="Self.Canal" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Captura" EntityType="Self.Captura" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CapturaIncidencia" EntityType="Self.CapturaIncidencia" Schema="dbo" store:Type="Tables" />
@@ -992,6 +1016,10 @@
           <EntitySet Name="RolMenu" EntityType="Self.RolMenu" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Sucursales" EntityType="Self.Sucursales" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Archivos_Paciente" Association="Self.FK_Archivos_Paciente">
+            <End Role="Paciente" EntitySet="Paciente" />
+            <End Role="Archivos" EntitySet="Archivos" />
+          </AssociationSet>
           <AssociationSet Name="FK_Captura_Paciente" Association="Self.FK_Captura_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
             <End Role="Captura" EntitySet="Captura" />
@@ -1320,6 +1348,7 @@
           <NavigationProperty Name="EPI_Odontologia" Relationship="DevModel.FK_EPI_Odontologia_Paciente" FromRole="Paciente" ToRole="EPI_Odontologia" />
           <Property Name="HASH" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="ExpedienteRevaloracion" Relationship="DevModel.FK_ExpedienteRevaloracion_Paciente" FromRole="Paciente" ToRole="ExpedienteRevaloracion" />
+          <NavigationProperty Name="Archivos" Relationship="DevModel.FK_Archivos_Paciente" FromRole="Paciente" ToRole="Archivos" />
         </EntityType>
         <EntityType Name="Recepcionista">
           <Key>
@@ -1742,6 +1771,11 @@
           <AssociationSet Name="FK_ExpedienteRevaloracion_Paciente" Association="DevModel.FK_ExpedienteRevaloracion_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
             <End Role="ExpedienteRevaloracion" EntitySet="ExpedienteRevaloracion" />
+          </AssociationSet>
+          <EntitySet Name="Archivos" EntityType="DevModel.Archivos" />
+          <AssociationSet Name="FK_Archivos_Paciente" Association="DevModel.FK_Archivos_Paciente">
+            <End Role="Paciente" EntitySet="Paciente" />
+            <End Role="Archivos" EntitySet="Archivos" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="CapturaIncidencia">
@@ -2345,6 +2379,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Archivos">
+          <Key>
+            <PropertyRef Name="idArchivos" />
+          </Key>
+          <Property Name="idArchivos" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ElectroCardiograma" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="NoAccidentes" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="HGlucosilada" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="ArchivosExtra" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="idPaciente" Type="Int32" />
+          <NavigationProperty Name="Paciente" Relationship="DevModel.FK_Archivos_Paciente" FromRole="Archivos" ToRole="Paciente" />
+        </EntityType>
+        <Association Name="FK_Archivos_Paciente">
+          <End Type="DevModel.Paciente" Role="Paciente" Multiplicity="0..1" />
+          <End Type="DevModel.Archivos" Role="Archivos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Paciente">
+              <PropertyRef Name="idPaciente" />
+            </Principal>
+            <Dependent Role="Archivos">
+              <PropertyRef Name="idPaciente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2902,6 +2960,18 @@
                 <ScalarProperty Name="idPaciente" ColumnName="idPaciente" />
                 <ScalarProperty Name="ExpedienteCompleto" ColumnName="ExpedienteCompleto" />
                 <ScalarProperty Name="idExpedienteRevaloracion" ColumnName="idExpedienteRevaloracion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Archivos">
+            <EntityTypeMapping TypeName="DevModel.Archivos">
+              <MappingFragment StoreEntitySet="Archivos">
+                <ScalarProperty Name="idPaciente" ColumnName="idPaciente" />
+                <ScalarProperty Name="ArchivosExtra" ColumnName="ArchivosExtra" />
+                <ScalarProperty Name="HGlucosilada" ColumnName="HGlucosilada" />
+                <ScalarProperty Name="NoAccidentes" ColumnName="NoAccidentes" />
+                <ScalarProperty Name="ElectroCardiograma" ColumnName="ElectroCardiograma" />
+                <ScalarProperty Name="idArchivos" ColumnName="idArchivos" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

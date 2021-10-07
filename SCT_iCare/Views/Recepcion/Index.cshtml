@@ -1539,6 +1539,7 @@ else
                                         {
                                             <a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>Completar Datos</b></a>
                                             <div class="dropdown-divider"></div>
+
                                         }
 
 
@@ -1560,6 +1561,14 @@ else
                                         <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
                                         <div class="dropdown-divider"></div>
 
+                                        //Subir Archivo
+                                        var revisionCarrusel = (from i in db.Cita where i.idPaciente == item.M.idPaciente && i.CarruselMedico == "SI" select i).FirstOrDefault();
+                                        {
+                                            <a href="#" data-toggle="modal" data-target="#subirArchivos_@item.M.idPaciente"><b>Subir Archivos</b></a>
+                                            <div class="dropdown-divider"></div>
+                                        }
+
+
                                         var entregado = (from e in db.Captura where e.idPaciente == item.M.idPaciente && e.EstatusCaptura == "Terminado" select e.EstatusCaptura).FirstOrDefault();
                                         if (entregado != null && item.M.Entregado == null)
                                         {
@@ -1577,42 +1586,42 @@ else
                                 }
 
                                 @*@if (item.M.EstatusPago == "Pagado")
-                                    {
-                                        var aptitud = (from i in db.EPI_DictamenAptitud where i.idPaciente == item.N.idPaciente orderby i.idDictamenAptitud descending select i).FirstOrDefault();
+                {
+                    var aptitud = (from i in db.EPI_DictamenAptitud where i.idPaciente == item.N.idPaciente orderby i.idDictamenAptitud descending select i).FirstOrDefault();
 
-                                        if (aptitud != null && aptitud.Aptitud == "NO APTO")
-                                        {
-                                            <a href="#" data-toggle="modal" data-target="#revaloracion_@item.M.idPaciente"><b>Revaloración</b></a>
-                                            <div class="dropdown-divider"></div>
-                                        }
+                    if (aptitud != null && aptitud.Aptitud == "NO APTO")
+                    {
+                        <a href="#" data-toggle="modal" data-target="#revaloracion_@item.M.idPaciente"><b>Revaloración</b></a>
+                        <div class="dropdown-divider"></div>
+                    }
 
-                                        <a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>Completar Datos</b></a>
-                                        <div class="dropdown-divider"></div>
-                                        <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
-                                        <div class="dropdown-divider"></div>
-                                        <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
-                                        <div class="dropdown-divider"></div>
-                                    }
-                                    else if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
-                                    {
-                                        <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Pagado</b></a>
-                                        <div class="dropdown-divider"></div>
-                                        <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
-                                        <div class="dropdown-divider"></div>
-                                    }
-                                    else if (item.M.NoExpediente != null && item.M.EstatusPago == "Pagado")
-                                    {
+                    <a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>Completar Datos</b></a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
+                    <div class="dropdown-divider"></div>
+                }
+                else if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
+                {
+                    <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Pagado</b></a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
+                    <div class="dropdown-divider"></div>
+                }
+                else if (item.M.NoExpediente != null && item.M.EstatusPago == "Pagado")
+                {
 
 
-                                        <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
-                                        <div class="dropdown-divider"></div>
+                    <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
+                    <div class="dropdown-divider"></div>
 
-                                        var entregado = (from e in db.Captura where e.idPaciente == item.M.idPaciente && e.EstatusCaptura == "Terminado" select e.EstatusCaptura).FirstOrDefault();
-                                        if (entregado != null && item.M.Entregado == null)
-                                        {
-                                            <a href="#" data-toggle="modal" data-target="#entregar_@item.M.idPaciente"><b style="color:limegreen">Entregado</b></a>
-                                        }
-                                    }*@
+                    var entregado = (from e in db.Captura where e.idPaciente == item.M.idPaciente && e.EstatusCaptura == "Terminado" select e.EstatusCaptura).FirstOrDefault();
+                    if (entregado != null && item.M.Entregado == null)
+                    {
+                        <a href="#" data-toggle="modal" data-target="#entregar_@item.M.idPaciente"><b style="color:limegreen">Entregado</b></a>
+                    }
+                }*@
 
                             </div>
                         </div>
@@ -1829,6 +1838,48 @@ else
                                                     }
                                                 </select>
                                             </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <input type="submit" value="Guardar" class="btn btn-primary" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+
+                        <!-- Modal para digitalización de Electrocardiograma u otros archivos-->
+                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/SubirArchivosEKG")">
+                            @Html.AntiForgeryToken()
+                            <div class="modal fade" id="subirArchivos_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Subir Archivos para EPI de @item.N.Nombre</b></h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="file" class="col-form-label">ElectroCardiograma:</label>
+                                                <input type="file" name="EKG" asp-for="file" class="" value="file" />
+                                                <input type="hidden" name="id" asp-for="file" class="" value="@item.N.idPaciente" />
+                                            </div>
+                                            <br />
+                                            <div class="form-group">
+                                                <label for="file" class="col-form-label">Carta de "NO ACCIDENTES":</label>
+                                                <input type="file" name="NoAccidentes" asp-for="file" class="" value="file" />
+                                            </div>
+                                            <br />
+                                            <div class="form-group">
+                                                <label for="file" class="col-form-label">Hemoglobina Glucosilada:</label>
+                                                <input type="file" name="Glucosilada" asp-for="file" class="" value="file" />
+                                            </div>
+                                            <br />
+                                            <div class="form-group">
+                                                <label for="file" class="col-form-label">Otros Archivos:</label>
+                                                <input type="file" name="Otros" asp-for="file" class="" value="file" />
+                                            </div>
+                                            <br />
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>

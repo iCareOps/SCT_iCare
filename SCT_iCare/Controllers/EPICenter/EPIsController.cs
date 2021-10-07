@@ -99,6 +99,71 @@ namespace SCT_iCare.Controllers.EPICenter
             
         }
 
+        public ActionResult ArchivosEPI(int id, string archivoRequerido)
+        {
+            var archivos = (from i in db.Archivos where i.idPaciente == id select i).FirstOrDefault();
+
+            var bytesBinary = archivos.ElectroCardiograma;
+
+            if(archivoRequerido == "Abrir ElectroCardiograma" && archivos.ElectroCardiograma != null)
+            {
+                TempData["EKG"] = id;
+                return RedirectToAction("PreDictamen", new { id = id });
+            }
+            if (archivoRequerido == "Abrir Carta de No Accidentes" && archivos.NoAccidentes != null)
+            {
+                TempData["NA"] = id;
+                return RedirectToAction("PreDictamen", new { id = id });
+            }
+            if (archivoRequerido == "Abrir Expediente de H. Glucosilada" && archivos.HGlucosilada != null)
+            {
+                TempData["HG"] = id;
+                return RedirectToAction("PreDictamen", new { id = id });
+            }
+            if (archivoRequerido == "Abrir Expedientes" && archivos.ArchivosExtra != null)
+            {
+                TempData["Otros"] = id;
+                return RedirectToAction("PreDictamen", new { id = id });
+            }
+
+            return RedirectToAction("PreDictamen", new { id = id });
+        }
+
+        public ActionResult AbrirArchivosEPI(int id, string tipoArchivo)
+        {
+            var archivos = (from i in db.Archivos where i.idPaciente == id select i).FirstOrDefault();
+
+            if(tipoArchivo == "EKG")
+            {
+                var bytesBinary = archivos.ElectroCardiograma;
+                TempData["EKG"] = null;
+                return File(bytesBinary, "application/pdf");
+            }
+
+            if (tipoArchivo == "HG")
+            {
+                var bytesBinary = archivos.HGlucosilada;
+                TempData["HG"] = null;
+                return File(bytesBinary, "application/pdf");
+            }
+
+            if (tipoArchivo == "NA")
+            {
+                var bytesBinary = archivos.NoAccidentes;
+                TempData["NA"] = null;
+                return File(bytesBinary, "application/pdf");
+            }
+
+            if (tipoArchivo == "Otros")
+            {
+                var bytesBinary = archivos.ArchivosExtra;
+                TempData["Otros"] = null;
+                return File(bytesBinary, "application/pdf");
+            }
+
+            return RedirectToAction("PreDictamen", new { id = id });
+        }
+
         public ActionResult AbrirEPI_EC(int? id)
         {
             Captura captura = db.Captura.Find(id);
