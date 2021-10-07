@@ -2054,6 +2054,167 @@ namespace SCT_iCare.Controllers.Recepcion
             return Redirect("Index");
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SubirArchivosEKG(HttpPostedFileBase EKG, HttpPostedFileBase NoAccidentes, HttpPostedFileBase Glucosilada, HttpPostedFileBase Otros, string id)
+        {
+            int ide = Convert.ToInt32(id);
+
+            Paciente paciente = db.Paciente.Find(ide);
+            var archivos = (from c in db.Archivos where c.idPaciente == ide select c).FirstOrDefault();
+
+            if(EKG != null)
+            {
+                byte[] bytes2;
+                var fileName = Path.GetFileName(EKG.FileName);
+
+                byte[] bytes;
+                using (BinaryReader br = new BinaryReader(EKG.InputStream))
+                {
+                    bytes = br.ReadBytes(EKG.ContentLength);
+                }
+                bytes2 = bytes;
+
+                if (archivos == null)
+                {
+                    Archivos pdf = new Archivos();
+                    pdf.ElectroCardiograma = bytes2;
+                    pdf.idPaciente = ide;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Archivos.Add(pdf);
+                        db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    Archivos pdf = db.Archivos.Find(archivos.idArchivos);
+                    pdf.ElectroCardiograma = bytes2;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Entry(pdf).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+            }
+
+            if (NoAccidentes != null)
+            {
+                byte[] bytes2;
+                var fileName = Path.GetFileName(NoAccidentes.FileName);
+
+                byte[] bytes;
+                using (BinaryReader br = new BinaryReader(NoAccidentes.InputStream))
+                {
+                    bytes = br.ReadBytes(NoAccidentes.ContentLength);
+                }
+                bytes2 = bytes;
+
+                if (archivos == null)
+                {
+                    Archivos pdf = new Archivos();
+                    pdf.NoAccidentes = bytes2;
+                    pdf.idPaciente = ide;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Archivos.Add(pdf);
+                        db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    Archivos pdf = db.Archivos.Find(archivos.idArchivos);
+                    pdf.NoAccidentes = bytes2;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Entry(pdf).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+            }
+
+            if (Glucosilada != null)
+            {
+                byte[] bytes2;
+                var fileName = Path.GetFileName(Glucosilada.FileName);
+
+                byte[] bytes;
+                using (BinaryReader br = new BinaryReader(Glucosilada.InputStream))
+                {
+                    bytes = br.ReadBytes(Glucosilada.ContentLength);
+                }
+                bytes2 = bytes;
+
+                if (archivos == null)
+                {
+                    Archivos pdf = new Archivos();
+                    pdf.HGlucosilada = bytes2;
+                    pdf.idPaciente = ide;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Archivos.Add(pdf);
+                        db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    Archivos pdf = db.Archivos.Find(archivos.idArchivos);
+                    pdf.HGlucosilada = bytes2;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Entry(pdf).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+            }
+
+            if (Otros != null)
+            {
+                byte[] bytes2;
+                var fileName = Path.GetFileName(Otros.FileName);
+
+                byte[] bytes;
+                using (BinaryReader br = new BinaryReader(Otros.InputStream))
+                {
+                    bytes = br.ReadBytes(Otros.ContentLength);
+                }
+                bytes2 = bytes;
+
+                if (archivos == null)
+                {
+                    Archivos pdf = new Archivos();
+                    pdf.ArchivosExtra = bytes2;
+                    pdf.idPaciente = ide;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Archivos.Add(pdf);
+                        db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    Archivos pdf = db.Archivos.Find(archivos.idArchivos);
+                    pdf.ArchivosExtra = bytes2;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Entry(pdf).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+            }
+
+            return Redirect("Index");
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult SubirRevaloracion(HttpPostedFileBase file, int id)
@@ -2096,6 +2257,28 @@ namespace SCT_iCare.Controllers.Recepcion
             var cita = (from c in db.Cita where c.idPaciente == id select c).FirstOrDefault();
             cita.Asistencia = "NO";
             cita.CancelaComentario = comentario;
+            
+
+            //Proceso para cancelar también las referencias Scotiabank que no se utilicen
+            var referenciaRepetida = (from r in db.Cita where r.idPaciente == id select r.Referencia).FirstOrDefault();
+            cita.Referencia = "Cancelada " +referenciaRepetida;
+
+            var idFlag = (from i in db.Cita where i.Referencia == referenciaRepetida orderby i.idPaciente descending select i).FirstOrDefault();
+            var tipoPago = (from t in db.ReferenciasSB where t.idPaciente == idFlag.idPaciente select t).FirstOrDefault();
+
+            if ((from r in db.Cita where r.Referencia == referenciaRepetida select r).Count() == 1)
+            {
+                ReferenciasSB refe = db.ReferenciasSB.Find(tipoPago.idReferencia);
+                refe.EstatusReferencia = "LIBRE";
+                refe.idPaciente = 0;
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(refe).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            //--------------------------------------------------------------------------------------
 
             if (ModelState.IsValid)
             {

@@ -723,7 +723,7 @@ int modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) =
 }
 else
 {
-    var citas = (from c in db.Cita select c).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal != "SITIO");
+    var citas = (from c in db.Cita select c).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal == "Gestoría");
 
     <h3 style="color:white">REFERENCIAS CREADAS HOY: @repetidas</h3>
     <div class="tablaScroll2">
@@ -939,7 +939,7 @@ else
 }
 else
 {
-    var citas = (from c in db.Cita select c).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.Canal != "SITIO");
+    var citas = (from c in db.Cita select c).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.Canal == "Gestoría");
 
     <h3 style="color:white">CITAS PARA HOY: @repetidasCitas</h3>
     <div class="tablaScroll2">

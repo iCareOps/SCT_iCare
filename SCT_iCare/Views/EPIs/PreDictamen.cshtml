@@ -5,6 +5,19 @@
 
     int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
 
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    string nombreUsuario = null;
+    int idUser = 0;
+    int? idRol = 0;
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
+    }
+
     int id;
 
     if (ViewBag.ID == null)
@@ -145,6 +158,16 @@
             }
         }
     </table>
+
+    var revisionHG = (from i in db.Archivos where i.idPaciente == idPaciente select i.HGlucosilada).FirstOrDefault();
+    if (revisionHG != null)
+    {
+        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/ArchivosEPI")">
+            <input type="hidden" name="id" value="@idPaciente" />
+            <input type="submit" value="Abrir Expediente de H. Glucosilada" name="archivoRequerido" class="btn btn-warning" />
+        </form>
+    }
+
     <hr />
 
 
@@ -217,6 +240,12 @@
             </td>
         </tr>
     </table>
+
+    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/ArchivosEPI")">
+        <input type="hidden" name="id" value="@idPaciente" />
+        <input type="submit" value="Abrir ElectroCardiograma" name="archivoRequerido" class="btn btn-warning" />
+    </form>
+
     <hr />
 
     var consulta = (from c in db.Epi_Oftalmologia where c.idPaciente == idPaciente orderby c.idOftalmologia descending select c).FirstOrDefault();
@@ -366,6 +395,15 @@
         }
 
     </table>
+
+    var revisionCarta = (from i in db.Archivos where i.idPaciente == idPaciente select i.NoAccidentes).FirstOrDefault();
+    if (revisionCarta != null)
+    {
+        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/ArchivosEPI")">
+            <input type="hidden" name="id" value="@idPaciente" />
+            <input type="submit" value="Abrir Carta de No Accidentes" name="archivoRequerido" class="btn btn-warning" />
+        </form>
+    }
 
     <hr />
 
@@ -603,6 +641,18 @@
             }
         </tr>
     </table>
+
+
+    var revisionOtros = (from i in db.Archivos where i.idPaciente == idPaciente select i.ArchivosExtra).FirstOrDefault();
+    if (revisionOtros != null)
+    {
+        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/ArchivosEPI")">
+            <input type="hidden" name="id" value="@idPaciente" />
+            <input type="submit" value="Abrir Expedientes" name="archivoRequerido" class="btn btn-warning" />
+        </form>
+    }
+
+    <br />
 
     <h3 style="text-align:left; color:white">Antecedentes Personales Patológicos</h3>
 
@@ -4847,6 +4897,38 @@
         var pacienteCaptura = (from e in db.Captura where e.idPaciente == idPaciente select e).FirstOrDefault();
 
         <button class="btn btn-success" style="text-decoration:none">@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = pacienteCaptura.idCaptura }, new { style = "text-decoration:none; color:white;" })</button>
+    }
+
+}
+
+
+@section scripts{
+    @if (TempData["EKG"] != null)
+    {
+        <script>
+            window.open('@Url.Action("AbrirArchivosEPI","EPIs", new { id = idPaciente, tipoArchivo = "EKG" })');
+        </script>
+    }
+
+    @if (TempData["HG"] != null)
+    {
+        <script>
+            window.open('@Url.Action("AbrirArchivosEPI","EPIs", new { id = idPaciente, tipoArchivo = "HG" })');
+        </script>
+    }
+
+    @if (TempData["NA"] != null)
+    {
+        <script>
+            window.open('@Url.Action("AbrirArchivosEPI","EPIs", new { id = idPaciente, tipoArchivo = "NA" })');
+        </script>
+    }
+
+    @if (TempData["Otros"] != null)
+    {
+        <script>
+            window.open('@Url.Action("AbrirArchivosEPI","EPIs", new { id = idPaciente, tipoArchivo = "Otros" })');
+        </script>
     }
 
 }
