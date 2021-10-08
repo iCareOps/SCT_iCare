@@ -8,6 +8,17 @@
     <Property Name="Aptitud" Type="varchar" MaxLength="50" />
     <Property Name="MotivoAptitud" Type="varchar" MaxLength="200" />
   </EntityType>
+  <EntityType Name="Archivos">
+    <Key>
+      <PropertyRef Name="idArchivos" />
+    </Key>
+    <Property Name="idArchivos" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ElectroCardiograma" Type="varbinary(max)" />
+    <Property Name="NoAccidentes" Type="varbinary(max)" />
+    <Property Name="HGlucosilada" Type="varbinary(max)" />
+    <Property Name="ArchivosExtra" Type="varbinary(max)" />
+    <Property Name="idPaciente" Type="int" />
+  </EntityType>
   <EntityType Name="Canal">
     <Key>
       <PropertyRef Name="idCanal" />
@@ -260,6 +271,20 @@
     <Property Name="Grafica" Type="varchar" MaxLength="10" />
     <Property Name="NotaMedica" Type="varchar" MaxLength="10" />
     <Property Name="idPaciente" Type="int" />
+    <Property Name="D125" Type="varchar" MaxLength="10" />
+    <Property Name="D250" Type="varchar" MaxLength="10" />
+    <Property Name="D500" Type="varchar" MaxLength="10" />
+    <Property Name="D1000" Type="varchar" MaxLength="10" />
+    <Property Name="D2000" Type="varchar" MaxLength="10" />
+    <Property Name="D4000" Type="varchar" MaxLength="10" />
+    <Property Name="D8000" Type="varchar" MaxLength="10" />
+    <Property Name="I125" Type="varchar" MaxLength="10" />
+    <Property Name="I250" Type="varchar" MaxLength="10" />
+    <Property Name="I500" Type="varchar" MaxLength="10" />
+    <Property Name="I1000" Type="varchar" MaxLength="10" />
+    <Property Name="I2000" Type="varchar" MaxLength="10" />
+    <Property Name="I4000" Type="varchar" MaxLength="10" />
+    <Property Name="I8000" Type="varchar" MaxLength="10" />
   </EntityType>
   <EntityType Name="EPI_Cardiologia">
     <Key>
@@ -461,6 +486,7 @@
     <Property Name="idReferido" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Nombre" Type="varchar" MaxLength="50" />
     <Property Name="Tipo" Type="varchar" MaxLength="50" />
+    <Property Name="Saldo" Type="int" />
   </EntityType>
   <EntityType Name="Roles">
     <Key>
@@ -500,6 +526,18 @@
     <Property Name="Password" Type="varchar" MaxLength="100" />
     <Property Name="idRol" Type="int" />
   </EntityType>
+  <Association Name="FK_Archivos_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="Archivos" Type="Self.Archivos" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Archivos">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Captura_Paciente">
     <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
     <End Role="Captura" Type="Self.Captura" Multiplicity="*" />
@@ -934,6 +972,7 @@
   </Association>
   <EntityContainer Name="DevModelStoreContainer">
     <EntitySet Name="Aptitud" EntityType="Self.Aptitud" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Archivos" EntityType="Self.Archivos" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Canal" EntityType="Self.Canal" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Captura" EntityType="Self.Captura" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CapturaIncidencia" EntityType="Self.CapturaIncidencia" Schema="dbo" store:Type="Tables" />
@@ -973,6 +1012,10 @@
     <EntitySet Name="RolMenu" EntityType="Self.RolMenu" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Sucursales" EntityType="Self.Sucursales" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_Archivos_Paciente" Association="Self.FK_Archivos_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Archivos" EntitySet="Archivos" />
+    </AssociationSet>
     <AssociationSet Name="FK_Captura_Paciente" Association="Self.FK_Captura_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />
       <End Role="Captura" EntitySet="Captura" />
