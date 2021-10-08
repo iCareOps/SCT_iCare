@@ -179,6 +179,7 @@
     <NavigationProperty Name="EPI_Odontologia" Relationship="DevModel.FK_EPI_Odontologia_Paciente" FromRole="Paciente" ToRole="EPI_Odontologia" />
     <Property Name="HASH" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
     <NavigationProperty Name="ExpedienteRevaloracion" Relationship="DevModel.FK_ExpedienteRevaloracion_Paciente" FromRole="Paciente" ToRole="ExpedienteRevaloracion" />
+    <NavigationProperty Name="Archivos" Relationship="DevModel.FK_Archivos_Paciente" FromRole="Paciente" ToRole="Archivos" />
   </EntityType>
   <EntityType Name="Recepcionista">
     <Key>
@@ -601,6 +602,11 @@
     <AssociationSet Name="FK_ExpedienteRevaloracion_Paciente" Association="DevModel.FK_ExpedienteRevaloracion_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />
       <End Role="ExpedienteRevaloracion" EntitySet="ExpedienteRevaloracion" />
+    </AssociationSet>
+    <EntitySet Name="Archivos" EntityType="DevModel.Archivos" />
+    <AssociationSet Name="FK_Archivos_Paciente" Association="DevModel.FK_Archivos_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Archivos" EntitySet="Archivos" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="CapturaIncidencia">
@@ -1077,6 +1083,20 @@
     <Property Name="NotaMedica" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
     <Property Name="idPaciente" Type="Int32" />
     <NavigationProperty Name="Paciente" Relationship="DevModel.FK_EPI_Audiologia_Paciente" FromRole="EPI_Audiologia" ToRole="Paciente" />
+    <Property Name="D125" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D250" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D500" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D1000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D2000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D4000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D8000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I125" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I250" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I500" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I1000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I2000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I4000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I8000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="EPI_ExploracionFisica">
     <Key>
@@ -1168,6 +1188,7 @@
     <Property Name="idReferido" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="Tipo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Saldo" Type="Int32" />
   </EntityType>
   <EntityType Name="ExpedienteRevaloracion">
     <Key>
@@ -1186,6 +1207,30 @@
         <PropertyRef Name="idPaciente" />
       </Principal>
       <Dependent Role="ExpedienteRevaloracion">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Archivos">
+    <Key>
+      <PropertyRef Name="idArchivos" />
+    </Key>
+    <Property Name="idArchivos" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ElectroCardiograma" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="NoAccidentes" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="HGlucosilada" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="ArchivosExtra" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="idPaciente" Type="Int32" />
+    <NavigationProperty Name="Paciente" Relationship="DevModel.FK_Archivos_Paciente" FromRole="Archivos" ToRole="Paciente" />
+  </EntityType>
+  <Association Name="FK_Archivos_Paciente">
+    <End Type="DevModel.Paciente" Role="Paciente" Multiplicity="0..1" />
+    <End Type="DevModel.Archivos" Role="Archivos" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Archivos">
         <PropertyRef Name="idPaciente" />
       </Dependent>
     </ReferentialConstraint>
