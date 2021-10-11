@@ -468,7 +468,11 @@
                                                 {
                                                     var consulta = (from c in db.EPI_Laboratorio where c.idPaciente == idPaciente orderby c.idLaboratorio descending select c).FirstOrDefault();
                                                     <h4 style="text-align:left"><b>Glucosa: </b><span class="text-primary"> @consulta.Glucosa</span></h4>
-                                                    <h4 style="text-align:left"><b>Hemoglobina Glucosilada: </b><span class="text-primary"> @consulta.HemoglobinaGlucosilada</span></h4>
+                                                    if (consulta.HemoglobinaGlucosilada != "0")
+                                                    {
+                                                        <h4 style="text-align:left"><b>Hemoglobina Glucosilada: </b><span class="text-primary"> @consulta.HemoglobinaGlucosilada</span></h4>
+                                                    }
+
                                                 }
                                                 else if (item.Nombre == "HISTORIA CLÍNICA")
                                                 {

@@ -1789,7 +1789,8 @@ namespace SCT_iCare.Controllers.Recepcion
                 return RedirectToAction("Index");
             }
 
-            return View(exp);
+            //return View(exp);
+            return RedirectToAction("Index");
         }
 
         // GET: Pacientes/Delete/5
