@@ -17,5 +17,6 @@ namespace SCT_iCare
         public int idReferido { get; set; }
         public string Nombre { get; set; }
         public string Tipo { get; set; }
+        public Nullable<int> Saldo { get; set; }
     }
 }
