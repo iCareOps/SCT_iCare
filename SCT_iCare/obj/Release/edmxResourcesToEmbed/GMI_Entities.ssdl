@@ -19,6 +19,14 @@
     <Property Name="ArchivosExtra" Type="varbinary(max)" />
     <Property Name="idPaciente" Type="int" />
   </EntityType>
+  <EntityType Name="Biometricos">
+    <Key>
+      <PropertyRef Name="idBiometricos" />
+    </Key>
+    <Property Name="idBiometricos" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Foto" Type="varbinary(max)" />
+    <Property Name="idPaciente" Type="int" />
+  </EntityType>
   <EntityType Name="Canal">
     <Key>
       <PropertyRef Name="idCanal" />
@@ -538,6 +546,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_Biometricos_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="Biometricos" Type="Self.Biometricos" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Biometricos">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Captura_Paciente">
     <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
     <End Role="Captura" Type="Self.Captura" Multiplicity="*" />
@@ -973,6 +993,7 @@
   <EntityContainer Name="DevModelStoreContainer">
     <EntitySet Name="Aptitud" EntityType="Self.Aptitud" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Archivos" EntityType="Self.Archivos" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Biometricos" EntityType="Self.Biometricos" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Canal" EntityType="Self.Canal" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Captura" EntityType="Self.Captura" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CapturaIncidencia" EntityType="Self.CapturaIncidencia" Schema="dbo" store:Type="Tables" />
@@ -1015,6 +1036,10 @@
     <AssociationSet Name="FK_Archivos_Paciente" Association="Self.FK_Archivos_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />
       <End Role="Archivos" EntitySet="Archivos" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Biometricos_Paciente" Association="Self.FK_Biometricos_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Biometricos" EntitySet="Biometricos" />
     </AssociationSet>
     <AssociationSet Name="FK_Captura_Paciente" Association="Self.FK_Captura_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />

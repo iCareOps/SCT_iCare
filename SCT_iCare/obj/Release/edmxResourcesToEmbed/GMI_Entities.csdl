@@ -180,6 +180,7 @@
     <Property Name="HASH" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
     <NavigationProperty Name="ExpedienteRevaloracion" Relationship="DevModel.FK_ExpedienteRevaloracion_Paciente" FromRole="Paciente" ToRole="ExpedienteRevaloracion" />
     <NavigationProperty Name="Archivos" Relationship="DevModel.FK_Archivos_Paciente" FromRole="Paciente" ToRole="Archivos" />
+    <NavigationProperty Name="Biometricos" Relationship="DevModel.FK_Biometricos_Paciente" FromRole="Paciente" ToRole="Biometricos" />
   </EntityType>
   <EntityType Name="Recepcionista">
     <Key>
@@ -607,6 +608,11 @@
     <AssociationSet Name="FK_Archivos_Paciente" Association="DevModel.FK_Archivos_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />
       <End Role="Archivos" EntitySet="Archivos" />
+    </AssociationSet>
+    <EntitySet Name="Biometricos" EntityType="DevModel.Biometricos" />
+    <AssociationSet Name="FK_Biometricos_Paciente" Association="DevModel.FK_Biometricos_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Biometricos" EntitySet="Biometricos" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="CapturaIncidencia">
@@ -1231,6 +1237,27 @@
         <PropertyRef Name="idPaciente" />
       </Principal>
       <Dependent Role="Archivos">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Biometricos">
+    <Key>
+      <PropertyRef Name="idBiometricos" />
+    </Key>
+    <Property Name="idBiometricos" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Foto" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="idPaciente" Type="Int32" />
+    <NavigationProperty Name="Paciente" Relationship="DevModel.FK_Biometricos_Paciente" FromRole="Biometricos" ToRole="Paciente" />
+  </EntityType>
+  <Association Name="FK_Biometricos_Paciente">
+    <End Type="DevModel.Paciente" Role="Paciente" Multiplicity="0..1" />
+    <End Type="DevModel.Biometricos" Role="Biometricos" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Biometricos">
         <PropertyRef Name="idPaciente" />
       </Dependent>
     </ReferentialConstraint>
