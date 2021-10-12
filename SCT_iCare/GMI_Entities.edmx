@@ -24,6 +24,14 @@
           <Property Name="ArchivosExtra" Type="varbinary(max)" />
           <Property Name="idPaciente" Type="int" />
         </EntityType>
+        <EntityType Name="Biometricos">
+          <Key>
+            <PropertyRef Name="idBiometricos" />
+          </Key>
+          <Property Name="idBiometricos" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Foto" Type="varbinary(max)" />
+          <Property Name="idPaciente" Type="int" />
+        </EntityType>
         <EntityType Name="Canal">
           <Key>
             <PropertyRef Name="idCanal" />
@@ -543,6 +551,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Biometricos_Paciente">
+          <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+          <End Role="Biometricos" Type="Self.Biometricos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Paciente">
+              <PropertyRef Name="idPaciente" />
+            </Principal>
+            <Dependent Role="Biometricos">
+              <PropertyRef Name="idPaciente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Captura_Paciente">
           <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
           <End Role="Captura" Type="Self.Captura" Multiplicity="*" />
@@ -978,6 +998,7 @@
         <EntityContainer Name="DevModelStoreContainer">
           <EntitySet Name="Aptitud" EntityType="Self.Aptitud" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Archivos" EntityType="Self.Archivos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Biometricos" EntityType="Self.Biometricos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Canal" EntityType="Self.Canal" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Captura" EntityType="Self.Captura" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CapturaIncidencia" EntityType="Self.CapturaIncidencia" Schema="dbo" store:Type="Tables" />
@@ -1020,6 +1041,10 @@
           <AssociationSet Name="FK_Archivos_Paciente" Association="Self.FK_Archivos_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
             <End Role="Archivos" EntitySet="Archivos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Biometricos_Paciente" Association="Self.FK_Biometricos_Paciente">
+            <End Role="Paciente" EntitySet="Paciente" />
+            <End Role="Biometricos" EntitySet="Biometricos" />
           </AssociationSet>
           <AssociationSet Name="FK_Captura_Paciente" Association="Self.FK_Captura_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
@@ -1350,6 +1375,7 @@
           <Property Name="HASH" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="ExpedienteRevaloracion" Relationship="DevModel.FK_ExpedienteRevaloracion_Paciente" FromRole="Paciente" ToRole="ExpedienteRevaloracion" />
           <NavigationProperty Name="Archivos" Relationship="DevModel.FK_Archivos_Paciente" FromRole="Paciente" ToRole="Archivos" />
+          <NavigationProperty Name="Biometricos" Relationship="DevModel.FK_Biometricos_Paciente" FromRole="Paciente" ToRole="Biometricos" />
         </EntityType>
         <EntityType Name="Recepcionista">
           <Key>
@@ -1777,6 +1803,11 @@
           <AssociationSet Name="FK_Archivos_Paciente" Association="DevModel.FK_Archivos_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
             <End Role="Archivos" EntitySet="Archivos" />
+          </AssociationSet>
+          <EntitySet Name="Biometricos" EntityType="DevModel.Biometricos" />
+          <AssociationSet Name="FK_Biometricos_Paciente" Association="DevModel.FK_Biometricos_Paciente">
+            <End Role="Paciente" EntitySet="Paciente" />
+            <End Role="Biometricos" EntitySet="Biometricos" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="CapturaIncidencia">
@@ -2405,6 +2436,27 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Biometricos">
+          <Key>
+            <PropertyRef Name="idBiometricos" />
+          </Key>
+          <Property Name="idBiometricos" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Foto" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="idPaciente" Type="Int32" />
+          <NavigationProperty Name="Paciente" Relationship="DevModel.FK_Biometricos_Paciente" FromRole="Biometricos" ToRole="Paciente" />
+        </EntityType>
+        <Association Name="FK_Biometricos_Paciente">
+          <End Type="DevModel.Paciente" Role="Paciente" Multiplicity="0..1" />
+          <End Type="DevModel.Biometricos" Role="Biometricos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Paciente">
+              <PropertyRef Name="idPaciente" />
+            </Principal>
+            <Dependent Role="Biometricos">
+              <PropertyRef Name="idPaciente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2975,6 +3027,15 @@
                 <ScalarProperty Name="NoAccidentes" ColumnName="NoAccidentes" />
                 <ScalarProperty Name="ElectroCardiograma" ColumnName="ElectroCardiograma" />
                 <ScalarProperty Name="idArchivos" ColumnName="idArchivos" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Biometricos">
+            <EntityTypeMapping TypeName="DevModel.Biometricos">
+              <MappingFragment StoreEntitySet="Biometricos">
+                <ScalarProperty Name="idPaciente" ColumnName="idPaciente" />
+                <ScalarProperty Name="Foto" ColumnName="Foto" />
+                <ScalarProperty Name="idBiometricos" ColumnName="idBiometricos" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

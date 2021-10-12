@@ -49,6 +49,63 @@ namespace SCT_iCare.Controllers.Recepcion
             return View(db.Paciente.ToList());
         }
 
+        public ActionResult Foto()
+        {
+            return View(db.Paciente.ToList());
+        }
+
+
+        public ActionResult CargarFoto(HttpPostedFileBase file, string id)
+        {
+            int ide = Convert.ToInt32(id);
+
+            var revisionFoto = (from i in db.Biometricos where i.idPaciente == ide select i).FirstOrDefault();
+
+            byte[] bytes2 = null;
+
+            if (file != null && file.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(file.FileName);
+
+                byte[] bytes;
+                using (BinaryReader br = new BinaryReader(file.InputStream))
+                {
+                    bytes = br.ReadBytes(file.ContentLength);
+                }
+
+                bytes2 = bytes;
+            }
+
+            if(revisionFoto == null)
+            {
+                Biometricos bio = new Biometricos();
+
+                bio.Foto = bytes2;
+                bio.idPaciente = ide;
+
+                if (ModelState.IsValid)
+                {
+                    db.Biometricos.Add(bio);
+                    db.SaveChanges();
+                }
+            }
+            else
+            {
+                var bio = db.Biometricos.Find(revisionFoto.idBiometricos);
+
+                bio.Foto = bytes2;
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(bio).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
+            return RedirectToAction("Foto");
+        }
+
+
         // GET: Pacientes/Details/5
         public ActionResult Details(int? id)
         {
