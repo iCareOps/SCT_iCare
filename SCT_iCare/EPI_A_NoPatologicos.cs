@@ -21,6 +21,8 @@ namespace SCT_iCare
         public string Escolaridad { get; set; }
         public string Hijos { get; set; }
         public Nullable<int> idPaciente { get; set; }
+        public string PadecimientoActual { get; set; }
+        public string ESP_PadecimientoActual { get; set; }
     
         public virtual Paciente Paciente { get; set; }
     }

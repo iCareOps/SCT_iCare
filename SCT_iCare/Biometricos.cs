@@ -12,22 +12,11 @@ namespace SCT_iCare
     using System;
     using System.Collections.Generic;
     
-    public partial class EPI_SignosVitales
+    public partial class Biometricos
     {
-        public int idSignosVitales { get; set; }
-        public string Sistolica { get; set; }
-        public string Diastolica { get; set; }
-        public string Cardiaca { get; set; }
-        public string Respiratoria { get; set; }
-        public string Temperatura { get; set; }
-        public string Peso { get; set; }
-        public string Estatura { get; set; }
-        public string IMC { get; set; }
-        public string Cintura { get; set; }
-        public string Cuello { get; set; }
-        public string Grasa { get; set; }
+        public int idBiometricos { get; set; }
+        public byte[] Foto { get; set; }
         public Nullable<int> idPaciente { get; set; }
-        public string GrupoSanguineo { get; set; }
     
         public virtual Paciente Paciente { get; set; }
     }

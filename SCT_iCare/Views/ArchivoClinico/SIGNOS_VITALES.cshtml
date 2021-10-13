@@ -16,6 +16,35 @@
 
 <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_SignosVitales")" style="display:inline-block; margin:0.5%">
 
+    <div>
+        <label style="color:white">Sexo: </label><br />
+        <select class="form-select" aria-label="Default select example" name="sexo">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Masculino">Masculino</option>
+
+        </select>
+    </div>
+    <br />
+
+    <div>
+        <label style="color:white">Grupo Sanguíneo: </label><br />
+        <select class="form-select" aria-label="Default select example" name="sangre">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="DESCONOCE">DESCONOCE</option>
+
+        </select>
+    </div>
+    <br />
+
     <div class="form-group">
         <label style="color:white">1. Presión arterial sistólica:</label>
         <input type="tel" name="sistolica" class="form-control" id="presion_sistolica" placeholder="" required>
@@ -66,20 +95,21 @@
         <number type="tel" step="any" name="imc" class="form-control" id="imc" placeholder="" required>
 
             <!-- SCRIPT PARA CALCULAR IMC -->
-            <script type="text/javascript">calc = document.getElementById("calc");
-                    kg = document.getElementById("peso");
-                    m = document.getElementById("estatura");
-                    imc_JS = document.getElementById("imc");
+            <script type="text/javascript">
+                calc = document.getElementById("calc");
+                kg = document.getElementById("peso");
+                m = document.getElementById("estatura");
+                imc_JS = document.getElementById("imc");
 
-                    function myFunction() {
-                        if (kg.value != "" && m.value != "") {
-                            imcx = (kg.value / (Math.pow(m.value / 100, 2)));
-                            imcx_red = imcx.toFixed(2);
-                            imc.innerHTML = imcx_red
-                            console.log(imcx_red);
-                        }
+                function myFunction() {
+                    if (kg.value != "" && m.value != "") {
+                        imcx = (kg.value / (Math.pow(m.value / 100, 2)));
+                        imcx_red = imcx.toFixed(2);
+                        imc.innerHTML = imcx_red
+                        console.log(imcx_red);
+                    }
 
-                    };</script>
+                };</script>
 
     </div>
 
