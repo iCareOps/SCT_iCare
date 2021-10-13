@@ -47,6 +47,7 @@ namespace SCT_iCare
         public string Folio { get; set; }
         public string CURP { get; set; }
         public string HASH { get; set; }
+        public string Genero { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Captura> Captura { get; set; }
