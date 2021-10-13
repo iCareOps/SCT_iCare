@@ -13,7 +13,29 @@
 <br />
 
 @{
+    var genero = (from c in db.Paciente where c.idPaciente == idPaciente select c).FirstOrDefault();
     var consulta1 = (from c in db.EPI_SignosVitales where c.idPaciente == idPaciente orderby c.idSignosVitales descending select c).FirstOrDefault();
+
+    <table class="table tablas2 table-bordered" style="width:400px; font-size:large">
+        <tr>
+            <td class="bg-primary">
+                <b>Sexo</b>
+            </td>
+            <td>
+                @genero.Genero
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-primary">
+                <b>Grupo Sanguíneo</b>
+            </td>
+            <td>
+                @consulta1.GrupoSanguineo
+            </td>
+        </tr>
+    </table>
+    <br />
+
     <h3 style="text-align:left; color:white">Signos Vitales</h3>
     @*<h4 style="text-align:left; color:white"><b>Presion Arterial Sistólica: </b><span style="color:aqua"> @consulta1.Sistolica</span></h4>
         <h4 style="text-align:left; color:white"><b>Presion Arterial Diastólica: </b><span style="color:aqua"> @consulta1.Diastolica</span></h4>
@@ -436,7 +458,7 @@
 
                         if (consulta4.D500 == "-10")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -445,7 +467,7 @@
 
                         if (consulta4.D1000 == "-10")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -463,7 +485,7 @@
 
                         if (consulta4.D4000 == "-10")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -472,7 +494,7 @@
 
                         if (consulta4.D8000 == "-10")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -495,7 +517,7 @@
 
                         if (consulta4.D250 == "-5")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -504,7 +526,7 @@
 
                         if (consulta4.D500 == "-5")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -513,7 +535,7 @@
 
                         if (consulta4.D1000 == "-5")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -522,7 +544,7 @@
 
                         if (consulta4.D2000 == "-5")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -531,7 +553,7 @@
 
                         if (consulta4.D4000 == "-5")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -540,7 +562,7 @@
 
                         if (consulta4.D8000 == "-5")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -553,7 +575,7 @@
                     @{
                         if (consulta4.D125 == "0")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -562,7 +584,7 @@
 
                         if (consulta4.D250 == "0")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -571,7 +593,7 @@
 
                         if (consulta4.D500 == "0")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -589,7 +611,7 @@
 
                         if (consulta4.D2000 == "0")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -598,7 +620,7 @@
 
                         if (consulta4.D4000 == "0")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -607,7 +629,7 @@
 
                         if (consulta4.D8000 == "0")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -647,7 +669,7 @@
 
                         if (consulta4.D1000 == "5")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -656,7 +678,7 @@
 
                         if (consulta4.D2000 == "5")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -665,7 +687,7 @@
 
                         if (consulta4.D4000 == "5")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -674,7 +696,7 @@
 
                         if (consulta4.D8000 == "5")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -687,7 +709,7 @@
                     @{
                         if (consulta4.D125 == "10")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -705,7 +727,7 @@
 
                         if (consulta4.D500 == "10")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -714,7 +736,7 @@
 
                         if (consulta4.D1000 == "10")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -723,7 +745,7 @@
 
                         if (consulta4.D2000 == "10")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -732,7 +754,7 @@
 
                         if (consulta4.D4000 == "10")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -741,7 +763,7 @@
 
                         if (consulta4.D8000 == "10")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -763,7 +785,7 @@
 
                         if (consulta4.D250 == "15")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -781,7 +803,7 @@
 
                         if (consulta4.D1000 == "15")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -790,7 +812,7 @@
 
                         if (consulta4.D2000 == "15")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -808,7 +830,7 @@
 
                         if (consulta4.D8000 == "15")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -821,7 +843,7 @@
                     @{
                         if (consulta4.D125 == "20")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -830,7 +852,7 @@
 
                         if (consulta4.D250 == "20")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -839,7 +861,7 @@
 
                         if (consulta4.D500 == "20")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -848,7 +870,7 @@
 
                         if (consulta4.D1000 == "20")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -866,7 +888,7 @@
 
                         if (consulta4.D4000 == "20")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -875,7 +897,7 @@
 
                         if (consulta4.D8000 == "20")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -888,7 +910,7 @@
                     @{
                         if (consulta4.D125 == "25")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -897,7 +919,7 @@
 
                         if (consulta4.D250 == "25")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -915,7 +937,7 @@
 
                         if (consulta4.D1000 == "25")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -924,7 +946,7 @@
 
                         if (consulta4.D2000 == "25")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -933,7 +955,7 @@
 
                         if (consulta4.D4000 == "25")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -942,7 +964,7 @@
 
                         if (consulta4.D8000 == "25")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -955,7 +977,7 @@
                     @{
                         if (consulta4.D125 == "30")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -964,7 +986,7 @@
 
                         if (consulta4.D250 == "30")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -973,7 +995,7 @@
 
                         if (consulta4.D500 == "30")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -982,7 +1004,7 @@
 
                         if (consulta4.D1000 == "30")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -991,7 +1013,7 @@
 
                         if (consulta4.D2000 == "30")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -1000,7 +1022,7 @@
 
                         if (consulta4.D4000 == "30")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -1009,7 +1031,7 @@
 
                         if (consulta4.D8000 == "30")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -1022,7 +1044,7 @@
                     @{
                         if (consulta4.D125 == "35")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -1031,7 +1053,7 @@
 
                         if (consulta4.D250 == "35")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -1040,7 +1062,7 @@
 
                         if (consulta4.D500 == "35")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -1049,7 +1071,7 @@
 
                         if (consulta4.D1000 == "35")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -1067,7 +1089,7 @@
 
                         if (consulta4.D4000 == "35")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -1076,7 +1098,7 @@
 
                         if (consulta4.D8000 == "35")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -1089,7 +1111,7 @@
                     @{
                         if (consulta4.D125 == "40")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -1098,7 +1120,7 @@
 
                         if (consulta4.D250 == "40")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -1107,7 +1129,7 @@
 
                         if (consulta4.D500 == "40")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -1116,7 +1138,7 @@
 
                         if (consulta4.D1000 == "40")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -1125,7 +1147,7 @@
 
                         if (consulta4.D2000 == "40")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -1134,7 +1156,7 @@
 
                         if (consulta4.D4000 == "40")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -1143,7 +1165,7 @@
 
                         if (consulta4.D8000 == "40")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -1156,7 +1178,7 @@
                     @{
                         if (consulta4.D125 == "45")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -1165,7 +1187,7 @@
 
                         if (consulta4.D250 == "45")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -1174,7 +1196,7 @@
 
                         if (consulta4.D500 == "45")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -1210,7 +1232,7 @@
 
                         if (consulta4.D8000 == "45")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked/></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -1232,7 +1254,7 @@
 
                         if (consulta4.D250 == "50")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -1250,7 +1272,7 @@
 
                         if (consulta4.D1000 == "50")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -1259,7 +1281,7 @@
 
                         if (consulta4.D2000 == "50")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -1268,7 +1290,7 @@
 
                         if (consulta4.D4000 == "50")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -1277,7 +1299,7 @@
 
                         if (consulta4.D8000 == "50")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -1299,7 +1321,7 @@
 
                         if (consulta4.D250 == "55")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -1308,7 +1330,7 @@
 
                         if (consulta4.D500 == "55")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -1335,7 +1357,7 @@
 
                         if (consulta4.D4000 == "55")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -1344,7 +1366,7 @@
 
                         if (consulta4.D8000 == "55")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -1357,7 +1379,7 @@
                     @{
                         if (consulta4.D125 == "60")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -1384,7 +1406,7 @@
 
                         if (consulta4.D1000 == "60")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -1393,7 +1415,7 @@
 
                         if (consulta4.D2000 == "60")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -1402,7 +1424,7 @@
 
                         if (consulta4.D4000 == "60")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -1411,7 +1433,7 @@
 
                         if (consulta4.D8000 == "60")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -1424,7 +1446,7 @@
                     @{
                         if (consulta4.D125 == "65")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -1433,7 +1455,7 @@
 
                         if (consulta4.D250 == "65")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -1442,7 +1464,7 @@
 
                         if (consulta4.D500 == "65")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -1451,7 +1473,7 @@
 
                         if (consulta4.D1000 == "65")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -1460,7 +1482,7 @@
 
                         if (consulta4.D2000 == "65")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -1469,7 +1491,7 @@
 
                         if (consulta4.D4000 == "65")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -1478,7 +1500,7 @@
 
                         if (consulta4.D8000 == "65")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -1491,7 +1513,7 @@
                     @{
                         if (consulta4.D125 == "70")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -1500,7 +1522,7 @@
 
                         if (consulta4.D250 == "70")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -1518,7 +1540,7 @@
 
                         if (consulta4.D1000 == "70")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -1527,7 +1549,7 @@
 
                         if (consulta4.D2000 == "70")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -1545,7 +1567,7 @@
 
                         if (consulta4.D8000 == "70")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -1558,7 +1580,7 @@
                     @{
                         if (consulta4.D125 == "75")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -1567,7 +1589,7 @@
 
                         if (consulta4.D250 == "75")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -1576,7 +1598,7 @@
 
                         if (consulta4.D500 == "75")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -1585,7 +1607,7 @@
 
                         if (consulta4.D1000 == "75")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -1594,7 +1616,7 @@
 
                         if (consulta4.D2000 == "75")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -1603,7 +1625,7 @@
 
                         if (consulta4.D4000 == "75")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -1625,7 +1647,7 @@
                     @{
                         if (consulta4.D125 == "80")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -1634,7 +1656,7 @@
 
                         if (consulta4.D250 == "80")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -1643,7 +1665,7 @@
 
                         if (consulta4.D500 == "80")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -1652,7 +1674,7 @@
 
                         if (consulta4.D1000 == "80")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -1670,7 +1692,7 @@
 
                         if (consulta4.D4000 == "80")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -1692,7 +1714,7 @@
                     @{
                         if (consulta4.D125 == "85")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -1710,7 +1732,7 @@
 
                         if (consulta4.D500 == "85")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -1737,7 +1759,7 @@
 
                         if (consulta4.D4000 == "85")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -1746,7 +1768,7 @@
 
                         if (consulta4.D8000 == "85")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -1759,7 +1781,7 @@
                     @{
                         if (consulta4.D125 == "90")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -1768,7 +1790,7 @@
 
                         if (consulta4.D250 == "90")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -1786,7 +1808,7 @@
 
                         if (consulta4.D1000 == "90")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -1795,7 +1817,7 @@
 
                         if (consulta4.D2000 == "90")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -1804,7 +1826,7 @@
 
                         if (consulta4.D4000 == "90")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -1813,7 +1835,7 @@
 
                         if (consulta4.D8000 == "90")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -1835,7 +1857,7 @@
 
                         if (consulta4.D250 == "95")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -1844,7 +1866,7 @@
 
                         if (consulta4.D500 == "95")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -1853,7 +1875,7 @@
 
                         if (consulta4.D1000 == "95")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -1862,7 +1884,7 @@
 
                         if (consulta4.D2000 == "95")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -1871,7 +1893,7 @@
 
                         if (consulta4.D4000 == "95")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -1880,7 +1902,7 @@
 
                         if (consulta4.D8000 == "95")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -1893,7 +1915,7 @@
                     @{
                         if (consulta4.D125 == "100")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -1929,7 +1951,7 @@
 
                         if (consulta4.D2000 == "100")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -1938,7 +1960,7 @@
 
                         if (consulta4.D4000 == "100")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -1960,7 +1982,7 @@
                     @{
                         if (consulta4.D125 == "105")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -1969,7 +1991,7 @@
 
                         if (consulta4.D250 == "105")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked/></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -1978,7 +2000,7 @@
 
                         if (consulta4.D500 == "105")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -1987,7 +2009,7 @@
 
                         if (consulta4.D1000 == "105")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -2005,7 +2027,7 @@
 
                         if (consulta4.D4000 == "105")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -2014,7 +2036,7 @@
 
                         if (consulta4.D8000 == "105")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -2027,7 +2049,7 @@
                     @{
                         if (consulta4.D125 == "110")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -2036,7 +2058,7 @@
 
                         if (consulta4.D250 == "110")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -2045,7 +2067,7 @@
 
                         if (consulta4.D500 == "110")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -2063,7 +2085,7 @@
 
                         if (consulta4.D2000 == "110")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -2072,7 +2094,7 @@
 
                         if (consulta4.D4000 == "110")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -2081,7 +2103,7 @@
 
                         if (consulta4.D8000 == "110")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -2094,7 +2116,7 @@
                     @{
                         if (consulta4.D125 == "115")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -2103,7 +2125,7 @@
 
                         if (consulta4.D250 == "115")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -2112,7 +2134,7 @@
 
                         if (consulta4.D500 == "115")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -2130,7 +2152,7 @@
 
                         if (consulta4.D2000 == "115")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
@@ -2139,7 +2161,7 @@
 
                         if (consulta4.D4000 == "115")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D4000" checked /></td>
                         }
                         else
                         {
@@ -2148,7 +2170,7 @@
 
                         if (consulta4.D8000 == "115")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D8000" checked /></td>
                         }
                         else
                         {
@@ -2161,7 +2183,7 @@
                     @{
                         if (consulta4.D125 == "120")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D125" checked /></td>
                         }
                         else
                         {
@@ -2170,7 +2192,7 @@
 
                         if (consulta4.D250 == "120")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D250" checked /></td>
                         }
                         else
                         {
@@ -2179,7 +2201,7 @@
 
                         if (consulta4.D500 == "120")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D500" checked /></td>
                         }
                         else
                         {
@@ -2188,7 +2210,7 @@
 
                         if (consulta4.D1000 == "120")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D1000" checked /></td>
                         }
                         else
                         {
@@ -2197,7 +2219,7 @@
 
                         if (consulta4.D2000 == "120")
                         {
-                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked  /></td>
+                            <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" name="D2000" checked /></td>
                         }
                         else
                         {
