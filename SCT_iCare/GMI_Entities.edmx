@@ -212,6 +212,8 @@
           <Property Name="Escolaridad" Type="varchar" MaxLength="20" />
           <Property Name="Hijos" Type="varchar" MaxLength="20" />
           <Property Name="idPaciente" Type="int" />
+          <Property Name="PadecimientoActual" Type="varchar" MaxLength="10" />
+          <Property Name="ESP_PadecimientoActual" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="EPI_A_Patologicos">
           <Key>
@@ -393,6 +395,7 @@
           <Property Name="Cuello" Type="varchar" MaxLength="10" />
           <Property Name="Grasa" Type="varchar" MaxLength="10" />
           <Property Name="idPaciente" Type="int" />
+          <Property Name="GrupoSanguineo" Type="varchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="ExpedienteRevaloracion">
           <Key>
@@ -474,6 +477,7 @@
           <Property Name="Folio" Type="varchar" MaxLength="100" />
           <Property Name="CURP" Type="varchar" MaxLength="20" />
           <Property Name="HASH" Type="varchar" MaxLength="20" />
+          <Property Name="Genero" Type="varchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="Recepcionista">
           <Key>
@@ -1376,6 +1380,7 @@
           <NavigationProperty Name="ExpedienteRevaloracion" Relationship="DevModel.FK_ExpedienteRevaloracion_Paciente" FromRole="Paciente" ToRole="ExpedienteRevaloracion" />
           <NavigationProperty Name="Archivos" Relationship="DevModel.FK_Archivos_Paciente" FromRole="Paciente" ToRole="Archivos" />
           <NavigationProperty Name="Biometricos" Relationship="DevModel.FK_Biometricos_Paciente" FromRole="Paciente" ToRole="Biometricos" />
+          <Property Name="Genero" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Recepcionista">
           <Key>
@@ -2039,6 +2044,7 @@
           <Property Name="Grasa" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="idPaciente" Type="Int32" />
           <NavigationProperty Name="Paciente" Relationship="DevModel.FK_EPI_SignosVitales_Paciente" FromRole="EPI_SignosVitales" ToRole="Paciente" />
+          <Property Name="GrupoSanguineo" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_EPI_Laboratorio_Paciente">
           <End Type="DevModel.Paciente" Role="Paciente" Multiplicity="0..1" />
@@ -2161,6 +2167,8 @@
           <Property Name="Hijos" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="idPaciente" Type="Int32" />
           <NavigationProperty Name="Paciente" Relationship="DevModel.FK_EPI_A_NoPatologicos_Paciente" FromRole="EPI_A_NoPatologicos" ToRole="Paciente" />
+          <Property Name="PadecimientoActual" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="ESP_PadecimientoActual" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="EPI_A_Patologicos">
           <Key>
@@ -2611,6 +2619,7 @@
           <EntitySetMapping Name="Paciente">
             <EntityTypeMapping TypeName="DevModel.Paciente">
               <MappingFragment StoreEntitySet="Paciente">
+                <ScalarProperty Name="Genero" ColumnName="Genero" />
                 <ScalarProperty Name="HASH" ColumnName="HASH" />
                 <ScalarProperty Name="idPaciente" ColumnName="idPaciente" />
                 <ScalarProperty Name="Nombre" ColumnName="Nombre" />
@@ -2785,6 +2794,7 @@
           <EntitySetMapping Name="EPI_SignosVitales">
             <EntityTypeMapping TypeName="DevModel.EPI_SignosVitales">
               <MappingFragment StoreEntitySet="EPI_SignosVitales">
+                <ScalarProperty Name="GrupoSanguineo" ColumnName="GrupoSanguineo" />
                 <ScalarProperty Name="idPaciente" ColumnName="idPaciente" />
                 <ScalarProperty Name="Grasa" ColumnName="Grasa" />
                 <ScalarProperty Name="Cuello" ColumnName="Cuello" />
@@ -2865,6 +2875,8 @@
           <EntitySetMapping Name="EPI_A_NoPatologicos">
             <EntityTypeMapping TypeName="DevModel.EPI_A_NoPatologicos">
               <MappingFragment StoreEntitySet="EPI_A_NoPatologicos">
+                <ScalarProperty Name="ESP_PadecimientoActual" ColumnName="ESP_PadecimientoActual" />
+                <ScalarProperty Name="PadecimientoActual" ColumnName="PadecimientoActual" />
                 <ScalarProperty Name="idPaciente" ColumnName="idPaciente" />
                 <ScalarProperty Name="Hijos" ColumnName="Hijos" />
                 <ScalarProperty Name="Escolaridad" ColumnName="Escolaridad" />

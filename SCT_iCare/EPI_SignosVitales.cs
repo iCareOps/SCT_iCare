@@ -27,6 +27,7 @@ namespace SCT_iCare
         public string Cuello { get; set; }
         public string Grasa { get; set; }
         public Nullable<int> idPaciente { get; set; }
+        public string GrupoSanguineo { get; set; }
     
         public virtual Paciente Paciente { get; set; }
     }

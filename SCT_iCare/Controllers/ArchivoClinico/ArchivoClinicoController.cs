@@ -606,7 +606,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         //Guardar módulos--------------------------------------------------------------------------------
 
         [HttpPost]
-        public ActionResult Guardar_SignosVitales(int id, double sistolica, double diastolica, double cardiaca, double respiratoria, double temperatura, double peso, double estatura, double cintura, double cuello, double grasa)
+        public ActionResult Guardar_SignosVitales(int id, double sistolica, double diastolica, double cardiaca, double respiratoria, double temperatura, double peso, double estatura, double cintura, double cuello, double grasa, string sexo, string sangre)
         {
             EPI_SignosVitales sv = new EPI_SignosVitales();
             sv.idPaciente = id;
@@ -621,6 +621,16 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             sv.Cintura = cintura.ToString();
             sv.Cuello = cuello.ToString();
             sv.Grasa = grasa.ToString();
+            sv.GrupoSanguineo = sangre;
+
+            Paciente paciente = db.Paciente.Find(id);
+
+            paciente.Genero = sexo;
+            if (ModelState.IsValid)
+            {
+                db.Entry(paciente).State = EntityState.Modified;
+                db.SaveChanges();
+            }
 
             var revision = (from r in db.CarruselMedico where r.idPaciente == id select r).FirstOrDefault();
 
@@ -1004,7 +1014,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         }
 
         [HttpPost]
-        public ActionResult Guardar_NoPatologicos(int id, string vacunas, string civil, string religion, string escolaridad, string hijos)
+        public ActionResult Guardar_NoPatologicos(int id, string vacunas, string civil, string religion, string escolaridad, string hijos, string padecimiento)
         {
             EPI_A_NoPatologicos nopat = new EPI_A_NoPatologicos();
 
@@ -1014,6 +1024,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             nopat.Escolaridad = escolaridad;
             nopat.Hijos = hijos;
             nopat.idPaciente = id;
+            nopat.PadecimientoActual = padecimiento == "on" ? "SI" : "NO";
 
             if (ModelState.IsValid)
             {
