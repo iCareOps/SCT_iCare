@@ -1014,7 +1014,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
         }
 
         [HttpPost]
-        public ActionResult Guardar_NoPatologicos(int id, string vacunas, string civil, string religion, string escolaridad, string hijos, string padecimiento)
+        public ActionResult Guardar_NoPatologicos(int id, string vacunas, string civil, string religion, string escolaridad, string hijos, string padecimiento, string esp_padecimiento)
         {
             EPI_A_NoPatologicos nopat = new EPI_A_NoPatologicos();
 
@@ -1025,6 +1025,8 @@ namespace SCT_iCare.Controllers.ArchivoClinico
             nopat.Hijos = hijos;
             nopat.idPaciente = id;
             nopat.PadecimientoActual = padecimiento == "on" ? "SI" : "NO";
+
+            nopat.ESP_PadecimientoActual = esp_padecimiento != null ? esp_padecimiento : null;
 
             if (ModelState.IsValid)
             {
@@ -1529,6 +1531,7 @@ namespace SCT_iCare.Controllers.ArchivoClinico
                     nopato.Religion = anteriorNOPATO.Religion;
                     nopato.Escolaridad = anteriorNOPATO.Escolaridad;
                     nopato.Hijos = anteriorNOPATO.Hijos;
+                    nopato.ESP_PadecimientoActual = anteriorNOPATO.ESP_PadecimientoActual;
 
                     if (ModelState.IsValid)
                     {
