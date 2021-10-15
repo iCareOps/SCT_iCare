@@ -3,6 +3,7 @@
     <script src="https://unpkg.com/xlsx@0.17.2/dist/xlsx.full.min.js"></script>
     <script src="https://unpkg.com/file-saverjs@1.3.6/FileSaver.min.js"></script>
     <script src="https://unpkg.com/tableexport@5.2.0/dist/js/tableexport.min.js"></script>
+
     @*Scripts para generar archivo Zip*@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.js"></script>
     <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
@@ -160,13 +161,13 @@
 {
     //Aqui empieza la tabla invisible final//
 
-    <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="exportTableToCSV('Reporte.csv')">ZIP</button>
+    @*<button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="exportTableToCSV('Reporte.csv')">ZIP</button>*@
     <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
-    <input type="button" id="btnExportar" value="Exportar Datos a Excel" style="background-color:limegreen; display" class="btn btn-info dropdown-toggle">
+    @*<input type="button" id="btnExportar" value="Exportar Datos a Excel" style="background-color:limegreen; display" class="btn btn-info dropdown-toggle">*@
     @*<button id="btnExportar">Exportar</button>*@
 
     @*Script donde se incorporan los archivos zip*@
-    <script>
+    @*<script>
 
         function exportTableToCSV() {
             var zip = new JSZip();
@@ -180,7 +181,7 @@
                     saveAs(content, "archive.zip");
                 });
         }
-    </script>
+    </script>*@
 
     <script>
 
@@ -324,7 +325,9 @@
 
     </table>
 
-    <script>
+    @*Script excel lento*@
+
+    @*<script>
 
             const $btnExportar = document.querySelector("#btnExportar"),
                 $tabla = document.querySelector("#tabla");
@@ -340,7 +343,7 @@
                 tableExport.export2file(preferenciasDocumento.data, preferenciasDocumento.mimeType, preferenciasDocumento.filename, preferenciasDocumento.fileExtension, preferenciasDocumento.merges, preferenciasDocumento.RTL, preferenciasDocumento.sheetname);
             });
 
-    </script>
+    </script>*@
 
 }
 else
@@ -505,6 +508,8 @@ else
 
     </div>
 </div>
+
+@*Script excel fomato viejo*@
 
 @*<script>
 
