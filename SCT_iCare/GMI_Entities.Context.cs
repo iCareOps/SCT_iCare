@@ -67,5 +67,9 @@ namespace SCT_iCare
         public virtual DbSet<ExpedienteRevaloracion> ExpedienteRevaloracion { get; set; }
         public virtual DbSet<Archivos> Archivos { get; set; }
         public virtual DbSet<Biometricos> Biometricos { get; set; }
+        public virtual DbSet<EKGRandom> EKGRandom { get; set; }
+        public virtual DbSet<HuellasRandom> HuellasRandom { get; set; }
+        public virtual DbSet<PacienteESP> PacienteESP { get; set; }
+        public virtual DbSet<FotoPacienteESP> FotoPacienteESP { get; set; }
     }
 }

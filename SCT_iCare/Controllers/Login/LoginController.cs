@@ -134,10 +134,6 @@ namespace SCT_iCare.Controllers.Login
                     }
                 }
 
-                
-
-                
-
                 //return RedirectToAction("Index", "Admin");
             }
             catch (Exception ex)

@@ -174,6 +174,13 @@
     <Property Name="idSucursal" Type="int" />
     <Property Name="idModulo" Type="int" />
   </EntityType>
+  <EntityType Name="EKGRandom">
+    <Key>
+      <PropertyRef Name="idEKG" />
+    </Key>
+    <Property Name="idEKG" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="EKG" Type="varbinary(max)" />
+  </EntityType>
   <EntityType Name="EPI_A_Heredofamiliares">
     <Key>
       <PropertyRef Name="idHeredofamiliares" />
@@ -409,6 +416,24 @@
     <Property Name="Recpecionista" Type="varchar" MaxLength="100" />
     <Property Name="idPaciente" Type="int" />
   </EntityType>
+  <EntityType Name="FotoPacienteESP">
+    <Key>
+      <PropertyRef Name="idFoto" />
+    </Key>
+    <Property Name="idFoto" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="FotoESP" Type="varbinary(max)" />
+    <Property Name="idPacienteESP" Type="int" />
+  </EntityType>
+  <EntityType Name="HuellasRandom">
+    <Key>
+      <PropertyRef Name="idHuella" />
+    </Key>
+    <Property Name="idHuella" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Huella2" Type="varbinary(max)" />
+    <Property Name="Huella3" Type="varbinary(max)" />
+    <Property Name="Huella7" Type="varbinary(max)" />
+    <Property Name="Huella8" Type="varbinary(max)" />
+  </EntityType>
   <EntityType Name="IncidenciaDictamen">
     <Key>
       <PropertyRef Name="idIncidencia" />
@@ -473,6 +498,26 @@
     <Property Name="CURP" Type="varchar" MaxLength="20" />
     <Property Name="HASH" Type="varchar" MaxLength="20" />
     <Property Name="Genero" Type="varchar" MaxLength="10" />
+  </EntityType>
+  <EntityType Name="PacienteESP">
+    <Key>
+      <PropertyRef Name="idPacienteESP" />
+    </Key>
+    <Property Name="idPacienteESP" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre" Type="varchar" MaxLength="100" />
+    <Property Name="CURP" Type="varchar" MaxLength="30" />
+    <Property Name="NoExpediente" Type="varchar" MaxLength="20" />
+    <Property Name="TipoTramite" Type="varchar" MaxLength="30" />
+    <Property Name="TipoLicencia" Type="varchar" MaxLength="30" />
+    <Property Name="Sucursal" Type="varchar" MaxLength="30" />
+    <Property Name="Doctor" Type="varchar" MaxLength="30" />
+    <Property Name="Usuario" Type="varchar" MaxLength="50" />
+    <Property Name="Asistencia" Type="varchar" MaxLength="10" />
+    <Property Name="CancelaComentario" Type="varchar(max)" />
+    <Property Name="Entregado" Type="varchar" MaxLength="10" />
+    <Property Name="ReferidoPor" Type="varchar" MaxLength="50" />
+    <Property Name="FechaCita" Type="datetime" />
+    <Property Name="Estatura" Type="varchar" MaxLength="20" />
   </EntityType>
   <EntityType Name="Recepcionista">
     <Key>
@@ -874,6 +919,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_FotoPacienteESP_PacienteESP">
+    <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+    <End Role="FotoPacienteESP" Type="Self.FotoPacienteESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="FotoPacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_IncidenciaDictamen_Captura">
     <End Role="Captura" Type="Self.Captura" Multiplicity="0..1" />
     <End Role="IncidenciaDictamen" Type="Self.IncidenciaDictamen" Multiplicity="*" />
@@ -1009,6 +1066,7 @@
     <EntitySet Name="DictamenProblema" EntityType="Self.DictamenProblema" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Doctores" EntityType="Self.Doctores" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="DoctorModulo" EntityType="Self.DoctorModulo" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="EKGRandom" EntityType="Self.EKGRandom" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI_A_Heredofamiliares" EntityType="Self.EPI_A_Heredofamiliares" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI_A_NoPatologicos" EntityType="Self.EPI_A_NoPatologicos" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI_A_Patologicos" EntityType="Self.EPI_A_Patologicos" Schema="dbo" store:Type="Tables" />
@@ -1023,6 +1081,8 @@
     <EntitySet Name="EPI_SignosVitales" EntityType="Self.EPI_SignosVitales" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="ExpedienteRevaloracion" EntityType="Self.ExpedienteRevaloracion" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Expedientes" EntityType="Self.Expedientes" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="FotoPacienteESP" EntityType="Self.FotoPacienteESP" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="HuellasRandom" EntityType="Self.HuellasRandom" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="IncidenciaDictamen" EntityType="Self.IncidenciaDictamen" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="IncidenciaPaciente" EntityType="Self.IncidenciaPaciente" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="log_InicioGestor" EntityType="Self.log_InicioGestor" Schema="dbo" store:Type="Tables" />
@@ -1030,6 +1090,7 @@
     <EntitySet Name="Menu" EntityType="Self.Menu" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Modulos" EntityType="Self.Modulos" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Paciente" EntityType="Self.Paciente" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PacienteESP" EntityType="Self.PacienteESP" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Recepcionista" EntityType="Self.Recepcionista" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="ReferenciasSB" EntityType="Self.ReferenciasSB" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Referido" EntityType="Self.Referido" Schema="dbo" store:Type="Tables" />
@@ -1148,6 +1209,10 @@
     <AssociationSet Name="FK_Expedientes_Paciente" Association="Self.FK_Expedientes_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />
       <End Role="Expedientes" EntitySet="Expedientes" />
+    </AssociationSet>
+    <AssociationSet Name="FK_FotoPacienteESP_PacienteESP" Association="Self.FK_FotoPacienteESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="FotoPacienteESP" EntitySet="FotoPacienteESP" />
     </AssociationSet>
     <AssociationSet Name="FK_IncidenciaDictamen_Captura" Association="Self.FK_IncidenciaDictamen_Captura">
       <End Role="Captura" EntitySet="Captura" />
