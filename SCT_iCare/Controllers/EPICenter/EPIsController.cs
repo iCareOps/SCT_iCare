@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -487,6 +488,17 @@ namespace SCT_iCare.Controllers.EPICenter
             var documento = (from d in db.Dictamen where captura.idPaciente == d.idPaciente orderby d.idDictamen descending select d.Dictamen1).FirstOrDefault();
 
             var bytesBinary = documento;
+
+            //Ionic.Zip.ZipFile zip = new Ionic.Zip.ZipFile();
+
+            //zip.AddEntry(captura.NombrePaciente + ".pdf", bytesBinary);
+
+            //using(MemoryStream output = new MemoryStream())
+            //{
+            //    zip.Save(output);
+            //    return File(output.ToArray(), "application/zip", "PUTOS_TODOS.zip");
+            //}
+
             Response.ContentType = "application/pdf";
             Response.AddHeader("content-disposition", "attachment;filename=" + captura.NombrePaciente + ".pdf");
             Response.BinaryWrite(bytesBinary);

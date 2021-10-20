@@ -615,6 +615,14 @@
       <End Role="Paciente" EntitySet="Paciente" />
       <End Role="Biometricos" EntitySet="Biometricos" />
     </AssociationSet>
+    <EntitySet Name="EKGRandom" EntityType="DevModel.EKGRandom" />
+    <EntitySet Name="HuellasRandom" EntityType="DevModel.HuellasRandom" />
+    <EntitySet Name="PacienteESP" EntityType="DevModel.PacienteESP" />
+    <EntitySet Name="FotoPacienteESP" EntityType="DevModel.FotoPacienteESP" />
+    <AssociationSet Name="FK_FotoPacienteESP_PacienteESP" Association="DevModel.FK_FotoPacienteESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="FotoPacienteESP" EntitySet="FotoPacienteESP" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="CapturaIncidencia">
     <Key>
@@ -1263,6 +1271,65 @@
       </Principal>
       <Dependent Role="Biometricos">
         <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="EKGRandom">
+    <Key>
+      <PropertyRef Name="idEKG" />
+    </Key>
+    <Property Name="idEKG" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EKG" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="HuellasRandom">
+    <Key>
+      <PropertyRef Name="idHuella" />
+    </Key>
+    <Property Name="idHuella" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Huella2" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="Huella3" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="Huella7" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="Huella8" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="PacienteESP">
+    <Key>
+      <PropertyRef Name="idPacienteESP" />
+    </Key>
+    <Property Name="idPacienteESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="CURP" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="NoExpediente" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="TipoTramite" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="TipoLicencia" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="Sucursal" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="Doctor" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="Usuario" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Asistencia" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="CancelaComentario" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="Entregado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="ReferidoPor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="FechaCita" Type="DateTime" Precision="3" />
+    <Property Name="Estatura" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="FotoPacienteESP" Relationship="DevModel.FK_FotoPacienteESP_PacienteESP" FromRole="PacienteESP" ToRole="FotoPacienteESP" />
+  </EntityType>
+  <EntityType Name="FotoPacienteESP">
+    <Key>
+      <PropertyRef Name="idFoto" />
+    </Key>
+    <Property Name="idFoto" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FotoESP" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="idPacienteESP" Type="Int32" />
+    <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_FotoPacienteESP_PacienteESP" FromRole="FotoPacienteESP" ToRole="PacienteESP" />
+  </EntityType>
+  <Association Name="FK_FotoPacienteESP_PacienteESP">
+    <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
+    <End Type="DevModel.FotoPacienteESP" Role="FotoPacienteESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="FotoPacienteESP">
+        <PropertyRef Name="idPacienteESP" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

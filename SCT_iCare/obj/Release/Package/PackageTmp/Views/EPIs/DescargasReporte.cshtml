@@ -1,8 +1,17 @@
 ﻿<head>
+    @*Scripts necesarios para descargar la tabla de excel*@
     <script src="https://unpkg.com/xlsx@0.17.2/dist/xlsx.full.min.js"></script>
     <script src="https://unpkg.com/file-saverjs@1.3.6/FileSaver.min.js"></script>
     <script src="https://unpkg.com/tableexport@5.2.0/dist/js/tableexport.min.js"></script>
+
+    @*Scripts para generar archivo Zip*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.js"></script>
+    <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
+
+    @*XLSX*@
+    <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
 </head>
+
 
 @using PagedList.Mvc;
 @model PagedList.IPagedList<SCT_iCare.Cita>
@@ -45,7 +54,7 @@
     int year = start.Year;
     int month = start.Month;
     int day = start.Day;
-    int tomorrorDay = day +1;
+    int tomorrorDay = day + 1;
     DateTime thisDate = Convert.ToDateTime(ViewBag.Inicio);
     DateTime tomorrowDate = Convert.ToDateTime(ViewBag.Final);
 
@@ -151,111 +160,122 @@
 @if (ViewBag.Estado == 1)
 {
     //Aqui empieza la tabla invisible final//
-    <input type="button" id="btnExportar" value="Exportar Datos a Excel" style="background-color:limegreen; display" class="btn btn-info dropdown-toggle">
+
+    @*<button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="exportTableToCSV('Reporte.csv')">ZIP</button>*@
+    <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
+    @*<input type="button" id="btnExportar" value="Exportar Datos a Excel" style="background-color:limegreen; display" class="btn btn-info dropdown-toggle">*@
     @*<button id="btnExportar">Exportar</button>*@
 
-    <table id="tabla" class="table tablas" style="color: #2F2D6B; display:none">
-        <thead>
-            <tr class="bg-primary" style="background-color:#62E3C9" @*style="background-color:#62E3C9"*@>
-                <th></th>
-                <th>
-                    Fecha Cita
-                </th>
-                <th>
-                    Nombre
-                </th>
+    @*Script donde se incorporan los archivos zip*@
+    @*<script>
 
-                <th>
-                    No. Expediente
-                </th>
+        function exportTableToCSV() {
+            var zip = new JSZip();
 
-                <th>
-                    Telefono
-                </th>
+            zip.file("Hello.txt", "Hello World\n");
 
-                <th>
-                    Email
-                </th>
+            // Generate the zip file asynchronously
+            zip.generateAsync({ type: "blob" })
+                .then(function (content) {
+                    // Force down of the Zip file
+                    saveAs(content, "archive.zip");
+                });
+        }
+    </script>*@
 
-                <th>
-                    Folio
-                </th>
+    <script>
 
-                <th>
-                    CURP
-                </th>
+        function ExportToExcel(type, fn, dl) {
+            var elt = document.getElementById('tbl_exporttable_to_xls');
+            var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+            return dl ?
+                XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+                XLSX.writeFile(wb, fn || ('Reporte del @ViewBag.Inicio.ToString("dd-MMMM-yyyy") al @ViewBag.Final.ToString("dd-MMMM-yyyy").' + (type || 'xlsx')));
+        }
 
-                <th>
-                    Tipo de Tramite
-                </th>
+    </script>
 
-                <th>
-                    Tipo de Licencia
-                </th>
+    @*<script>
 
-                <th>
-                    Tipo de Pago
-                </th>
+            function downloadCSV(csv, filename) {
+                var csvFile;
+                var downloadLink;
 
-                <th>
-                    Sucursal
-                </th>
+                // CSV file
+                csvFile = new Blob([csv], { type: "text/csv" });
 
-                <th>
-                    Doctor
-                </th>
+                // Download link
+                downloadLink = document.createElement("a");
 
-                <th>
-                    Persona que realizo la cita
-                </th>
+                // File name
+                downloadLink.download = filename;
 
-                <th>
-                    Referencia de Pago
-                </th>
+                // Create a link to the file
+                downloadLink.href = window.URL.createObjectURL(csvFile);
 
-                <th>
-                    Canal
-                </th>
+                // Hide download link
+                downloadLink.style.display = "none";
 
-                <th>
-                    ¿Asisto?
-                </th>
+                // Add the link to DOM
+                document.body.appendChild(downloadLink);
 
-                <th>
-                    Fecha de Captura
-                </th>
+                // Click download link
+                downloadLink.click();
+            }
 
-                <th>
-                    Capturista
-                </th>
+        </script>*@
 
-                <th>
-                    Estatus de Captura
-                </th>
 
-                <th>
-                    Inicio de Captura
-                </th>
+    @*<script>
 
-                <th>
-                    Final de Captura
-                </th>
+            function exportTableToCSV(filename) {
+                var csv = [];
+                var rows = document.querySelectorAll("table tr");
 
-                <th>
-                    Aptitud
-                </th>
+                for (var i = 0; i < rows.length; i++) {
+                    var row = [], cols = rows[i].querySelectorAll("td, th");
 
-                <th>
-                    Fecha de Vigencia
-                </th>
+                    for (var j = 0; j < cols.length; j++)
+                        row.push(cols[j].innerText);
 
-                <th>
-                    Referido Por
-                </th>
+                    csv.push(row.join(","));
+                }
 
-            </tr>
+                // Download CSV file
+                downloadCSV(csv.join("\n"), filename);
+            }
 
-        </thead>
+        </script>*@
+
+    <table id="tbl_exporttable_to_xls" class="table tablas" style="color: #2F2D6B; display:none">
+
+        <tr>
+            <th></th>
+            <th>Fecha Cita</th>
+            <th>Nombre</th>
+            <th>No. Expediente</th>
+            <th>Telefono</th>
+            <th>Email</th>
+            <th>Folio</th>
+            <th>CURP</th>
+            <th>Tipo de Tramite</th>
+            <th>Tipo de Licencia</th>
+            <th>Tipo de Pago</th>
+            <th>Sucursal</th>
+            <th>Doctor</th>
+            <th>Persona que realizo la cita</th>
+            <th>Referencia de Pago</th>
+            <th>Canal</th>
+            <th>¿Asisto?</th>
+            <th>Fecha de Captura</th>
+            <th>Capturista</th>
+            <th>Estatus de Captura</th>
+            <th>Inicio de Captura</th>
+            <th>Final de Captura</th>
+            <th>Aptitud</th>
+            <th>Fecha de Vigencia</th>
+            <th>Referido Por</th>
+        </tr>
 
         @{ foreach (var n in tablaFinal)
             {
@@ -305,28 +325,30 @@
 
     </table>
 
-    <script>
+    @*Script excel lento*@
 
-        const $btnExportar = document.querySelector("#btnExportar"),
-            $tabla = document.querySelector("#tabla");
+    @*<script>
 
-        $btnExportar.addEventListener("click", function () {
-            let tableExport = new TableExport($tabla, {
-                exportButtons: false, // No queremos botones
-                filename: "Reporte del " + "@ViewBag.Inicio.ToString("dd-MMMM-yyyy") " + "al @ViewBag.Final.ToString("dd-MMMM-yyyy")" , //Nombre del archivo de Excel
-                sheetname: "Reporte", //Título de la hoja
+            const $btnExportar = document.querySelector("#btnExportar"),
+                $tabla = document.querySelector("#tabla");
+
+            $btnExportar.addEventListener("click", function () {
+                let tableExport = new TableExport($tabla, {
+                    exportButtons: false, // No queremos botones
+                    filename: "Reporte del " + "@ViewBag.Inicio.ToString("dd-MMMM-yyyy") " + "al @ViewBag.Final.ToString("dd-MMMM-yyyy")" , //Nombre del archivo de Excel
+                    sheetname: "Reporte", //Título de la hoja
+                });
+                let datos = tableExport.getExportData();
+                let preferenciasDocumento = datos.tabla.xlsx;
+                tableExport.export2file(preferenciasDocumento.data, preferenciasDocumento.mimeType, preferenciasDocumento.filename, preferenciasDocumento.fileExtension, preferenciasDocumento.merges, preferenciasDocumento.RTL, preferenciasDocumento.sheetname);
             });
-            let datos = tableExport.getExportData();
-            let preferenciasDocumento = datos.tabla.xlsx;
-            tableExport.export2file(preferenciasDocumento.data, preferenciasDocumento.mimeType, preferenciasDocumento.filename, preferenciasDocumento.fileExtension, preferenciasDocumento.merges, preferenciasDocumento.RTL, preferenciasDocumento.sheetname);
-        });
 
-    </script>
+    </script>*@
 
 }
 else
 {
-    < h1 style = "color:white" > Seleccione un rango de fecha para descargar el Reporte General </ h1 >
+    <h1 style="color:white"> Seleccione un rango de fecha para descargar el Reporte General </h1>
 }
 
 @section scripts{
@@ -487,6 +509,8 @@ else
     </div>
 </div>
 
+@*Script excel fomato viejo*@
+
 @*<script>
 
         var tableToExcelCaptura = (function () {
@@ -502,5 +526,3 @@ else
         })()
 
     </script>*@
-
-
