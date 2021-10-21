@@ -220,5 +220,100 @@ namespace SCT_iCare.Controllers.Dictamenes
             return RedirectToAction("Index");
         }
 
+
+        public ActionResult CompletarDatos(int? id, string nombre, string curp, string numero, string doctor, string tipoL, string tipoT, HttpPostedFileBase file)
+        {
+            var revisionPacienteESP = (from i in db.PacienteESP where i.idPacienteESP == id select i).FirstOrDefault();
+
+            int numeroRandom = 0;
+            double numeroDecimalRandom = 0;
+            double decimalRandom = 0.00;
+            double altura = 1.74;
+            double peso = 0.00;
+            float cadenaPeso;
+
+            for(int i  = 0; i < 10; i++)
+            {
+                Random ran = new Random();
+                numeroRandom = ran.Next(57);
+
+                numeroDecimalRandom = ran.Next(2223, 2878)/100.00;
+
+                peso = numeroDecimalRandom * (altura * altura);
+                cadenaPeso = (float)(Math.Round((double)peso, 2));
+            }
+
+            if(nombre != "")
+            {
+                revisionPacienteESP.Nombre = nombre != "" ? nombre : revisionPacienteESP.Nombre;
+            }
+
+            if (curp != "")
+            {
+                revisionPacienteESP.CURP = curp != "" ? curp : revisionPacienteESP.CURP;
+            }
+
+            if (numero != "")
+            {
+                revisionPacienteESP.NoExpediente = numero != "" ? numero : revisionPacienteESP.NoExpediente;
+            }
+
+            if (doctor != "")
+            {
+                revisionPacienteESP.Doctor = doctor != "" ? doctor : revisionPacienteESP.Doctor;
+            }
+
+            if (tipoL != "")
+            {
+                revisionPacienteESP.TipoLicencia = tipoL != "" ? tipoL : revisionPacienteESP.TipoLicencia;
+            }
+
+            if (tipoT != "")
+            {
+                revisionPacienteESP.TipoTramite = tipoT != "" ? tipoT : revisionPacienteESP.TipoTramite;
+            }
+
+            byte[] bytes2 = null;
+            if (file != null)
+            {
+                if (file != null && file.ContentLength > 0)
+                {
+                    var fileName = Path.GetFileName(file.FileName);
+
+                    byte[] bytes;
+
+                    using (BinaryReader br = new BinaryReader(file.InputStream))
+                    {
+                        bytes = br.ReadBytes(file.ContentLength);
+                        bytes2 = bytes;
+                    }
+                }
+            }
+
+            if(ModelState.IsValid && file != null)
+            {
+                var revisionFoto = (from i in db.FotoPacienteESP where i.idPacienteESP == id select i.idFoto).FirstOrDefault();
+                var foto = db.FotoPacienteESP.Find(revisionFoto);
+                FotoPacienteESP nuevaFoto = new FotoPacienteESP();
+
+                if(revisionFoto != null)
+                {
+                    foto.FotoESP = bytes2;
+                    db.Entry(foto).State = EntityState.Modified;
+                }
+                else
+                {
+                    nuevaFoto.FotoESP = bytes2;
+                    nuevaFoto.idPacienteESP = id;
+                    db.FotoPacienteESP.Add(nuevaFoto);
+                }
+
+                db.Entry(revisionPacienteESP).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("Citas");
+        }
+
     }
 }
