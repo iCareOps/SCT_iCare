@@ -520,12 +520,8 @@ else
                             @if(item.Asistencia != "SI")
                             {
                             <span class="tip-content">
-                                @{
+                                @{ 
                                     var revisionFoto = (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                    var revisionDocumentos = (from i in db.DocumentosESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                    var revisionCartaNO = (from i in db.CartaNoAccidentesESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                    var revisionDeclaracion = (from i in db.DeclaracionSaludESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                    var revisionGlucosilada = (from i in db.HemoglobinaGlucosiladaESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
                                 }
                                 @if (revisionFoto != null)
                                 {
@@ -534,30 +530,6 @@ else
                                 else
                                 {
                                     <b>Foto: </b> <span class="glyphicon glyphicon-minus"></span> <br />
-                                }
-
-                                @if (revisionDocumentos != null)
-                                {
-                                    <b>Documentación: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                }
-                                else
-                                {
-                                    <b>Documentación: </b> <span class="glyphicon glyphicon-minus"></span> <br />
-                                }
-
-                                @if (revisionCartaNO != null)
-                                {
-                                    <b>Carta de No Accidentes: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                }
-
-                                @if (revisionDeclaracion != null)
-                                {
-                                    <b>Declaración de Salud: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                }
-
-                                @if (revisionGlucosilada != null)
-                                {
-                                    <b>Hemoglobina Glucosilada: </b> <span class="glyphicon glyphicon-ok"></span> <br />
                                 }
                             </span>
                             }
@@ -579,55 +551,28 @@ else
                                     </button>
                                 }
 
-                        <div class="dropdown-menu" style="padding:10px">
-                            @{
-                                var revisionFoto2 = (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                var revisionDocumentos2 = (from i in db.DocumentosESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                var revisionCartaNO2 = (from i in db.CartaNoAccidentesESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                var revisionDeclaracion2 = (from i in db.DeclaracionSaludESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                var revisionGlucosilada2 = (from i in db.HemoglobinaGlucosiladaESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
+                                <div class="dropdown-menu" style="padding:10px">
+                                    @{
+                                        var revisionFoto2 = (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
 
-                                if (item.Asistencia == null && (item.NoExpediente == null || item.TipoTramite == null || item.TipoLicencia == null
-                                                                            || item.Doctor == null || revisionFoto2 == null || revisionDocumentos2 == null))
-                                {
-                                    <a href="#" data-toggle="modal" data-target="#CompletarDatos_@item.idPacienteESP"><b>Completar Datos</b></a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" data-toggle="modal" data-target="#Cancelar_@item.idPacienteESP"><b class="text-danger">Cancelar Cita</b></a>
-                                    <div class="dropdown-divider"></div>
-                                }
-                                else if (item.Asistencia == null && (item.NoExpediente != null || item.TipoTramite != null || item.TipoLicencia != null
-                                    || item.Doctor != null || revisionFoto2 != null || revisionDocumentos2 != null))
-                                {
-                                    <a href="#" data-toggle="modal" data-target="#CompletarDatos_@item.idPacienteESP"><b>Editar Datos</b></a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" data-toggle="modal" data-target="#DescargarEPI_@item.idPacienteESP"><b>Descargar EPI</b></a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" data-toggle="modal" data-target="#DescargarEKG_@item.idPacienteESP">Electrocardiograma</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" data-toggle="modal" data-target="#DescargarDocumentos_@item.idPacienteESP">Documentación</a>
-                                    <div class="dropdown-divider"></div>
-
-                                    if (revisionCartaNO2 != null)
-                                    {
-                                        <a href="#" data-toggle="modal" data-target="#DescargarNoAccidentes_@item.idPacienteESP">Carta NoAccidentes</a>
-                                        <div class="dropdown-divider"></div>
+                                        if (item.Asistencia == null && (item.NoExpediente == null || item.TipoTramite == null || item.TipoLicencia == null 
+                                            || item.Doctor == null || revisionFoto2 == null))
+                                        {
+                                            <a href="#" data-toggle="modal" data-target="#CompletarDatos_@item.idPacienteESP"><b>Completar Datos</b></a>
+                                            <div class="dropdown-divider"></div>
+                                            <b>*Cancelar cita</b>
+                                            <div class="dropdown-divider"></div>
+                                        }
+                                        else if(item.Asistencia == null && (item.NoExpediente != null || item.TipoTramite != null || item.TipoLicencia != null
+                                            || item.Doctor != null || revisionFoto2 != null))
+                                        {
+                                            <a href="#" data-toggle="modal" data-target="#CompletarDatos_@item.idPacienteESP"><b>Editar Datos</b></a>
+                                            <div class="dropdown-divider"></div>
+                                            <b>*Cancelar cita</b>
+                                            <div class="dropdown-divider"></div>
+                                        }
                                     }
-                                    if (revisionDeclaracion2 != null)
-                                    {
-                                        <a href="#" data-toggle="modal" data-target="#DescargarDeclaracionSalud_@item.idPacienteESP">Declaración Salud</a>
-                                        <div class="dropdown-divider"></div>
-                                    }
-                                    if (revisionGlucosilada2 != null)
-                                    {
-                                        <a href="#" data-toggle="modal" data-target="#DescargarGlucosilada_@item.idPacienteESP">H. Glucosilada</a>
-                                        <div class="dropdown-divider"></div>
-                                    }
-
-                                    <a href="#" data-toggle="modal" data-target="#Cancelar_@item.idPacienteESP"><b class="text-danger">Cancelar Cita</b></a>
-                                    <div class="dropdown-divider"></div>
-                                }
-                            }
-                        </div>
+                                </div>
 
                             }
 
@@ -663,7 +608,7 @@ else
                                                     @{
                                                         if (item.CURP == null)
                                                         {
-                                                            <input type="text" class="form-control" id="curp" name="curp" maxlength="18"/>
+                                                            <input type="text" class="form-control" id="curp" name="curp" maxlength="18" required />
                                                         }
                                                         else
                                                         {
@@ -677,7 +622,7 @@ else
                                                     @{
                                                         if (item.Estatura == null)
                                                         {
-                                                            <input type="number" class="form-control" id="curp" name="estatura"/>
+                                                            <input type="number" class="form-control" id="curp" name="estatura" required />
                                                         }
                                                         else
                                                         {
@@ -691,7 +636,7 @@ else
                                                     @{
                                                         if (item.NoExpediente == null)
                                                         {
-                                                            <input type="text" class="form-control" id="numero" name="numero"/>
+                                                            <input type="text" class="form-control" id="numero" name="numero" required />
                                                         }
                                                         else
                                                         {

@@ -49,6 +49,9 @@
     var pendientesHoy = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.EstatusCaptura == "Pendiente");
     int pendientesHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.EstatusCaptura == "Pendiente").Count();
 
+    var pausadosHoy = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.EstatusCaptura == "Pausado");
+    int pausadosHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.EstatusCaptura == "Pausado").Count();
+
     var entregados = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.Entregado == "SI");
     int entregadosConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.Entregado == "SI").Count();
 
@@ -69,7 +72,7 @@
                     S.N.FechaCita
                 }).Count();
 
-    
+
 
     var mejorSucursal = (from s in db.Cita where s.FechaCita >= dateToday && s.FechaCita < dateTomorrow && s.Doctor != null select s).GroupBy(o => o.Sucursal);
     var mejorS = (from m in mejorSucursal select m).OrderByDescending(o => o.Count());
@@ -361,7 +364,7 @@
                 @{
                     foreach (var item in sucursalesLista)
                     {
-                        var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.EstatusCaptura == "Pendiente" select e).Count();
+                        var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.EstatusCaptura == "Pausado" select e).Count();
 
                         <h4><b>@item.Nombre:</b> @elemento</h4>
                     }
@@ -373,7 +376,7 @@
 
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-outline-warning boton-transparenteIndicador6 botonesGral col-md-4" data-toggle="modal" data-target="#entregados" style="color:white">
-    <h4><span class="glyphicon glyphicon-thumbs-up"></span> &nbsp; &nbsp;Dictámenes Entregados: <b>@entregadosConteo</b></h4>
+    <h4><span class="glyphicon glyphicon-thumbs-up"></span> &nbsp; &nbsp;Dictámenes Pendientes: <b>@pausadosHoyConteo</b></h4>
 </button>
 
 <!-- Modal -->
@@ -381,13 +384,19 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header" style="background-color:aquamarine">
-                <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-thumbs-up"></span> &nbsp; &nbsp;Dictámenes Entregados: <b>@entregadosConteo</b></h3>
+                <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-thumbs-up"></span> &nbsp; &nbsp;Dictámenes Pendientes: <b>@pausadosHoyConteo</b></h3>
             </div>
             <div class="modal-body">
                 @{
-                    foreach (var item in sucursalesLista)
+                    @*foreach (var item in sucursalesLista)
                     {
                         var elemento = (from e in db.Cita where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && (e.Entregado == "SI") select e).Count();
+
+                        <h4><b>@item.Nombre:</b> @elemento</h4>
+                    }*@
+                    foreach (var item in sucursalesLista)
+                    {
+                        var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.EstatusCaptura == "Pausado" select e).Count();
 
                         <h4><b>@item.Nombre:</b> @elemento</h4>
                     }
@@ -408,12 +417,22 @@
         <div class="modal-content">
             <div class="modal-header" style="background-color:aquamarine">
                 <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-send"></span> &nbsp; &nbsp;Dictámenes Enviados: <b>@enviadosCount</b></h3>
+                <h4 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-thumbs-up"></span> &nbsp; &nbsp;Dictámenes Entregados: <b>@entregadosConteo</b></h4>
             </div>
             <div class="modal-body">
                 @{
                     foreach (var item in sucursalesLista)
                     {
                         var elemento = (from e in enviados where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusEnvio == "SI" select e).Count();
+
+                        <h4><b>@item.Nombre:</b> @elemento</h4>
+                    }
+
+                    <hr />
+                    <h4>Entregados en sitio:</h4>
+                    foreach (var item in sucursalesLista)
+                    {
+                        var elemento = (from e in db.Cita where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && (e.Entregado == "SI") select e).Count();
 
                         <h4><b>@item.Nombre:</b> @elemento</h4>
                     }

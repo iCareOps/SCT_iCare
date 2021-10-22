@@ -1143,12 +1143,12 @@ else
                     <th>
                         Administración
                     </th>
-                    @if (idRol == 2)
+                    @*@if (idRol == 2)
                     {
                         <th>
                             Estatus Médico
                         </th>
-                    }
+                    }*@
 
                     <th>
                         Dictamen
@@ -1339,7 +1339,7 @@ else
             </td>
             @if (idRol == 2)
             {
-                <td style="font-size: smaller">
+                <!--<td style="font-size: smaller">
                     @{
                         var revisionEPI = (from e in db.Expedientes where e.idPaciente == item.N.idPaciente select e.idPaciente).FirstOrDefault();
                         var revisionDictamen = (from e in db.EPI_DictamenAptitud where e.idPaciente == item.N.idPaciente select e).FirstOrDefault();
@@ -1467,7 +1467,7 @@ else
                             </span>
                         }
 
-                    }
+                    }-->
 
 
                     @*@if (item.M.Doctor == null && item.M.Asistencia != "NO")
@@ -1482,7 +1482,7 @@ else
                 {
                     <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px">Cancelado</mark></b>
                 }*@
-                </td>
+                <!--</td>-->
             }
 
             <td style="font-size: smaller">
@@ -1527,111 +1527,124 @@ else
 
                     }
 
-                    <div class="dropdown-menu" style="padding:10px">
-                        @{
-                            if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
-                            {
-                                <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Pagado</b></a>
-                                <div class="dropdown-divider"></div>
-                                <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
-                                <div class="dropdown-divider"></div>
-                            }
-                            else if (item.M.EstatusPago == "Pagado" && item.M.Doctor == null)
-                            {
-                                if (item.M.idCanal == null)
-                                {
-                                    <a href="#" data-toggle="modal" data-target="#Nombre_@item.M.idPaciente"><b>Editar Nombre</b></a>
-                                    <div class="dropdown-divider"></div>
-                                }
-                                else
-                                {
-                                    <a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>Completar Datos</b></a>
-                                    <div class="dropdown-divider"></div>
-
-                                }
-
-
-                                var carruselActivo = (from i in db.Cita where i.idPaciente == item.M.idPaciente && i.CarruselMedico != "SI" select i.CarruselMedico).FirstOrDefault();
-                                var expedienteActivo = (from i in db.Expedientes where i.idPaciente == item.M.idPaciente select i.idPaciente).FirstOrDefault();
-
-                                if ((from i in db.Cita where i.idPaciente == item.M.idPaciente && i.CarruselMedico == "SI" select i.CarruselMedico).FirstOrDefault() == null &&
-                                    (from i in db.Expedientes where i.idPaciente == item.M.idPaciente select i.idPaciente).FirstOrDefault() == null)
-                                {
-                                    <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
-                                    <div class="dropdown-divider"></div>
-                                }
-
-                                <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
-                                <div class="dropdown-divider"></div>
-                            }
-                            else if (item.M.EstatusPago == "Pagado" && item.M.Doctor != null)
-                            {
-                                <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
-                                <div class="dropdown-divider"></div>
-
-                                //Subir Archivo
-                                var revisionCarrusel = (from i in db.Cita where i.idPaciente == item.M.idPaciente && i.CarruselMedico == "SI" select i).FirstOrDefault();
-                                {
-                                    <a href="#" data-toggle="modal" data-target="#subirArchivos_@item.M.idPaciente"><b>Subir Archivos</b></a>
-                                    <div class="dropdown-divider"></div>
-                                }
-
-
-                                var entregado = (from e in db.Captura where e.idPaciente == item.M.idPaciente && e.EstatusCaptura == "Terminado" select e.EstatusCaptura).FirstOrDefault();
-                                if (entregado != null && item.M.Entregado == null)
-                                {
-                                    <a href="#" data-toggle="modal" data-target="#entregar_@item.M.idPaciente"><b style="color:limegreen">Entregado</b></a>
-                                }
-
-                                var aptitud = (from i in db.EPI_DictamenAptitud where i.idPaciente == item.N.idPaciente orderby i.idDictamenAptitud descending select i).FirstOrDefault();
-
-                                if (aptitud != null && aptitud.Aptitud == "NO APTO")
-                                {
-                                    <a href="#" data-toggle="modal" data-target="#revaloracion_@item.M.idPaciente"><b>Revaloración</b></a>
-                                    <div class="dropdown-divider"></div>
-                                }
-                            }
-                        }
-
-                        @*@if (item.M.EstatusPago == "Pagado")
-                    {
-                        var aptitud = (from i in db.EPI_DictamenAptitud where i.idPaciente == item.N.idPaciente orderby i.idDictamenAptitud descending select i).FirstOrDefault();
-
-                        if (aptitud != null && aptitud.Aptitud == "NO APTO")
+                <div class="dropdown-menu" style="padding:10px">
+                    @{
+                        if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
                         {
-                            <a href="#" data-toggle="modal" data-target="#revaloracion_@item.M.idPaciente"><b>Revaloración</b></a>
+                            <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Pagado</b></a>
                             <div class="dropdown-divider"></div>
+                            if (item.M.Canal == "Recepción")
+                            {
+                                <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
+                                <div class="dropdown-divider"></div>
+                            }
+
                         }
-
-                        <a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>Completar Datos</b></a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
-                        <div class="dropdown-divider"></div>
-                    }
-                    else if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
-                    {
-                        <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Pagado</b></a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
-                        <div class="dropdown-divider"></div>
-                    }
-                    else if (item.M.NoExpediente != null && item.M.EstatusPago == "Pagado")
-                    {
-
-
-                        <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
-                        <div class="dropdown-divider"></div>
-
-                        var entregado = (from e in db.Captura where e.idPaciente == item.M.idPaciente && e.EstatusCaptura == "Terminado" select e.EstatusCaptura).FirstOrDefault();
-                        if (entregado != null && item.M.Entregado == null)
+                        else if (item.M.EstatusPago == "Pagado" && item.M.Doctor == null)
                         {
-                            <a href="#" data-toggle="modal" data-target="#entregar_@item.M.idPaciente"><b style="color:limegreen">Entregado</b></a>
-                        }
-                    }*@
+                            if (item.M.idCanal == null)
+                            {
+                                <a href="#" data-toggle="modal" data-target="#Nombre_@item.M.idPaciente"><b>Editar Nombre</b></a>
+                                <div class="dropdown-divider"></div>
+                            }
+                            //
+                            else
+                            {
+                                <a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>Completar Datos</b></a>
+                                <div class="dropdown-divider"></div>
 
-                    </div>
+                            }
+
+
+                            var carruselActivo = (from i in db.Cita where i.idPaciente == item.M.idPaciente && i.CarruselMedico != "SI" select i.CarruselMedico).FirstOrDefault();
+                            var expedienteActivo = (from i in db.Expedientes where i.idPaciente == item.M.idPaciente select i.idPaciente).FirstOrDefault();
+
+                            if ((from i in db.Cita where i.idPaciente == item.M.idPaciente && i.CarruselMedico == "SI" select i.CarruselMedico).FirstOrDefault() == null &&
+                                (from i in db.Expedientes where i.idPaciente == item.M.idPaciente select i.idPaciente).FirstOrDefault() == null)
+                            {
+                                <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
+                                <div class="dropdown-divider"></div>
+                            }
+                            if (item.M.Canal == "Recepción")
+                            {
+                                <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
+                                <div class="dropdown-divider"></div>
+                            }
+
+                        }
+                        else if (item.M.EstatusPago == "Pagado" && item.M.Doctor != null)
+                        {
+                            <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
+                            <div class="dropdown-divider"></div>
+                            if ((from i in db.Expedientes where i.idPaciente == item.M.idPaciente select i.idPaciente).FirstOrDefault() == null)
+                            {
+                                <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
+                                <div class="dropdown-divider"></div>
+                            }
+
+                            //Subir Archivo
+                            @*var revisionCarrusel = (from i in db.Cita where i.idPaciente == item.M.idPaciente && i.CarruselMedico == "SI" select i).FirstOrDefault();
+                {
+                    <a href="#" data-toggle="modal" data-target="#subirArchivos_@item.M.idPaciente"><b>Subir Archivos</b></a>
+                    <div class="dropdown-divider"></div>
+                }*@
+
+
+                            var entregado = (from e in db.Captura where e.idPaciente == item.M.idPaciente && e.EstatusCaptura == "Terminado" select e.EstatusCaptura).FirstOrDefault();
+                            if (entregado != null && item.M.Entregado == null)
+                            {
+                                <a href="#" data-toggle="modal" data-target="#entregar_@item.M.idPaciente"><b style="color:limegreen">Entregado</b></a>
+                            }
+
+                            var aptitud = (from i in db.EPI_DictamenAptitud where i.idPaciente == item.N.idPaciente orderby i.idDictamenAptitud descending select i).FirstOrDefault();
+
+                            if (aptitud != null && aptitud.Aptitud == "NO APTO")
+                            {
+                                <a href="#" data-toggle="modal" data-target="#revaloracion_@item.M.idPaciente"><b>Revaloración</b></a>
+                                <div class="dropdown-divider"></div>
+                            }
+                        }
+                    }
+
+                    @*@if (item.M.EstatusPago == "Pagado")
+        {
+            var aptitud = (from i in db.EPI_DictamenAptitud where i.idPaciente == item.N.idPaciente orderby i.idDictamenAptitud descending select i).FirstOrDefault();
+
+            if (aptitud != null && aptitud.Aptitud == "NO APTO")
+            {
+                <a href="#" data-toggle="modal" data-target="#revaloracion_@item.M.idPaciente"><b>Revaloración</b></a>
+                <div class="dropdown-divider"></div>
+            }
+
+            <a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>Completar Datos</b></a>
+            <div class="dropdown-divider"></div>
+            <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
+            <div class="dropdown-divider"></div>
+            <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
+            <div class="dropdown-divider"></div>
+        }
+        else if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
+        {
+            <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Pagado</b></a>
+            <div class="dropdown-divider"></div>
+            <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
+            <div class="dropdown-divider"></div>
+        }
+        else if (item.M.NoExpediente != null && item.M.EstatusPago == "Pagado")
+        {
+
+
+            <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
+            <div class="dropdown-divider"></div>
+
+            var entregado = (from e in db.Captura where e.idPaciente == item.M.idPaciente && e.EstatusCaptura == "Terminado" select e.EstatusCaptura).FirstOrDefault();
+            if (entregado != null && item.M.Entregado == null)
+            {
+                <a href="#" data-toggle="modal" data-target="#entregar_@item.M.idPaciente"><b style="color:limegreen">Entregado</b></a>
+            }
+        }*@
+
+                </div>
                 </div>
 
                 <!-- Modal para elegir el método de pago una vez que se concrete el mismo -->
@@ -1784,7 +1797,7 @@ else
                                         @*<input type="text" class="form-control" id="numero" name="numero" placeholder="@item.M.NoExpediente" required>*@
                                     </div>
                                     @{
-                                        if (consultaAereo != null)
+                                        if (consultaAereo == "AEREO")
                                         {
                                             <input type="hidden" name="tipoL" id="tipoL" value="AEREO" />
                                         }
@@ -2174,7 +2187,7 @@ else
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Está seguro que ha emtregado el dictamen de la siguiente persona?</b></h4>
+                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Está seguro que ha entregado el dictamen de la siguiente persona?</b></h4>
                                 </div>
                                 <div class="modal-body">
                                     <input type="hidden" name="id" value="@item.M.idPaciente" />
@@ -2190,7 +2203,7 @@ else
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                    <input type="submit" value="Lo he enviado!!" class="btn btn-success" />
+                                    <input type="submit" value="El dictamen ha sido entregado!!" class="btn btn-success" />
                                 </div>
                             </div>
                         </div>
