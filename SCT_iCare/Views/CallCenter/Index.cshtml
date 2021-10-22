@@ -56,30 +56,30 @@
         if (oUser.idRol == 2 || nombreUsuario == "Royer Plata" || nombreUsuario == "Pamela Rodriguez Saucedo")
         {
             modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC != null) && (s.M.Recepcionista != "Cristian Airaldi"));
+            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC != null) && (s.M.Canal == "Call Center"));
 
             modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-.Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC != null) && (s.M.Recepcionista != "Cristian Airaldi")).Count();
+.Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC != null) && (s.M.Canal == "Call Center")).Count();
 
             modelo2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC != null ) && (s.M.Recepcionista != "Cristian Airaldi"));
+.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC != null ) && (s.M.Canal == "Call Center"));
 
             modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC != null) && (s.M.Recepcionista != "Cristian Airaldi")).Count();
+.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC != null) && (s.M.Canal == "Call Center")).Count();
         }
         else
         {
             modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC == nombreUsuario));
+            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == nombreUsuario));
 
             modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC == nombreUsuario)).Count();
+            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == nombreUsuario)).Count();
 
             modelo2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-    .Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC == nombreUsuario));
+    .Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.Recepcionista == nombreUsuario));
 
             modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-    .Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC == nombreUsuario)).Count();
+    .Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.Recepcionista == nombreUsuario)).Count();
         }
 
 
@@ -902,17 +902,7 @@ else
                         <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
                     </td>
                     <td>
-                        @{
-                            if (item.M.CC == "Cristian Airaldi")
-                            {
-                                @Html.DisplayFor(modelItem => item.M.Recepcionista)
-                            }
-                            else
-                            {
-                                @Html.DisplayFor(modelItem => item.M.CC)
-                            }
-                        }
-
+                        @Html.DisplayFor(modelItem => item.M.Recepcionista)
                     </td>
                     <td>
                         @*@Html.DisplayFor(modelItem => item.M.FechaCita)*@
@@ -1112,18 +1102,8 @@ else
                             <span class="tip-content">@item.M.Doctor</span>
                         </span>
                     </td>
-                                        <td>
-                        @{
-                            if (item.M.CC == "Cristian Airaldi")
-                            {
-                                @Html.DisplayFor(modelItem => item.M.Recepcionista)
-                            }
-                            else
-                            {
-                                @Html.DisplayFor(modelItem => item.M.CC)
-                            }
-                        }
-
+                    <td>
+                        @Html.DisplayFor(modelItem => item.M.Recepcionista)
                     </td>
                     <td>
                         @*@Html.DisplayFor(modelItem => item.M.FechaCita)*@

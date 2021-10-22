@@ -623,6 +623,26 @@
       <End Role="PacienteESP" EntitySet="PacienteESP" />
       <End Role="FotoPacienteESP" EntitySet="FotoPacienteESP" />
     </AssociationSet>
+    <EntitySet Name="CartaNoAccidentesESP" EntityType="DevModel.CartaNoAccidentesESP" />
+    <EntitySet Name="DeclaracionSaludESP" EntityType="DevModel.DeclaracionSaludESP" />
+    <EntitySet Name="DocumentosESP" EntityType="DevModel.DocumentosESP" />
+    <EntitySet Name="HemoglobinaGlucosiladaESP" EntityType="DevModel.HemoglobinaGlucosiladaESP" />
+    <AssociationSet Name="FK_CartaNoAccidentesESP_PacienteESP" Association="DevModel.FK_CartaNoAccidentesESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="CartaNoAccidentesESP" EntitySet="CartaNoAccidentesESP" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DeclaracionSaludESP_PacienteESP" Association="DevModel.FK_DeclaracionSaludESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="DeclaracionSaludESP" EntitySet="DeclaracionSaludESP" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DocumentosESP_PacienteESP" Association="DevModel.FK_DocumentosESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="DocumentosESP" EntitySet="DocumentosESP" />
+    </AssociationSet>
+    <AssociationSet Name="FK_HemoglobinaGlucosiladaESP_PacienteESP" Association="DevModel.FK_HemoglobinaGlucosiladaESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="HemoglobinaGlucosiladaESP" EntitySet="HemoglobinaGlucosiladaESP" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="CapturaIncidencia">
     <Key>
@@ -1311,6 +1331,10 @@
     <Property Name="FechaCita" Type="DateTime" Precision="3" />
     <Property Name="Estatura" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
     <NavigationProperty Name="FotoPacienteESP" Relationship="DevModel.FK_FotoPacienteESP_PacienteESP" FromRole="PacienteESP" ToRole="FotoPacienteESP" />
+    <NavigationProperty Name="CartaNoAccidentesESP" Relationship="DevModel.FK_CartaNoAccidentesESP_PacienteESP" FromRole="PacienteESP" ToRole="CartaNoAccidentesESP" />
+    <NavigationProperty Name="DeclaracionSaludESP" Relationship="DevModel.FK_DeclaracionSaludESP_PacienteESP" FromRole="PacienteESP" ToRole="DeclaracionSaludESP" />
+    <NavigationProperty Name="DocumentosESP" Relationship="DevModel.FK_DocumentosESP_PacienteESP" FromRole="PacienteESP" ToRole="DocumentosESP" />
+    <NavigationProperty Name="HemoglobinaGlucosiladaESP" Relationship="DevModel.FK_HemoglobinaGlucosiladaESP_PacienteESP" FromRole="PacienteESP" ToRole="HemoglobinaGlucosiladaESP" />
   </EntityType>
   <EntityType Name="FotoPacienteESP">
     <Key>
@@ -1329,6 +1353,90 @@
         <PropertyRef Name="idPacienteESP" />
       </Principal>
       <Dependent Role="FotoPacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="CartaNoAccidentesESP">
+    <Key>
+      <PropertyRef Name="idDocumentacionESP" />
+    </Key>
+    <Property Name="idDocumentacionESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CartaNoAccidentes" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="idPacienteESP" Type="Int32" />
+    <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_CartaNoAccidentesESP_PacienteESP" FromRole="CartaNoAccidentesESP" ToRole="PacienteESP" />
+  </EntityType>
+  <EntityType Name="DeclaracionSaludESP">
+    <Key>
+      <PropertyRef Name="idDocumentacionESP" />
+    </Key>
+    <Property Name="idDocumentacionESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="DeclaracionSalud" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="idPacienteESP" Type="Int32" />
+    <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_DeclaracionSaludESP_PacienteESP" FromRole="DeclaracionSaludESP" ToRole="PacienteESP" />
+  </EntityType>
+  <EntityType Name="DocumentosESP">
+    <Key>
+      <PropertyRef Name="idDocumentacionESP" />
+    </Key>
+    <Property Name="idDocumentacionESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Documentos" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="idPacienteESP" Type="Int32" />
+    <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_DocumentosESP_PacienteESP" FromRole="DocumentosESP" ToRole="PacienteESP" />
+  </EntityType>
+  <EntityType Name="HemoglobinaGlucosiladaESP">
+    <Key>
+      <PropertyRef Name="idDocumentacionESP" />
+    </Key>
+    <Property Name="idDocumentacionESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="HemoglobinaGlucosilada" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="idPacienteESP" Type="Int32" />
+    <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_HemoglobinaGlucosiladaESP_PacienteESP" FromRole="HemoglobinaGlucosiladaESP" ToRole="PacienteESP" />
+  </EntityType>
+  <Association Name="FK_CartaNoAccidentesESP_PacienteESP">
+    <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
+    <End Type="DevModel.CartaNoAccidentesESP" Role="CartaNoAccidentesESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="CartaNoAccidentesESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DeclaracionSaludESP_PacienteESP">
+    <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
+    <End Type="DevModel.DeclaracionSaludESP" Role="DeclaracionSaludESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="DeclaracionSaludESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DocumentosESP_PacienteESP">
+    <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
+    <End Type="DevModel.DocumentosESP" Role="DocumentosESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="DocumentosESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_HemoglobinaGlucosiladaESP_PacienteESP">
+    <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
+    <End Type="DevModel.HemoglobinaGlucosiladaESP" Role="HemoglobinaGlucosiladaESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="HemoglobinaGlucosiladaESP">
         <PropertyRef Name="idPacienteESP" />
       </Dependent>
     </ReferentialConstraint>

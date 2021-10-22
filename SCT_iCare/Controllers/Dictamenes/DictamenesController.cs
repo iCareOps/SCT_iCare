@@ -221,7 +221,9 @@ namespace SCT_iCare.Controllers.Dictamenes
         }
 
 
-        public ActionResult CompletarDatos(int? id, string nombre, string curp, string numero, string doctor, string tipoL, string tipoT, HttpPostedFileBase file)
+        public ActionResult CompletarDatos(int? id, string nombre, string estatura, string curp, string numero, 
+            string doctor, string tipoL, string tipoT, HttpPostedFileBase file,
+            HttpPostedFileBase documentos, HttpPostedFileBase declaracion, HttpPostedFileBase carta, HttpPostedFileBase glucosilada)
         {
             var revisionPacienteESP = (from i in db.PacienteESP where i.idPacienteESP == id select i).FirstOrDefault();
 
@@ -248,9 +250,14 @@ namespace SCT_iCare.Controllers.Dictamenes
                 revisionPacienteESP.Nombre = nombre != "" ? nombre : revisionPacienteESP.Nombre;
             }
 
+            if(estatura != "")
+            {
+                revisionPacienteESP.Estatura = estatura != "" ? estatura: revisionPacienteESP.Estatura;
+            }
+
             if (curp != "")
             {
-                revisionPacienteESP.CURP = curp != "" ? curp : revisionPacienteESP.CURP;
+                revisionPacienteESP.CURP = curp.ToUpper() != "" ? curp : revisionPacienteESP.CURP;
             }
 
             if (numero != "")
@@ -290,22 +297,182 @@ namespace SCT_iCare.Controllers.Dictamenes
                 }
             }
 
-            if(ModelState.IsValid && file != null)
+            byte[] bytesDOCS = null;
+            if (documentos != null)
+            {
+                if (documentos != null && documentos.ContentLength > 0)
+                {
+                    var fileName = Path.GetFileName(documentos.FileName);
+
+                    byte[] bytes;
+
+                    using (BinaryReader br = new BinaryReader(documentos.InputStream))
+                    {
+                        bytes = br.ReadBytes(documentos.ContentLength);
+                        bytesDOCS = bytes;
+                    }
+                }
+            }
+
+            byte[] bytesCARTA = null;
+            if (carta != null)
+            {
+                if (carta != null && carta.ContentLength > 0)
+                {
+                    var fileName = Path.GetFileName(carta.FileName);
+
+                    byte[] bytes;
+
+                    using (BinaryReader br = new BinaryReader(carta.InputStream))
+                    {
+                        bytes = br.ReadBytes(carta.ContentLength);
+                        bytesCARTA = bytes;
+                    }
+                }
+            }
+
+            byte[] bytesGLUCO = null;
+            if (glucosilada != null)
+            {
+                if (glucosilada != null && glucosilada.ContentLength > 0)
+                {
+                    var fileName = Path.GetFileName(glucosilada.FileName);
+
+                    byte[] bytes;
+
+                    using (BinaryReader br = new BinaryReader(glucosilada.InputStream))
+                    {
+                        bytes = br.ReadBytes(glucosilada.ContentLength);
+                        bytesGLUCO = bytes;
+                    }
+                }
+            }
+
+            byte[] bytesDEC = null;
+            if (declaracion != null)
+            {
+                if (declaracion != null && declaracion.ContentLength > 0)
+                {
+                    var fileName = Path.GetFileName(declaracion.FileName);
+
+                    byte[] bytes;
+
+                    using (BinaryReader br = new BinaryReader(declaracion.InputStream))
+                    {
+                        bytes = br.ReadBytes(declaracion.ContentLength);
+                        bytesDEC = bytes;
+                    }
+                }
+            }
+
+            if (ModelState.IsValid)
             {
                 var revisionFoto = (from i in db.FotoPacienteESP where i.idPacienteESP == id select i.idFoto).FirstOrDefault();
                 var foto = db.FotoPacienteESP.Find(revisionFoto);
                 FotoPacienteESP nuevaFoto = new FotoPacienteESP();
 
-                if(revisionFoto != null)
+                if(revisionFoto != 0 && file != null)
                 {
                     foto.FotoESP = bytes2;
                     db.Entry(foto).State = EntityState.Modified;
                 }
                 else
                 {
-                    nuevaFoto.FotoESP = bytes2;
-                    nuevaFoto.idPacienteESP = id;
-                    db.FotoPacienteESP.Add(nuevaFoto);
+                    if(file != null)
+                    {
+                        nuevaFoto.FotoESP = bytes2;
+                        nuevaFoto.idPacienteESP = id;
+                        db.FotoPacienteESP.Add(nuevaFoto);
+                    }
+                }
+
+                var revisionDocumentos = (from i in db.DocumentosESP where i.idPacienteESP == id select i.idPacienteESP).FirstOrDefault();
+                var revisionCartaNO = (from i in db.CartaNoAccidentesESP where i.idPacienteESP == id select i.idPacienteESP).FirstOrDefault();
+                var revisionDeclaracion = (from i in db.DeclaracionSaludESP where i.idPacienteESP == id select i.idPacienteESP).FirstOrDefault();
+                var revisionGlucosilada = (from i in db.HemoglobinaGlucosiladaESP where i.idPacienteESP == id select i.idPacienteESP).FirstOrDefault();
+
+                if (revisionDocumentos != null)
+                {
+                    var idDocumentos = (from i in db.DocumentosESP where i.idPacienteESP == id select i.idDocumentacionESP).FirstOrDefault();
+                    if (documentos != null)
+                    {
+                        var DOCS = db.DocumentosESP.Find(idDocumentos);
+                        DOCS.Documentos = bytesDOCS;
+                        db.Entry(DOCS).State = EntityState.Modified;
+                    }
+                }
+                else
+                {
+                    DocumentosESP docs = new DocumentosESP();
+                    if (documentos != null)
+                    {
+                        docs.Documentos = bytesDOCS;
+                        docs.idPacienteESP = id;
+                        db.DocumentosESP.Add(docs);
+                    }
+                }
+
+                if (revisionDeclaracion != null)
+                {
+                    var idDeclaracion = (from i in db.DeclaracionSaludESP where i.idPacienteESP == id select i.idDocumentacionESP).FirstOrDefault();
+                    if (declaracion != null)
+                    {
+                        var DEC = db.DeclaracionSaludESP.Find(idDeclaracion);
+                        DEC.DeclaracionSalud = bytesDEC;
+                        db.Entry(DEC).State = EntityState.Modified;
+                    }
+                }
+                else
+                {
+                    DeclaracionSaludESP dec = new DeclaracionSaludESP();
+                    if (declaracion != null)
+                    {
+                        dec.DeclaracionSalud = bytesDEC;
+                        dec.idPacienteESP = id;
+                        db.DeclaracionSaludESP.Add(dec);
+                    }
+                }
+
+                if (revisionCartaNO != null)
+                {
+                    var idCartaNo = (from i in db.CartaNoAccidentesESP where i.idPacienteESP == id select i.idDocumentacionESP).FirstOrDefault();
+                    if (carta != null)
+                    {
+                        var CARTA = db.CartaNoAccidentesESP.Find(idCartaNo);
+                        CARTA.CartaNoAccidentes = bytesCARTA;
+                        db.Entry(CARTA).State = EntityState.Modified;
+                    }
+                }
+                else
+                {
+                    CartaNoAccidentesESP car = new CartaNoAccidentesESP();
+                    if (carta != null)
+                    {
+                        car.CartaNoAccidentes = bytesCARTA;
+                        car.idPacienteESP = id;
+                        db.CartaNoAccidentesESP.Add(car);
+                    }
+                }
+
+                if (revisionGlucosilada != null)
+                {
+                    var idGluco = (from i in db.HemoglobinaGlucosiladaESP where i.idPacienteESP == id select i.idDocumentacionESP).FirstOrDefault();
+                    if (glucosilada != null)
+                    {
+                        var GLUCOSILADA = db.HemoglobinaGlucosiladaESP.Find(idGluco);
+                        GLUCOSILADA.HemoglobinaGlucosilada = bytesGLUCO;
+                        db.Entry(GLUCOSILADA).State = EntityState.Modified;
+                    }
+                }
+                else
+                {
+                    HemoglobinaGlucosiladaESP hem = new HemoglobinaGlucosiladaESP();
+                    if (glucosilada != null)
+                    {
+                        hem.HemoglobinaGlucosilada = bytesGLUCO;
+                        hem.idPacienteESP = id;
+                        db.HemoglobinaGlucosiladaESP.Add(hem);
+                    }
                 }
 
                 db.Entry(revisionPacienteESP).State = EntityState.Modified;

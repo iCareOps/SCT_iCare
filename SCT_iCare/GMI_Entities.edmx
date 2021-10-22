@@ -95,6 +95,14 @@
           <Property Name="Fin_HistoriaClinica" Type="datetime" />
           <Property Name="InicioCarrusel" Type="datetime" />
         </EntityType>
+        <EntityType Name="CartaNoAccidentesESP">
+          <Key>
+            <PropertyRef Name="idDocumentacionESP" />
+          </Key>
+          <Property Name="idDocumentacionESP" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CartaNoAccidentes" Type="varbinary(max)" />
+          <Property Name="idPacienteESP" Type="int" />
+        </EntityType>
         <EntityType Name="CERTIFICADO">
           <Key>
             <PropertyRef Name="idCertificado" />
@@ -144,6 +152,14 @@
           <Property Name="Ciudad" Type="varchar" MaxLength="100" />
           <Property Name="Estado" Type="varchar" MaxLength="100" />
         </EntityType>
+        <EntityType Name="DeclaracionSaludESP">
+          <Key>
+            <PropertyRef Name="idDocumentacionESP" />
+          </Key>
+          <Property Name="idDocumentacionESP" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DeclaracionSalud" Type="varbinary(max)" />
+          <Property Name="idPacienteESP" Type="int" />
+        </EntityType>
         <EntityType Name="Dictamen">
           <Key>
             <PropertyRef Name="idDictamen" />
@@ -178,6 +194,14 @@
           <Property Name="idUsuario" Type="int" />
           <Property Name="idSucursal" Type="int" />
           <Property Name="idModulo" Type="int" />
+        </EntityType>
+        <EntityType Name="DocumentosESP">
+          <Key>
+            <PropertyRef Name="idDocumentacionESP" />
+          </Key>
+          <Property Name="idDocumentacionESP" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Documentos" Type="varbinary(max)" />
+          <Property Name="idPacienteESP" Type="int" />
         </EntityType>
         <EntityType Name="EKGRandom">
           <Key>
@@ -429,6 +453,14 @@
           <Property Name="FotoESP" Type="varbinary(max)" />
           <Property Name="idPacienteESP" Type="int" />
         </EntityType>
+        <EntityType Name="HemoglobinaGlucosiladaESP">
+          <Key>
+            <PropertyRef Name="idDocumentacionESP" />
+          </Key>
+          <Property Name="idDocumentacionESP" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="HemoglobinaGlucosilada" Type="varbinary(max)" />
+          <Property Name="idPacienteESP" Type="int" />
+        </EntityType>
         <EntityType Name="HuellasRandom">
           <Key>
             <PropertyRef Name="idHuella" />
@@ -648,6 +680,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_CartaNoAccidentesESP_PacienteESP">
+          <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+          <End Role="CartaNoAccidentesESP" Type="Self.CartaNoAccidentesESP" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Principal>
+            <Dependent Role="CartaNoAccidentesESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Cita_Canal">
           <End Role="Canal" Type="Self.Canal" Multiplicity="0..1" />
           <End Role="Cita" Type="Self.Cita" Multiplicity="*" />
@@ -669,6 +713,18 @@
             </Principal>
             <Dependent Role="Cita">
               <PropertyRef Name="idPaciente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DeclaracionSaludESP_PacienteESP">
+          <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+          <End Role="DeclaracionSaludESP" Type="Self.DeclaracionSaludESP" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Principal>
+            <Dependent Role="DeclaracionSaludESP">
+              <PropertyRef Name="idPacienteESP" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -753,6 +809,18 @@
             </Principal>
             <Dependent Role="DoctorModulo">
               <PropertyRef Name="idUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DocumentosESP_PacienteESP">
+          <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+          <End Role="DocumentosESP" Type="Self.DocumentosESP" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Principal>
+            <Dependent Role="DocumentosESP">
+              <PropertyRef Name="idPacienteESP" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -936,6 +1004,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_HemoglobinaGlucosiladaESP_PacienteESP">
+          <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+          <End Role="HemoglobinaGlucosiladaESP" Type="Self.HemoglobinaGlucosiladaESP" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Principal>
+            <Dependent Role="HemoglobinaGlucosiladaESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_IncidenciaDictamen_Captura">
           <End Role="Captura" Type="Self.Captura" Multiplicity="0..1" />
           <End Role="IncidenciaDictamen" Type="Self.IncidenciaDictamen" Multiplicity="*" />
@@ -1064,13 +1144,16 @@
           <EntitySet Name="Captura" EntityType="Self.Captura" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CapturaIncidencia" EntityType="Self.CapturaIncidencia" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CarruselMedico" EntityType="Self.CarruselMedico" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CartaNoAccidentesESP" EntityType="Self.CartaNoAccidentesESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CERTIFICADO" EntityType="Self.CERTIFICADO" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Cita" EntityType="Self.Cita" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Ciudades" EntityType="Self.Ciudades" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DeclaracionSaludESP" EntityType="Self.DeclaracionSaludESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Dictamen" EntityType="Self.Dictamen" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DictamenProblema" EntityType="Self.DictamenProblema" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Doctores" EntityType="Self.Doctores" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DoctorModulo" EntityType="Self.DoctorModulo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DocumentosESP" EntityType="Self.DocumentosESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EKGRandom" EntityType="Self.EKGRandom" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EPI_A_Heredofamiliares" EntityType="Self.EPI_A_Heredofamiliares" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EPI_A_NoPatologicos" EntityType="Self.EPI_A_NoPatologicos" Schema="dbo" store:Type="Tables" />
@@ -1087,6 +1170,7 @@
           <EntitySet Name="ExpedienteRevaloracion" EntityType="Self.ExpedienteRevaloracion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Expedientes" EntityType="Self.Expedientes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FotoPacienteESP" EntityType="Self.FotoPacienteESP" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HemoglobinaGlucosiladaESP" EntityType="Self.HemoglobinaGlucosiladaESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HuellasRandom" EntityType="Self.HuellasRandom" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="IncidenciaDictamen" EntityType="Self.IncidenciaDictamen" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="IncidenciaPaciente" EntityType="Self.IncidenciaPaciente" Schema="dbo" store:Type="Tables" />
@@ -1123,6 +1207,10 @@
             <End Role="Paciente" EntitySet="Paciente" />
             <End Role="CarruselMedico" EntitySet="CarruselMedico" />
           </AssociationSet>
+          <AssociationSet Name="FK_CartaNoAccidentesESP_PacienteESP" Association="Self.FK_CartaNoAccidentesESP_PacienteESP">
+            <End Role="PacienteESP" EntitySet="PacienteESP" />
+            <End Role="CartaNoAccidentesESP" EntitySet="CartaNoAccidentesESP" />
+          </AssociationSet>
           <AssociationSet Name="FK_Cita_Canal" Association="Self.FK_Cita_Canal">
             <End Role="Canal" EntitySet="Canal" />
             <End Role="Cita" EntitySet="Cita" />
@@ -1130,6 +1218,10 @@
           <AssociationSet Name="FK_Cita_Paciente" Association="Self.FK_Cita_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
             <End Role="Cita" EntitySet="Cita" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DeclaracionSaludESP_PacienteESP" Association="Self.FK_DeclaracionSaludESP_PacienteESP">
+            <End Role="PacienteESP" EntitySet="PacienteESP" />
+            <End Role="DeclaracionSaludESP" EntitySet="DeclaracionSaludESP" />
           </AssociationSet>
           <AssociationSet Name="FK_Dictamen_Aptitud" Association="Self.FK_Dictamen_Aptitud">
             <End Role="Aptitud" EntitySet="Aptitud" />
@@ -1158,6 +1250,10 @@
           <AssociationSet Name="FK_DoctorModulo_Usuarios" Association="Self.FK_DoctorModulo_Usuarios">
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="DoctorModulo" EntitySet="DoctorModulo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DocumentosESP_PacienteESP" Association="Self.FK_DocumentosESP_PacienteESP">
+            <End Role="PacienteESP" EntitySet="PacienteESP" />
+            <End Role="DocumentosESP" EntitySet="DocumentosESP" />
           </AssociationSet>
           <AssociationSet Name="FK_EPI_A_Heredofamiliares_Paciente" Association="Self.FK_EPI_A_Heredofamiliares_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
@@ -1218,6 +1314,10 @@
           <AssociationSet Name="FK_FotoPacienteESP_PacienteESP" Association="Self.FK_FotoPacienteESP_PacienteESP">
             <End Role="PacienteESP" EntitySet="PacienteESP" />
             <End Role="FotoPacienteESP" EntitySet="FotoPacienteESP" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HemoglobinaGlucosiladaESP_PacienteESP" Association="Self.FK_HemoglobinaGlucosiladaESP_PacienteESP">
+            <End Role="PacienteESP" EntitySet="PacienteESP" />
+            <End Role="HemoglobinaGlucosiladaESP" EntitySet="HemoglobinaGlucosiladaESP" />
           </AssociationSet>
           <AssociationSet Name="FK_IncidenciaDictamen_Captura" Association="Self.FK_IncidenciaDictamen_Captura">
             <End Role="Captura" EntitySet="Captura" />
@@ -1886,6 +1986,26 @@
           <AssociationSet Name="FK_FotoPacienteESP_PacienteESP" Association="DevModel.FK_FotoPacienteESP_PacienteESP">
             <End Role="PacienteESP" EntitySet="PacienteESP" />
             <End Role="FotoPacienteESP" EntitySet="FotoPacienteESP" />
+          </AssociationSet>
+          <EntitySet Name="CartaNoAccidentesESP" EntityType="DevModel.CartaNoAccidentesESP" />
+          <EntitySet Name="DeclaracionSaludESP" EntityType="DevModel.DeclaracionSaludESP" />
+          <EntitySet Name="DocumentosESP" EntityType="DevModel.DocumentosESP" />
+          <EntitySet Name="HemoglobinaGlucosiladaESP" EntityType="DevModel.HemoglobinaGlucosiladaESP" />
+          <AssociationSet Name="FK_CartaNoAccidentesESP_PacienteESP" Association="DevModel.FK_CartaNoAccidentesESP_PacienteESP">
+            <End Role="PacienteESP" EntitySet="PacienteESP" />
+            <End Role="CartaNoAccidentesESP" EntitySet="CartaNoAccidentesESP" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DeclaracionSaludESP_PacienteESP" Association="DevModel.FK_DeclaracionSaludESP_PacienteESP">
+            <End Role="PacienteESP" EntitySet="PacienteESP" />
+            <End Role="DeclaracionSaludESP" EntitySet="DeclaracionSaludESP" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DocumentosESP_PacienteESP" Association="DevModel.FK_DocumentosESP_PacienteESP">
+            <End Role="PacienteESP" EntitySet="PacienteESP" />
+            <End Role="DocumentosESP" EntitySet="DocumentosESP" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HemoglobinaGlucosiladaESP_PacienteESP" Association="DevModel.FK_HemoglobinaGlucosiladaESP_PacienteESP">
+            <End Role="PacienteESP" EntitySet="PacienteESP" />
+            <End Role="HemoglobinaGlucosiladaESP" EntitySet="HemoglobinaGlucosiladaESP" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="CapturaIncidencia">
@@ -2575,6 +2695,10 @@
           <Property Name="FechaCita" Type="DateTime" Precision="3" />
           <Property Name="Estatura" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="FotoPacienteESP" Relationship="DevModel.FK_FotoPacienteESP_PacienteESP" FromRole="PacienteESP" ToRole="FotoPacienteESP" />
+          <NavigationProperty Name="CartaNoAccidentesESP" Relationship="DevModel.FK_CartaNoAccidentesESP_PacienteESP" FromRole="PacienteESP" ToRole="CartaNoAccidentesESP" />
+          <NavigationProperty Name="DeclaracionSaludESP" Relationship="DevModel.FK_DeclaracionSaludESP_PacienteESP" FromRole="PacienteESP" ToRole="DeclaracionSaludESP" />
+          <NavigationProperty Name="DocumentosESP" Relationship="DevModel.FK_DocumentosESP_PacienteESP" FromRole="PacienteESP" ToRole="DocumentosESP" />
+          <NavigationProperty Name="HemoglobinaGlucosiladaESP" Relationship="DevModel.FK_HemoglobinaGlucosiladaESP_PacienteESP" FromRole="PacienteESP" ToRole="HemoglobinaGlucosiladaESP" />
         </EntityType>
         <EntityType Name="FotoPacienteESP">
           <Key>
@@ -2593,6 +2717,90 @@
               <PropertyRef Name="idPacienteESP" />
             </Principal>
             <Dependent Role="FotoPacienteESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="CartaNoAccidentesESP">
+          <Key>
+            <PropertyRef Name="idDocumentacionESP" />
+          </Key>
+          <Property Name="idDocumentacionESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CartaNoAccidentes" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="idPacienteESP" Type="Int32" />
+          <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_CartaNoAccidentesESP_PacienteESP" FromRole="CartaNoAccidentesESP" ToRole="PacienteESP" />
+        </EntityType>
+        <EntityType Name="DeclaracionSaludESP">
+          <Key>
+            <PropertyRef Name="idDocumentacionESP" />
+          </Key>
+          <Property Name="idDocumentacionESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DeclaracionSalud" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="idPacienteESP" Type="Int32" />
+          <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_DeclaracionSaludESP_PacienteESP" FromRole="DeclaracionSaludESP" ToRole="PacienteESP" />
+        </EntityType>
+        <EntityType Name="DocumentosESP">
+          <Key>
+            <PropertyRef Name="idDocumentacionESP" />
+          </Key>
+          <Property Name="idDocumentacionESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Documentos" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="idPacienteESP" Type="Int32" />
+          <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_DocumentosESP_PacienteESP" FromRole="DocumentosESP" ToRole="PacienteESP" />
+        </EntityType>
+        <EntityType Name="HemoglobinaGlucosiladaESP">
+          <Key>
+            <PropertyRef Name="idDocumentacionESP" />
+          </Key>
+          <Property Name="idDocumentacionESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="HemoglobinaGlucosilada" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="idPacienteESP" Type="Int32" />
+          <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_HemoglobinaGlucosiladaESP_PacienteESP" FromRole="HemoglobinaGlucosiladaESP" ToRole="PacienteESP" />
+        </EntityType>
+        <Association Name="FK_CartaNoAccidentesESP_PacienteESP">
+          <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
+          <End Type="DevModel.CartaNoAccidentesESP" Role="CartaNoAccidentesESP" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Principal>
+            <Dependent Role="CartaNoAccidentesESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DeclaracionSaludESP_PacienteESP">
+          <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
+          <End Type="DevModel.DeclaracionSaludESP" Role="DeclaracionSaludESP" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Principal>
+            <Dependent Role="DeclaracionSaludESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DocumentosESP_PacienteESP">
+          <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
+          <End Type="DevModel.DocumentosESP" Role="DocumentosESP" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Principal>
+            <Dependent Role="DocumentosESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_HemoglobinaGlucosiladaESP_PacienteESP">
+          <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
+          <End Type="DevModel.HemoglobinaGlucosiladaESP" Role="HemoglobinaGlucosiladaESP" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Principal>
+            <Dependent Role="HemoglobinaGlucosiladaESP">
               <PropertyRef Name="idPacienteESP" />
             </Dependent>
           </ReferentialConstraint>
@@ -3229,6 +3437,42 @@
                 <ScalarProperty Name="idPacienteESP" ColumnName="idPacienteESP" />
                 <ScalarProperty Name="FotoESP" ColumnName="FotoESP" />
                 <ScalarProperty Name="idFoto" ColumnName="idFoto" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CartaNoAccidentesESP">
+            <EntityTypeMapping TypeName="DevModel.CartaNoAccidentesESP">
+              <MappingFragment StoreEntitySet="CartaNoAccidentesESP">
+                <ScalarProperty Name="idPacienteESP" ColumnName="idPacienteESP" />
+                <ScalarProperty Name="CartaNoAccidentes" ColumnName="CartaNoAccidentes" />
+                <ScalarProperty Name="idDocumentacionESP" ColumnName="idDocumentacionESP" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DeclaracionSaludESP">
+            <EntityTypeMapping TypeName="DevModel.DeclaracionSaludESP">
+              <MappingFragment StoreEntitySet="DeclaracionSaludESP">
+                <ScalarProperty Name="idPacienteESP" ColumnName="idPacienteESP" />
+                <ScalarProperty Name="DeclaracionSalud" ColumnName="DeclaracionSalud" />
+                <ScalarProperty Name="idDocumentacionESP" ColumnName="idDocumentacionESP" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DocumentosESP">
+            <EntityTypeMapping TypeName="DevModel.DocumentosESP">
+              <MappingFragment StoreEntitySet="DocumentosESP">
+                <ScalarProperty Name="idPacienteESP" ColumnName="idPacienteESP" />
+                <ScalarProperty Name="Documentos" ColumnName="Documentos" />
+                <ScalarProperty Name="idDocumentacionESP" ColumnName="idDocumentacionESP" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HemoglobinaGlucosiladaESP">
+            <EntityTypeMapping TypeName="DevModel.HemoglobinaGlucosiladaESP">
+              <MappingFragment StoreEntitySet="HemoglobinaGlucosiladaESP">
+                <ScalarProperty Name="idPacienteESP" ColumnName="idPacienteESP" />
+                <ScalarProperty Name="HemoglobinaGlucosilada" ColumnName="HemoglobinaGlucosilada" />
+                <ScalarProperty Name="idDocumentacionESP" ColumnName="idDocumentacionESP" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

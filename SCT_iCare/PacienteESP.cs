@@ -18,6 +18,10 @@ namespace SCT_iCare
         public PacienteESP()
         {
             this.FotoPacienteESP = new HashSet<FotoPacienteESP>();
+            this.CartaNoAccidentesESP = new HashSet<CartaNoAccidentesESP>();
+            this.DeclaracionSaludESP = new HashSet<DeclaracionSaludESP>();
+            this.DocumentosESP = new HashSet<DocumentosESP>();
+            this.HemoglobinaGlucosiladaESP = new HashSet<HemoglobinaGlucosiladaESP>();
         }
     
         public int idPacienteESP { get; set; }
@@ -38,5 +42,13 @@ namespace SCT_iCare
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FotoPacienteESP> FotoPacienteESP { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CartaNoAccidentesESP> CartaNoAccidentesESP { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DeclaracionSaludESP> DeclaracionSaludESP { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DocumentosESP> DocumentosESP { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<HemoglobinaGlucosiladaESP> HemoglobinaGlucosiladaESP { get; set; }
     }
 }

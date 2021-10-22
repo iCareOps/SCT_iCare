@@ -71,5 +71,9 @@ namespace SCT_iCare
         public virtual DbSet<HuellasRandom> HuellasRandom { get; set; }
         public virtual DbSet<PacienteESP> PacienteESP { get; set; }
         public virtual DbSet<FotoPacienteESP> FotoPacienteESP { get; set; }
+        public virtual DbSet<CartaNoAccidentesESP> CartaNoAccidentesESP { get; set; }
+        public virtual DbSet<DeclaracionSaludESP> DeclaracionSaludESP { get; set; }
+        public virtual DbSet<DocumentosESP> DocumentosESP { get; set; }
+        public virtual DbSet<HemoglobinaGlucosiladaESP> HemoglobinaGlucosiladaESP { get; set; }
     }
 }

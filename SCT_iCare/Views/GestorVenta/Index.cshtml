@@ -43,8 +43,8 @@
     var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 int modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate).Count()@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 
-var repetidas = (from r in db.Cita select r).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal != "SITIO" && s.Canal != "Call Center" && s.Asistencia == null).Select(s => new { s.Referencia }).Distinct().Count(); ;
-var repetidasCitas = (from r in db.Cita select r).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.Canal != "SITIO" && s.Canal != "Call Center" && s.Asistencia == null).Select(s => new { s.Referencia }).Distinct().Count(); ;
+var repetidas = (from r in db.Cita select r).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal == "Gestoría" && s.Asistencia == null).Select(s => new { s.Referencia }).Distinct().Count(); ;
+var repetidasCitas = (from r in db.Cita select r).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.Canal == "Gestoría" && s.Asistencia == null).Select(s => new { s.Referencia }).Distinct().Count(); ;
 
 
 if (oUser != null)
@@ -56,17 +56,17 @@ nombreUsuario = oUser.Nombre;
 Hospital = "GENERAL";
 Sucursal = Hospital.ToString();
 
-modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && s.M.CC == oUser.Nombre);
+modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == oUser.Nombre || s.M.Canal == "Gestoría"));
 
 if (nombreUsuario == "Cristian Airaldi" || nombreUsuario == "Administrador")
 {
-modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate);
+modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == oUser.Nombre || s.M.Canal == "Gestoría"));
 modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-.Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == "Cristian Airaldi")).Count();
+.Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == oUser.Nombre || s.M.Canal == "Gestoría")).Count();
 
 }
 
-registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && s.M.CC == oUser.Nombre).Count();
+registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && s.M.Recepcionista == oUser.Nombre).Count();
 }
 
 }
