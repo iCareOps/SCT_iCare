@@ -461,6 +461,10 @@ namespace SCT_iCare.Controllers.EPICenter
             captura.EstatusCaptura = "Terminado";
             captura.FinalCaptura = DateTime.Now;
             captura.Duracion = minutos;
+            if(minutos > 1000)
+            {
+                captura.Duracion = 10;
+            }
             dictamen.Dictamen1 = bytes2;
             dictamen.idPaciente = captura.idPaciente;
             dictamen.idAptitud = 1;

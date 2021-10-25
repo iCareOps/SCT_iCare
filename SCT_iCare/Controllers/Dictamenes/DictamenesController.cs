@@ -23,6 +23,11 @@ namespace SCT_iCare.Controllers.Dictamenes
             return View();
         }
 
+        public ActionResult Captura()
+        {
+            return View();
+        }
+
         [HttpPost]
         public ActionResult Create1(string nombre, string usuario, string sucursal, string cantidad, string cantidadAereo, string referido)
         {
@@ -221,7 +226,7 @@ namespace SCT_iCare.Controllers.Dictamenes
         }
 
 
-        public ActionResult CompletarDatos(int? id, string nombre, string estatura, string curp, string numero, 
+        public ActionResult CompletarDatos(int? id, string nombre, string estatura, string curp, string numero, string metra,
             string doctor, string tipoL, string tipoT, HttpPostedFileBase file,
             HttpPostedFileBase documentos, HttpPostedFileBase declaracion, HttpPostedFileBase carta, HttpPostedFileBase glucosilada)
         {
@@ -245,10 +250,19 @@ namespace SCT_iCare.Controllers.Dictamenes
                 cadenaPeso = (float)(Math.Round((double)peso, 2));
             }
 
+            if(revisionPacienteESP.NoExpediente != null && revisionPacienteESP.TipoLicencia != null && revisionPacienteESP.TipoTramite != null && revisionPacienteESP.Doctor != null 
+                && revisionPacienteESP.Estatura != null && revisionPacienteESP.Metra != null 
+                && (from i in db.DictamenESP where i.idPacienteESP == id select i.idPacienteESP).FirstOrDefault() == null)
+            {
+                revisionPacienteESP.EstatusCaptura = "En Proceso";
+            }
+
             if(nombre != "")
             {
                 revisionPacienteESP.Nombre = nombre != "" ? nombre : revisionPacienteESP.Nombre;
             }
+
+            revisionPacienteESP.Metra = metra == "on" ? revisionPacienteESP.Metra = "SI" : revisionPacienteESP.Metra = null;
 
             if(estatura != "")
             {
@@ -480,6 +494,98 @@ namespace SCT_iCare.Controllers.Dictamenes
             }
 
             return RedirectToAction("Citas");
+        }
+
+
+        public ActionResult AbrirElectro()
+        {
+            var ekg = (from i in db.EKGRandom select i.idEKG).Count();
+
+            Random ran = new Random();
+            int numero = ran.Next(ekg);
+
+            TempData["Electro"] = numero;
+            return RedirectToAction("Captura");
+        }
+
+        public FileResult DescargarElectro()
+        {
+            var expediente = (from e in db.EKGRandom select e).FirstOrDefault();
+
+            var bytesBinary = expediente.EKG;
+            TempData["Electro"] = null;
+            return File(bytesBinary, "application/pdf");
+        }
+
+
+        public ActionResult AbrirDocumentos(int? id)
+        {
+            var paciente = (from i in db.PacienteESP where i.idPacienteESP == id select i).FirstOrDefault();
+
+            TempData["Documentos"] = id;
+            return RedirectToAction("Captura");
+        }
+
+        public FileResult DescargarDocumentos(int? id)
+        {
+            var expediente = (from e in db.DocumentosESP where e.idPacienteESP == id select e).FirstOrDefault();
+
+            var bytesBinary = expediente.Documentos;
+            TempData["Documentos"] = null;
+            return File(bytesBinary, "application/pdf");
+        }
+
+        public ActionResult AbrirNoAccidentes(int? id)
+        {
+            var paciente = (from i in db.PacienteESP where i.idPacienteESP == id select i).FirstOrDefault();
+
+            TempData["NoAccidentes"] = id;
+            return RedirectToAction("Captura");
+        }
+
+        public FileResult DescargarNoAccidentes(int? id)
+        {
+            var expediente = (from e in db.CartaNoAccidentesESP where e.idPacienteESP == id select e).FirstOrDefault();
+
+            var bytesBinary = expediente.CartaNoAccidentes;
+            TempData["NoAccidentes"] = null;
+            return File(bytesBinary, "application/pdf");
+        }
+
+
+        public ActionResult AbrirDeclaracion(int? id)
+        {
+            var paciente = (from i in db.PacienteESP where i.idPacienteESP == id select i).FirstOrDefault();
+
+            TempData["Declaracion"] = id;
+            return RedirectToAction("Captura");
+        }
+
+        public FileResult DescargarDeclaracion(int? id)
+        {
+            var expediente = (from e in db.DeclaracionSaludESP where e.idPacienteESP == id select e).FirstOrDefault();
+
+            var bytesBinary = expediente.DeclaracionSalud;
+            TempData["Declaracion"] = null;
+            return File(bytesBinary, "application/pdf");
+        }
+
+
+        public ActionResult AbrirGlucosilada(int? id)
+        {
+            var paciente = (from i in db.PacienteESP where i.idPacienteESP == id select i).FirstOrDefault();
+
+            TempData["Glucosilada"] = id;
+            return RedirectToAction("Captura");
+        }
+
+        public FileResult DescargarGlucosilada(int? id)
+        {
+            var expediente = (from e in db.HemoglobinaGlucosiladaESP where e.idPacienteESP == id select e).FirstOrDefault();
+
+            var bytesBinary = expediente.HemoglobinaGlucosilada;
+            TempData["Glucosilada"] = null;
+            return File(bytesBinary, "application/pdf");
         }
 
     }

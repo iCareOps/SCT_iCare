@@ -643,6 +643,11 @@
       <End Role="PacienteESP" EntitySet="PacienteESP" />
       <End Role="HemoglobinaGlucosiladaESP" EntitySet="HemoglobinaGlucosiladaESP" />
     </AssociationSet>
+    <EntitySet Name="DictamenESP" EntityType="DevModel.DictamenESP" />
+    <AssociationSet Name="FK_DictamenESP_PacienteESP" Association="DevModel.FK_DictamenESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="DictamenESP" EntitySet="DictamenESP" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="CapturaIncidencia">
     <Key>
@@ -1335,6 +1340,10 @@
     <NavigationProperty Name="DeclaracionSaludESP" Relationship="DevModel.FK_DeclaracionSaludESP_PacienteESP" FromRole="PacienteESP" ToRole="DeclaracionSaludESP" />
     <NavigationProperty Name="DocumentosESP" Relationship="DevModel.FK_DocumentosESP_PacienteESP" FromRole="PacienteESP" ToRole="DocumentosESP" />
     <NavigationProperty Name="HemoglobinaGlucosiladaESP" Relationship="DevModel.FK_HemoglobinaGlucosiladaESP_PacienteESP" FromRole="PacienteESP" ToRole="HemoglobinaGlucosiladaESP" />
+    <Property Name="Metra" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="EstatusCaptura" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Capturista" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="DictamenESP" Relationship="DevModel.FK_DictamenESP_PacienteESP" FromRole="PacienteESP" ToRole="DictamenESP" />
   </EntityType>
   <EntityType Name="FotoPacienteESP">
     <Key>
@@ -1437,6 +1446,27 @@
         <PropertyRef Name="idPacienteESP" />
       </Principal>
       <Dependent Role="HemoglobinaGlucosiladaESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="DictamenESP">
+    <Key>
+      <PropertyRef Name="idDictamenESP" />
+    </Key>
+    <Property Name="idDictamenESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="DictamenArchivo" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="idPacienteESP" Type="Int32" />
+    <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_DictamenESP_PacienteESP" FromRole="DictamenESP" ToRole="PacienteESP" />
+  </EntityType>
+  <Association Name="FK_DictamenESP_PacienteESP">
+    <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
+    <End Type="DevModel.DictamenESP" Role="DictamenESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="DictamenESP">
         <PropertyRef Name="idPacienteESP" />
       </Dependent>
     </ReferentialConstraint>

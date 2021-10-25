@@ -22,6 +22,7 @@ namespace SCT_iCare
             this.DeclaracionSaludESP = new HashSet<DeclaracionSaludESP>();
             this.DocumentosESP = new HashSet<DocumentosESP>();
             this.HemoglobinaGlucosiladaESP = new HashSet<HemoglobinaGlucosiladaESP>();
+            this.DictamenESP = new HashSet<DictamenESP>();
         }
     
         public int idPacienteESP { get; set; }
@@ -39,6 +40,9 @@ namespace SCT_iCare
         public string ReferidoPor { get; set; }
         public Nullable<System.DateTime> FechaCita { get; set; }
         public string Estatura { get; set; }
+        public string Metra { get; set; }
+        public string EstatusCaptura { get; set; }
+        public string Capturista { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FotoPacienteESP> FotoPacienteESP { get; set; }
@@ -50,5 +54,7 @@ namespace SCT_iCare
         public virtual ICollection<DocumentosESP> DocumentosESP { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<HemoglobinaGlucosiladaESP> HemoglobinaGlucosiladaESP { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DictamenESP> DictamenESP { get; set; }
     }
 }

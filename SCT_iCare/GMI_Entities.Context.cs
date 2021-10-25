@@ -75,5 +75,6 @@ namespace SCT_iCare
         public virtual DbSet<DeclaracionSaludESP> DeclaracionSaludESP { get; set; }
         public virtual DbSet<DocumentosESP> DocumentosESP { get; set; }
         public virtual DbSet<HemoglobinaGlucosiladaESP> HemoglobinaGlucosiladaESP { get; set; }
+        public virtual DbSet<DictamenESP> DictamenESP { get; set; }
     }
 }

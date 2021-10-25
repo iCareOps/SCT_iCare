@@ -34,48 +34,44 @@
     DateTime thisDate = new DateTime(year, month, day);
     DateTime tomorrowDate = new DateTime(year1, month1, day1);
 
-    var modelo = db.PacienteESP.Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate);
-int? idRol = 0;
+    var modelo = db.PacienteESP.Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.NoExpediente != null && s.Doctor != null && s.Asistencia == null && s.Estatura != null
+    && s.Metra != null);
+    int? idRol = 0;
 
-if (oUser != null)
-{
-idUser = oUser.idUsuario;
-nombreUsuario = oUser.Nombre;
-idRol = oUser.idRol;
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
 
-if (idUser != 14 && oUser.idRol != 2)
-{
-Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
-Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
-idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
-Sucursal = Hospital.ToString();
+        if (idUser != 14 && oUser.idRol != 2)
+        {
+            Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
+            Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
+            idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
+            Sucursal = Hospital.ToString();
 
-registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal).Count();
+            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal).Count();
 
-}
-else
-{
-Hospital = "GENERAL";
-Sucursal = Hospital.ToString();
+        }
+        else
+        {
+            Hospital = "GENERAL";
+            Sucursal = Hospital.ToString();
 
-registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
+            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
 
-}
-}
-
-
+        }
+    }
 
 }
 
 <br />
 <br />
-<h3 style="color:#AC9070" class="text-center">@Sucursal, <span style="color:white"><a style="text-decoration:none; color:white; cursor:pointer" onclick="location.href='@Url.Action("NextDay", "Recepcion")'">@DateTime.Now.ToString("dd-MMMM-yyyy")</a></span></h3>
+<h3 style="color:#AC9070" class="text-center"><span style="color:white"><a style="text-decoration:none; color:white; cursor:pointer">Centro de Captura</a></span></h3>
 @*<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>
     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>*@
 
-<div class="form-inline">
-    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Nueva Cita</button>
-</div>
 
 @section scripts{
 
@@ -149,224 +145,46 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
             window.open('@TempData["Link"]');
         </script>
     }
+
+
+
+    @if (TempData["Electro"] != null)
+    {
+        <script>
+            window.open('@Url.Action("DescargarElectro","Dictamenes")');
+        </script>
+    }
+
+    @if (TempData["Documentos"] != null)
+    {
+        <script>
+            window.open('@Url.Action("DescargarDocumentos","Dictamenes", new { id = TempData["Documentos"] })');
+        </script>
+    }
+
+    @if (TempData["NoAccidentes"] != null)
+    {
+        <script>
+            window.open('@Url.Action("DescargarNoAccidentes","Dictamenes", new { id = TempData["NoAccidentes"] })');
+        </script>
+    }
+
+    @if (TempData["Declaracion"] != null)
+    {
+        <script>
+            window.open('@Url.Action("DescargarDeclaracion","Dictamenes", new { id = TempData["Declaracion"] })');
+        </script>
+    }
+
+    @if (TempData["Glucosilada"] != null)
+    {
+        <script>
+            window.open('@Url.Action("DescargarGlucosilada","Dictamenes", new { id = TempData["Glucosilada"] })');
+        </script>
+    }
 }
 
 <br />
-
-
-
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Registrar cita previamente pagada</b></h3>
-            </div>
-            <div class="modal-body">
-                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/Create1")">
-                    @Html.AntiForgeryToken()
-                    <div class="form-inline">
-                        <label for="recipient-name" class="col-form-label">Cantidad de EPIs requeridos (Autotransporte, Marítimos y Ferroviarios):</label>
-                    </div>
-                    <div class="form-inline">
-                        <span class="">
-                            <button class="btn btn-info" id="menos" type="button"><b><span class="glyphicon glyphicon-minus"></span></b></button>
-                        </span>
-                        <input style="display:inline-block" type="number" class="form-control" id="contador" min="1" name="cantidad" placeholder="Ingresa una cantidad">
-                        <span class="">
-                            <button class="btn btn-info" id="mas" type="button"><b><span class="glyphicon glyphicon-plus"></span></b></button>
-                        </span>
-                        <br />
-                        <br />
-                    </div>
-                    <div class="form-inline">
-                        <label for="recipient-name" class="col-form-label">Cantidad de EPIs requeridos (Aéreos):</label>
-                    </div>
-                    <div class="form-inline">
-                        <span class="">
-                            <button class="btn btn-warning" id="menos0" type="button"><b><span class="glyphicon glyphicon-minus"></span></b></button>
-                        </span>
-                        <input style="display:inline-block" type="number" class="form-control" id="contador0" min="1" name="cantidadAereo" placeholder="Ingresa una cantidad">
-                        <span class="">
-                            <button class="btn btn-warning" id="mas0" type="button"><b><span class="glyphicon glyphicon-plus"></span></b></button>
-                        </span>
-                        <br />
-                        <br />
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Nombre del Paciente (o Gestor):</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" required />
-                    </div>
-                    <div class="form-group" style="width:60%; min-width:320px">
-                        <label for="recipient-name" class="col-form-label">Sucursal:</label>
-                        <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                            @{
-                                var sucursalesOption = from s in db.Sucursales select s.Nombre;
-                                foreach (var opcion in sucursalesOption)
-                                {
-                                    <option value="@opcion">@opcion</option>
-                                }
-                            }
-                        </select>
-                    </div>
-                    <input type="hidden" value="@nombreUsuario" name="usuario" />
-                    <div class="form-group" style="width:60%; min-width:320px">
-                        <label for="recipient-name" class="col-form-label">Referido Por:</label>
-                        <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                            <option selected value="NINGUNO">NINGUNO</option>
-                            @{
-                                //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
-                                var referidosGestor = (from r in db.Referido where r.Tipo == "Gestor" select r).OrderBy(o => o.Nombre);
-                                var referidosGMI = (from r in db.Referido where r.Tipo == "GMI" select r).OrderBy(o => o.Nombre);
-                                var referidosEmpresa = (from r in db.Referido where r.Tipo == "Empresa" select r).OrderBy(o => o.Nombre);
-                                var referidosCanacar = (from r in db.Referido where r.Tipo == "Canacar" select r).OrderBy(o => o.Nombre);
-                                var referidosParticular = (from r in db.Referido where r.Tipo == "Particular" select r).OrderBy(o => o.Nombre);
-                                var referidosSindicato = (from r in db.Referido where r.Tipo == "Sindicato" select r).OrderBy(o => o.Nombre);
-                                var referidosAnexa = (from r in db.Referido where r.Tipo == "Anexa" select r).OrderBy(o => o.Nombre);
-
-                                <option disabled>--------GESTORES--------</option>
-                                foreach (var item in referidosGestor)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------GMI--------</b></option>
-                                foreach (var item in referidosGMI)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------EMPRESAS--------</b></option>
-                                foreach (var item in referidosEmpresa)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------CANACAR--------</b></option>
-                                foreach (var item in referidosCanacar)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------PARTICULAR--------</b></option>
-                                foreach (var item in referidosParticular)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------SINDICATOS--------</b></option>
-                                foreach (var item in referidosSindicato)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------ANEXA--------</b></option>
-                                foreach (var item in referidosAnexa)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-                            }
-                            <option disabled><b>--------OTROS--------</b></option>
-                            <option value="OTRO">OTRO</option>
-                        </select>
-                    </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <input type="submit" value="Enviar" class="btn btn-primary" />
-            </div></form>
-        </div>
-    </div>
-</div>
-
-<script type="text/javascript">
-    var sumar = document.getElementById("mas");
-    var restar = document.getElementById("menos");
-    var contador = document.getElementById("contador");
-    var importe = document.getElementById("importe");
-    var valorBase = 5.20;
-    var prevValue;
-
-    function calcular() {
-        var value = contador.value;
-        var isValid = /^[1-9][0-9]*$/.test(value);
-
-        if (!isValid) {
-            contador.value = prevValue;
-        } else {
-            prevValue = value;
-        }
-
-        importe.value = Number.parseFloat(contador.value * valorBase).toFixed(2);
-    }
-
-    sumar.onclick = function () {
-        contador.value = Number(contador.value) + 1;
-        calcular();
-    };
-
-    restar.onclick = function () {
-        contador.value = Number(contador.value) - 1;
-        calcular();
-    };
-
-    contador.onchange = function () {
-        calcular();
-    };
-
-    contador.onkeyup = function () {
-        if (contador.value === "") {
-            return;
-        }
-        calcular();
-    };
-
-    calcular();
-</script>
-
-<script type="text/javascript">
-    var sumar0 = document.getElementById("mas0");
-    var restar0 = document.getElementById("menos0");
-    var contador0 = document.getElementById("contador0");
-    var importe0 = document.getElementById("importe0");
-    var valorBase0 = 5.20;
-    var prevValue0;
-
-    function calcular0() {
-        var value0 = contador0.value;
-        var isValid = /^[1-9][0-9]*$/.test(value0);
-
-        if (!isValid) {
-            contador0.value = prevValue0;
-        } else {
-            prevValue0 = value0;
-        }
-
-        importe0.value = Number.parseFloat(contador0.value * valorBase0).toFixed(2);
-    }
-
-    sumar0.onclick = function () {
-        contador0.value = Number(contador0.value) + 1;
-        calcular0();
-    };
-
-    restar0.onclick = function () {
-        contador0.value = Number(contador0.value) - 1;
-        calcular0();
-    };
-
-    contador0.onchange = function () {
-        calcular0();
-    };
-
-    contador0.onkeyup = function () {
-        if (contador0.value === "") {
-            return;
-        }
-        calcular0();
-    };
-
-    calcular0();
-</script>
 
 
 @if (modelo.FirstOrDefault() == null)
@@ -385,36 +203,25 @@ else
                     </th>
 
                     <th>
-                        Nombre-EPI
+                        Nombre
                     </th>
 
                     <th>
-                        No. Exp.
+                        NoExpediente
                     </th>
-                    @{
-                        if (idRol == 2)
-                        {
-                            <th>Sucursal</th>
-                        }
-                        else
-                        {
-                            <th>
-                                Doctor
-                            </th>
-                        }
-                    }
+                    <th>Sucursal</th>
                     <th>
-                        Referido Por
+                        Doctor
                     </th>
 
                     <th>
                         Tipo de Trámite
                     </th>
                     <th>
-                        Administración
+                        Estatus
                     </th>
                     <th>
-                        Dictamen
+                        Capturista
                     </th>
                     <th></th>
                 </tr>
@@ -458,137 +265,20 @@ else
                     <td>
                         <b>@Html.DisplayFor(modelItem => item.NoExpediente)</b>
                     </td>
-                    @{
-                        if (idRol == 2)
-                        {
-                            <th>
-                                @{
-                                    if (item.Doctor != null)
-                                    {
-                                        <span class="field-tip">
-                                            <b>@Html.DisplayFor(modelItem => item.Sucursal)</b>
-                                            <span class="tip-content">@item.Doctor</span>
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <b>@Html.DisplayFor(modelItem => item.Sucursal)</b>
-                                    }
-                                }
-
-                            </th>
-
-
-                        }
-                        else
-                        {
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Doctor)
-                            </td>
-                        }
-                    }
                     <td>
-                        <span class="field-tip">
-                            <b>@item.ReferidoPor</b>
-                            <span class="tip-content">
-                                <b>Realiza la cita: </b>@item.Usuario <br />
-                                <b>Referido por: </b>@item.ReferidoPor
-                            </span>
-                        </span>
+                        <b>@Html.DisplayFor(modelItem => item.Sucursal)</b>
                     </td>
                     <td>
-                        <b>@Html.DisplayFor(modelItem => item.TipoTramite)</b>
+                        <b>@Html.DisplayFor(modelItem => item.Doctor)</b>
+                    </td>
+                    <td>
+                        <b>@Html.DisplayFor(modelItem => item.TipoTramite)</b><br /> (@item.TipoLicencia)
                     </td>
                     <td style="font-size: smaller">
-                        @{
-                            <span class="field-tip field-tip2">
-                            @if (item.Asistencia == "NO")
-                            {
-                                <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">Cancelado</mark></b>
-                            }
-                            else if (item.Asistencia == null && (item.NoExpediente == null || item.TipoTramite == null || item.TipoLicencia == null
-                                     || item.Doctor == null || (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() == null)
-                                     || (from i in db.DocumentosESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() == null || item.Metra == null)
-                            {
-                                <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">DatosIncompletos</mark></b>
-                            }
-                            else if (item.Asistencia == null && (item.NoExpediente != null || item.TipoTramite != null || item.TipoLicencia != null
-                                     || item.Doctor != null || (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() != null)
-                                     || (from i in db.DocumentosESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() != null || item.Metra != null)
-                            {
-                                <b><mark style="background-color: turquoise; padding:5px; border-radius:7px">DatosCompletos</mark></b>
-                            }
-
-                            @if(item.Asistencia != "SI")
-                            {
-                            <span class="tip-content">
-                                @{
-                                    var revisionFoto = (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                    var revisionDocumentos = (from i in db.DocumentosESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                    var revisionCartaNO = (from i in db.CartaNoAccidentesESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                    var revisionDeclaracion = (from i in db.DeclaracionSaludESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                    var revisionGlucosilada = (from i in db.HemoglobinaGlucosiladaESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                }
-
-                                @if (item.Metra != null)
-                                {
-                                    <b>METRA: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                }
-                                else
-                                {
-                                    <b>METRA: </b> <span class="glyphicon glyphicon-minus"></span> <br />
-                                }
-
-                                @if (revisionFoto != null)
-                                {
-                                    <b>Foto: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                }
-                                else
-                                {
-                                    <b>Foto: </b> <span class="glyphicon glyphicon-minus"></span> <br />
-                                }
-
-                                @if (revisionDocumentos != null)
-                                {
-                                    <b>Documentación: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                }
-                                else
-                                {
-                                    <b>Documentación: </b> <span class="glyphicon glyphicon-minus"></span> <br />
-                                }
-
-                                @if (revisionCartaNO != null)
-                                {
-                                    <b>Carta de No Accidentes: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                }
-
-                                @if (revisionDeclaracion != null)
-                                {
-                                    <b>Declaración de Salud: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                }
-
-                                @if (revisionGlucosilada != null)
-                                {
-                                    <b>Hemoglobina Glucosilada: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                }
-                            </span>
-                            }
-
-                            </span>
-                        }
+                        <b>@item.EstatusCaptura.ToUpper()</b>
                     </td>
                     <td style="font-size: smaller">
-                        @{
-                            if (item.EstatusCaptura == "En Proceso")
-                            {
-                                <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>
-                            }
-                            else if (item.EstatusCaptura == "Terminado")
-                            {
-                                <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>
-                            }
-                        }
-
+                        <span>@item.Capturista</span>
                     </td>
                     <td>
                         <div class="btn-group">
@@ -609,43 +299,31 @@ else
                                 var revisionDeclaracion2 = (from i in db.DeclaracionSaludESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
                                 var revisionGlucosilada2 = (from i in db.HemoglobinaGlucosiladaESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
 
-                                if (item.Asistencia == null && (item.NoExpediente == null || item.TipoTramite == null || item.TipoLicencia == null
-                                                                            || item.Doctor == null || revisionFoto2 == null || revisionDocumentos2 == null))
+                                <a href="#" data-toggle="modal" data-target="#DescargarEPI_@item.idPacienteESP"><b>Descargar EPI</b></a>
+                                <div class="dropdown-divider"></div>
+                                @*<a href="#" data-toggle="modal" data-target="#DescargarEKG_@item.idPacienteESP">Electrocardiograma</a>*@
+                                <b>@Html.ActionLink("Descargar EKG", "AbrirElectro", null, new { style = "color: cadetblue; text-decoration: none" })</b>
+                                <div class="dropdown-divider"></div>
+                                @*<a href="#" data-toggle="modal" data-target="#DescargarDocumentos_@item.idPacienteESP">Documentación</a>*@
+                                <b>@Html.ActionLink("Documentos", "AbrirDocumentos", new { id = item.idPacienteESP }, new { style = "color: cadetblue; text-decoration: none" })</b>
+                                <div class="dropdown-divider"></div>
+
+                                if (revisionCartaNO2 != null)
                                 {
-                                    <a href="#" data-toggle="modal" data-target="#CompletarDatos_@item.idPacienteESP"><b>Completar Datos</b></a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" data-toggle="modal" data-target="#Cancelar_@item.idPacienteESP"><b class="text-danger">Cancelar Cita</b></a>
+                                    @*<a href="#" data-toggle="modal" data-target="#DescargarNoAccidentes_@item.idPacienteESP">Carta NoAccidentes</a>*@
+                                    <b>@Html.ActionLink("Carta NoAccidentes", "AbrirNoAccidenres", new { id = item.idPacienteESP }, new { style = "color: cadetblue; text-decoration: none" })</b>
                                     <div class="dropdown-divider"></div>
                                 }
-                                else if (item.Asistencia == null && (item.NoExpediente != null || item.TipoTramite != null || item.TipoLicencia != null
-                                    || item.Doctor != null || revisionFoto2 != null || revisionDocumentos2 != null))
+                                if (revisionDeclaracion2 != null)
                                 {
-                                    <a href="#" data-toggle="modal" data-target="#CompletarDatos_@item.idPacienteESP"><b>Editar Datos</b></a>
+                                    @*<a href="#" data-toggle="modal" data-target="#DescargarDeclaracionSalud_@item.idPacienteESP">Declaración Salud</a>*@
+                                    <b>@Html.ActionLink("Declaración Salud", "AbrirDeclaracion", new { id = item.idPacienteESP }, new { style = "color: cadetblue; text-decoration: none" })</b>
                                     <div class="dropdown-divider"></div>
-                                    @*<a href="#" data-toggle="modal" data-target="#DescargarEPI_@item.idPacienteESP"><b>Descargar EPI</b></a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" data-toggle="modal" data-target="#DescargarEKG_@item.idPacienteESP">Electrocardiograma</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" data-toggle="modal" data-target="#DescargarDocumentos_@item.idPacienteESP">Documentación</a>
-                                    <div class="dropdown-divider"></div>
-
-                                    if (revisionCartaNO2 != null)
-                                    {
-                                        <a href="#" data-toggle="modal" data-target="#DescargarNoAccidentes_@item.idPacienteESP">Carta NoAccidentes</a>
-                                        <div class="dropdown-divider"></div>
-                                    }
-                                    if (revisionDeclaracion2 != null)
-                                    {
-                                        <a href="#" data-toggle="modal" data-target="#DescargarDeclaracionSalud_@item.idPacienteESP">Declaración Salud</a>
-                                        <div class="dropdown-divider"></div>
-                                    }
-                                    if (revisionGlucosilada2 != null)
-                                    {
-                                        <a href="#" data-toggle="modal" data-target="#DescargarGlucosilada_@item.idPacienteESP">H. Glucosilada</a>
-                                        <div class="dropdown-divider"></div>
-                                    }*@
-
-                                    <a href="#" data-toggle="modal" data-target="#Cancelar_@item.idPacienteESP"><b class="text-danger">Cancelar Cita</b></a>
+                                }
+                                if (revisionGlucosilada2 != null)
+                                {
+                                    @*<a href="#" data-toggle="modal" data-target="#DescargarGlucosilada_@item.idPacienteESP">H. Glucosilada</a>*@
+                                    <b>@Html.ActionLink("H.Glucosilada", "AbrirGlucosilada", new { id = item.idPacienteESP }, new { style = "color: cadetblue; text-decoration: none" })</b>
                                     <div class="dropdown-divider"></div>
                                 }
                             }
@@ -673,7 +351,7 @@ else
                                                         <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Completar Datos</b></h4>
                                                     }
                                                 }
-                                                
+
                                             </div>
                                             <div class="modal-body">
                                                 <div class="form-group">
@@ -798,17 +476,6 @@ else
                                                         }
                                                     </select>
                                                 </div>
-                                                <div class="form-group">
-                                                    @if (item.Metra == null)
-                                                    {
-                                                        <input type="checkbox" name="metra" />
-                                                    }
-                                                    else
-                                                    {
-                                                        <input type="checkbox" checked name="metra" />
-                                                    }
-                                                    <label for="file" class="col-form-label">¿Cita registrada en METRA?:</label>
-                                                </div>
                                                 <hr />
                                                 <div class="form-group">
                                                     <label for="file" class="col-form-label">Capturar Foto:</label>
@@ -851,7 +518,7 @@ else
 
                 flag += 1;
 
-                                                            }
+            }
 
         </table>
     </div>
