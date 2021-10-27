@@ -44,24 +44,29 @@
         nombreUsuario = oUser.Nombre;
         idRol = oUser.idRol;
 
-        if (idUser != 14 && oUser.idRol != 2)
-        {
-            Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
-            Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
-            idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
-            Sucursal = Hospital.ToString();
+        Hospital = "GENERAL";
+        Sucursal = Hospital.ToString();
 
-            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal).Count();
+        registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
 
-        }
-        else
-        {
-            Hospital = "GENERAL";
-            Sucursal = Hospital.ToString();
+        //if (idUser != 14 && oUser.idRol != 2)
+        //{
+        //    Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
+        //    Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
+        //    idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
+        //    Sucursal = Hospital.ToString();
 
-            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
+        //    registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal).Count();
 
-        }
+        //}
+        //else
+        //{
+        //    Hospital = "GENERAL";
+        //    Sucursal = Hospital.ToString();
+
+        //    registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
+
+        //}
     }
 
 }
@@ -275,7 +280,17 @@ else
                         <b>@Html.DisplayFor(modelItem => item.TipoTramite)</b><br /> (@item.TipoLicencia)
                     </td>
                     <td style="font-size: smaller">
-                        <b>@item.EstatusCaptura.ToUpper()</b>
+                        @{
+                            if (item.EstatusCaptura == null)
+                            {
+                                <b>NO INICIADO</b>
+                            }
+                            else
+                            {
+                                <b>@item.EstatusCaptura.ToUpper()</b>
+                            }
+                        }
+
                     </td>
                     <td style="font-size: smaller">
                         <span>@item.Capturista</span>
@@ -291,215 +306,65 @@ else
                                     </button>
                                 }
 
-                        <div class="dropdown-menu" style="padding:10px">
-                            @{
-                                var revisionFoto2 = (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                var revisionDocumentos2 = (from i in db.DocumentosESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                var revisionCartaNO2 = (from i in db.CartaNoAccidentesESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                var revisionDeclaracion2 = (from i in db.DeclaracionSaludESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                var revisionGlucosilada2 = (from i in db.HemoglobinaGlucosiladaESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
+                                <div class="dropdown-menu" style="padding:10px">
+                                    @{
+                                        var revisionFoto2 = (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
+                                        var revisionDocumentos2 = (from i in db.DocumentosESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
+                                        var revisionCartaNO2 = (from i in db.CartaNoAccidentesESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
+                                        var revisionDeclaracion2 = (from i in db.DeclaracionSaludESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
+                                        var revisionGlucosilada2 = (from i in db.HemoglobinaGlucosiladaESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
 
-                                <a href="#" data-toggle="modal" data-target="#DescargarEPI_@item.idPacienteESP"><b>Descargar EPI</b></a>
-                                <div class="dropdown-divider"></div>
-                                @*<a href="#" data-toggle="modal" data-target="#DescargarEKG_@item.idPacienteESP">Electrocardiograma</a>*@
-                                <b>@Html.ActionLink("Descargar EKG", "AbrirElectro", null, new { style = "color: cadetblue; text-decoration: none" })</b>
-                                <div class="dropdown-divider"></div>
-                                @*<a href="#" data-toggle="modal" data-target="#DescargarDocumentos_@item.idPacienteESP">Documentación</a>*@
-                                <b>@Html.ActionLink("Documentos", "AbrirDocumentos", new { id = item.idPacienteESP }, new { style = "color: cadetblue; text-decoration: none" })</b>
-                                <div class="dropdown-divider"></div>
+                                        <a href="#" data-toggle="modal" data-target="#DescargarEPI_@item.idPacienteESP"><b>Descargar EPI</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        @*<a href="#" data-toggle="modal" data-target="#DescargarEKG_@item.idPacienteESP">Electrocardiograma</a>*@
+                                        <b>@Html.ActionLink("Descargar EKG", "AbrirElectro", null, new { style = "color: cadetblue; text-decoration: none" })</b>
+                                        <div class="dropdown-divider"></div>
+                                        @*<a href="#" data-toggle="modal" data-target="#DescargarDocumentos_@item.idPacienteESP">Documentación</a>*@
+                                        <b>@Html.ActionLink("Documentos", "AbrirDocumentos", new { id = item.idPacienteESP }, new { style = "color: cadetblue; text-decoration: none" })</b>
+                                        <div class="dropdown-divider"></div>
 
-                                if (revisionCartaNO2 != null)
-                                {
-                                    @*<a href="#" data-toggle="modal" data-target="#DescargarNoAccidentes_@item.idPacienteESP">Carta NoAccidentes</a>*@
-                                    <b>@Html.ActionLink("Carta NoAccidentes", "AbrirNoAccidenres", new { id = item.idPacienteESP }, new { style = "color: cadetblue; text-decoration: none" })</b>
-                                    <div class="dropdown-divider"></div>
-                                }
-                                if (revisionDeclaracion2 != null)
-                                {
-                                    @*<a href="#" data-toggle="modal" data-target="#DescargarDeclaracionSalud_@item.idPacienteESP">Declaración Salud</a>*@
-                                    <b>@Html.ActionLink("Declaración Salud", "AbrirDeclaracion", new { id = item.idPacienteESP }, new { style = "color: cadetblue; text-decoration: none" })</b>
-                                    <div class="dropdown-divider"></div>
-                                }
-                                if (revisionGlucosilada2 != null)
-                                {
-                                    @*<a href="#" data-toggle="modal" data-target="#DescargarGlucosilada_@item.idPacienteESP">H. Glucosilada</a>*@
-                                    <b>@Html.ActionLink("H.Glucosilada", "AbrirGlucosilada", new { id = item.idPacienteESP }, new { style = "color: cadetblue; text-decoration: none" })</b>
-                                    <div class="dropdown-divider"></div>
-                                }
-                            }
-                        </div>
+                                        if (revisionCartaNO2 != null)
+                                        {
+                                            @*<a href="#" data-toggle="modal" data-target="#DescargarNoAccidentes_@item.idPacienteESP">Carta NoAccidentes</a>*@
+                                            <b>@Html.ActionLink("Carta NoAccidentes", "AbrirNoAccidenres", new { id = item.idPacienteESP }, new { style = "color: cadetblue; text-decoration: none" })</b>
+                                            <div class="dropdown-divider"></div>
+                                        }
+                                        if (revisionDeclaracion2 != null)
+                                        {
+                                            @*<a href="#" data-toggle="modal" data-target="#DescargarDeclaracionSalud_@item.idPacienteESP">Declaración Salud</a>*@
+                                            <b>@Html.ActionLink("Declaración Salud", "AbrirDeclaracion", new { id = item.idPacienteESP }, new { style = "color: cadetblue; text-decoration: none" })</b>
+                                            <div class="dropdown-divider"></div>
+                                        }
+                                        if (revisionGlucosilada2 != null)
+                                        {
+                                            @*<a href="#" data-toggle="modal" data-target="#DescargarGlucosilada_@item.idPacienteESP">H. Glucosilada</a>*@
+                                            <b>@Html.ActionLink("H.Glucosilada", "AbrirGlucosilada", new { id = item.idPacienteESP }, new { style = "color: cadetblue; text-decoration: none" })</b>
+                                            <div class="dropdown-divider"></div>
+                                        }
+
+                                        <b><a href="#" data-toggle="modal" data-target="#Dictaminar_@item.idPacienteESP">Dictaminar</a></b>
+                                        <div class="dropdown-divider"></div>
+                                    }
+                                </div>
 
                             }
 
                             <!-- -------------------------------------------------------------------------------------------------------------- -->
                             <!-- Modal para Completar Datos -->
-                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/CompletarDatos")">
+                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/Dictaminar")">
                                 @Html.AntiForgeryToken()
-                                <div class="modal fade" id="CompletarDatos_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal fade" id="Dictaminar_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                @{
-                                                    var revisionTL = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
-
-                                                    if (revisionTL.TipoLicencia == "AEREO")
-                                                    {
-                                                        <h4 class="modal-title text-danger" id="exampleModalLabel"><b>Completar Datos (Paciente Aereo)</b></h4>
-                                                    }
-                                                    else
-                                                    {
-                                                        <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Completar Datos</b></h4>
-                                                    }
-                                                }
-
+                                                <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Dictaminar a @item.Nombre</b></h4>
                                             </div>
                                             <div class="modal-body">
                                                 <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
-                                                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.Nombre">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">CURP (Clave Única de Registro de Población):</label>
-                                                    @{
-                                                        if (item.CURP == null)
-                                                        {
-                                                            <input type="text" class="form-control" id="curp" name="curp" maxlength="18" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="text" class="form-control" id="curp" name="curp" maxlength="18" value="@item.CURP" placeholder="@item.CURP" />
-                                                        }
-                                                    }
-                                                    <input type="hidden" class="form-control" id="id" name="id" value="@item.idPacienteESP">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">Estatura (en cms):</label>
-                                                    @{
-                                                        if (item.Estatura == null)
-                                                        {
-                                                            <input type="number" class="form-control" id="curp" name="estatura" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="number" class="form-control" id="curp" name="estatura" maxlength="18" value="@item.Estatura" placeholder="@item.Estatura" />
-                                                        }
-                                                    }
-                                                    <input type="hidden" class="form-control" id="id" name="id" value="@item.idPacienteESP">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">No. de Expediente:</label>
-                                                    @{
-                                                        if (item.NoExpediente == null)
-                                                        {
-                                                            <input type="text" class="form-control" id="numero" name="numero" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="text" class="form-control" id="numero" name="numero" value="@item.NoExpediente" placeholder="@item.NoExpediente" />
-                                                        }
-                                                    }
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">Doctor Dictaminador:</label>
-                                                    <select name="doctor" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                                        @{
-                                                            var consultorios1 = from c in db.Doctores select c;
-                                                            var revisionD = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
-
-                                                            if (revisionD.Doctor != null)
-                                                            {
-                                                                <option style="font-weight:bold" value="@revisionTL.Doctor" selected>@revisionTL.Doctor</option>
-                                                                <option disabled>----------------------------------------------</option>
-                                                            }
-
-                                                            foreach (var item1 in consultorios1)
-                                                            {
-                                                                <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
-                                                            }
-
-                                                        }
-                                                    </select>
-                                                </div>
-                                                @{
-                                                    var consultaAereo1 = (from c in db.PacienteESP where c.idPacienteESP == item.idPacienteESP select c.TipoLicencia).FirstOrDefault();
-                                                    if (consultaAereo1 == "AEREO")
-                                                    {
-                                                        <input type="hidden" name="tipoL" id="tipoL" value="AEREO" />
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="form-group" style="width:80%; min-width:320px">
-                                                            <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
-                                                            <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-
-                                                                @{
-                                                                    var revisionTL2 = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
-
-                                                                    if (revisionTL2.TipoLicencia != null)
-                                                                    {
-                                                                        <option value="@revisionTL2.TipoLicencia" selected>@revisionTL2.TipoLicencia</option>
-                                                                        <option disabled>----------------------------------------</option>
-                                                                        <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
-                                                                        <option value="MARITIMO">MARITIMO</option>
-                                                                        <option value="FERROVIARIO">FERROVIARIO</option>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
-                                                                        <option value="MARITIMO">MARITIMO</option>
-                                                                        <option value="FERROVIARIO">FERROVIARIO</option>
-                                                                    }
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    }
-                                                }
-
-                                                <div class="form-group" style="width:80%; min-width:320px">
-                                                    <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
-                                                    <select name="tipoT" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                                        @{
-                                                            var revisionTT = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i.TipoTramite).FirstOrDefault();
-
-                                                            if (revisionTT != null)
-                                                            {
-                                                                <option value="@revisionTT" selected>@revisionTT</option>
-                                                                <option disabled>----------------------------------------</option>
-                                                                <option value="REVALIDACIÓN">REVALIDACIÓN</option>
-                                                                <option value="PRIMERA VEZ">PRIMERA VEZ</option>
-                                                            }
-                                                            else
-                                                            {
-                                                                <option value="REVALIDACIÓN">REVALIDACIÓN</option>
-                                                                <option value="PRIMERA VEZ">PRIMERA VEZ</option>
-                                                            }
-                                                        }
-                                                    </select>
-                                                </div>
-                                                <hr />
-                                                <div class="form-group">
-                                                    <label for="file" class="col-form-label">Capturar Foto:</label>
-                                                    <input type="file" name="file" capture="camera" />
-                                                </div>
-                                                <br />
-                                                <div class="form-group">
-                                                    <label for="file" class="col-form-label">Cargar Documentos del Paciente:</label>
-                                                    <input type="file" name="documentos" />
-                                                </div>
-                                                <hr />
-                                                <div class="form-group">
-                                                    <label for="file" class="col-form-label">Cargar Declaración de Salud:</label>
-                                                    <input type="file" name="declaracion" />
-                                                </div>
-                                                <hr />
-                                                <div class="form-group">
-                                                    <label for="file" class="col-form-label">Cargar Carta de NO ACCIDENTES (sólo si aplica):</label>
-                                                    <input type="file" name="carta" />
-                                                </div>
-                                                <hr />
-                                                <div class="form-group">
-                                                    <label for="file" class="col-form-label">Hemoglobina Glucosilada (sólo si aplica):</label>
-                                                    <input type="file" name="glucosilada" />
+                                                    <label for="file" class="col-form-label">Dictamen:</label>
+                                                    <input type="file" name="dictamen" required />
+                                                    <input type="hidden" name="id" value="@item.idPacienteESP" />
+                                                    <input type="hidden" name="usuario" value="@nombreUsuario" />
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -510,6 +375,225 @@ else
                                     </div>
                                 </div>
                             </form>
+
+                            <!-- Modal para Completar Datos -->
+                                <div class="modal fade" id="DescargarEPI_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Descargar datos en Excel de @item.Nombre</b></h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <table>
+                                                    <tr>
+                                                        <th>Genero</th>
+                                                        <th>Sistolica</th>
+                                                        <th>Diastolica</th>
+                                                        <th>Cardiaca</th>
+                                                        <th>Respiratoria</th>
+                                                        <th>Temperatura</th>
+                                                        <th>Peso</th>
+                                                        <th>Estatura</th>
+                                                        <th>Cintura</th>
+                                                        <th>Cuello</th>
+                                                        <th>Grasa</th>
+
+                                                        <th>Glucosa</th>
+                                                        <th>Hemoglobina</th>
+
+                                                        <th>Frecuencia</th>
+                                                        <th>Eje</th>
+                                                        <th>PR</th>
+                                                        <th>QT</th>
+                                                        <th>QRS</th>
+                                                        <th>OndaP</th>
+                                                        <th>OndaT</th>
+
+                                                        <th>AVCD</th>
+                                                        <th>AVCI</th>
+                                                        <th>AVID</th>
+                                                        <th>AVII</th>
+                                                        <th>AVLD</th>
+                                                        <th>AVLI</th>
+                                                        <th>LENTES</th>
+                                                        <th>ESTEREOPSIS</th>
+                                                        <th>CARTA</th>
+                                                        <th>CAMPOVISUAL</th>
+                                                        <th>MOVOCULARES</th>
+                                                        <th>RPD</th>
+                                                        <th>RPI</th>
+                                                        <th>NOTA</th>
+                                                        <th>TEST VC</th>
+
+                                                        <th>MadreVive</th>
+                                                        <th>CausaM</th>
+                                                        <th>PadreVive</th>
+                                                        <th>CausaP</th>
+                                                        <th>HermanosViven</th>
+                                                        <th>CausaH</th>
+                                                        <th>VacComp</th>
+                                                        <th>Ecivil</th>
+                                                        <th>Religion</th>
+                                                        <th>Escolaridad</th>
+                                                        <th>#Hijos</th>
+                                                        <th>Econgenita</th>
+                                                        <th>EspDiag</th>
+                                                        <th>Alergia</th>
+                                                        <th>Diabetes</th>
+                                                        <th>EspDiab</th>
+                                                        <th>DiagHipArt</th>
+                                                        <th>EspDiagArt</th>
+                                                        <th>Alcohol</th>
+                                                        <th>Fuma</th>
+                                                        <th>Drogas</th>
+                                                        <th>UsaLentes</th>
+                                                        <th>TLentes</th>
+                                                        <th>Uregla</th>
+                                                        <th>#Embara</th>
+                                                        <th>#Aborto</th>
+                                                        <th>#Parto</th>
+                                                        <th>#Cesarea</th>
+                                                        <th>IVSex</th>
+                                                        <th>Genero</th>
+
+                                                        <th>PATOLOGIAS</th>
+                                                        <th>INTERPRETACION</th>
+                                                        <th>NOTA MEDICA</th>
+                                                        <th>125</th>
+                                                        <th>250</th>
+                                                        <th>500</th>
+                                                        <th>1000</th>
+                                                        <th>2000</th>
+                                                        <th>4000</th>
+                                                        <th>8000</th>
+                                                        <th>12000</th>
+                                                        <th>125i</th>
+                                                        <th>250i</th>
+                                                        <th>500i</th>
+                                                        <th>1000i</th>
+                                                        <th>2000i</th>
+                                                        <th>4000i</th>
+                                                        <th>8000i</th>
+                                                        <th>12000i</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@item.Genero</td>
+                                                        <td>120</td>
+                                                        <td>80</td>
+                                                        <td>80</td>
+                                                        <td>18</td>
+                                                        <td>36</td>
+                                                        @{
+                                                            int numeroRandom = 0;
+                                                            double numeroDecimalRandom = 0;
+                                                            double decimalRandom = 0.00;
+                                                            double altura = 1.74;
+                                                            double peso = 0.00;
+                                                            float cadenaPeso;
+
+                                                            Random ran = new Random();
+                                                            numeroRandom = ran.Next(57);
+
+                                                            numeroDecimalRandom = ran.Next(2223, 2878) / 100.00;
+
+                                                            peso = numeroDecimalRandom * (altura * altura);
+                                                            cadenaPeso = (float)(Math.Round((double)peso, 2));
+
+                                                            <td>@cadenaPeso</td>
+                                                        }
+
+                                                        <td>@item.Estatura</td>
+                                                        <td>90</td>
+                                                        <td>38</td>
+                                                        <td>25</td>
+
+                                                        <td>100</td>
+                                                        <td>6.5</td>
+
+                                                        <td>80</td>
+                                                        <td>60</td>
+                                                        <td>160</td>
+                                                        <td>220</td>
+                                                        <td>300</td>
+                                                        <td>120</td>
+                                                        <td>200</td>
+
+                                                        <td>1</td>
+                                                        <td>1</td>
+                                                        <td>1</td>
+                                                        <td>1</td>
+                                                        <td>1</td>
+                                                        <td>1</td>
+                                                        <td>NO</td>
+                                                        <td>60</td>
+                                                        <td>NO</td>
+                                                        <td>NORMAL</td>
+                                                        <td>NORMAL</td>
+                                                        <td>NORMAL</td>
+                                                        <td>NORMAL</td>
+                                                        <td>SANO VE BIEN</td>
+                                                        <td>NORMAL</td>
+
+                                                        <td>SI</td>
+                                                        <td>NULL</td>
+                                                        <td>SI</td>
+                                                        <td>NULL</td>
+                                                        <td>SI</td>
+                                                        <td>NULL</td>
+                                                        <td>SI</td>
+                                                        <td>UNIONLIBRE</td>
+                                                        <td>OTRO</td>
+                                                        <td>SECUNDARIA</td>
+                                                        <td>0</td>
+                                                        <td>NO</td>
+                                                        <td>Esta limpio</td>
+                                                        <td>Ninguna</td>
+                                                        <td>NO</td>
+                                                        <td>Null</td>
+                                                        <td>NO</td>
+                                                        <td>Null</td>
+                                                        <td>NO</td>
+                                                        <td>NO</td>
+                                                        <td>NO</td>
+                                                        <td>NO</td>
+                                                        <td>Null</td>
+                                                        <td>@DateTime.Now.AddDays(-20).ToString("yyyy-MM-dd").Replace("-", "")</td>
+                                                        <td>0</td>
+                                                        <td>0</td>
+                                                        <td>0</td>
+                                                        <td>0</td>
+                                                        <td>18</td>
+                                                        <td>@item.Genero</td>
+
+                                                        <td>NINGUNO</td>
+                                                        <td>NORMAL</td>
+                                                        <td>NORMAL</td>
+                                                        <td>0</td>
+                                                        <td>-5</td>
+                                                        <td>0</td>
+                                                        <td>5</td>
+                                                        <td>-5</td>
+                                                        <td>-10</td>
+                                                        <td>0</td>
+                                                        <td>5</td>
+                                                        <td>5</td>
+                                                        <td>0</td>
+                                                        <td>-10</td>
+                                                        <td>-5</td>
+                                                        <td>5</td>
+                                                        <td>0</td>
+                                                        <td>-5</td>
+                                                        <td>0</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                <input type="submit" value="Descargar" class="btn btn-success" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                         </div>
 

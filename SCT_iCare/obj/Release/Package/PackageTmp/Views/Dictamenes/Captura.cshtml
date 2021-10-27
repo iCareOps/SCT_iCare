@@ -44,24 +44,29 @@
         nombreUsuario = oUser.Nombre;
         idRol = oUser.idRol;
 
-        if (idUser != 14 && oUser.idRol != 2)
-        {
-            Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
-            Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
-            idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
-            Sucursal = Hospital.ToString();
+        Hospital = "GENERAL";
+        Sucursal = Hospital.ToString();
 
-            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal).Count();
+        registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
 
-        }
-        else
-        {
-            Hospital = "GENERAL";
-            Sucursal = Hospital.ToString();
+        //if (idUser != 14 && oUser.idRol != 2)
+        //{
+        //    Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
+        //    Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
+        //    idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
+        //    Sucursal = Hospital.ToString();
 
-            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
+        //    registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal).Count();
 
-        }
+        //}
+        //else
+        //{
+        //    Hospital = "GENERAL";
+        //    Sucursal = Hospital.ToString();
+
+        //    registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
+
+        //}
     }
 
 }
@@ -326,6 +331,9 @@ else
                                     <b>@Html.ActionLink("H.Glucosilada", "AbrirGlucosilada", new { id = item.idPacienteESP }, new { style = "color: cadetblue; text-decoration: none" })</b>
                                     <div class="dropdown-divider"></div>
                                 }
+
+                                <b><a href="#" data-toggle="modal" data-target="#Dictaminar_@item.idPacienteESP">Dictaminar</a></b>
+                                <div class="dropdown-divider"></div>
                             }
                         </div>
 
@@ -333,173 +341,20 @@ else
 
                             <!-- -------------------------------------------------------------------------------------------------------------- -->
                             <!-- Modal para Completar Datos -->
-                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/CompletarDatos")">
+                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/Dictaminar")">
                                 @Html.AntiForgeryToken()
-                                <div class="modal fade" id="CompletarDatos_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal fade" id="Dictaminar_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                @{
-                                                    var revisionTL = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
-
-                                                    if (revisionTL.TipoLicencia == "AEREO")
-                                                    {
-                                                        <h4 class="modal-title text-danger" id="exampleModalLabel"><b>Completar Datos (Paciente Aereo)</b></h4>
-                                                    }
-                                                    else
-                                                    {
-                                                        <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Completar Datos</b></h4>
-                                                    }
-                                                }
-
+                                                <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Dictaminar a @item.Nombre</b></h4>
                                             </div>
                                             <div class="modal-body">
                                                 <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
-                                                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.Nombre">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">CURP (Clave Única de Registro de Población):</label>
-                                                    @{
-                                                        if (item.CURP == null)
-                                                        {
-                                                            <input type="text" class="form-control" id="curp" name="curp" maxlength="18" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="text" class="form-control" id="curp" name="curp" maxlength="18" value="@item.CURP" placeholder="@item.CURP" />
-                                                        }
-                                                    }
-                                                    <input type="hidden" class="form-control" id="id" name="id" value="@item.idPacienteESP">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">Estatura (en cms):</label>
-                                                    @{
-                                                        if (item.Estatura == null)
-                                                        {
-                                                            <input type="number" class="form-control" id="curp" name="estatura" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="number" class="form-control" id="curp" name="estatura" maxlength="18" value="@item.Estatura" placeholder="@item.Estatura" />
-                                                        }
-                                                    }
-                                                    <input type="hidden" class="form-control" id="id" name="id" value="@item.idPacienteESP">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">No. de Expediente:</label>
-                                                    @{
-                                                        if (item.NoExpediente == null)
-                                                        {
-                                                            <input type="text" class="form-control" id="numero" name="numero" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="text" class="form-control" id="numero" name="numero" value="@item.NoExpediente" placeholder="@item.NoExpediente" />
-                                                        }
-                                                    }
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">Doctor Dictaminador:</label>
-                                                    <select name="doctor" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                                        @{
-                                                            var consultorios1 = from c in db.Doctores select c;
-                                                            var revisionD = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
-
-                                                            if (revisionD.Doctor != null)
-                                                            {
-                                                                <option style="font-weight:bold" value="@revisionTL.Doctor" selected>@revisionTL.Doctor</option>
-                                                                <option disabled>----------------------------------------------</option>
-                                                            }
-
-                                                            foreach (var item1 in consultorios1)
-                                                            {
-                                                                <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
-                                                            }
-
-                                                        }
-                                                    </select>
-                                                </div>
-                                                @{
-                                                    var consultaAereo1 = (from c in db.PacienteESP where c.idPacienteESP == item.idPacienteESP select c.TipoLicencia).FirstOrDefault();
-                                                    if (consultaAereo1 == "AEREO")
-                                                    {
-                                                        <input type="hidden" name="tipoL" id="tipoL" value="AEREO" />
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="form-group" style="width:80%; min-width:320px">
-                                                            <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
-                                                            <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-
-                                                                @{
-                                                                    var revisionTL2 = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
-
-                                                                    if (revisionTL2.TipoLicencia != null)
-                                                                    {
-                                                                        <option value="@revisionTL2.TipoLicencia" selected>@revisionTL2.TipoLicencia</option>
-                                                                        <option disabled>----------------------------------------</option>
-                                                                        <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
-                                                                        <option value="MARITIMO">MARITIMO</option>
-                                                                        <option value="FERROVIARIO">FERROVIARIO</option>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
-                                                                        <option value="MARITIMO">MARITIMO</option>
-                                                                        <option value="FERROVIARIO">FERROVIARIO</option>
-                                                                    }
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    }
-                                                }
-
-                                                <div class="form-group" style="width:80%; min-width:320px">
-                                                    <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
-                                                    <select name="tipoT" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                                        @{
-                                                            var revisionTT = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i.TipoTramite).FirstOrDefault();
-
-                                                            if (revisionTT != null)
-                                                            {
-                                                                <option value="@revisionTT" selected>@revisionTT</option>
-                                                                <option disabled>----------------------------------------</option>
-                                                                <option value="REVALIDACIÓN">REVALIDACIÓN</option>
-                                                                <option value="PRIMERA VEZ">PRIMERA VEZ</option>
-                                                            }
-                                                            else
-                                                            {
-                                                                <option value="REVALIDACIÓN">REVALIDACIÓN</option>
-                                                                <option value="PRIMERA VEZ">PRIMERA VEZ</option>
-                                                            }
-                                                        }
-                                                    </select>
-                                                </div>
-                                                <hr />
-                                                <div class="form-group">
-                                                    <label for="file" class="col-form-label">Capturar Foto:</label>
-                                                    <input type="file" name="file" capture="camera" />
-                                                </div>
-                                                <br />
-                                                <div class="form-group">
-                                                    <label for="file" class="col-form-label">Cargar Documentos del Paciente:</label>
-                                                    <input type="file" name="documentos" />
-                                                </div>
-                                                <hr />
-                                                <div class="form-group">
-                                                    <label for="file" class="col-form-label">Cargar Declaración de Salud:</label>
-                                                    <input type="file" name="declaracion" />
-                                                </div>
-                                                <hr />
-                                                <div class="form-group">
-                                                    <label for="file" class="col-form-label">Cargar Carta de NO ACCIDENTES (sólo si aplica):</label>
-                                                    <input type="file" name="carta" />
-                                                </div>
-                                                <hr />
-                                                <div class="form-group">
-                                                    <label for="file" class="col-form-label">Hemoglobina Glucosilada (sólo si aplica):</label>
-                                                    <input type="file" name="glucosilada" />
+                                                    <label for="file" class="col-form-label">Dictamen:</label>
+                                                    <input type="file" name="dictamen" required />
+                                                    <input type="hidden" name="id" value="@item.idPacienteESP" />
+                                                    <input type="hidden" name="usuario" value="@nombreUsuario" />
                                                 </div>
                                             </div>
                                             <div class="modal-footer">

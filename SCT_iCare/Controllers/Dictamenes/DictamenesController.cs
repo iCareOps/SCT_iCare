@@ -226,7 +226,7 @@ namespace SCT_iCare.Controllers.Dictamenes
         }
 
 
-        public ActionResult CompletarDatos(int? id, string nombre, string estatura, string curp, string numero, string metra,
+        public ActionResult CompletarDatos(int? id, string nombre, string estatura, string curp, string numero, string metra, string genero,
             string doctor, string tipoL, string tipoT, HttpPostedFileBase file,
             HttpPostedFileBase documentos, HttpPostedFileBase declaracion, HttpPostedFileBase carta, HttpPostedFileBase glucosilada)
         {
@@ -259,7 +259,7 @@ namespace SCT_iCare.Controllers.Dictamenes
 
             if(nombre != "")
             {
-                revisionPacienteESP.Nombre = nombre != "" ? nombre : revisionPacienteESP.Nombre;
+                revisionPacienteESP.Nombre = nombre != "" ? nombre.ToUpper() : revisionPacienteESP.Nombre;
             }
 
             revisionPacienteESP.Metra = metra == "on" ? revisionPacienteESP.Metra = "SI" : revisionPacienteESP.Metra = null;
@@ -292,6 +292,11 @@ namespace SCT_iCare.Controllers.Dictamenes
             if (tipoT != "")
             {
                 revisionPacienteESP.TipoTramite = tipoT != "" ? tipoT : revisionPacienteESP.TipoTramite;
+            }
+
+            if (genero != "")
+            {
+                revisionPacienteESP.Genero = genero != "" ? genero : revisionPacienteESP.Genero;
             }
 
             byte[] bytes2 = null;
@@ -510,7 +515,11 @@ namespace SCT_iCare.Controllers.Dictamenes
 
         public FileResult DescargarElectro()
         {
-            var expediente = (from e in db.EKGRandom select e).FirstOrDefault();
+            var ekg = (from i in db.EKGRandom select i.idEKG).Count();
+            Random ran = new Random();
+            int numero = ran.Next(ekg);
+
+            var expediente = (from e in db.EKGRandom where e.idEKG == numero select e).FirstOrDefault();
 
             var bytesBinary = expediente.EKG;
             TempData["Electro"] = null;
@@ -586,6 +595,63 @@ namespace SCT_iCare.Controllers.Dictamenes
             var bytesBinary = expediente.HemoglobinaGlucosilada;
             TempData["Glucosilada"] = null;
             return File(bytesBinary, "application/pdf");
+        }
+
+
+        [HttpPost]
+        public ActionResult Dictaminar(HttpPostedFileBase dictamen, int? id, string usuario)
+        {
+
+            byte[] bytes2 = null;
+            if (dictamen != null)
+            {
+                if (dictamen != null && dictamen.ContentLength > 0)
+                {
+                    var fileName = Path.GetFileName(dictamen.FileName);
+
+                    byte[] bytes;
+
+                    using (BinaryReader br = new BinaryReader(dictamen.InputStream))
+                    {
+                        bytes = br.ReadBytes(dictamen.ContentLength);
+                        bytes2 = bytes;
+                    }
+                }
+            }
+
+            DictamenESP dic = new DictamenESP();
+
+            dic.DictamenArchivo = bytes2;
+            dic.idPacienteESP = id;
+
+            PacienteESP paciente = db.PacienteESP.Find(id);
+            paciente.EstatusCaptura = "Terminado";
+            paciente.Capturista = usuario;
+
+            if(ModelState.IsValid)
+            {
+                db.DictamenESP.Add(dic);
+                db.Entry(paciente).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("Captura");
+        }
+
+        public ActionResult DescargarPDF(int? id)
+        {
+            PacienteESP paciente = db.PacienteESP.Find(id);
+
+            var documento = (from d in db.DictamenESP where d.idPacienteESP == id  orderby d.idDictamenESP descending select d.DictamenArchivo).FirstOrDefault();
+
+            var bytesBinary = documento;
+
+            Response.ContentType = "application/pdf";
+            Response.AddHeader("content-disposition", "attachment;filename=" + paciente.Nombre + ".pdf");
+            Response.BinaryWrite(bytesBinary);
+            Response.End();
+
+            return RedirectToAction("Citas");
         }
 
     }
