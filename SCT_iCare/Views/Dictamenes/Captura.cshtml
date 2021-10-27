@@ -395,10 +395,10 @@ else
 
                                 function ExportToExcel(type, fn, dl) {
                                     var elt = document.getElementById('tbl_exporttable_to_xls');
-                                    var wb = XLSX.utils.table_to_book(elt, { sheet: "@item.Nombre" + "_@item.NoExpediente" });
+                                    var wb = XLSX.utils.table_to_book(elt, { sheet: "EPI_RPA" });
                                     return dl ?
                                         XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
-                                        XLSX.writeFile(wb, fn || ('EPI_RPA.' + (type || 'xlsx')));
+                                        XLSX.writeFile(wb, fn || ('@item.Nombre @item.NoExpediente.' + (type || 'xlsx')));
                                 }
 
                             </script>
@@ -411,8 +411,9 @@ else
                                             <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Descargar datos en Excel de @item.Nombre</b></h4>
                                         </div>
                                         <div class="modal-body">
-                                            <table id="tbl_exporttable_to_xls">
+                                            <table id="tbl_exporttable_to_xls" style="color: #2F2D6B; display:none">
                                                 <tr>
+                                                    <th>No. EXP</th>
                                                     <th>Genero</th>
                                                     <th>Sistolica</th>
                                                     <th>Diastolica</th>
@@ -504,6 +505,7 @@ else
                                                     <th>12000i</th>
                                                 </tr>
                                                 <tr>
+                                                    <td>@item.NoExpediente</td>
                                                     <td>@item.Genero</td>
                                                     <td>120</td>
                                                     <td>80</td>
