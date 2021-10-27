@@ -127,6 +127,12 @@ namespace SCT_iCare.Controllers.Login
                             int idLog = logGestor.idLogInicioGestor;
                             TempData["ID"] = idLog;
                             return Redirect("~/Gestoria/Index");
+                        case 22:
+                            ViewBag.Nombre = oUser.Nombre.ToString();
+                            return Redirect("~/Dictamenes/Citas");
+                        case 23:
+                            ViewBag.Nombre = oUser.Nombre.ToString();
+                            return Redirect("~/Dictamenes/Captura");
 
                         default:
                             //return Redirect("~/Login/Login");

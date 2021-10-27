@@ -169,6 +169,14 @@
           <Property Name="idPaciente" Type="int" />
           <Property Name="idAptitud" Type="int" />
         </EntityType>
+        <EntityType Name="DictamenESP">
+          <Key>
+            <PropertyRef Name="idDictamenESP" />
+          </Key>
+          <Property Name="idDictamenESP" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DictamenArchivo" Type="varbinary(max)" />
+          <Property Name="idPacienteESP" Type="int" />
+        </EntityType>
         <EntityType Name="DictamenProblema">
           <Key>
             <PropertyRef Name="idEnviados" />
@@ -555,6 +563,10 @@
           <Property Name="ReferidoPor" Type="varchar" MaxLength="50" />
           <Property Name="FechaCita" Type="datetime" />
           <Property Name="Estatura" Type="varchar" MaxLength="20" />
+          <Property Name="EstatusCaptura" Type="varchar" MaxLength="20" />
+          <Property Name="Capturista" Type="varchar" MaxLength="50" />
+          <Property Name="Metra" Type="varchar" MaxLength="10" />
+          <Property Name="Genero" Type="varchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="Recepcionista">
           <Key>
@@ -749,6 +761,18 @@
             </Principal>
             <Dependent Role="Dictamen">
               <PropertyRef Name="idPaciente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DictamenESP_PacienteESP">
+          <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+          <End Role="DictamenESP" Type="Self.DictamenESP" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Principal>
+            <Dependent Role="DictamenESP">
+              <PropertyRef Name="idPacienteESP" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1150,6 +1174,7 @@
           <EntitySet Name="Ciudades" EntityType="Self.Ciudades" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DeclaracionSaludESP" EntityType="Self.DeclaracionSaludESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Dictamen" EntityType="Self.Dictamen" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DictamenESP" EntityType="Self.DictamenESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DictamenProblema" EntityType="Self.DictamenProblema" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Doctores" EntityType="Self.Doctores" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DoctorModulo" EntityType="Self.DoctorModulo" Schema="dbo" store:Type="Tables" />
@@ -1230,6 +1255,10 @@
           <AssociationSet Name="FK_Dictamen_Paciente" Association="Self.FK_Dictamen_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
             <End Role="Dictamen" EntitySet="Dictamen" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DictamenESP_PacienteESP" Association="Self.FK_DictamenESP_PacienteESP">
+            <End Role="PacienteESP" EntitySet="PacienteESP" />
+            <End Role="DictamenESP" EntitySet="DictamenESP" />
           </AssociationSet>
           <AssociationSet Name="FK_DictamenProblema_Paciente" Association="Self.FK_DictamenProblema_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
@@ -2007,6 +2036,11 @@
             <End Role="PacienteESP" EntitySet="PacienteESP" />
             <End Role="HemoglobinaGlucosiladaESP" EntitySet="HemoglobinaGlucosiladaESP" />
           </AssociationSet>
+          <EntitySet Name="DictamenESP" EntityType="DevModel.DictamenESP" />
+          <AssociationSet Name="FK_DictamenESP_PacienteESP" Association="DevModel.FK_DictamenESP_PacienteESP">
+            <End Role="PacienteESP" EntitySet="PacienteESP" />
+            <End Role="DictamenESP" EntitySet="DictamenESP" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="CapturaIncidencia">
           <Key>
@@ -2699,7 +2733,12 @@
           <NavigationProperty Name="DeclaracionSaludESP" Relationship="DevModel.FK_DeclaracionSaludESP_PacienteESP" FromRole="PacienteESP" ToRole="DeclaracionSaludESP" />
           <NavigationProperty Name="DocumentosESP" Relationship="DevModel.FK_DocumentosESP_PacienteESP" FromRole="PacienteESP" ToRole="DocumentosESP" />
           <NavigationProperty Name="HemoglobinaGlucosiladaESP" Relationship="DevModel.FK_HemoglobinaGlucosiladaESP_PacienteESP" FromRole="PacienteESP" ToRole="HemoglobinaGlucosiladaESP" />
-        </EntityType>
+          <Property Name="Metra" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="EstatusCaptura" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Capturista" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="DictamenESP" Relationship="DevModel.FK_DictamenESP_PacienteESP" FromRole="PacienteESP" ToRole="DictamenESP" />
+          <Property Name="Genero" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          </EntityType>
         <EntityType Name="FotoPacienteESP">
           <Key>
             <PropertyRef Name="idFoto" />
@@ -2801,6 +2840,27 @@
               <PropertyRef Name="idPacienteESP" />
             </Principal>
             <Dependent Role="HemoglobinaGlucosiladaESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="DictamenESP">
+          <Key>
+            <PropertyRef Name="idDictamenESP" />
+          </Key>
+          <Property Name="idDictamenESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DictamenArchivo" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="idPacienteESP" Type="Int32" />
+          <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_DictamenESP_PacienteESP" FromRole="DictamenESP" ToRole="PacienteESP" />
+        </EntityType>
+        <Association Name="FK_DictamenESP_PacienteESP">
+          <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
+          <End Type="DevModel.DictamenESP" Role="DictamenESP" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Principal>
+            <Dependent Role="DictamenESP">
               <PropertyRef Name="idPacienteESP" />
             </Dependent>
           </ReferentialConstraint>
@@ -3413,6 +3473,10 @@
           <EntitySetMapping Name="PacienteESP">
             <EntityTypeMapping TypeName="DevModel.PacienteESP">
               <MappingFragment StoreEntitySet="PacienteESP">
+                <ScalarProperty Name="Genero" ColumnName="Genero" />
+                <ScalarProperty Name="Capturista" ColumnName="Capturista" />
+                <ScalarProperty Name="EstatusCaptura" ColumnName="EstatusCaptura" />
+                <ScalarProperty Name="Metra" ColumnName="Metra" />
                 <ScalarProperty Name="Estatura" ColumnName="Estatura" />
                 <ScalarProperty Name="FechaCita" ColumnName="FechaCita" />
                 <ScalarProperty Name="ReferidoPor" ColumnName="ReferidoPor" />
@@ -3473,6 +3537,15 @@
                 <ScalarProperty Name="idPacienteESP" ColumnName="idPacienteESP" />
                 <ScalarProperty Name="HemoglobinaGlucosilada" ColumnName="HemoglobinaGlucosilada" />
                 <ScalarProperty Name="idDocumentacionESP" ColumnName="idDocumentacionESP" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DictamenESP">
+            <EntityTypeMapping TypeName="DevModel.DictamenESP">
+              <MappingFragment StoreEntitySet="DictamenESP">
+                <ScalarProperty Name="idPacienteESP" ColumnName="idPacienteESP" />
+                <ScalarProperty Name="DictamenArchivo" ColumnName="DictamenArchivo" />
+                <ScalarProperty Name="idDictamenESP" ColumnName="idDictamenESP" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

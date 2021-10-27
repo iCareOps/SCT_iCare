@@ -23,6 +23,11 @@ namespace SCT_iCare.Controllers.Dictamenes
             return View();
         }
 
+        public ActionResult Captura()
+        {
+            return View();
+        }
+
         [HttpPost]
         public ActionResult Create1(string nombre, string usuario, string sucursal, string cantidad, string cantidadAereo, string referido)
         {
@@ -221,7 +226,7 @@ namespace SCT_iCare.Controllers.Dictamenes
         }
 
 
-        public ActionResult CompletarDatos(int? id, string nombre, string estatura, string curp, string numero, 
+        public ActionResult CompletarDatos(int? id, string nombre, string estatura, string curp, string numero, string metra, string genero,
             string doctor, string tipoL, string tipoT, HttpPostedFileBase file,
             HttpPostedFileBase documentos, HttpPostedFileBase declaracion, HttpPostedFileBase carta, HttpPostedFileBase glucosilada)
         {
@@ -245,10 +250,19 @@ namespace SCT_iCare.Controllers.Dictamenes
                 cadenaPeso = (float)(Math.Round((double)peso, 2));
             }
 
+            if(revisionPacienteESP.NoExpediente != null && revisionPacienteESP.TipoLicencia != null && revisionPacienteESP.TipoTramite != null && revisionPacienteESP.Doctor != null 
+                && revisionPacienteESP.Estatura != null && revisionPacienteESP.Metra != null 
+                && (from i in db.DictamenESP where i.idPacienteESP == id select i.idPacienteESP).FirstOrDefault() == null)
+            {
+                revisionPacienteESP.EstatusCaptura = "En Proceso";
+            }
+
             if(nombre != "")
             {
-                revisionPacienteESP.Nombre = nombre != "" ? nombre : revisionPacienteESP.Nombre;
+                revisionPacienteESP.Nombre = nombre != "" ? nombre.ToUpper() : revisionPacienteESP.Nombre;
             }
+
+            revisionPacienteESP.Metra = metra == "on" ? revisionPacienteESP.Metra = "SI" : revisionPacienteESP.Metra = null;
 
             if(estatura != "")
             {
@@ -278,6 +292,11 @@ namespace SCT_iCare.Controllers.Dictamenes
             if (tipoT != "")
             {
                 revisionPacienteESP.TipoTramite = tipoT != "" ? tipoT : revisionPacienteESP.TipoTramite;
+            }
+
+            if (genero != "")
+            {
+                revisionPacienteESP.Genero = genero != "" ? genero : revisionPacienteESP.Genero;
             }
 
             byte[] bytes2 = null;
@@ -478,6 +497,159 @@ namespace SCT_iCare.Controllers.Dictamenes
                 db.Entry(revisionPacienteESP).State = EntityState.Modified;
                 db.SaveChanges();
             }
+
+            return RedirectToAction("Citas");
+        }
+
+
+        public ActionResult AbrirElectro()
+        {
+            var ekg = (from i in db.EKGRandom select i.idEKG).Count();
+
+            Random ran = new Random();
+            int numero = ran.Next(ekg);
+
+            TempData["Electro"] = numero;
+            return RedirectToAction("Captura");
+        }
+
+        public FileResult DescargarElectro()
+        {
+            var ekg = (from i in db.EKGRandom select i.idEKG).Count();
+            Random ran = new Random();
+            int numero = ran.Next(ekg);
+
+            var expediente = (from e in db.EKGRandom where e.idEKG == numero select e).FirstOrDefault();
+
+            var bytesBinary = expediente.EKG;
+            TempData["Electro"] = null;
+            return File(bytesBinary, "application/pdf");
+        }
+
+
+        public ActionResult AbrirDocumentos(int? id)
+        {
+            var paciente = (from i in db.PacienteESP where i.idPacienteESP == id select i).FirstOrDefault();
+
+            TempData["Documentos"] = id;
+            return RedirectToAction("Captura");
+        }
+
+        public FileResult DescargarDocumentos(int? id)
+        {
+            var expediente = (from e in db.DocumentosESP where e.idPacienteESP == id select e).FirstOrDefault();
+
+            var bytesBinary = expediente.Documentos;
+            TempData["Documentos"] = null;
+            return File(bytesBinary, "application/pdf");
+        }
+
+        public ActionResult AbrirNoAccidentes(int? id)
+        {
+            var paciente = (from i in db.PacienteESP where i.idPacienteESP == id select i).FirstOrDefault();
+
+            TempData["NoAccidentes"] = id;
+            return RedirectToAction("Captura");
+        }
+
+        public FileResult DescargarNoAccidentes(int? id)
+        {
+            var expediente = (from e in db.CartaNoAccidentesESP where e.idPacienteESP == id select e).FirstOrDefault();
+
+            var bytesBinary = expediente.CartaNoAccidentes;
+            TempData["NoAccidentes"] = null;
+            return File(bytesBinary, "application/pdf");
+        }
+
+
+        public ActionResult AbrirDeclaracion(int? id)
+        {
+            var paciente = (from i in db.PacienteESP where i.idPacienteESP == id select i).FirstOrDefault();
+
+            TempData["Declaracion"] = id;
+            return RedirectToAction("Captura");
+        }
+
+        public FileResult DescargarDeclaracion(int? id)
+        {
+            var expediente = (from e in db.DeclaracionSaludESP where e.idPacienteESP == id select e).FirstOrDefault();
+
+            var bytesBinary = expediente.DeclaracionSalud;
+            TempData["Declaracion"] = null;
+            return File(bytesBinary, "application/pdf");
+        }
+
+
+        public ActionResult AbrirGlucosilada(int? id)
+        {
+            var paciente = (from i in db.PacienteESP where i.idPacienteESP == id select i).FirstOrDefault();
+
+            TempData["Glucosilada"] = id;
+            return RedirectToAction("Captura");
+        }
+
+        public FileResult DescargarGlucosilada(int? id)
+        {
+            var expediente = (from e in db.HemoglobinaGlucosiladaESP where e.idPacienteESP == id select e).FirstOrDefault();
+
+            var bytesBinary = expediente.HemoglobinaGlucosilada;
+            TempData["Glucosilada"] = null;
+            return File(bytesBinary, "application/pdf");
+        }
+
+
+        [HttpPost]
+        public ActionResult Dictaminar(HttpPostedFileBase dictamen, int? id, string usuario)
+        {
+
+            byte[] bytes2 = null;
+            if (dictamen != null)
+            {
+                if (dictamen != null && dictamen.ContentLength > 0)
+                {
+                    var fileName = Path.GetFileName(dictamen.FileName);
+
+                    byte[] bytes;
+
+                    using (BinaryReader br = new BinaryReader(dictamen.InputStream))
+                    {
+                        bytes = br.ReadBytes(dictamen.ContentLength);
+                        bytes2 = bytes;
+                    }
+                }
+            }
+
+            DictamenESP dic = new DictamenESP();
+
+            dic.DictamenArchivo = bytes2;
+            dic.idPacienteESP = id;
+
+            PacienteESP paciente = db.PacienteESP.Find(id);
+            paciente.EstatusCaptura = "Terminado";
+            paciente.Capturista = usuario;
+
+            if(ModelState.IsValid)
+            {
+                db.DictamenESP.Add(dic);
+                db.Entry(paciente).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("Captura");
+        }
+
+        public ActionResult DescargarPDF(int? id)
+        {
+            PacienteESP paciente = db.PacienteESP.Find(id);
+
+            var documento = (from d in db.DictamenESP where d.idPacienteESP == id  orderby d.idDictamenESP descending select d.DictamenArchivo).FirstOrDefault();
+
+            var bytesBinary = documento;
+
+            Response.ContentType = "application/pdf";
+            Response.AddHeader("content-disposition", "attachment;filename=" + paciente.Nombre + ".pdf");
+            Response.BinaryWrite(bytesBinary);
+            Response.End();
 
             return RedirectToAction("Citas");
         }

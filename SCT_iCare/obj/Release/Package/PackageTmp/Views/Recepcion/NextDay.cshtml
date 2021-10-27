@@ -42,7 +42,7 @@ if (oUser != null)
 idUser = oUser.idUsuario;
 nombreUsuario = oUser.Nombre;
 
-if (idUser != 14)
+if (idUser != 14 && oUser.idRol != 2)
 {
 Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
 Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
@@ -110,17 +110,26 @@ else
                 </th>
 
                 @*<th>
-                        Teléfono
-                    </th>
-                    <th>
-                        Email
-                    </th>*@
+            Teléfono
+        </th>
+        <th>
+            Email
+        </th>*@
                 <th>
                     Folio
                 </th>
                 <th>
                     Referencia
                 </th>
+                @{
+                    if (oUser.idRol == 2)
+                    {
+                        <th>
+                            Sucursal
+                        </th>
+                    }
+                }
+
                 <th>
                     Doctor
                 </th>
@@ -179,6 +188,14 @@ else
                     <td>
                         <b>@Html.DisplayFor(modelItem => item.M.Referencia)</b>
                     </td>
+                    @{
+                    if (oUser.idRol == 2)
+                        {
+                            <th>
+                                <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
+                            </th>
+                        }
+                    }
                     <td>
                         @Html.DisplayFor(modelItem => item.M.Doctor)
                     </td>
