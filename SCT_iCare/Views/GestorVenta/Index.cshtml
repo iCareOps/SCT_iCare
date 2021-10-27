@@ -43,8 +43,9 @@
     var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 int modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate).Count()@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 
-var repetidas = (from r in db.Cita select r).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal == "Gestoría" && s.Asistencia == null).Select(s => new { s.Referencia }).Distinct().Count(); ;
-var repetidasCitas = (from r in db.Cita select r).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.Canal == "Gestoría" && s.Asistencia == null).Select(s => new { s.Referencia }).Distinct().Count(); ;
+var repetidas = (from r in db.Cita select r).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal == "Gestoría" && s.Asistencia == null).Select(s => new { s.Referencia }).Distinct().Count();
+var repetidasCitas = (from r in db.Cita select r).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.Canal == "Gestoría" && s.Asistencia == null).Select(s => new { s.Referencia }).Distinct().Count();
+
 
 
 if (oUser != null)
@@ -66,6 +67,12 @@ modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => ne
 
 }
 
+if (nombreUsuario == "Gestoría ASPA" || nombreUsuario == "Gestoría TAPO")
+{
+repetidas = (from r in db.Cita select r).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal == "Gestoría" && s.Asistencia == null && s.Recepcionista == nombreUsuario).Select(s => new { s.Referencia }).Distinct().Count();
+repetidasCitas = (from r in db.Cita select r).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.Canal == "Gestoría" && s.Asistencia == null && s.Recepcionista == nombreUsuario).Select(s => new { s.Referencia }).Distinct().Count();
+}
+
 registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && s.M.Recepcionista == oUser.Nombre).Count();
 }
 
@@ -73,11 +80,27 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
 
 <br />
 <br />
-<h3 style="color:white" class="text-center">Gestoría</h3>
+@{
+    if (nombreUsuario != "Gestoría ASPA" && nombreUsuario != "Gestoría TAPO")
+    {
+        <h3 style="color:white" class="text-center">Gestoría</h3>
+    }
+    else
+    {
+        <h3 style="color:white" class="text-center">Empresas</h3>
+    }
+}
+
 @*<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>*@
 <div class="form-inline">
     @*<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>*@
-    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#saldo"><span class="glyphicon glyphicon-usd"></span> Añadir Saldo a Gestor</button>
+    @{
+        if (nombreUsuario != "Gestoría ASPA" && nombreUsuario != "Gestoría TAPO")
+        {
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#saldo"><span class="glyphicon glyphicon-usd"></span> Añadir Saldo a Gestor</button>
+        }
+    }
+
     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>
     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal3"><span class="glyphicon glyphicon-credit-card"></span> Pago con Tarjeta</button>&nbsp;&nbsp;&nbsp;
 
@@ -887,6 +910,11 @@ else
 {
     var citas = (from c in db.Cita select c).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal == "Gestoría");
 
+    if (nombreUsuario == "Gestoría ASPA" || nombreUsuario == "Gestoría TAPO")
+    {
+        citas = (from c in db.Cita select c).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.Canal == "Gestoría" && s.Recepcionista == nombreUsuario);
+    }
+
     <h3 style="color:white">REFERENCIAS CREADAS HOY: @repetidas</h3>
     <div class="tablaScroll2">
         <table class="table tablas" style="color: #2F2D6B">
@@ -939,7 +967,7 @@ else
 
 
 
-                if (referencias > 1)
+                if (referencias > 1 || (nombreUsuario == "Gestoría ASPA" || nombreUsuario == "Gestoría TAPO"))
                 {
                     <tr>
                         <td>
@@ -1103,6 +1131,11 @@ else
 {
     var citas = (from c in db.Cita select c).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.Canal == "Gestoría");
 
+    if (nombreUsuario == "Gestoría ASPA" || nombreUsuario == "Gestoría TAPO")
+    {
+        citas = (from c in db.Cita select c).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.Canal == "Gestoría" && s.Recepcionista == nombreUsuario);
+    }
+
     <h3 style="color:white">CITAS PARA HOY: @repetidasCitas</h3>
     <div class="tablaScroll2">
         <table class="table tablas" style="color: #2F2D6B">
@@ -1143,7 +1176,7 @@ else
 
                 int referencias = (from r in db.Cita where r.Referencia == item.Referencia select r).Count();
 
-                if (referencias > 1)
+                if (referencias > 1 || (nombreUsuario == "Gestoría ASPA" || nombreUsuario == "Gestoría TAPO"))
                 {
                     <tr>
                         <td>
@@ -1303,7 +1336,7 @@ else
     var saldoFavor = from i in db.Referido where i.Saldo > 0 select i;
     var saldoFavorCount = (from i in db.Referido where i.Saldo > 0 select i).Count();
 
-    if (saldoFavorCount >= 1)
+    if (saldoFavorCount >= 1 && (nombreUsuario != "Gestoría ASPA" && nombreUsuario != "Gestoría TAPO"))
     {
         <div class="tablaScroll3" style="width:45%; display:inline-block; min-width:340px; margin:2%">
             <br />
