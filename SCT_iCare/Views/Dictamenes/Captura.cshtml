@@ -1,4 +1,19 @@
-﻿@model IEnumerable<SCT_iCare.Paciente>
+﻿<head>
+    @*Scripts necesarios para descargar la tabla de excel*@
+    <script src="https://unpkg.com/xlsx@0.17.2/dist/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/file-saverjs@1.3.6/FileSaver.min.js"></script>
+    <script src="https://unpkg.com/tableexport@5.2.0/dist/js/tableexport.min.js"></script>
+
+    @*Scripts para generar archivo Zip*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.js"></script>
+    <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
+
+    @*XLSX*@
+    <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+</head>
+
+
+@model IEnumerable<SCT_iCare.Paciente>
 
 @{
     ViewBag.Title = "Index";
@@ -198,7 +213,7 @@
     <h1 style="color:white">No existen citas registradas el día de hoy</h1>
 }
 else
-{
+{ 
     <div class="tablaScroll">
         <br />
         <table class="table tablas" style="color: #2F2D6B">
@@ -376,224 +391,236 @@ else
                                 </div>
                             </form>
 
+                            <script>
+
+                                function ExportToExcel(type, fn, dl) {
+                                    var elt = document.getElementById('tbl_exporttable_to_xls');
+                                    var wb = XLSX.utils.table_to_book(elt, { sheet: "@item.Nombre" + "_@item.NoExpediente" });
+                                    return dl ?
+                                        XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+                                        XLSX.writeFile(wb, fn || ('EPI_RPA.' + (type || 'xlsx')));
+                                }
+
+                            </script>
+
                             <!-- Modal para Completar Datos -->
-                                <div class="modal fade" id="DescargarEPI_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Descargar datos en Excel de @item.Nombre</b></h4>
-                                            </div>
-                                            <div class="modal-body">
-                                                <table>
-                                                    <tr>
-                                                        <th>Genero</th>
-                                                        <th>Sistolica</th>
-                                                        <th>Diastolica</th>
-                                                        <th>Cardiaca</th>
-                                                        <th>Respiratoria</th>
-                                                        <th>Temperatura</th>
-                                                        <th>Peso</th>
-                                                        <th>Estatura</th>
-                                                        <th>Cintura</th>
-                                                        <th>Cuello</th>
-                                                        <th>Grasa</th>
+                            <div class="modal fade" id="DescargarEPI_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Descargar datos en Excel de @item.Nombre</b></h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <table id="tbl_exporttable_to_xls">
+                                                <tr>
+                                                    <th>Genero</th>
+                                                    <th>Sistolica</th>
+                                                    <th>Diastolica</th>
+                                                    <th>Cardiaca</th>
+                                                    <th>Respiratoria</th>
+                                                    <th>Temperatura</th>
+                                                    <th>Peso</th>
+                                                    <th>Estatura</th>
+                                                    <th>Cintura</th>
+                                                    <th>Cuello</th>
+                                                    <th>Grasa</th>
 
-                                                        <th>Glucosa</th>
-                                                        <th>Hemoglobina</th>
+                                                    <th>Glucosa</th>
+                                                    <th>Hemoglobina</th>
 
-                                                        <th>Frecuencia</th>
-                                                        <th>Eje</th>
-                                                        <th>PR</th>
-                                                        <th>QT</th>
-                                                        <th>QRS</th>
-                                                        <th>OndaP</th>
-                                                        <th>OndaT</th>
+                                                    <th>Frecuencia</th>
+                                                    <th>Eje</th>
+                                                    <th>PR</th>
+                                                    <th>QT</th>
+                                                    <th>QRS</th>
+                                                    <th>OndaP</th>
+                                                    <th>OndaT</th>
 
-                                                        <th>AVCD</th>
-                                                        <th>AVCI</th>
-                                                        <th>AVID</th>
-                                                        <th>AVII</th>
-                                                        <th>AVLD</th>
-                                                        <th>AVLI</th>
-                                                        <th>LENTES</th>
-                                                        <th>ESTEREOPSIS</th>
-                                                        <th>CARTA</th>
-                                                        <th>CAMPOVISUAL</th>
-                                                        <th>MOVOCULARES</th>
-                                                        <th>RPD</th>
-                                                        <th>RPI</th>
-                                                        <th>NOTA</th>
-                                                        <th>TEST VC</th>
+                                                    <th>AVCD</th>
+                                                    <th>AVCI</th>
+                                                    <th>AVID</th>
+                                                    <th>AVII</th>
+                                                    <th>AVLD</th>
+                                                    <th>AVLI</th>
+                                                    <th>LENTES</th>
+                                                    <th>ESTEREOPSIS</th>
+                                                    <th>CARTA</th>
+                                                    <th>CAMPOVISUAL</th>
+                                                    <th>MOVOCULARES</th>
+                                                    <th>RPD</th>
+                                                    <th>RPI</th>
+                                                    <th>NOTA</th>
+                                                    <th>TEST VC</th>
 
-                                                        <th>MadreVive</th>
-                                                        <th>CausaM</th>
-                                                        <th>PadreVive</th>
-                                                        <th>CausaP</th>
-                                                        <th>HermanosViven</th>
-                                                        <th>CausaH</th>
-                                                        <th>VacComp</th>
-                                                        <th>Ecivil</th>
-                                                        <th>Religion</th>
-                                                        <th>Escolaridad</th>
-                                                        <th>#Hijos</th>
-                                                        <th>Econgenita</th>
-                                                        <th>EspDiag</th>
-                                                        <th>Alergia</th>
-                                                        <th>Diabetes</th>
-                                                        <th>EspDiab</th>
-                                                        <th>DiagHipArt</th>
-                                                        <th>EspDiagArt</th>
-                                                        <th>Alcohol</th>
-                                                        <th>Fuma</th>
-                                                        <th>Drogas</th>
-                                                        <th>UsaLentes</th>
-                                                        <th>TLentes</th>
-                                                        <th>Uregla</th>
-                                                        <th>#Embara</th>
-                                                        <th>#Aborto</th>
-                                                        <th>#Parto</th>
-                                                        <th>#Cesarea</th>
-                                                        <th>IVSex</th>
-                                                        <th>Genero</th>
+                                                    <th>MadreVive</th>
+                                                    <th>CausaM</th>
+                                                    <th>PadreVive</th>
+                                                    <th>CausaP</th>
+                                                    <th>HermanosViven</th>
+                                                    <th>CausaH</th>
+                                                    <th>VacComp</th>
+                                                    <th>Ecivil</th>
+                                                    <th>Religion</th>
+                                                    <th>Escolaridad</th>
+                                                    <th>#Hijos</th>
+                                                    <th>Econgenita</th>
+                                                    <th>EspDiag</th>
+                                                    <th>Alergia</th>
+                                                    <th>Diabetes</th>
+                                                    <th>EspDiab</th>
+                                                    <th>DiagHipArt</th>
+                                                    <th>EspDiagArt</th>
+                                                    <th>Alcohol</th>
+                                                    <th>Fuma</th>
+                                                    <th>Drogas</th>
+                                                    <th>UsaLentes</th>
+                                                    <th>TLentes</th>
+                                                    <th>Uregla</th>
+                                                    <th>#Embara</th>
+                                                    <th>#Aborto</th>
+                                                    <th>#Parto</th>
+                                                    <th>#Cesarea</th>
+                                                    <th>IVSex</th>
+                                                    <th>Genero</th>
 
-                                                        <th>PATOLOGIAS</th>
-                                                        <th>INTERPRETACION</th>
-                                                        <th>NOTA MEDICA</th>
-                                                        <th>125</th>
-                                                        <th>250</th>
-                                                        <th>500</th>
-                                                        <th>1000</th>
-                                                        <th>2000</th>
-                                                        <th>4000</th>
-                                                        <th>8000</th>
-                                                        <th>12000</th>
-                                                        <th>125i</th>
-                                                        <th>250i</th>
-                                                        <th>500i</th>
-                                                        <th>1000i</th>
-                                                        <th>2000i</th>
-                                                        <th>4000i</th>
-                                                        <th>8000i</th>
-                                                        <th>12000i</th>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>@item.Genero</td>
-                                                        <td>120</td>
-                                                        <td>80</td>
-                                                        <td>80</td>
-                                                        <td>18</td>
-                                                        <td>36</td>
-                                                        @{
-                                                            int numeroRandom = 0;
-                                                            double numeroDecimalRandom = 0;
-                                                            double decimalRandom = 0.00;
-                                                            double altura = 1.74;
-                                                            double peso = 0.00;
-                                                            float cadenaPeso;
+                                                    <th>PATOLOGIAS</th>
+                                                    <th>INTERPRETACION</th>
+                                                    <th>NOTA MEDICA</th>
+                                                    <th>125</th>
+                                                    <th>250</th>
+                                                    <th>500</th>
+                                                    <th>1000</th>
+                                                    <th>2000</th>
+                                                    <th>4000</th>
+                                                    <th>8000</th>
+                                                    <th>12000</th>
+                                                    <th>125i</th>
+                                                    <th>250i</th>
+                                                    <th>500i</th>
+                                                    <th>1000i</th>
+                                                    <th>2000i</th>
+                                                    <th>4000i</th>
+                                                    <th>8000i</th>
+                                                    <th>12000i</th>
+                                                </tr>
+                                                <tr>
+                                                    <td>@item.Genero</td>
+                                                    <td>120</td>
+                                                    <td>80</td>
+                                                    <td>80</td>
+                                                    <td>18</td>
+                                                    <td>36</td>
+                                                    @{
+                                                        int numeroRandom = 0;
+                                                        double numeroDecimalRandom = 0;
+                                                        double decimalRandom = 0.00;
+                                                        double altura = 1.74;
+                                                        double peso = 0.00;
+                                                        float cadenaPeso;
 
-                                                            Random ran = new Random();
-                                                            numeroRandom = ran.Next(57);
+                                                        Random ran = new Random();
+                                                        numeroRandom = ran.Next(57);
 
-                                                            numeroDecimalRandom = ran.Next(2223, 2878) / 100.00;
+                                                        numeroDecimalRandom = ran.Next(2223, 2878) / 100.00;
 
-                                                            peso = numeroDecimalRandom * (altura * altura);
-                                                            cadenaPeso = (float)(Math.Round((double)peso, 2));
+                                                        peso = numeroDecimalRandom * (altura * altura);
+                                                        cadenaPeso = (float)(Math.Round((double)peso, 2));
 
-                                                            <td>@cadenaPeso</td>
-                                                        }
+                                                        <td>@cadenaPeso</td>
+                                                    }
 
-                                                        <td>@item.Estatura</td>
-                                                        <td>90</td>
-                                                        <td>38</td>
-                                                        <td>25</td>
+                                                    <td>@item.Estatura</td>
+                                                    <td>90</td>
+                                                    <td>38</td>
+                                                    <td>25</td>
 
-                                                        <td>100</td>
-                                                        <td>6.5</td>
+                                                    <td>100</td>
+                                                    <td>6.5</td>
 
-                                                        <td>80</td>
-                                                        <td>60</td>
-                                                        <td>160</td>
-                                                        <td>220</td>
-                                                        <td>300</td>
-                                                        <td>120</td>
-                                                        <td>200</td>
+                                                    <td>80</td>
+                                                    <td>60</td>
+                                                    <td>160</td>
+                                                    <td>220</td>
+                                                    <td>300</td>
+                                                    <td>120</td>
+                                                    <td>200</td>
 
-                                                        <td>1</td>
-                                                        <td>1</td>
-                                                        <td>1</td>
-                                                        <td>1</td>
-                                                        <td>1</td>
-                                                        <td>1</td>
-                                                        <td>NO</td>
-                                                        <td>60</td>
-                                                        <td>NO</td>
-                                                        <td>NORMAL</td>
-                                                        <td>NORMAL</td>
-                                                        <td>NORMAL</td>
-                                                        <td>NORMAL</td>
-                                                        <td>SANO VE BIEN</td>
-                                                        <td>NORMAL</td>
+                                                    <td>1</td>
+                                                    <td>1</td>
+                                                    <td>1</td>
+                                                    <td>1</td>
+                                                    <td>1</td>
+                                                    <td>1</td>
+                                                    <td>NO</td>
+                                                    <td>60</td>
+                                                    <td>NO</td>
+                                                    <td>NORMAL</td>
+                                                    <td>NORMAL</td>
+                                                    <td>NORMAL</td>
+                                                    <td>NORMAL</td>
+                                                    <td>SANO VE BIEN</td>
+                                                    <td>NORMAL</td>
 
-                                                        <td>SI</td>
-                                                        <td>NULL</td>
-                                                        <td>SI</td>
-                                                        <td>NULL</td>
-                                                        <td>SI</td>
-                                                        <td>NULL</td>
-                                                        <td>SI</td>
-                                                        <td>UNIONLIBRE</td>
-                                                        <td>OTRO</td>
-                                                        <td>SECUNDARIA</td>
-                                                        <td>0</td>
-                                                        <td>NO</td>
-                                                        <td>Esta limpio</td>
-                                                        <td>Ninguna</td>
-                                                        <td>NO</td>
-                                                        <td>Null</td>
-                                                        <td>NO</td>
-                                                        <td>Null</td>
-                                                        <td>NO</td>
-                                                        <td>NO</td>
-                                                        <td>NO</td>
-                                                        <td>NO</td>
-                                                        <td>Null</td>
-                                                        <td>@DateTime.Now.AddDays(-20).ToString("yyyy-MM-dd").Replace("-", "")</td>
-                                                        <td>0</td>
-                                                        <td>0</td>
-                                                        <td>0</td>
-                                                        <td>0</td>
-                                                        <td>18</td>
-                                                        <td>@item.Genero</td>
+                                                    <td>SI</td>
+                                                    <td>NULL</td>
+                                                    <td>SI</td>
+                                                    <td>NULL</td>
+                                                    <td>SI</td>
+                                                    <td>NULL</td>
+                                                    <td>SI</td>
+                                                    <td>UNIONLIBRE</td>
+                                                    <td>OTRO</td>
+                                                    <td>SECUNDARIA</td>
+                                                    <td>0</td>
+                                                    <td>NO</td>
+                                                    <td>Esta limpio</td>
+                                                    <td>Ninguna</td>
+                                                    <td>NO</td>
+                                                    <td>Null</td>
+                                                    <td>NO</td>
+                                                    <td>Null</td>
+                                                    <td>NO</td>
+                                                    <td>NO</td>
+                                                    <td>NO</td>
+                                                    <td>NO</td>
+                                                    <td>Null</td>
+                                                    <td>@DateTime.Now.AddDays(-20).ToString("yyyy-MM-dd").Replace("-", "")</td>
+                                                    <td>0</td>
+                                                    <td>0</td>
+                                                    <td>0</td>
+                                                    <td>0</td>
+                                                    <td>18</td>
+                                                    <td>@item.Genero</td>
 
-                                                        <td>NINGUNO</td>
-                                                        <td>NORMAL</td>
-                                                        <td>NORMAL</td>
-                                                        <td>0</td>
-                                                        <td>-5</td>
-                                                        <td>0</td>
-                                                        <td>5</td>
-                                                        <td>-5</td>
-                                                        <td>-10</td>
-                                                        <td>0</td>
-                                                        <td>5</td>
-                                                        <td>5</td>
-                                                        <td>0</td>
-                                                        <td>-10</td>
-                                                        <td>-5</td>
-                                                        <td>5</td>
-                                                        <td>0</td>
-                                                        <td>-5</td>
-                                                        <td>0</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                                <input type="submit" value="Descargar" class="btn btn-success" />
-                                            </div>
+                                                    <td>NINGUNO</td>
+                                                    <td>NORMAL</td>
+                                                    <td>NORMAL</td>
+                                                    <td>0</td>
+                                                    <td>-5</td>
+                                                    <td>0</td>
+                                                    <td>5</td>
+                                                    <td>-5</td>
+                                                    <td>-10</td>
+                                                    <td>0</td>
+                                                    <td>5</td>
+                                                    <td>5</td>
+                                                    <td>0</td>
+                                                    <td>-10</td>
+                                                    <td>-5</td>
+                                                    <td>5</td>
+                                                    <td>0</td>
+                                                    <td>-5</td>
+                                                    <td>0</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
                         </div>
 
