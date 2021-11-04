@@ -338,9 +338,9 @@
 
     function calcular0() {
         var value0 = contador0.value;
-        var isValid = /^[1-9][0-9]*$/.test(value0);
+        var isValid0 = /^[1-9][0-9]*$/.test(value0);
 
-        if (!isValid) {
+        if (!isValid0) {
             contador0.value = prevValue0;
         } else {
             prevValue0 = value0;
@@ -512,14 +512,14 @@ else
                                 <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">Cancelado</mark></b>
                             }
                             else if (item.Asistencia == null && (item.NoExpediente == null || item.TipoTramite == null || item.TipoLicencia == null
-                                     || item.Doctor == null || (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() == null)
+                                     || item.Doctor == null || item.Genero == null || (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() == null)
                                      || (from i in db.DocumentosESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() == null || item.Metra == null
                                      || (from i in db.DictamenESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() == null)
                             {
                                 <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">DatosIncompletos</mark></b>
                             }
                             else if (item.Asistencia == null && (item.NoExpediente != null && item.TipoTramite != null && item.TipoLicencia != null
-                                     && item.Doctor != null && (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() != null)
+                                     && item.Doctor != null && item.Genero != null && (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() != null)
                                      && (from i in db.DocumentosESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() != null && item.Metra != null
                                      && ((from i in db.DictamenESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() == null))
                             {
@@ -691,6 +691,37 @@ else
                                                 <div class="form-group">
                                                     <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
                                                     <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.Nombre">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="recipient-name" class="col-form-label">Género:</label>
+                                                    <select name="genero" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                        @{
+                                                            var revisionSexo = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
+                                                            if(revisionSexo.Genero == null)
+                                                            {
+                                                                <option style = "font-weight:bold" disabled selected>SELECCIONE UN GÉNERO</option>
+                                                            }
+                                                            if (revisionSexo.Genero != null)
+                                                            {
+                                                                string Genero = "";
+                                                                if (revisionSexo.Genero == "M")
+                                                                {
+                                                                    Genero = "MASCULINO";
+                                                                }
+                                                                else
+                                                                {
+                                                                    Genero = "FEMENINO";
+                                                                }
+                                                                <option style="font-weight:bold" value="@revisionSexo.Genero" selected>@Genero</option>
+                                                                <option disabled>----------------------------------------------</option>
+                                                                                                    }
+
+
+
+                                                            <option style="font-weight:bold" value="F">FEMENINO</option>
+                                                            <option style="font-weight:bold" value="M">MASCULINO</option>
+                                                        }
+                                                    </select>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="recipient-name" class="col-form-label">CURP (Clave Única de Registro de Población):</label>

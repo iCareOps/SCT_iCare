@@ -750,6 +750,7 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.Canal = "Gestoría";
                 cita.FechaCita = fecha;
                 cita.ReferidoPor = referido.ToUpper();
+                cita.FechaCreacion = DateTime.Now;
 
                 //Se usa el idCanal para poder hacer que en Recepción se tenga que editar el nombre si viene de gestor
                 cita.idCanal = 1;
@@ -944,6 +945,7 @@ namespace SCT_iCare.Controllers.Gestoria
                     cita.TipoPago = "REFERENCIA OXXO";
                     cita.CC = usuario;
                     cita.ReferidoPor = referido.ToUpper();
+                    cita.FechaCreacion = DateTime.Now;
 
 
                     if (referido == "ELIZABETH")
@@ -1211,6 +1213,7 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.Referencia = Convert.ToString(card);
                 cita.CC = usuario;
                 cita.ReferidoPor = referido.ToUpper();
+                cita.FechaCreacion = DateTime.Now;
 
                 //Se usa el idCanal para poder hacer que en Recepción se tenga que editar el nombre si viene de gestor
                 cita.idCanal = 1;
@@ -1375,6 +1378,7 @@ namespace SCT_iCare.Controllers.Gestoria
                     cita.Referencia = Convert.ToString(card);
                     cita.CC = usuario;
                     cita.ReferidoPor = referido.ToUpper();
+                    cita.FechaCreacion = DateTime.Now;
 
 
                     if (referido == "NINGUNO" || referido == "OTRO")
@@ -1721,6 +1725,433 @@ namespace SCT_iCare.Controllers.Gestoria
 
             return Redirect("Index");
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult OrdenScotiabank(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, string referido)
+        {
+            GetApiKey();
+
+            string mailSeteado = "referenciasoxxo@medicinagmi.mx";
+
+
+            int cantidadN;
+            int cantidadA;
+
+            if (cantidad == "")
+            {
+                cantidadN = 0;
+            }
+            else
+            {
+                cantidadN = Convert.ToInt32(cantidad);
+            }
+
+            if (cantidadAereo == "")
+            {
+                cantidadA = 0;
+            }
+            else
+            {
+                cantidadA = Convert.ToInt32(cantidadAereo);
+            }
+
+            int precio = (cantidadN * 2842) + (cantidadA * 3480);
+
+            if (precio > 10000)
+            {
+                precio = 9990;
+            }
+
+            if (cantidadAereo == "" && cantidad == "")
+            {
+                return View("Index");
+            }
+
+
+            var referenciaSB = (from r in db.ReferenciasSB where r.EstatusReferencia == "LIBRE" select r.ReferenciaSB).FirstOrDefault();
+            ViewBag.ReferenciaSB = referenciaSB;
+
+            ViewBag.Metodo = "OXXO";
+
+            if ((cantidadN + cantidadA) == 1)
+            {
+                Paciente paciente = new Paciente();
+
+                paciente.Nombre = nombre.ToUpper();
+                paciente.Telefono = telefono;
+                paciente.Email = email;
+
+                string hash;
+                do
+                {
+                    Random numero = new Random();
+                    int randomize = numero.Next(0, 61);
+                    string[] aleatorio = new string[62] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+                    string get_1;
+                    get_1 = aleatorio[randomize];
+                    hash = get_1;
+                    for (int i = 0; i < 9; i++)
+                    {
+                        randomize = numero.Next(0, 61);
+                        get_1 = aleatorio[randomize];
+                        hash += get_1;
+                    }
+                } while ((from i in db.Paciente where i.HASH == hash select i) == null);
+
+                paciente.HASH = hash;
+
+
+                //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
+                string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
+                //string doc = (from d in db.Doctores where d.Nombre == doctor select d.idDoctor).FirstOrDefault().ToString();
+
+                //Se obtiene el número del contador desde la base de datos
+                int? num = (from c in db.Sucursales where c.Nombre == sucursal select c.Contador).FirstOrDefault() + 1;
+
+                //Contadores por número de citas en cada sucursal
+                string contador = "";
+                if (num == null)
+                {
+                    contador = "100";
+                }
+                else if (num < 10)
+                {
+                    contador = "00" + Convert.ToString(num);
+                }
+                else if (num >= 10 && num < 100)
+                {
+                    contador = "0" + Convert.ToString(num);
+                }
+                else
+                {
+                    contador = Convert.ToString(num);
+                }
+
+                //Se asigna el número de ID del doctor
+                //if (Convert.ToInt32(doc) < 10)
+                //{
+                //    doc = "0" + doc;
+                //}
+
+                string mes = DateTime.Now.Month.ToString();
+                string dia = DateTime.Now.Day.ToString();
+                char[] year = (DateTime.Now.Year.ToString()).ToCharArray();
+                string anio = "";
+
+                for (int i = 2; i < year.Length; i++)
+                {
+                    anio += year[i];
+                }
+
+                if (Convert.ToInt32(mes) < 10)
+                {
+                    mes = "0" + mes;
+                }
+
+                if (Convert.ToInt32(dia) < 10)
+                {
+                    dia = "0" + dia;
+                }
+
+                //Se crea el número de Folio
+                //string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+                //paciente.Folio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+
+                string numFolio = dia + mes + anio + SUC + "-" + contador;
+                paciente.Folio = dia + mes + anio + SUC + "-" + contador;
+
+                if (ModelState.IsValid)
+                {
+                    db.Paciente.Add(paciente);
+                    db.SaveChanges();
+                    //return RedirectToAction("Index");
+                }
+
+                int? idSuc = (from i in db.Sucursales where i.Nombre == sucursal select i.idSucursal).FirstOrDefault();
+
+                Sucursales suc = db.Sucursales.Find(idSuc);
+
+                suc.Contador = Convert.ToInt32(num);
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(suc).State = EntityState.Modified;
+                    db.SaveChanges();
+                    //No retorna ya que sigue el proceso
+                    //return RedirectToAction("Index");
+                }
+
+                var idPaciente = (from i in db.Paciente where i.Folio == paciente.Folio select i.idPaciente).FirstOrDefault();
+
+                Cita cita = new Cita();
+
+                cita.TipoPago = "Referencia Scotiabank";
+
+                cita.Referencia = referenciaSB;
+
+                cita.idPaciente = idPaciente;
+                cita.FechaReferencia = DateTime.Now;
+                cita.Sucursal = sucursal;
+                cita.Recepcionista = usuario;
+                cita.EstatusPago = "pending_payment";
+                cita.Folio = numFolio;
+                cita.Canal = "Gestoría";
+                cita.FechaCita = DateTime.Now;
+                cita.ReferidoPor = referido.ToUpper();
+
+                //Se usa el idCanal para poder hacer que en Recepción se tenga que editar el nombre si viene de gestor
+                cita.idCanal = 1;
+
+                if (referido == "ELIZABETH")
+                {
+                    cita.Referencia = "E1293749";
+                }
+                if (referido == "PABLO")
+                {
+                    cita.Referencia = "PL1293750";
+                }
+                if (referido == "NATALY FRANCO")
+                {
+                    cita.Referencia = "NF1293751";
+                }
+                if (referido == "LUIS VALENCIA")
+                {
+                    cita.Referencia = "LV1293752";
+                }
+                if (referido == "ROBERTO SALAZAR")
+                {
+                    cita.Referencia = "RS1293753";
+                }
+
+                int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
+                ReferenciasSB refe = db.ReferenciasSB.Find(idRefSB);
+                refe.EstatusReferencia = "PENDIENTE";
+                refe.idPaciente = idPaciente;
+
+                string TIPOLIC = null;
+                if (cantidadA != 0)
+                {
+                    TIPOLIC = "AEREO";
+                }
+                cita.TipoLicencia = TIPOLIC;
+
+                if (referido == "NINGUNO" || referido == "OTRO")
+                {
+                    cita.CC = "N/A";
+                }
+                else
+                {
+                    var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                    cita.CC = referidoTipo;
+                }
+
+                if (ModelState.IsValid)
+                {
+                    db.Cita.Add(cita);
+                    db.Entry(refe).State = EntityState.Modified;
+                    db.SaveChanges();
+                    //no regresa ya que se debe ver la pantalla de Orden
+                    //return RedirectToAction("Index");
+                }
+
+                ViewBag.idPaciente = paciente.idPaciente;
+                ViewBag.idCita = cita.idCita;
+            }
+            else
+            {
+                //return View(detallesOrden);
+                for (int n = 1; n <= Convert.ToInt32((cantidadN + cantidadA)); n++)
+                {
+                    Paciente paciente = new Paciente();
+
+                    paciente.Nombre = referido.ToUpper() + " " + n;
+                    paciente.Telefono = telefono;
+                    paciente.Email = email;
+
+                    string hash;
+                    do
+                    {
+                        Random numero = new Random();
+                        int randomize = numero.Next(0, 61);
+                        string[] aleatorio = new string[62] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+                        string get_1;
+                        get_1 = aleatorio[randomize];
+                        hash = get_1;
+                        for (int i = 0; i < 9; i++)
+                        {
+                            randomize = numero.Next(0, 61);
+                            get_1 = aleatorio[randomize];
+                            hash += get_1;
+                        }
+                    } while ((from i in db.Paciente where i.HASH == hash select i) == null);
+
+                    paciente.HASH = hash;
+
+
+                    //Se obtienen las abreviaciónes de Sucursal y el ID del doctor
+                    string SUC = (from S in db.Sucursales where S.Nombre == sucursal select S.SUC).FirstOrDefault();
+                    //string doc = (from d in db.Doctores where d.Nombre == doctor select d.idDoctor).FirstOrDefault().ToString();
+
+                    //Se obtiene el número del contador desde la base de datos
+                    int? num = (from c in db.Sucursales where c.Nombre == sucursal select c.Contador).FirstOrDefault() + 1;
+
+                    //Contadores por número de citas en cada sucursal
+                    string contador = "";
+                    if (num == null)
+                    {
+                        contador = "100";
+                    }
+                    else if (num < 10)
+                    {
+                        contador = "00" + Convert.ToString(num);
+                    }
+                    else if (num >= 10 && num < 100)
+                    {
+                        contador = "0" + Convert.ToString(num);
+                    }
+                    else
+                    {
+                        contador = Convert.ToString(num);
+                    }
+
+                    //Se asigna el número de ID del doctor
+                    //if (Convert.ToInt32(doc) < 10)
+                    //{
+                    //    doc = "0" + doc;
+                    //}
+
+                    string mes = DateTime.Now.Month.ToString();
+                    string dia = DateTime.Now.Day.ToString();
+                    char[] year = (DateTime.Now.Year.ToString()).ToCharArray();
+                    string anio = "";
+
+                    for (int i = 2; i < year.Length; i++)
+                    {
+                        anio += year[i];
+                    }
+
+                    if (Convert.ToInt32(mes) < 10)
+                    {
+                        mes = "0" + mes;
+                    }
+
+                    if (Convert.ToInt32(dia) < 10)
+                    {
+                        dia = "0" + dia;
+                    }
+
+                    //Se crea el número de Folio
+                    //string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+                    //paciente.Folio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + "-" + contador;
+
+                    string numFolio = dia + mes + anio + SUC + "-" + contador;
+                    paciente.Folio = dia + mes + anio + SUC + "-" + contador;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Paciente.Add(paciente);
+                        db.SaveChanges();
+                        //return RedirectToAction("Index");
+                    }
+
+                    int? idSuc = (from i in db.Sucursales where i.Nombre == sucursal select i.idSucursal).FirstOrDefault();
+
+                    Sucursales suc = db.Sucursales.Find(idSuc);
+
+                    suc.Contador = Convert.ToInt32(num);
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Entry(suc).State = EntityState.Modified;
+                        db.SaveChanges();
+                        //No retorna ya que sigue el proceso
+                        //return RedirectToAction("Index");
+                    }
+
+                    var idPaciente = (from i in db.Paciente where i.Folio == paciente.Folio select i.idPaciente).FirstOrDefault();
+
+                    Cita cita = new Cita();
+
+                    cita.TipoPago = "Referencia Scotiabank";
+
+                    cita.Referencia = referenciaSB;
+
+                    cita.idPaciente = idPaciente;
+                    cita.FechaReferencia = DateTime.Now;
+                    cita.Sucursal = sucursal;
+                    cita.Recepcionista = usuario;
+                    cita.EstatusPago = "pending_payment";
+                    cita.Folio = numFolio;
+                    cita.Canal = "Gestoría";
+                    cita.FechaCita = DateTime.Now;
+                    cita.ReferidoPor = referido.ToUpper();
+
+                    if (referido == "ELIZABETH")
+                    {
+                        cita.Referencia = "E1293749";
+                    }
+                    if (referido == "PABLO")
+                    {
+                        cita.Referencia = "PL1293750";
+                    }
+                    if (referido == "NATALY FRANCO")
+                    {
+                        cita.Referencia = "NF1293751";
+                    }
+                    if (referido == "LUIS VALENCIA")
+                    {
+                        cita.Referencia = "LV1293752";
+                    }
+                    if (referido == "ROBERTO SALAZAR")
+                    {
+                        cita.Referencia = "RS1293753";
+                    }
+
+                    if (n > cantidadN)
+                    {
+                        cita.TipoLicencia = "AEREO";
+                    }
+
+                    int idRefSB = Convert.ToInt32((from r in db.ReferenciasSB where r.ReferenciaSB == referenciaSB select r.idReferencia).FirstOrDefault());
+                    ReferenciasSB refe = db.ReferenciasSB.Find(idRefSB);
+                    refe.EstatusReferencia = "PENDIENTE";
+                    refe.idPaciente = idPaciente;
+
+                    if (referido == "NINGUNO" || referido == "OTRO")
+                    {
+                        cita.CC = "N/A";
+                    }
+                    else
+                    {
+                        var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                        cita.CC = referidoTipo;
+                    }
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Entry(refe).State = EntityState.Modified;
+                        db.Cita.Add(cita);
+                        db.SaveChanges();
+                        //no regresa ya que se debe ver la pantalla de Orden
+                        //return RedirectToAction("Index");
+                    }
+
+                    ViewBag.idPaciente = paciente.idPaciente;
+                    ViewBag.idCita = cita.idCita;
+                }
+            }
+
+            byte[] imageBytes;
+
+            ViewBag.AEREO = Convert.ToInt32(cantidadA);
+            ViewBag.AUTO = Convert.ToInt32(cantidadN);
+            ViewBag.Precio = (Convert.ToInt32(cantidadN) * 2842) + (Convert.ToInt32(cantidadA) * 3480);
+
+
+            return View();
+        }
+
 
         public JsonResult Buscar(string dato)
         {
