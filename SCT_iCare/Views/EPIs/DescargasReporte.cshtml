@@ -56,14 +56,16 @@
     int day = start.Day;
     int tomorrorDay = day + 1;
     DateTime thisDate = Convert.ToDateTime(ViewBag.Inicio);
+    //thisDate = thisDate.AddDays(1);
     DateTime tomorrowDate = Convert.ToDateTime(ViewBag.Final);
 
     var tablaFinal = db.Paciente.
         Join(db.Cita, a => a.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
-        Where(w => w.B.FechaCita >= thisDate && w.B.FechaCita < tomorrowDate).
+        Where(w => w.B.FechaReferencia >= thisDate && w.B.FechaReferencia < tomorrowDate).
         Join(db.Captura, c => c.A.idPaciente, d => d.idPaciente, (c, d) => new { C = c, D = d }).
         Select(s => new
         {
+            s.C.B.FechaReferencia,
             s.C.B.FechaCita,
             s.C.A.Nombre,
             s.C.B.NoExpediente,
@@ -88,7 +90,7 @@
             s.D.Aptitud,
             s.D.FechaVigencia,
             s.C.B.ReferidoPor
-        }); ;
+        }).OrderBy(o => o.FechaReferencia) ;
 
     string fila_1 = ""; //Background row de tabla invisible
 
@@ -190,7 +192,7 @@
             var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
             return dl ?
                 XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
-                XLSX.writeFile(wb, fn || ('Reporte del @ViewBag.Inicio.ToString("dd-MMMM-yyyy") al @ViewBag.Final.ToString("dd-MMMM-yyyy").' + (type || 'xlsx')));
+                XLSX.writeFile(wb, fn || ('Reporte del @ViewBag.Inicio.ToString("dd-MMMM-yyyy") al @ViewBag.Final.AddDays(-1).ToString("dd-MMMM-yyyy").' + (type || 'xlsx')));
         }
 
     </script>
@@ -251,6 +253,7 @@
 
         <tr>
             <th></th>
+            <th>Fecha Creación</th>
             <th>Fecha Cita</th>
             <th>Nombre</th>
             <th>No. Expediente</th>
@@ -292,7 +295,8 @@
                 <tr style="background-color:@fila_1">
 
                     <td>@flag</td>
-                    <td>@Convert.ToDateTime(n.FechaCita).ToString("dd-MMMM-yyyy")</td>
+                    <td>@Convert.ToDateTime(n.FechaReferencia).AddDays(1).ToString("dd-MMMM-yyyy")</td>
+                    <td>@Convert.ToDateTime(n.FechaCita).AddDays(1).ToString("dd-MMMM-yyyy")</td>
                     <td>@n.Nombre</td>
                     <td>@n.NoExpediente</td>
                     <td>@n.Telefono</td>
@@ -308,13 +312,13 @@
                     <td>@n.Referencia</td>
                     <td>@n.Canal</td>
                     <td>@n.Asistencia</td>
-                    <td>@Convert.ToDateTime(n.FechaExpdiente).ToString("dd-MMMM-yyyy")</td>
+                    <td>@Convert.ToDateTime(n.FechaExpdiente).AddDays(1).ToString("dd-MMMM-yyyy")</td>
                     <td>@n.Capturista</td>
                     <td>@n.EstatusCaptura</td>
                     <td>@Convert.ToDateTime(n.InicioCaptura).ToString("dd-MMMM-yyyy HH:mm:ss")</td>
                     <td>@Convert.ToDateTime(n.FinalCaptura).ToString("dd-MMMM-yyyy HH:mm:ss")</td>
                     <td>@n.Aptitud</td>
-                    <td>@Convert.ToDateTime(n.FechaVigencia).ToString("dd-MMMM-yyyy")</td>
+                    <td>@Convert.ToDateTime(n.FechaVigencia).AddDays(1).ToString("dd-MMMM-yyyy")</td>
                     <td>@n.ReferidoPor</td>
                 </tr>
                 flag++;

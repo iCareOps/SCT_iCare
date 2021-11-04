@@ -261,6 +261,7 @@ namespace SCT_iCare.Controllers.CallCenter
                 cita.Canal = "Call Center";
                 cita.FechaCita = fecha;
                 cita.ReferidoPor = referido.ToUpper();
+                cita.FechaCreacion = DateTime.Now;
                 //cita.FechaCita = new DateTime(fecha.Year, fecha.Month, fecha.)
 
                 //Se usa el idCanal para poder hacer que en Recepción se tenga que editar el nombre si viene de gestor
@@ -454,6 +455,7 @@ namespace SCT_iCare.Controllers.CallCenter
                     cita.Canal = "Call Center";
                     cita.TipoPago = "REFERENCIA OXXO";
                     cita.ReferidoPor = referido.ToUpper();
+                    cita.FechaCreacion = DateTime.Now;
 
                     if (referido == "ELIZABETH")
                     {
@@ -714,6 +716,7 @@ namespace SCT_iCare.Controllers.CallCenter
                 cita.Referencia = Convert.ToString(card);
                 cita.CC = usuario;
                 cita.ReferidoPor = referido.ToUpper();
+                cita.FechaCreacion = DateTime.Now;
 
                 //Se usa el idCanal para poder hacer que en Recepción se tenga que editar el nombre si viene de gestor
                 cita.idCanal = 1;
@@ -877,6 +880,7 @@ namespace SCT_iCare.Controllers.CallCenter
                     cita.Referencia = Convert.ToString(card);
                     cita.CC = usuario;
                     cita.ReferidoPor = referido.ToUpper();
+                    cita.FechaCreacion = DateTime.Now;
 
                     if (referido == "NINGUNO" || referido == "OTRO")
                     {
