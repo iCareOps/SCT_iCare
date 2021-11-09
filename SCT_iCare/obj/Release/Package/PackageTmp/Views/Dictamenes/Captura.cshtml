@@ -213,7 +213,7 @@
     <h1 style="color:white">No existen citas registradas el día de hoy</h1>
 }
 else
-{ 
+{
     <div class="tablaScroll">
         <br />
         <table class="table tablas" style="color: #2F2D6B">
@@ -314,7 +314,23 @@ else
                         <div class="btn-group">
 
                             @{
-                                if (item.Asistencia == null)
+                                if (item.EstatusCaptura == null)
+                                {
+                                    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/IniciarCaptura")">
+                                        <input type="submit" class="btn btn-primary" value="Iniciar" />
+                                        <input type="hidden" value="@item.idPacienteESP" name="id" />
+                                        <input type="hidden" value="@nombreUsuario" name="capturista" />
+                                    </form>
+                                }
+                                else if (item.EstatusCaptura == "Terminado")
+                                {
+                                    @*<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/IniciarCaptura")">
+                                        <input type="submit" class="btn btn-warning" value="Descargar" />
+                                        <input type="hidden" value="@item.idPacienteESP" name="id" />
+                                    </form>*@
+                                    <a href=@Url.Action("DescargarPDF", "Dictamenes", new { id = item.idPacienteESP })><button class="btn btn-warning">Descargar</button></a>
+                                }
+                                else
                                 {
                                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
@@ -332,28 +348,35 @@ else
                                         <a href="#" data-toggle="modal" data-target="#DescargarEPI_@item.idPacienteESP"><b>Descargar EPI</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#DescargarEKG_@item.idPacienteESP">Electrocardiograma</a>*@
-                                        <b>@Html.ActionLink("Descargar EKG", "AbrirElectro", null, new { style = "color: cadetblue; text-decoration: none" })</b>
+                                        <b>@Html.ActionLink("Descargar EKG", "AbrirElectro", null, new { style = "text-decoration: none" })</b>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#DescargarDocumentos_@item.idPacienteESP">Documentación</a>*@
-                                        <b>@Html.ActionLink("Documentos", "AbrirDocumentos", new { id = item.idPacienteESP }, new { style = "color: cadetblue; text-decoration: none" })</b>
+                                        <b>@Html.ActionLink("Documentos", "AbrirDocumentos", new { id = item.idPacienteESP }, new { style = "text-decoration: none" })</b>
                                         <div class="dropdown-divider"></div>
 
                                         if (revisionCartaNO2 != null)
                                         {
                                             @*<a href="#" data-toggle="modal" data-target="#DescargarNoAccidentes_@item.idPacienteESP">Carta NoAccidentes</a>*@
-                                            <b>@Html.ActionLink("Carta NoAccidentes", "AbrirNoAccidenres", new { id = item.idPacienteESP }, new { style = "color: cadetblue; text-decoration: none" })</b>
+                                            <b>@Html.ActionLink("Carta NoAccidentes", "AbrirNoAccidenres", new { id = item.idPacienteESP }, new { style = "text-decoration: none" })</b>
                                             <div class="dropdown-divider"></div>
                                         }
                                         if (revisionDeclaracion2 != null)
                                         {
                                             @*<a href="#" data-toggle="modal" data-target="#DescargarDeclaracionSalud_@item.idPacienteESP">Declaración Salud</a>*@
-                                            <b>@Html.ActionLink("Declaración Salud", "AbrirDeclaracion", new { id = item.idPacienteESP }, new { style = "color: cadetblue; text-decoration: none" })</b>
+                                            <b>@Html.ActionLink("Declaración Salud", "AbrirDeclaracion", new { id = item.idPacienteESP }, new { style = "text-decoration: none" })</b>
                                             <div class="dropdown-divider"></div>
                                         }
                                         if (revisionGlucosilada2 != null)
                                         {
                                             @*<a href="#" data-toggle="modal" data-target="#DescargarGlucosilada_@item.idPacienteESP">H. Glucosilada</a>*@
-                                            <b>@Html.ActionLink("H.Glucosilada", "AbrirGlucosilada", new { id = item.idPacienteESP }, new { style = "color: cadetblue; text-decoration: none" })</b>
+                                            <b>@Html.ActionLink("H.Glucosilada", "AbrirGlucosilada", new { id = item.idPacienteESP }, new { style = "text-decoration: none" })</b>
+                                            <div class="dropdown-divider"></div>
+                                        }
+                                        <span>---------------------------</span><br />
+
+                                        if (item.EstatusCaptura == "En Proceso")
+                                        {
+                                            <b><a href="#" data-toggle="modal" data-target="#Reportar_@item.idPacienteESP">Reportar Problema</a></b>
                                             <div class="dropdown-divider"></div>
                                         }
 
@@ -385,6 +408,31 @@ else
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                                                 <input type="submit" value="Guardar" class="btn btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!-- Modal para Reportar Problema -->
+                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/ReportarProblema")">
+                                @Html.AntiForgeryToken()
+                                <div class="modal fade" id="Reportar_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Reportar problema con Dictamen de @item.Nombre</b></h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label for="recipient-name" class="col-form-label">Problema:</label>
+                                                    <input type="text" maxlength="200" class="form-control" id="comentario" name="comentario" required>
+                                                    <input type="hidden" name="id" value="@item.idPacienteESP" />
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                <input type="submit" value="Enviar" class="btn btn-primary" />
                                             </div>
                                         </div>
                                     </div>
