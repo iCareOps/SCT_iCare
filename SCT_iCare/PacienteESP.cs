@@ -44,6 +44,8 @@ namespace SCT_iCare
         public string EstatusCaptura { get; set; }
         public string Capturista { get; set; }
         public string Genero { get; set; }
+        public string Problema { get; set; }
+        public string Solicita { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FotoPacienteESP> FotoPacienteESP { get; set; }

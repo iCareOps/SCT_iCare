@@ -28,6 +28,55 @@ namespace SCT_iCare.Controllers.Dictamenes
             return View();
         }
 
+
+        public ActionResult Dashboard(DateTime? inicio, DateTime? final)
+        {
+            DateTime thisDate = new DateTime();
+            DateTime tomorrowDate = new DateTime();
+
+            DateTime start1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            DateTime finish1 = new DateTime(DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day);
+
+            int nulos = 0;
+
+            if (inicio != null || final != null)
+            {
+                nulos = 1;
+            }
+
+            if (inicio != null)
+            {
+                DateTime start = Convert.ToDateTime(inicio);
+                int year = start.Year;
+                int month = start.Month;
+                int day = start.Day;
+
+                inicio = new DateTime(year, month, day);
+                thisDate = new DateTime(year, month, day);
+            }
+            if (final != null)
+            {
+                DateTime finish = Convert.ToDateTime(final).AddDays(1);
+                int year = finish.Year;
+                int month = finish.Month;
+                int day = finish.Day;
+
+                final = new DateTime(year, month, day);
+                tomorrowDate = new DateTime(year, month, day);
+            }
+
+            inicio = (inicio ?? start1);
+            final = (final ?? finish1);
+
+            ViewBag.Inicio = inicio;
+            ViewBag.Final = final;
+            ViewBag.Estado = nulos;
+
+            ViewBag.Parameter = "";
+
+            return View();
+        }
+
         [HttpPost]
         public ActionResult Create1(string nombre, string usuario, string sucursal, string cantidad, string cantidadAereo, string referido)
         {
@@ -63,7 +112,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                 paciente.Nombre = nombre.ToUpper()/*.Normalize(System.Text.NormalizationForm.FormD).Replace(@"´¨", "")*/;
                 paciente.FechaCita = DateTime.Now;
                 paciente.Sucursal = sucursal;
-                paciente.Usuario = usuario;
+                paciente.Solicita = usuario;
                 paciente.ReferidoPor = referido.ToUpper();
 
                 string TIPOLIC = null;
@@ -90,7 +139,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                     PacienteESP paciente = new PacienteESP();
                     paciente.Nombre = nombre.ToUpper() + " " + n;
                     paciente.Sucursal = sucursal;
-                    paciente.Usuario = usuario;
+                    paciente.Solicita = usuario;
                     paciente.FechaCita = DateTime.Now;
                     paciente.ReferidoPor = referido.ToUpper();
 
@@ -226,7 +275,7 @@ namespace SCT_iCare.Controllers.Dictamenes
         }
 
 
-        public ActionResult CompletarDatos(int? id, string nombre, string estatura, string curp, string numero, string metra, string genero,
+        public ActionResult CompletarDatos(int? id, string nombre, string estatura, string curp, string numero, /*string metra,*/ string genero,
             string doctor, string tipoL, string tipoT, HttpPostedFileBase file,
             HttpPostedFileBase documentos, HttpPostedFileBase declaracion, HttpPostedFileBase carta, HttpPostedFileBase glucosilada)
         {
@@ -262,7 +311,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                 revisionPacienteESP.Nombre = nombre != "" ? nombre.ToUpper() : revisionPacienteESP.Nombre;
             }
 
-            revisionPacienteESP.Metra = metra == "on" ? revisionPacienteESP.Metra = "SI" : revisionPacienteESP.Metra = null;
+            //revisionPacienteESP.Metra = metra == "on" ? revisionPacienteESP.Metra = "SI" : revisionPacienteESP.Metra = null;
 
             if(estatura != "")
             {
@@ -501,6 +550,53 @@ namespace SCT_iCare.Controllers.Dictamenes
             return RedirectToAction("Citas");
         }
 
+        public ActionResult Metra(int? id, string usuario)
+        {
+            var paciente = db.PacienteESP.Find(id);
+            paciente.Metra = "SI";
+            paciente.Usuario = usuario;
+
+            if(ModelState.IsValid)
+            {
+                db.Entry(paciente).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("Citas");
+        }
+
+        public ActionResult IniciarCaptura(int? id, string capturista)
+        {
+            var paciente = db.PacienteESP.Find(id);
+
+            paciente.EstatusCaptura = "En Proceso";
+            paciente.Capturista = capturista;
+
+            if(ModelState.IsValid)
+            {
+                db.Entry(paciente).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("Captura");
+        }
+
+
+        public ActionResult ReportarProblema(int? id, string comentario)
+        {
+            var paciente = db.PacienteESP.Find(id);
+
+            paciente.EstatusCaptura = "Pausado";
+            paciente.Problema = comentario;
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(paciente).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("Captura");
+        }
 
         public ActionResult AbrirElectro()
         {
