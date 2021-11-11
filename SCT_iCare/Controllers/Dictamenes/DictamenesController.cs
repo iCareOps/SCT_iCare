@@ -78,7 +78,7 @@ namespace SCT_iCare.Controllers.Dictamenes
         }
 
         [HttpPost]
-        public ActionResult Create1(string nombre, string usuario, string sucursal, string cantidad, string cantidadAereo, string referido)
+        public ActionResult Create1(string nombre, string usuario, /*string sucursal, */string cantidad, string cantidadAereo, string referido)
         {
             PacienteESP paciente1 = new PacienteESP();
 
@@ -111,7 +111,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                 PacienteESP paciente = new PacienteESP();
                 paciente.Nombre = nombre.ToUpper()/*.Normalize(System.Text.NormalizationForm.FormD).Replace(@"´¨", "")*/;
                 paciente.FechaCita = DateTime.Now;
-                paciente.Sucursal = sucursal;
+                //paciente.Sucursal = sucursal;
                 paciente.Solicita = usuario;
                 paciente.ReferidoPor = referido.ToUpper();
 
@@ -119,6 +119,10 @@ namespace SCT_iCare.Controllers.Dictamenes
                 if (cantidadA != 0)
                 {
                     TIPOLIC = "AEREO";
+                }
+                else
+                {
+                    TIPOLIC = "AUTOTRANSPORTE";
                 }
                 paciente.TipoLicencia = TIPOLIC;
 
@@ -138,7 +142,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                 {
                     PacienteESP paciente = new PacienteESP();
                     paciente.Nombre = nombre.ToUpper() + " " + n;
-                    paciente.Sucursal = sucursal;
+                    //paciente.Sucursal = sucursal;
                     paciente.Solicita = usuario;
                     paciente.FechaCita = DateTime.Now;
                     paciente.ReferidoPor = referido.ToUpper();
@@ -147,6 +151,10 @@ namespace SCT_iCare.Controllers.Dictamenes
                     if (n > cantidadN)
                     {
                         paciente.TipoLicencia = "AEREO";
+                    }
+                    else
+                    {
+                        paciente.TipoLicencia = "AUTOTRANSPORTE";
                     }
 
 
@@ -276,7 +284,7 @@ namespace SCT_iCare.Controllers.Dictamenes
 
 
         public ActionResult CompletarDatos(int? id, string nombre, string estatura, string curp, string numero, /*string metra,*/ string genero,
-            string doctor, string tipoL, string tipoT, HttpPostedFileBase file,
+            string doctor, /*string tipoL, */string tipoT, HttpPostedFileBase file,
             HttpPostedFileBase documentos, HttpPostedFileBase declaracion, HttpPostedFileBase carta, HttpPostedFileBase glucosilada)
         {
             var revisionPacienteESP = (from i in db.PacienteESP where i.idPacienteESP == id select i).FirstOrDefault();
@@ -333,10 +341,10 @@ namespace SCT_iCare.Controllers.Dictamenes
                 revisionPacienteESP.Doctor = doctor != "" ? doctor : revisionPacienteESP.Doctor;
             }
 
-            if (tipoL != "")
-            {
-                revisionPacienteESP.TipoLicencia = tipoL != "" ? tipoL : revisionPacienteESP.TipoLicencia;
-            }
+            //if (tipoL != "")
+            //{
+            //    revisionPacienteESP.TipoLicencia = tipoL != "" ? tipoL : revisionPacienteESP.TipoLicencia;
+            //}
 
             if (tipoT != "")
             {

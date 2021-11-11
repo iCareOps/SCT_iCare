@@ -201,7 +201,7 @@
                         <label for="recipient-name" class="col-form-label">Nombre del Paciente (o Gestor):</label>
                         <input type="text" class="form-control" id="nombre" name="nombre" required />
                     </div>
-                    <div class="form-group" style="width:60%; min-width:320px">
+                    @*<div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Sucursal:</label>
                         <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
                             @{
@@ -212,7 +212,7 @@
                                 }
                             }
                         </select>
-                    </div>
+                    </div>*@
                     <input type="hidden" value="@nombreUsuario" name="usuario" />
                     <div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Referido Por:</label>
@@ -412,7 +412,7 @@ else
                     <th>
                         No. Exp.
                     </th>
-                    @{
+                    @*@{
                         if (idRol == 2)
                         {
                             <th>Sucursal</th>
@@ -423,7 +423,10 @@ else
                                 Doctor
                             </th>
                         }
-                    }
+                    }*@
+                    <th>
+                        Doctor
+                    </th>
                     <th>
                         Referido Por
                     </th>
@@ -479,7 +482,7 @@ else
                     <td>
                         <b>@Html.DisplayFor(modelItem => item.NoExpediente)</b>
                     </td>
-                    @{
+                    @*@{
                         if (idRol == 2)
                         {
                             <th>
@@ -507,7 +510,9 @@ else
                                 @Html.DisplayFor(modelItem => item.Doctor)
                             </td>
                         }
-                    }
+                    }*@
+                    <td>
+                                @Html.DisplayFor(modelItem => item.Doctor)       
                     <td>
                         <span class="field-tip">
                             <b>@item.ReferidoPor</b>
@@ -655,23 +660,21 @@ else
                                         var revisionDeclaracion2 = (from i in db.DeclaracionSaludESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
                                         var revisionGlucosilada2 = (from i in db.HemoglobinaGlucosiladaESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
 
-                                        if (item.Asistencia == null && (item.NoExpediente == null || item.TipoTramite == null || item.TipoLicencia == null
-                                                                                    || item.Doctor == null || revisionFoto2 == null || revisionDocumentos2 == null))
+                                        if (item.Asistencia == null && (item.NoExpediente == null || item.TipoTramite == null || item.Doctor == null || revisionFoto2 == null || revisionDocumentos2 == null))
                                         {
                                             <a href="#" data-toggle="modal" data-target="#CompletarDatos_@item.idPacienteESP"><b>Completar Datos</b></a>
                                             <div class="dropdown-divider"></div>
 
                                             if (item.Metra == null)
                                             {
-                                                <a href="#" data-toggle="modal" data-target="#Metra_@item.idPacienteESP"><b class="text-danger">Confirmar Metra</b></a>
+                                                <a href="#" data-toggle="modal" data-target="#Metra_@item.idPacienteESP"><b>Confirmar Metra</b></a>
                                                 <div class="dropdown-divider"></div>
                                             }
 
                                             <a href="#" data-toggle="modal" data-target="#Cancelar_@item.idPacienteESP"><b class="text-danger">Cancelar Cita</b></a>
                                             <div class="dropdown-divider"></div>
                                         }
-                                        else if (item.Asistencia == null && (item.NoExpediente != null || item.TipoTramite != null || item.TipoLicencia != null
-                                            || item.Doctor != null || revisionFoto2 != null || revisionDocumentos2 != null))
+                                        else if (item.Asistencia == null && (item.NoExpediente != null || item.TipoTramite != null || item.Doctor != null || revisionFoto2 != null || revisionDocumentos2 != null))
                                         {
                                             <a href="#" data-toggle="modal" data-target="#CompletarDatos_@item.idPacienteESP"><b>Editar Datos</b></a>
                                             <div class="dropdown-divider"></div>
@@ -739,6 +742,123 @@ else
                                                     <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
                                                     <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.Nombre">
                                                 </div>
+
+                                                <div class="form-group">
+                                                    <label for="recipient-name" class="col-form-label">No. de Expediente:</label>
+                                                    @{
+                                                        if (item.NoExpediente == null)
+                                                        {
+                                                            <input type="text" class="form-control" id="numero" name="numero" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="text" class="form-control" id="numero" name="numero" value="@item.NoExpediente" placeholder="@item.NoExpediente" />
+                                                        }
+                                                    }
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="recipient-name" class="col-form-label">CURP (Clave Única de Registro de Población):</label>
+                                                    @{
+                                                        if (item.CURP == null)
+                                                        {
+                                                            <input type="text" class="form-control" id="curp" name="curp" maxlength="18" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="text" class="form-control" id="curp" name="curp" maxlength="18" value="@item.CURP" placeholder="@item.CURP" />
+                                                        }
+                                                    }
+                                                    <input type="hidden" class="form-control" id="id" name="id" value="@item.idPacienteESP">
+                                                </div>
+
+
+                                                <div class="form-group">
+                                                    <label for="recipient-name" class="col-form-label">Doctor Dictaminador:</label>
+                                                    <select name="doctor" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                        @{
+                                                            var consultorios1 = from c in db.Doctores select c;
+                                                            var revisionD = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
+
+                                                            if (revisionD.Doctor != null)
+                                                            {
+                                                                <option style="font-weight:bold" value="@revisionTL.Doctor" selected>@revisionTL.Doctor</option>
+                                                                <option disabled>----------------------------------------------</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option style="font-weight:bold" disabled selected>SELECCIONA UNA OPCIÓN</option>
+                                                            }
+
+                                                            <option style="font-weight:bold" value="RUBEN SHTURMAN ELLSTEIN">RUBEN SHTURMAN ELLSTEIN</option>
+                                                            <option style="font-weight:bold" value="DIANA ELENA VILLA SCHEFER">DIANA ELENA VILLA SCHEFER</option>
+                                                            <option style="font-weight:bold" value="SANDRA LIMA COSIO">SANDRA LIMA COSIO</option>
+                                                            <option style="font-weight:bold" value="ARTURO ESCOBEDO GARCÍA">ARTURO ESCOBEDO GARCÍA</option>
+
+                                                            @*foreach (var item1 in consultorios1)
+                    {
+                        <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
+                    }*@
+
+                                                        }
+                                                    </select>
+                                                </div>
+                                                @*@{
+            var consultaAereo1 = (from c in db.PacienteESP where c.idPacienteESP == item.idPacienteESP select c.TipoLicencia).FirstOrDefault();
+            if (consultaAereo1 == "AEREO")
+            {
+                <input type="hidden" name="tipoL" id="tipoL" value="AEREO" />
+            }
+            else
+            {
+                <div class="form-group" style="width:80%; min-width:320px">
+                    <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
+                    <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+
+                        @{
+                            var revisionTL2 = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
+
+                            if (revisionTL2.TipoLicencia != null)
+                            {
+                                <option value="@revisionTL2.TipoLicencia" selected>@revisionTL2.TipoLicencia</option>
+                                <option disabled>----------------------------------------</option>
+                                <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                                <option value="MARITIMO">MARITIMO</option>
+                                <option value="FERROVIARIO">FERROVIARIO</option>
+                            }
+                            else
+                            {
+                                <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                                <option value="MARITIMO">MARITIMO</option>
+                                <option value="FERROVIARIO">FERROVIARIO</option>
+                            }
+                        }
+                    </select>
+                </div>
+            }
+        }*@
+
+                                                <div class="form-group" style="width:80%; min-width:320px">
+                                                    <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
+                                                    <select name="tipoT" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                        @{
+                                                            var revisionTT = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i.TipoTramite).FirstOrDefault();
+
+                                                            if (revisionTT != null)
+                                                            {
+                                                                <option value="@revisionTT" selected>@revisionTT</option>
+                                                                <option disabled>----------------------------------------</option>
+                                                                <option value="REVALIDACIÓN">REVALIDACIÓN</option>
+                                                                <option value="PRIMERA VEZ">PRIMERA VEZ</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="REVALIDACIÓN">REVALIDACIÓN</option>
+                                                                <option value="PRIMERA VEZ">PRIMERA VEZ</option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                </div>
                                                 <div class="form-group">
                                                     <label for="recipient-name" class="col-form-label">Género:</label>
                                                     <select name="genero" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
@@ -771,20 +891,6 @@ else
                                                     </select>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">CURP (Clave Única de Registro de Población):</label>
-                                                    @{
-                                                        if (item.CURP == null)
-                                                        {
-                                                            <input type="text" class="form-control" id="curp" name="curp" maxlength="18" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="text" class="form-control" id="curp" name="curp" maxlength="18" value="@item.CURP" placeholder="@item.CURP" />
-                                                        }
-                                                    }
-                                                    <input type="hidden" class="form-control" id="id" name="id" value="@item.idPacienteESP">
-                                                </div>
-                                                <div class="form-group">
                                                     <label for="recipient-name" class="col-form-label">Estatura (en cms):</label>
                                                     @{
                                                         if (item.Estatura == null)
@@ -798,116 +904,17 @@ else
                                                     }
                                                     <input type="hidden" class="form-control" id="id" name="id" value="@item.idPacienteESP">
                                                 </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">No. de Expediente:</label>
-                                                    @{
-                                                        if (item.NoExpediente == null)
-                                                        {
-                                                            <input type="text" class="form-control" id="numero" name="numero" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="text" class="form-control" id="numero" name="numero" value="@item.NoExpediente" placeholder="@item.NoExpediente" />
-                                                        }
-                                                    }
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">Doctor Dictaminador:</label>
-                                                    <select name="doctor" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                                        @{
-                                                            var consultorios1 = from c in db.Doctores select c;
-                                                            var revisionD = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
-
-                                                            if (revisionD.Doctor != null)
-                                                            {
-                                                                <option style="font-weight:bold" value="@revisionTL.Doctor" selected>@revisionTL.Doctor</option>
-                                                                <option disabled>----------------------------------------------</option>
-                                                            }
-                                                            else
-                                                            {
-                                                                <option style="font-weight:bold" disabled selected>SELECCIONA UNA OPCIÓN</option>
-                                                            }
-
-                                                            <option style="font-weight:bold" value="RUBEN SHTURMAN ELLSTEIN">RUBEN SHTURMAN ELLSTEIN</option>
-                                                            <option style="font-weight:bold" value="DIANA ELENA VILLA SCHEFER">DIANA ELENA VILLA SCHEFER</option>
-                                                            <option style="font-weight:bold" value="SANDRA LIMA COSIO">SANDRA LIMA COSIO</option>
-                                                            <option style="font-weight:bold" value="ARTURO ESCOBEDO GARCÍA">ARTURO ESCOBEDO GARCÍA</option>
-
-                                                            @*foreach (var item1 in consultorios1)
-                                        {
-                                            <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
-                                        }*@
-
-                                                        }
-                                                    </select>
-                                                </div>
-                                                @{
-                                                    var consultaAereo1 = (from c in db.PacienteESP where c.idPacienteESP == item.idPacienteESP select c.TipoLicencia).FirstOrDefault();
-                                                    if (consultaAereo1 == "AEREO")
-                                                    {
-                                                        <input type="hidden" name="tipoL" id="tipoL" value="AEREO" />
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="form-group" style="width:80%; min-width:320px">
-                                                            <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
-                                                            <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-
-                                                                @{
-                                                                    var revisionTL2 = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
-
-                                                                    if (revisionTL2.TipoLicencia != null)
-                                                                    {
-                                                                        <option value="@revisionTL2.TipoLicencia" selected>@revisionTL2.TipoLicencia</option>
-                                                                        <option disabled>----------------------------------------</option>
-                                                                        <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
-                                                                        <option value="MARITIMO">MARITIMO</option>
-                                                                        <option value="FERROVIARIO">FERROVIARIO</option>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
-                                                                        <option value="MARITIMO">MARITIMO</option>
-                                                                        <option value="FERROVIARIO">FERROVIARIO</option>
-                                                                    }
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    }
-                                                }
-
-                                                <div class="form-group" style="width:80%; min-width:320px">
-                                                    <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
-                                                    <select name="tipoT" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                                        @{
-                                                            var revisionTT = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i.TipoTramite).FirstOrDefault();
-
-                                                            if (revisionTT != null)
-                                                            {
-                                                                <option value="@revisionTT" selected>@revisionTT</option>
-                                                                <option disabled>----------------------------------------</option>
-                                                                <option value="REVALIDACIÓN">REVALIDACIÓN</option>
-                                                                <option value="PRIMERA VEZ">PRIMERA VEZ</option>
-                                                            }
-                                                            else
-                                                            {
-                                                                <option value="REVALIDACIÓN">REVALIDACIÓN</option>
-                                                                <option value="PRIMERA VEZ">PRIMERA VEZ</option>
-                                                            }
-                                                        }
-                                                    </select>
-                                                </div>
                                                 @*<div class="form-group">
-                                @if (item.Metra == null)
-                                {
-                                    <input type="checkbox" name="metra" />
-                                }
-                                else
-                                {
-                                    <input type="checkbox" checked name="metra" />
-                                }
-                                <label for="file" class="col-form-label">¿Cita registrada en METRA?:</label>
-                            </div>*@
+            @if (item.Metra == null)
+            {
+                <input type="checkbox" name="metra" />
+            }
+            else
+            {
+                <input type="checkbox" checked name="metra" />
+            }
+            <label for="file" class="col-form-label">¿Cita registrada en METRA?:</label>
+        </div>*@
                                                 <hr />
                                                 <div class="form-group">
                                                     <label for="file" class="col-form-label">Capturar Foto:</label>
@@ -933,6 +940,14 @@ else
                                                     <label for="file" class="col-form-label">Hemoglobina Glucosilada (sólo si aplica):</label>
                                                     <input type="file" name="glucosilada" />
                                                 </div>
+                                                <hr />
+                                                <div class="form-group" style="background-color:ghostwhite; padding:5px; border:solid 1px darkblue; border-radius:4px">
+                                                    <label for="file" class="col-form-label">Cargar Huellas:</label><br />
+                                                    <b>Dedo #2</b><input type="file" name="" />
+                                                    <b>Dedo #3</b><input type="file" name="" />
+                                                    <b>Dedo #7</b><input type="file" name="" />
+                                                    <b>Dedo #8</b><input type="file" name="" /><br />
+                                                </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -953,6 +968,12 @@ else
                                                 <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Confirmar la cita en METRA</b></h4>
                                             </div>
                                             <div class="modal-body">
+                                                @{
+                                                    var nombrePaciente = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i.Nombre).FirstOrDefault();
+
+                                                    <h4>¿Confirma que ha realizado la cita del paciente <b>@nombrePaciente</b> en METRA?</h4>
+                                                }
+
                                                 <input type="hidden" name="id" value="@item.idPacienteESP" />
                                                 <input type="hidden" name="usuario" value="@nombreUsuario" />
                                             </div>
