@@ -2462,7 +2462,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 cantidadA = Convert.ToInt32(cantidadAereo);
             }
 
-            int precio = (cantidadN * 2842) + (cantidadA * 3480);
+            int precio = (cantidadN * 3480) + (cantidadA * 4640);
 
             if (precio > 10000)
             {

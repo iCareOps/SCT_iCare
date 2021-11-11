@@ -201,7 +201,7 @@
                         <label for="recipient-name" class="col-form-label">Nombre del Paciente (o Gestor):</label>
                         <input type="text" class="form-control" id="nombre" name="nombre" required />
                     </div>
-                    <div class="form-group" style="width:60%; min-width:320px">
+                    @*<div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Sucursal:</label>
                         <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
                             @{
@@ -212,7 +212,7 @@
                                 }
                             }
                         </select>
-                    </div>
+                    </div>*@
                     <input type="hidden" value="@nombreUsuario" name="usuario" />
                     <div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Referido Por:</label>
@@ -412,7 +412,7 @@ else
                     <th>
                         No. Exp.
                     </th>
-                    @{
+                    @*@{
                         if (idRol == 2)
                         {
                             <th>Sucursal</th>
@@ -423,7 +423,10 @@ else
                                 Doctor
                             </th>
                         }
-                    }
+                    }*@
+                    <th>
+                        Doctor
+                    </th>
                     <th>
                         Referido Por
                     </th>
@@ -479,7 +482,7 @@ else
                     <td>
                         <b>@Html.DisplayFor(modelItem => item.NoExpediente)</b>
                     </td>
-                    @{
+                    @*@{
                         if (idRol == 2)
                         {
                             <th>
@@ -507,7 +510,9 @@ else
                                 @Html.DisplayFor(modelItem => item.Doctor)
                             </td>
                         }
-                    }
+                    }*@
+                    <td>
+                                @Html.DisplayFor(modelItem => item.Doctor)       
                     <td>
                         <span class="field-tip">
                             <b>@item.ReferidoPor</b>
@@ -655,23 +660,21 @@ else
                                         var revisionDeclaracion2 = (from i in db.DeclaracionSaludESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
                                         var revisionGlucosilada2 = (from i in db.HemoglobinaGlucosiladaESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
 
-                                        if (item.Asistencia == null && (item.NoExpediente == null || item.TipoTramite == null || item.TipoLicencia == null
-                                                                                    || item.Doctor == null || revisionFoto2 == null || revisionDocumentos2 == null))
+                                        if (item.Asistencia == null && (item.NoExpediente == null || item.TipoTramite == null || item.Doctor == null || revisionFoto2 == null || revisionDocumentos2 == null))
                                         {
                                             <a href="#" data-toggle="modal" data-target="#CompletarDatos_@item.idPacienteESP"><b>Completar Datos</b></a>
                                             <div class="dropdown-divider"></div>
 
                                             if (item.Metra == null)
                                             {
-                                                <a href="#" data-toggle="modal" data-target="#Metra_@item.idPacienteESP"><b class="text-danger">Confirmar Metra</b></a>
+                                                <a href="#" data-toggle="modal" data-target="#Metra_@item.idPacienteESP"><b>Confirmar Metra</b></a>
                                                 <div class="dropdown-divider"></div>
                                             }
 
                                             <a href="#" data-toggle="modal" data-target="#Cancelar_@item.idPacienteESP"><b class="text-danger">Cancelar Cita</b></a>
                                             <div class="dropdown-divider"></div>
                                         }
-                                        else if (item.Asistencia == null && (item.NoExpediente != null || item.TipoTramite != null || item.TipoLicencia != null
-                                            || item.Doctor != null || revisionFoto2 != null || revisionDocumentos2 != null))
+                                        else if (item.Asistencia == null && (item.NoExpediente != null || item.TipoTramite != null || item.Doctor != null || revisionFoto2 != null || revisionDocumentos2 != null))
                                         {
                                             <a href="#" data-toggle="modal" data-target="#CompletarDatos_@item.idPacienteESP"><b>Editar Datos</b></a>
                                             <div class="dropdown-divider"></div>
@@ -739,37 +742,21 @@ else
                                                     <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
                                                     <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.Nombre">
                                                 </div>
+
                                                 <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">Género:</label>
-                                                    <select name="genero" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                                        @{
-                                                            var revisionSexo = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
-                                                            if (revisionSexo.Genero == null)
-                                                            {
-                                                                <option style="font-weight:bold" disabled selected>SELECCIONE UN GÉNERO</option>
-                                                            }
-                                                            if (revisionSexo.Genero != null)
-                                                            {
-                                                                string Genero = "";
-                                                                if (revisionSexo.Genero == "M")
-                                                                {
-                                                                    Genero = "MASCULINO";
-                                                                }
-                                                                else
-                                                                {
-                                                                    Genero = "FEMENINO";
-                                                                }
-                                                                <option style="font-weight:bold" value="@revisionSexo.Genero" selected>@Genero</option>
-                                                                <option disabled>----------------------------------------------</option>
-                                                            }
-
-
-
-                                                            <option style="font-weight:bold" value="F">FEMENINO</option>
-                                                            <option style="font-weight:bold" value="M">MASCULINO</option>
+                                                    <label for="recipient-name" class="col-form-label">No. de Expediente:</label>
+                                                    @{
+                                                        if (item.NoExpediente == null)
+                                                        {
+                                                            <input type="text" class="form-control" id="numero" name="numero" />
                                                         }
-                                                    </select>
+                                                        else
+                                                        {
+                                                            <input type="text" class="form-control" id="numero" name="numero" value="@item.NoExpediente" placeholder="@item.NoExpediente" />
+                                                        }
+                                                    }
                                                 </div>
+
                                                 <div class="form-group">
                                                     <label for="recipient-name" class="col-form-label">CURP (Clave Única de Registro de Población):</label>
                                                     @{
@@ -784,33 +771,8 @@ else
                                                     }
                                                     <input type="hidden" class="form-control" id="id" name="id" value="@item.idPacienteESP">
                                                 </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">Estatura (en cms):</label>
-                                                    @{
-                                                        if (item.Estatura == null)
-                                                        {
-                                                            <input type="number" class="form-control" id="curp" name="estatura" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="number" class="form-control" id="curp" name="estatura" maxlength="18" value="@item.Estatura" placeholder="@item.Estatura" />
-                                                        }
-                                                    }
-                                                    <input type="hidden" class="form-control" id="id" name="id" value="@item.idPacienteESP">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">No. de Expediente:</label>
-                                                    @{
-                                                        if (item.NoExpediente == null)
-                                                        {
-                                                            <input type="text" class="form-control" id="numero" name="numero" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="text" class="form-control" id="numero" name="numero" value="@item.NoExpediente" placeholder="@item.NoExpediente" />
-                                                        }
-                                                    }
-                                                </div>
+
+
                                                 <div class="form-group">
                                                     <label for="recipient-name" class="col-form-label">Doctor Dictaminador:</label>
                                                     <select name="doctor" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
@@ -834,14 +796,14 @@ else
                                                             <option style="font-weight:bold" value="ARTURO ESCOBEDO GARCÍA">ARTURO ESCOBEDO GARCÍA</option>
 
                                                             @*foreach (var item1 in consultorios1)
-                                        {
-                                            <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
-                                        }*@
+                    {
+                        <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
+                    }*@
 
                                                         }
                                                     </select>
                                                 </div>
-                                                @{
+                                                @*@{
                                                     var consultaAereo1 = (from c in db.PacienteESP where c.idPacienteESP == item.idPacienteESP select c.TipoLicencia).FirstOrDefault();
                                                     if (consultaAereo1 == "AEREO")
                                                     {
@@ -874,7 +836,7 @@ else
                                                             </select>
                                                         </div>
                                                     }
-                                                }
+                                                }*@
 
                                                 <div class="form-group" style="width:80%; min-width:320px">
                                                     <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
@@ -897,17 +859,62 @@ else
                                                         }
                                                     </select>
                                                 </div>
+                                                <div class="form-group">
+                                                    <label for="recipient-name" class="col-form-label">Género:</label>
+                                                    <select name="genero" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                        @{
+                                                            var revisionSexo = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
+                                                            if (revisionSexo.Genero == null)
+                                                            {
+                                                                <option style="font-weight:bold" disabled selected>SELECCIONE UN GÉNERO</option>
+                                                            }
+                                                            if (revisionSexo.Genero != null)
+                                                            {
+                                                                string Genero = "";
+                                                                if (revisionSexo.Genero == "M")
+                                                                {
+                                                                    Genero = "MASCULINO";
+                                                                }
+                                                                else
+                                                                {
+                                                                    Genero = "FEMENINO";
+                                                                }
+                                                                <option style="font-weight:bold" value="@revisionSexo.Genero" selected>@Genero</option>
+                                                                <option disabled>----------------------------------------------</option>
+                                                            }
+
+
+
+                                                            <option style="font-weight:bold" value="F">FEMENINO</option>
+                                                            <option style="font-weight:bold" value="M">MASCULINO</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="recipient-name" class="col-form-label">Estatura (en cms):</label>
+                                                    @{
+                                                        if (item.Estatura == null)
+                                                        {
+                                                            <input type="number" class="form-control" id="curp" name="estatura" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="number" class="form-control" id="curp" name="estatura" maxlength="18" value="@item.Estatura" placeholder="@item.Estatura" />
+                                                        }
+                                                    }
+                                                    <input type="hidden" class="form-control" id="id" name="id" value="@item.idPacienteESP">
+                                                </div>
                                                 @*<div class="form-group">
-                                @if (item.Metra == null)
-                                {
-                                    <input type="checkbox" name="metra" />
-                                }
-                                else
-                                {
-                                    <input type="checkbox" checked name="metra" />
-                                }
-                                <label for="file" class="col-form-label">¿Cita registrada en METRA?:</label>
-                            </div>*@
+            @if (item.Metra == null)
+            {
+                <input type="checkbox" name="metra" />
+            }
+            else
+            {
+                <input type="checkbox" checked name="metra" />
+            }
+            <label for="file" class="col-form-label">¿Cita registrada en METRA?:</label>
+        </div>*@
                                                 <hr />
                                                 <div class="form-group">
                                                     <label for="file" class="col-form-label">Capturar Foto:</label>
@@ -953,6 +960,12 @@ else
                                                 <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Confirmar la cita en METRA</b></h4>
                                             </div>
                                             <div class="modal-body">
+                                                @{
+                                                    var nombrePaciente = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i.Nombre).FirstOrDefault();
+
+                                                    <h4>¿Confirma que ha realizado la cita del paciente <b>@nombrePaciente</b> en METRA?</h4>
+                                                }
+
                                                 <input type="hidden" name="id" value="@item.idPacienteESP" />
                                                 <input type="hidden" name="usuario" value="@nombreUsuario" />
                                             </div>
