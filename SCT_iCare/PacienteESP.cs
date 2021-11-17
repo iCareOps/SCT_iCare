@@ -23,6 +23,7 @@ namespace SCT_iCare
             this.DocumentosESP = new HashSet<DocumentosESP>();
             this.HemoglobinaGlucosiladaESP = new HashSet<HemoglobinaGlucosiladaESP>();
             this.DictamenESP = new HashSet<DictamenESP>();
+            this.EPI_ESP = new HashSet<EPI_ESP>();
         }
     
         public int idPacienteESP { get; set; }
@@ -59,5 +60,7 @@ namespace SCT_iCare
         public virtual ICollection<HemoglobinaGlucosiladaESP> HemoglobinaGlucosiladaESP { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DictamenESP> DictamenESP { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<EPI_ESP> EPI_ESP { get; set; }
     }
 }

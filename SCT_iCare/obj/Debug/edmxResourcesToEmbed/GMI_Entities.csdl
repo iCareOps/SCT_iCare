@@ -649,6 +649,11 @@
       <End Role="PacienteESP" EntitySet="PacienteESP" />
       <End Role="DictamenESP" EntitySet="DictamenESP" />
     </AssociationSet>
+    <EntitySet Name="EPI_ESP" EntityType="DevModel.EPI_ESP" />
+    <AssociationSet Name="FK_EPI_ESP_PacienteESP" Association="DevModel.FK_EPI_ESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="EPI_ESP" EntitySet="EPI_ESP" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="CapturaIncidencia">
     <Key>
@@ -1348,6 +1353,7 @@
     <Property Name="Genero" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
     <Property Name="Problema" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
     <Property Name="Solicita" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="EPI_ESP" Relationship="DevModel.FK_EPI_ESP_PacienteESP" FromRole="PacienteESP" ToRole="EPI_ESP" />
   </EntityType>
   <EntityType Name="FotoPacienteESP">
     <Key>
@@ -1471,6 +1477,90 @@
         <PropertyRef Name="idPacienteESP" />
       </Principal>
       <Dependent Role="DictamenESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="EPI_ESP">
+    <Key>
+      <PropertyRef Name="idEpiESP" />
+    </Key>
+    <Property Name="idEpiESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idPacienteESP" Type="Int32" />
+    <Property Name="NoExpediente" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Genero" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Sistolica" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Diastolica" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Cardiaca" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Respiratoria" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Temperatura" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Peso" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Estatura" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Cintura" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Cuello" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Grasa" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Glucosa" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Hemoglobina" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Ritmo" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Frecuencia" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Eje" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="PR" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="QT" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="QRS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="OndaP" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="OndaT" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="AVCD" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="AVCI" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="AVID" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="AVII" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="AVLD" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="AVLI" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Lentes" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Estereopsis" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Carta" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="CampoVisual" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="MovOculares" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="RPD" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="RPI" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Nota" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="TestVC" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="MadreVive" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="PadreVive" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="HermanosViven" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="VacCompletas" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="ECivil" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="Religion" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="Escolaridad" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="Hijos" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="ECongenita" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="EspDiag" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Alergia" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Diabetes" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="DiagHipArt" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Alcohol" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Fuma" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Drogas" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="UsaLentes" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="TLentes" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="URegla" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Embarazos" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Abortos" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Parto" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Cesarea" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="IVSexual" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Patologias" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Interpretacion" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="NotaMedica" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_EPI_ESP_PacienteESP" FromRole="EPI_ESP" ToRole="PacienteESP" />
+  </EntityType>
+  <Association Name="FK_EPI_ESP_PacienteESP">
+    <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
+    <End Type="DevModel.EPI_ESP" Role="EPI_ESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="EPI_ESP">
         <PropertyRef Name="idPacienteESP" />
       </Dependent>
     </ReferentialConstraint>

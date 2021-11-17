@@ -49,7 +49,7 @@
     DateTime thisDate = new DateTime(year, month, day);
     DateTime tomorrowDate = new DateTime(year1, month1, day1);
 
-    var modelo = db.PacienteESP.Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.NoExpediente != null && s.Doctor != null && s.Asistencia == null && s.Estatura != null
+    var modelo = db.PacienteESP.Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && (s.NoExpediente != null || s.CURP != null) && s.Doctor != null && s.Asistencia == null && s.Estatura != null
     && s.Metra != null);
     int? idRol = 0;
 
@@ -345,6 +345,14 @@ else
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#DescargarEKG_@item.idPacienteESP">Electrocardiograma</a>*@
                                         <b>@Html.ActionLink("Descargar EKG", "AbrirElectro", null, new { style = "text-decoration: none" })</b>
+                                        <div class="dropdown-divider"></div>
+                                        <b>@Html.ActionLink("Huella 2", "DescargarHuellasZIP", new { id = item.idPacienteESP, h2 = "SI"}, new { style = "text-decoration: none" })</b>
+                                        <div class="dropdown-divider"></div>
+                                        <b>@Html.ActionLink("Huella 3", "DescargarHuellasZIP", new { id = item.idPacienteESP, h3 = "SI"}, new { style = "text-decoration: none" })</b>
+                                        <div class="dropdown-divider"></div>
+                                        <b>@Html.ActionLink("Huella 7", "DescargarHuellasZIP", new { id = item.idPacienteESP, h7 = "SI"}, new { style = "text-decoration: none" })</b>
+                                        <div class="dropdown-divider"></div>
+                                        <b>@Html.ActionLink("Huella 8", "DescargarHuellasZIP", new { id = item.idPacienteESP, h8 = "SI"}, new { style = "text-decoration: none" })</b>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#DescargarDocumentos_@item.idPacienteESP">Documentación</a>*@
                                         <b>@Html.ActionLink("Documentos", "AbrirDocumentos", new { id = item.idPacienteESP }, new { style = "text-decoration: none" })</b>
