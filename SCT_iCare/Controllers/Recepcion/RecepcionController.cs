@@ -132,7 +132,7 @@ namespace SCT_iCare.Controllers.Recepcion
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create1(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, string pago,string referencia, string referido)
+        public ActionResult Create1(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, string pago,string referencia, string referido, DateTime? fecha)
         {
             Paciente paciente1 = new Paciente();
 
@@ -306,7 +306,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.idPaciente = idPaciente;
                 cita.FechaReferencia = DateTime.Now;
                 cita.Sucursal = sucursal;
-                cita.FechaCita = DateTime.Now;
+                cita.FechaCita = fecha != null ? fecha : DateTime.Now;
                 cita.Recepcionista = usuario;
                 cita.EstatusPago = "Pagado";
                 cita.Referencia = referencia;
@@ -540,7 +540,7 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.Folio = numFolio;
                     cita.Referencia = referencia;
                     cita.Canal = "Recepción";
-                    cita.FechaCita = DateTime.Now;
+                    cita.FechaCita = fecha != null ? fecha : DateTime.Now;
                     cita.ReferidoPor = referido.ToUpper();
                     cita.FechaCreacion = DateTime.Now;
 
@@ -599,7 +599,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Orden(string nombre, string telefono, string email, string usuario, string sucursal,  string cantidad, string cantidadAereo, string referido)
+        public ActionResult Orden(string nombre, string telefono, string email, string usuario, string sucursal,  string cantidad, string cantidadAereo, string referido, DateTime? fecha)
         {
             GetApiKey();
 
@@ -804,7 +804,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.EstatusPago = orden.payment_status;
                 cita.Folio = numFolio;
                 cita.Canal = "Recepción";
-                cita.FechaCita = DateTime.Now;
+                cita.FechaCita = fecha != null ? fecha : DateTime.Now;
                 cita.ReferidoPor = referido.ToUpper();
                 cita.FechaCreacion = DateTime.Now;
 
@@ -996,7 +996,7 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.EstatusPago = orden.payment_status;
                     cita.Folio = numFolio;
                     cita.Canal = "Recepción";
-                    cita.FechaCita = DateTime.Now;
+                    cita.FechaCita = fecha != null ? fecha : DateTime.Now;
                     cita.ReferidoPor = referido.ToUpper();
                     cita.FechaCreacion = DateTime.Now;
 
@@ -1075,7 +1075,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult PagoTarjeta(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, int card, string referido)
+        public ActionResult PagoTarjeta(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, int card, string referido, DateTime? fecha)
         {
             GetApiKey();
 
@@ -1258,7 +1258,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 cita.EstatusPago = "Pendiente";
                 cita.Folio = numFolio;
                 cita.Canal = "Recepción";
-                cita.FechaCita = DateTime.Now;
+                cita.FechaCita = fecha != null ? fecha : DateTime.Now;
                 cita.NoOrden = link;
                 cita.Referencia = Convert.ToString(card);
                 cita.ReferidoPor = referido.ToUpper();
@@ -1422,7 +1422,7 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.EstatusPago = "Pendiente";
                     cita.Folio = numFolio;
                     cita.Canal = "Recepción";
-                    cita.FechaCita = DateTime.Now;
+                    cita.FechaCita = fecha != null ? fecha : DateTime.Now;
                     cita.NoOrden = link;
                     cita.Referencia = Convert.ToString(card);
                     cita.ReferidoPor = referido.ToUpper();
@@ -2336,7 +2336,7 @@ namespace SCT_iCare.Controllers.Recepcion
             return Redirect("Index");
         }
 
-        public ActionResult NoLlego(int id, string comentario)
+        public ActionResult NoLlego(int id, string comentario, string pago)
         {
             var cita = (from c in db.Cita where c.idPaciente == id select c).FirstOrDefault();
             cita.Asistencia = "NO";
@@ -2350,18 +2350,23 @@ namespace SCT_iCare.Controllers.Recepcion
             var idFlag = (from i in db.Cita where i.Referencia == referenciaRepetida orderby i.idPaciente descending select i).FirstOrDefault();
             var tipoPago = (from t in db.ReferenciasSB where t.idPaciente == idFlag.idPaciente select t).FirstOrDefault();
 
-            if ((from r in db.Cita where r.Referencia == referenciaRepetida select r).Count() == 1)
+            if(pago != "Pago con Tarjeta")
             {
-                ReferenciasSB refe = db.ReferenciasSB.Find(tipoPago.idReferencia);
-                refe.EstatusReferencia = "LIBRE";
-                refe.idPaciente = 0;
-
-                if (ModelState.IsValid)
+                if ((from r in db.Cita where r.Referencia == referenciaRepetida select r).Count() == 1)
                 {
-                    db.Entry(refe).State = EntityState.Modified;
-                    db.SaveChanges();
+                    ReferenciasSB refe = db.ReferenciasSB.Find(tipoPago.idReferencia);
+                    refe.EstatusReferencia = "LIBRE";
+                    refe.idPaciente = 0;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Entry(refe).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
                 }
             }
+
+            
             //--------------------------------------------------------------------------------------
 
             if (ModelState.IsValid)

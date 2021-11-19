@@ -41,7 +41,14 @@
     var enProceso = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.EstatusCaptura == "En Proceso");
     int enProcesoCount = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.EstatusCaptura == "En Proceso").Count();
 
+    DateTime mesInicio = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+    DateTime mesFinal = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddDays(-1);
+
+    var mes = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= mesInicio && w.FechaCita < mesFinal);
+    int mesCount = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= mesInicio && w.FechaCita < mesFinal).Count();
+
     var gestor = (from i in db.PacienteESP where i.FechaCita >= dateToday && i.FechaCita < dateTomorrow select i.ReferidoPor).Distinct();
+    var gestor2 = (from i in db.PacienteESP where i.FechaCita >= mesInicio && i.FechaCita < mesFinal select i.ReferidoPor).Distinct();
 
     int flag = 1;
 
@@ -317,10 +324,40 @@
             <div class="modal-body">
                 @{
 
-                    foreach (var item in gestor)
+                    foreach (var item in gestor2)
                     {
                         string nombreGestor = item.ToString();
                         var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusCaptura == "Pausado" select e).Count();
+
+                        <h4><b>@item:</b> @elemento</h4>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-outline-warning boton-transparenteIndicador5 botonesGral col-md-4" data-toggle="modal" data-target="#mes" style="color:white">
+    <h4><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;Epis de <b style="color:chartreuse">@DateTime.Now.ToString("MMMM")</b>: <b>@mesCount</b></h4>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="mes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:aqua">
+                <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;Epis de <b>@DateTime.Now.ToString("MMMM")</b>: <b>@mesCount</b></h3>
+            </div>
+            <div class="modal-body">
+                @{
+
+                    foreach (var item in gestor2)
+                    {
+                        string nombreGestor = item.ToString();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= mesInicio && e.FechaCita < mesFinal  select e).Count();
 
                         <h4><b>@item:</b> @elemento</h4>
                     }
@@ -377,7 +414,7 @@ else
 
             @foreach (var item in episHoy)
             {
-                <tr >
+                <tr>
                     <td>
                         @flag
                     </td>
@@ -387,7 +424,7 @@ else
                     </td>
 
                     <td>
-                            <b>@item.ReferidoPor</b>
+                        <b>@item.ReferidoPor</b>
                     </td>
 
                     <th>

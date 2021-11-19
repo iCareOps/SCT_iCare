@@ -28,6 +28,71 @@ namespace SCT_iCare.Controllers.Dictamenes
             return View();
         }
 
+        public ActionResult VentasAlternativas(DateTime? inicio, DateTime? final, string gestor, string estatus)
+        {
+            DateTime thisDate = new DateTime();
+            DateTime tomorrowDate = new DateTime();
+
+            DateTime start1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            DateTime finish1 = new DateTime(DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day);
+
+            int nulos = 0;
+
+            if (inicio != null || final != null)
+            {
+                nulos = 1;
+            }
+
+            if (inicio != null)
+            {
+                DateTime start = Convert.ToDateTime(inicio);
+                int year = start.Year;
+                int month = start.Month;
+                int day = start.Day;
+
+                inicio = new DateTime(year, month, day);
+                thisDate = new DateTime(year, month, day);
+            }
+            if (final != null)
+            {
+                DateTime finish = Convert.ToDateTime(final).AddDays(1);
+                int year = finish.Year;
+                int month = finish.Month;
+                int day = finish.Day;
+
+                final = new DateTime(year, month, day);
+                tomorrowDate = new DateTime(year, month, day);
+            }
+
+            var urge = (from i in db.UrgentesCount select i).FirstOrDefault();
+            string mes = DateTime.Now.ToString("MMMM");
+
+            if(urge.Mes != mes)
+            {
+                urge.Mes = mes;
+                urge.Contador = 500;
+
+                if(ModelState.IsValid)
+                {
+                    db.Entry(urge).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
+            inicio = (inicio ?? start1);
+            final = (final ?? finish1);
+
+            ViewBag.Inicio = inicio;
+            ViewBag.Final = final;
+            ViewBag.Estado = nulos;
+            ViewBag.Gestor = gestor;
+            ViewBag.Estatus = estatus;
+
+            ViewBag.Parameter = "";
+
+            return View();
+        }
+
 
         public ActionResult Dashboard(DateTime? inicio, DateTime? final)
         {
@@ -169,6 +234,131 @@ namespace SCT_iCare.Controllers.Dictamenes
             return Redirect("Citas"); ;
         }
 
+
+        [HttpPost]
+        public ActionResult CreateVentas(string nombre, string usuario, /*string sucursal, */string cantidad, string cantidadAereo, string referido, string urgente)
+        {
+            PacienteESP paciente1 = new PacienteESP();
+
+            string canal = null;
+
+            int cantidadN;
+            int cantidadA;
+
+            if (cantidad == "")
+            {
+                cantidadN = 0;
+            }
+            else
+            {
+                cantidadN = Convert.ToInt32(cantidad);
+            }
+
+            if (cantidadAereo == "")
+            {
+                cantidadA = 0;
+            }
+            else
+            {
+                cantidadA = Convert.ToInt32(cantidadAereo);
+            }
+
+
+            if ((cantidadN + cantidadA) == 1)
+            {
+                PacienteESP paciente = new PacienteESP();
+                paciente.Nombre = nombre.ToUpper()/*.Normalize(System.Text.NormalizationForm.FormD).Replace(@"´¨", "")*/;
+                paciente.FechaCita = DateTime.Now;
+                //paciente.Sucursal = sucursal;
+                paciente.Solicita = usuario;
+                paciente.ReferidoPor = referido.ToUpper();
+
+                if(urgente == "on")
+                {
+                    paciente.CancelaComentario = "Urgente";
+                    var urge = (from i in db.UrgentesCount select i).FirstOrDefault();
+
+                    if(urge.Contador >= 1)
+                    {
+                        urge.Contador -= 1;
+
+                        if (ModelState.IsValid)
+                        {
+                            db.Entry(urge).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
+                    }          
+                }
+
+                string TIPOLIC = null;
+                if (cantidadA != 0)
+                {
+                    TIPOLIC = "AEREO";
+                }
+                else
+                {
+                    TIPOLIC = "AUTOTRANSPORTE";
+                }
+                paciente.TipoLicencia = TIPOLIC;
+
+
+                if (ModelState.IsValid)
+                {
+                    db.PacienteESP.Add(paciente);
+
+                    db.SaveChanges();
+                }
+
+            }
+            else
+            {
+                for (int n = 1; n <= Convert.ToInt32((cantidadN + cantidadA)); n++)
+                {
+                    PacienteESP paciente = new PacienteESP();
+                    paciente.Nombre = nombre.ToUpper() + " " + n;
+                    //paciente.Sucursal = sucursal;
+                    paciente.Solicita = usuario;
+                    paciente.FechaCita = DateTime.Now;
+                    paciente.ReferidoPor = referido.ToUpper();
+
+                    if (urgente == "on")
+                    {
+                        paciente.CancelaComentario = "Urgente";
+                        var urge = (from i in db.UrgentesCount select i).FirstOrDefault();
+
+                        if (urge.Contador >= Convert.ToInt32((cantidadN + cantidadA)))
+                        {
+                            urge.Contador -= Convert.ToInt32((cantidadN + cantidadA));
+
+                            if (ModelState.IsValid)
+                            {
+                                db.Entry(urge).State = EntityState.Modified;
+                                db.SaveChanges();
+                            }
+                        }
+                    }
+
+                    if (n > cantidadN)
+                    {
+                        paciente.TipoLicencia = "AEREO";
+                    }
+                    else
+                    {
+                        paciente.TipoLicencia = "AUTOTRANSPORTE";
+                    }
+
+
+                    if (ModelState.IsValid)
+                    {
+                        db.PacienteESP.Add(paciente);
+                        db.SaveChanges();
+                    }
+                }
+            }
+
+            return Redirect("VentasAlternativas"); ;
+        }
+
         [HttpPost]
         public ActionResult SubirHuellas(HttpPostedFileBase h2, HttpPostedFileBase h3, HttpPostedFileBase h7, HttpPostedFileBase h8)
         {
@@ -289,23 +479,239 @@ namespace SCT_iCare.Controllers.Dictamenes
         {
             var revisionPacienteESP = (from i in db.PacienteESP where i.idPacienteESP == id select i).FirstOrDefault();
 
-            int numeroRandom = 0;
-            double numeroDecimalRandom = 0;
-            double decimalRandom = 0.00;
-            double altura = 1.74;
-            double peso = 0.00;
-            float cadenaPeso;
+            EPI_ESP epi = new EPI_ESP();
+            var revisionEPI = (from i in db.EPI_ESP where i.idPacienteESP == id select i).FirstOrDefault();
+            var idEPI = db.EPI_ESP.Find(0);
 
-            for(int i  = 0; i < 10; i++)
+            if(revisionEPI != null)
             {
-                Random ran = new Random();
-                numeroRandom = ran.Next(57);
-
-                numeroDecimalRandom = ran.Next(2223, 2878)/100.00;
-
-                peso = numeroDecimalRandom * (altura * altura);
-                cadenaPeso = (float)(Math.Round((double)peso, 2));
+                idEPI = db.EPI_ESP.Find(revisionEPI.idEpiESP);
             }
+
+
+            if (revisionEPI == null)
+            {
+                epi.idPacienteESP = id;
+
+                if (numero != null)
+                {
+                    epi.NoExpediente = numero;
+                }
+                else
+                {
+                    if(revisionEPI != null)
+                    {
+                        epi.NoExpediente = revisionEPI.NoExpediente;
+                    }
+                }
+
+                if (genero != null)
+                {
+                    epi.Genero = genero;
+
+                    if(genero == "F")
+                    {
+                        epi.URegla = DateTime.Now.AddDays(-20).ToString("yyyy-MM-dd").Replace("-", "");
+                        epi.Embarazos = "0";
+                        epi.Abortos = "0";
+                        epi.Parto = "0";
+                        epi.Cesarea = "0";
+                        epi.IVSexual = "0";
+                    }
+                }
+                else
+                {
+                    if (revisionEPI != null)
+                    {
+                        epi.Genero = revisionEPI.Genero;
+
+                        if (revisionEPI.Genero == "F")
+                        {
+                            epi.URegla = DateTime.Now.AddDays(-20).ToString("yyyy-MM-dd").Replace("-", "");
+                            epi.Embarazos = "0";
+                            epi.Abortos = "0";
+                            epi.Parto = "0";
+                            epi.Cesarea = "0";
+                            epi.IVSexual = "0";
+                        }
+                    }
+                }
+
+                Random random = new Random();
+                epi.Sistolica = random.Next(111, 132).ToString();
+                epi.Diastolica = random.Next(71, 84).ToString();
+                epi.Cardiaca = random.Next(66, 98).ToString();
+                epi.Respiratoria = random.Next(15, 19).ToString();
+                epi.Temperatura = random.Next(36, 37).ToString();
+
+                if (estatura != "")
+                {
+                    double numeroDecimalRandom = 0;
+                    double altura = Convert.ToDouble(estatura);
+                    double peso = 0.00;
+                    float cadenaPeso;
+
+                    epi.Estatura = estatura;
+                    numeroDecimalRandom = random.Next(2223, 2878) / 100.00;
+
+                    peso = numeroDecimalRandom * ((altura / 100) * (altura / 100));
+                    cadenaPeso = (float)(Math.Round((double)peso, 2));
+                    epi.Peso = Convert.ToInt32(cadenaPeso).ToString();
+                }
+                else
+                {
+                    if (revisionEPI != null)
+                    {
+                        double numeroDecimalRandom = 0;
+                        double altura = Convert.ToDouble(estatura);
+                        double peso = 0.00;
+                        float cadenaPeso;
+
+                        epi.Estatura = estatura;
+                        numeroDecimalRandom = random.Next(2223, 2878) / 100.00;
+
+                        peso = numeroDecimalRandom * ((altura / 100) * (altura / 100));
+                        cadenaPeso = (float)(Math.Round((double)peso, 2));
+                        epi.Peso = Convert.ToInt32(cadenaPeso).ToString();
+                    }
+                }
+
+                epi.Cintura = "90";
+                epi.Cuello = "38";
+                epi.Grasa = random.Next(19, 33).ToString();
+
+                epi.Glucosa = "100";
+                epi.Hemoglobina = "6.5";
+
+                epi.Ritmo = "SINUSAL";
+                epi.Frecuencia = random.Next(66, 99).ToString();
+                epi.Eje = random.Next(30, 90).ToString();
+                epi.PR = random.Next(120, 200).ToString();
+                epi.QT = random.Next(350, 400).ToString();
+                epi.QRS = random.Next(60, 100).ToString();
+                epi.OndaP = random.Next(90, 110).ToString();
+                epi.OndaT = random.Next(120, 130).ToString();
+
+                epi.AVCD = "1";
+                epi.AVCI = "1";
+                epi.AVID = "1";
+                epi.AVII = "1";
+                epi.AVLD = "1";
+                epi.AVLI = "1";
+                epi.Carta = "NO";
+
+                int [] profundidad = { 40, 50, 60 };
+
+                int numeroProfundidad = random.Next(0, 2);
+                epi.Estereopsis = profundidad[numeroProfundidad].ToString();
+
+                epi.Lentes = "NO";
+                epi.CampoVisual = "NORMAL";
+                epi.MovOculares = "NORMAL";
+                epi.RPD = "NORMAL";
+                epi.RPI = "NORMAL";
+                epi.TestVC = "NORMAL";
+
+                string[] notaVisual = { "Sano", "Sano ve bien", "No presenta problema" };
+                int numeroNotaVisual = random.Next(0, 2);
+                epi.Nota = notaVisual[numeroNotaVisual].ToString();
+
+                epi.MadreVive = "SI";
+                epi.PadreVive = "SI";
+                epi.HermanosViven = "SI";
+
+                epi.Patologias = "NINGUNO";
+                epi.Interpretacion = "NORMAL";
+                epi.NotaMedica = "NORMAL";
+                epi.VacCompletas = "SI";
+                epi.ECivil = "UNIONLIBRE";
+                epi.Religion = "OTRO";
+                epi.Escolaridad = "SECUNDARIA";
+                epi.Hijos = "0";
+                epi.ECongenita = "NO";
+                epi.EspDiag = "Esta limpio";
+                epi.Alergia = "Ninguna";
+                epi.Diabetes = "NO";
+                epi.DiagHipArt = "NO";
+                epi.Alcohol = "NO";
+                epi.Fuma = "NO";
+                epi.Drogas = "NO";
+                epi.UsaLentes = "NO";
+
+                if(ModelState.IsValid)
+                {
+                    db.EPI_ESP.Add(epi);
+                    db.SaveChanges();
+                }
+            }
+            else
+            {
+                if(genero != "")
+                {
+                    idEPI.Genero = genero;
+                }
+                if(numero != "")
+                {
+                    idEPI.NoExpediente = numero;
+                }
+                if(estatura != "")
+                {
+                    Random random = new Random();
+                    idEPI.Estatura = estatura;
+
+                    double numeroDecimalRandom = 0;
+                    double altura = Convert.ToDouble(estatura);
+                    double peso = 0.00;
+                    float cadenaPeso;
+
+                    idEPI.Estatura = estatura;
+                    numeroDecimalRandom = random.Next(2223, 2878) / 100.00;
+
+                    peso = numeroDecimalRandom * ((altura /100 ) * (altura/100));
+                    cadenaPeso = (float)(Math.Round((double)peso, 2));
+                    idEPI.Peso = Convert.ToInt32(cadenaPeso).ToString();
+                }
+
+                if (genero != null)
+                {
+                    epi.Genero = genero;
+
+                    if (genero == "F")
+                    {
+                        idEPI.URegla = DateTime.Now.AddDays(-20).ToString("yyyy-MM-dd").Replace("-", "");
+                        idEPI.Embarazos = "0";
+                        idEPI.Abortos = "0";
+                        idEPI.Parto = "0";
+                        idEPI.Cesarea = "0";
+                        idEPI.IVSexual = "0";
+                    }
+                }
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(idEPI).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+
+            }
+
+            //int numeroRandom = 0;
+            //double numeroDecimalRandom = 0;
+            //double decimalRandom = 0.00;
+            //double altura = 1.74;
+            //double peso = 0.00;
+            //float cadenaPeso;
+
+            //for(int i  = 0; i < 10; i++)
+            //{
+            //    Random ran = new Random();
+            //    //numeroRandom = ran.Next(57);
+
+            //    numeroDecimalRandom = ran.Next(2223, 2878)/100.00;
+
+            //    peso = numeroDecimalRandom * (altura * altura);
+            //    cadenaPeso = (float)(Math.Round((double)peso, 2));
+            //}
 
             if(revisionPacienteESP.NoExpediente != null && revisionPacienteESP.TipoLicencia != null && revisionPacienteESP.TipoTramite != null && revisionPacienteESP.Doctor != null 
                 && revisionPacienteESP.Estatura != null && revisionPacienteESP.Metra != null 
@@ -754,6 +1160,134 @@ namespace SCT_iCare.Controllers.Dictamenes
             Response.AddHeader("content-disposition", "attachment;filename=" + paciente.Nombre + ".pdf");
             Response.BinaryWrite(bytesBinary);
             Response.End();
+
+            return RedirectToAction("Citas");
+        }
+
+
+        public ActionResult DescargarHuellasZIP(int? id, string h2, string h3, string h7, string h8)
+        {
+            Random ran = new Random();
+            //int numeroRandom = ran.Next(90);
+
+            var documento = (from d in db.HuellasRandom where d.idHuella == 1  select d.Huella2).FirstOrDefault();
+
+            if(h2 != null)
+            {
+                documento = (from d in db.HuellasRandom where d.idHuella == 1 select d.Huella2).FirstOrDefault();
+            }
+
+            if (h3 != null)
+            {
+                documento = (from d in db.HuellasRandom where d.idHuella == 1 select d.Huella3).FirstOrDefault();
+            }
+
+            if (h7 != null)
+            {
+                documento = (from d in db.HuellasRandom where d.idHuella == 1 select d.Huella7).FirstOrDefault();
+            }
+
+            if (h8 != null)
+            {
+                documento = (from d in db.HuellasRandom where d.idHuella == 1 select d.Huella8).FirstOrDefault();
+            }
+
+
+            var paciente = (from i in db.PacienteESP where i.idPacienteESP == id select i).FirstOrDefault();
+            var bytesBinary = documento;
+
+            Ionic.Zip.ZipFile zip = new Ionic.Zip.ZipFile();
+            //zip.AddEntry(paciente.NoExpediente + "-h-2.bmp", bytesBinary);
+
+            if(h2 != null)
+            {
+                zip.AddEntry(paciente.NoExpediente + "-h-2.bmp", bytesBinary);
+            }
+
+            if (h3 != null)
+            {
+                zip.AddEntry(paciente.NoExpediente + "-h-3.bmp", bytesBinary);
+            }
+
+            if (h7 != null)
+            {
+                zip.AddEntry(paciente.NoExpediente + "-h-7.bmp", bytesBinary);
+            }
+
+            if (h8 != null)
+            {
+                zip.AddEntry(paciente.NoExpediente + "-h-8.bmp", bytesBinary);
+            }
+
+            using (MemoryStream output = new MemoryStream())
+            {
+                zip.Save(output);
+
+                if(h2 != null)
+                {
+                    return File(output.ToArray(), "application/zip", paciente.NoExpediente + "-h-2.zip");
+                }
+
+                if (h3 != null)
+                {
+                    return File(output.ToArray(), "application/zip", paciente.NoExpediente + "-h-3.zip");
+                }
+
+                if (h7 != null)
+                {
+                    return File(output.ToArray(), "application/zip", paciente.NoExpediente + "-h-7.zip");
+                }
+
+                if (h8 != null)
+                {
+                    return File(output.ToArray(), "application/zip", paciente.NoExpediente + "-h-8.zip");
+                }
+
+            }
+
+            Response.ContentType = "application/pdf";
+            //Response.AddHeader("content-disposition", "attachment;filename=" + paciente.NoExpediente + "-h-2.bmp");
+
+            if(h2 != null)
+            {
+                Response.AddHeader("content-disposition", "attachment;filename=" + paciente.NoExpediente + "-h-2.bmp");
+            }
+
+            if (h3 != null)
+            {
+                Response.AddHeader("content-disposition", "attachment;filename=" + paciente.NoExpediente + "-h-3.bmp");
+            }
+
+            if (h7 != null)
+            {
+                Response.AddHeader("content-disposition", "attachment;filename=" + paciente.NoExpediente + "-h-7.bmp");
+            }
+
+            if (h8 != null)
+            {
+                Response.AddHeader("content-disposition", "attachment;filename=" + paciente.NoExpediente + "-h-8.bmp");
+            }
+
+            Response.BinaryWrite(bytesBinary);
+            Response.End();
+            HttpContext.ApplicationInstance.CompleteRequest();
+
+            return RedirectToAction("Captura");
+        }
+
+        public ActionResult CancelarCita(int? id, string comentario)
+        {
+            var paciente = db.PacienteESP.Find(id);
+
+            paciente.Asistencia = "NO";
+            paciente.CancelaComentario = comentario;
+            paciente.EstatusCaptura = "Cancelado";
+
+            if(ModelState.IsValid)
+            {
+                db.Entry(paciente).State = EntityState.Modified;
+                db.SaveChanges();
+            }
 
             return RedirectToAction("Citas");
         }

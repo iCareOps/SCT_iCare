@@ -361,6 +361,77 @@
     <Property Name="idPaciente" Type="int" />
     <Property Name="Motivo" Type="varchar" MaxLength="30" />
   </EntityType>
+  <EntityType Name="EPI_ESP">
+    <Key>
+      <PropertyRef Name="idEpiESP" />
+    </Key>
+    <Property Name="idEpiESP" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="idPacienteESP" Type="int" />
+    <Property Name="NoExpediente" Type="varchar" MaxLength="10" />
+    <Property Name="Genero" Type="varchar" MaxLength="10" />
+    <Property Name="Sistolica" Type="varchar" MaxLength="10" />
+    <Property Name="Diastolica" Type="varchar" MaxLength="10" />
+    <Property Name="Cardiaca" Type="varchar" MaxLength="10" />
+    <Property Name="Respiratoria" Type="varchar" MaxLength="10" />
+    <Property Name="Temperatura" Type="varchar" MaxLength="10" />
+    <Property Name="Peso" Type="varchar" MaxLength="10" />
+    <Property Name="Estatura" Type="varchar" MaxLength="10" />
+    <Property Name="Cintura" Type="varchar" MaxLength="10" />
+    <Property Name="Cuello" Type="varchar" MaxLength="10" />
+    <Property Name="Grasa" Type="varchar" MaxLength="10" />
+    <Property Name="Glucosa" Type="varchar" MaxLength="10" />
+    <Property Name="Hemoglobina" Type="varchar" MaxLength="10" />
+    <Property Name="Ritmo" Type="varchar" MaxLength="10" />
+    <Property Name="Frecuencia" Type="varchar" MaxLength="10" />
+    <Property Name="Eje" Type="varchar" MaxLength="10" />
+    <Property Name="PR" Type="varchar" MaxLength="10" />
+    <Property Name="QT" Type="varchar" MaxLength="10" />
+    <Property Name="QRS" Type="varchar" MaxLength="10" />
+    <Property Name="OndaP" Type="varchar" MaxLength="10" />
+    <Property Name="OndaT" Type="varchar" MaxLength="10" />
+    <Property Name="AVCD" Type="varchar" MaxLength="10" />
+    <Property Name="AVCI" Type="varchar" MaxLength="10" />
+    <Property Name="AVID" Type="varchar" MaxLength="10" />
+    <Property Name="AVII" Type="varchar" MaxLength="10" />
+    <Property Name="AVLD" Type="varchar" MaxLength="10" />
+    <Property Name="AVLI" Type="varchar" MaxLength="10" />
+    <Property Name="Lentes" Type="varchar" MaxLength="10" />
+    <Property Name="Estereopsis" Type="varchar" MaxLength="10" />
+    <Property Name="Carta" Type="varchar" MaxLength="10" />
+    <Property Name="CampoVisual" Type="varchar" MaxLength="20" />
+    <Property Name="MovOculares" Type="varchar" MaxLength="20" />
+    <Property Name="RPD" Type="varchar" MaxLength="20" />
+    <Property Name="RPI" Type="varchar" MaxLength="20" />
+    <Property Name="Nota" Type="varchar" MaxLength="20" />
+    <Property Name="TestVC" Type="varchar" MaxLength="20" />
+    <Property Name="MadreVive" Type="varchar" MaxLength="10" />
+    <Property Name="PadreVive" Type="varchar" MaxLength="10" />
+    <Property Name="HermanosViven" Type="varchar" MaxLength="10" />
+    <Property Name="VacCompletas" Type="varchar" MaxLength="10" />
+    <Property Name="ECivil" Type="varchar" MaxLength="30" />
+    <Property Name="Religion" Type="varchar" MaxLength="30" />
+    <Property Name="Escolaridad" Type="varchar" MaxLength="30" />
+    <Property Name="Hijos" Type="varchar" MaxLength="10" />
+    <Property Name="ECongenita" Type="varchar" MaxLength="10" />
+    <Property Name="EspDiag" Type="varchar" MaxLength="20" />
+    <Property Name="Alergia" Type="varchar" MaxLength="20" />
+    <Property Name="Diabetes" Type="varchar" MaxLength="10" />
+    <Property Name="DiagHipArt" Type="varchar" MaxLength="10" />
+    <Property Name="Alcohol" Type="varchar" MaxLength="10" />
+    <Property Name="Fuma" Type="varchar" MaxLength="10" />
+    <Property Name="Drogas" Type="varchar" MaxLength="10" />
+    <Property Name="UsaLentes" Type="varchar" MaxLength="10" />
+    <Property Name="TLentes" Type="varchar" MaxLength="10" />
+    <Property Name="URegla" Type="varchar" MaxLength="10" />
+    <Property Name="Embarazos" Type="varchar" MaxLength="10" />
+    <Property Name="Abortos" Type="varchar" MaxLength="10" />
+    <Property Name="Parto" Type="varchar" MaxLength="10" />
+    <Property Name="Cesarea" Type="varchar" MaxLength="10" />
+    <Property Name="IVSexual" Type="varchar" MaxLength="10" />
+    <Property Name="Patologias" Type="varchar" MaxLength="20" />
+    <Property Name="Interpretacion" Type="varchar" MaxLength="20" />
+    <Property Name="NotaMedica" Type="varchar" MaxLength="20" />
+  </EntityType>
   <EntityType Name="EPI_ExploracionFisica">
     <Key>
       <PropertyRef Name="idExploracionFisica" />
@@ -619,6 +690,14 @@
     <Property Name="SUC" Type="varchar" MaxLength="10" />
     <Property Name="Contador" Type="int" />
     <Property Name="ContadorFecha" Type="datetime" />
+  </EntityType>
+  <EntityType Name="UrgentesCount">
+    <Key>
+      <PropertyRef Name="idUrgentes" />
+    </Key>
+    <Property Name="idUrgentes" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Contador" Type="int" />
+    <Property Name="Mes" Type="varchar" MaxLength="20" />
   </EntityType>
   <EntityType Name="Usuarios">
     <Key>
@@ -930,6 +1009,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_EPI_ESP_PacienteESP">
+    <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+    <End Role="EPI_ESP" Type="Self.EPI_ESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="EPI_ESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_EPI_ExploracionFisica_Paciente">
     <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
     <End Role="EPI_ExploracionFisica" Type="Self.EPI_ExploracionFisica" Multiplicity="*" />
@@ -1185,6 +1276,7 @@
     <EntitySet Name="EPI_Audiologia" EntityType="Self.EPI_Audiologia" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI_Cardiologia" EntityType="Self.EPI_Cardiologia" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI_DictamenAptitud" EntityType="Self.EPI_DictamenAptitud" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="EPI_ESP" EntityType="Self.EPI_ESP" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI_ExploracionFisica" EntityType="Self.EPI_ExploracionFisica" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI_Laboratorio" EntityType="Self.EPI_Laboratorio" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EPI_Odontologia" EntityType="Self.EPI_Odontologia" Schema="dbo" store:Type="Tables" />
@@ -1209,6 +1301,7 @@
     <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="RolMenu" EntityType="Self.RolMenu" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Sucursales" EntityType="Self.Sucursales" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="UrgentesCount" EntityType="Self.UrgentesCount" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
     <AssociationSet Name="FK_Archivos_Paciente" Association="Self.FK_Archivos_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />
@@ -1309,6 +1402,10 @@
     <AssociationSet Name="FK_EPI_DictamenAptitud_Paciente" Association="Self.FK_EPI_DictamenAptitud_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />
       <End Role="EPI_DictamenAptitud" EntitySet="EPI_DictamenAptitud" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_ESP_PacienteESP" Association="Self.FK_EPI_ESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="EPI_ESP" EntitySet="EPI_ESP" />
     </AssociationSet>
     <AssociationSet Name="FK_EPI_ExploracionFisica_Paciente" Association="Self.FK_EPI_ExploracionFisica_Paciente">
       <End Role="Paciente" EntitySet="Paciente" />

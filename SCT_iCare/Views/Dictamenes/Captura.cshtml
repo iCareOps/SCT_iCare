@@ -16,7 +16,7 @@
 @model IEnumerable<SCT_iCare.Paciente>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Captura";
 
     var oUser = (Usuarios)HttpContext.Current.Session["User"];
 
@@ -49,8 +49,8 @@
     DateTime thisDate = new DateTime(year, month, day);
     DateTime tomorrowDate = new DateTime(year1, month1, day1);
 
-    var modelo = db.PacienteESP.Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.NoExpediente != null && s.Doctor != null && s.Asistencia == null && s.Estatura != null
-    && s.Metra != null);
+    var modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && (s.NoExpediente != null || s.CURP != null) && s.Doctor != null && s.Asistencia == null && s.Estatura != null
+    && s.Metra != null) || (s.Metra != null && s.EstatusCaptura == null)).OrderByDescending(o => o.CancelaComentario == "Urgente").ThenByDescending(t => t.FechaCita);
     int? idRol = 0;
 
     if (oUser != null)
@@ -237,6 +237,9 @@ else
                         Tipo de Trámite
                     </th>
                     <th>
+                        Fecha Solicitud
+                    </th>
+                    <th>
                         Estatus
                     </th>
                     <th>
@@ -274,6 +277,13 @@ else
 
                     <td>
                         <b>@Html.DisplayFor(modelItem => item.Nombre) </b>
+                        @{
+                            if (item.CancelaComentario == "Urgente")
+                            {
+                                <br />
+                                <span style="font-size:x-small;color:red"><b>URGENTE!!</b></span>
+                            }
+                        }
 
                         @if (item.Entregado != null)
                         {
@@ -289,6 +299,9 @@ else
                     </td>
                     <td>
                         <b>@Html.DisplayFor(modelItem => item.TipoTramite)</b><br /> (@item.TipoLicencia)
+                    </td>
+                    <td>
+                        <span style="font-size:smaller">@Convert.ToDateTime(item.FechaCita).ToString("dd-MMMM-yyyy")</span>
                     </td>
                     <td style="font-size: smaller">
                         @{
@@ -345,6 +358,14 @@ else
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#DescargarEKG_@item.idPacienteESP">Electrocardiograma</a>*@
                                         <b>@Html.ActionLink("Descargar EKG", "AbrirElectro", null, new { style = "text-decoration: none" })</b>
+                                        <div class="dropdown-divider"></div>
+                                        <b>@Html.ActionLink("Huella 2", "DescargarHuellasZIP", new { id = item.idPacienteESP, h2 = "SI"}, new { style = "text-decoration: none" })</b>
+                                        <div class="dropdown-divider"></div>
+                                        <b>@Html.ActionLink("Huella 3", "DescargarHuellasZIP", new { id = item.idPacienteESP, h3 = "SI"}, new { style = "text-decoration: none" })</b>
+                                        <div class="dropdown-divider"></div>
+                                        <b>@Html.ActionLink("Huella 7", "DescargarHuellasZIP", new { id = item.idPacienteESP, h7 = "SI"}, new { style = "text-decoration: none" })</b>
+                                        <div class="dropdown-divider"></div>
+                                        <b>@Html.ActionLink("Huella 8", "DescargarHuellasZIP", new { id = item.idPacienteESP, h8 = "SI"}, new { style = "text-decoration: none" })</b>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#DescargarDocumentos_@item.idPacienteESP">Documentación</a>*@
                                         <b>@Html.ActionLink("Documentos", "AbrirDocumentos", new { id = item.idPacienteESP }, new { style = "text-decoration: none" })</b>

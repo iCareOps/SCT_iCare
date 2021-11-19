@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<SCT_iCare.Paciente>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Citas";
 
     var oUser = (Usuarios)HttpContext.Current.Session["User"];
 
@@ -34,7 +34,7 @@
     DateTime thisDate = new DateTime(year, month, day);
     DateTime tomorrowDate = new DateTime(year1, month1, day1);
 
-    var modelo = db.PacienteESP.Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate);
+    var modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate) || (s.EstatusCaptura == null)).OrderByDescending(o => o.FechaCita).OrderByDescending(o => o.CancelaComentario == "Urgente");
     int? idRol = 0;
 
     if (oUser != null)
@@ -283,6 +283,7 @@
                             <option style="font-weight:bold" value="LUIS ENRIQUE">LUIS ENRIQUE</option>
                             <option style="font-weight:bold" value="LUIS GDL">LUIS GDL</option>
                             <option style="font-weight:bold" value="MIRIAM SOL">MIRIAM SOL</option>
+                            <option style="font-weight:bold" value="NATALY">NATALY</option>
                             <option style="font-weight:bold" value="PABLO">PABLO</option>
                             <option style="font-weight:bold" value="ROBERTO BONIFACIO">ROBERTO BONIFACIO</option>
                             <option style="font-weight:bold" value="ROYAL TRANSPORTS">ROYAL TRANSPORTS</option>
@@ -435,6 +436,9 @@ else
                         Tipo de Trámite
                     </th>
                     <th>
+                        FechaSolicitud
+                    </th>
+                    <th>
                         Cita en METRA
                     </th>
                     <th>
@@ -472,6 +476,13 @@ else
 
                     <td>
                         <b>@Html.DisplayFor(modelItem => item.Nombre) </b>
+                        @{
+                            if (item.CancelaComentario == "Urgente")
+                            {
+                                <br />
+                                <span style="font-size:x-small;color:red"><b>URGENTE!!</b></span>
+                            }
+                        }
 
                         @if (item.Entregado != null)
                         {
@@ -524,6 +535,9 @@ else
                     </td>
                     <td>
                         <b>@Html.DisplayFor(modelItem => item.TipoTramite)</b>
+                    </td>
+                    <td>
+                        <span style="font-size:smaller">@Convert.ToDateTime(item.FechaCita).ToString("dd-MMMM-yyyy")</span>
                     </td>
                     <td style="font-size: larger; text-align:center">
                         @if (item.Metra != null)
@@ -622,6 +636,11 @@ else
                             if (item.EstatusCaptura == "En Proceso")
                             {
                                 <b><mark style="background-color: dodgerblue; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>
+                            }
+                            else if (item.EstatusCaptura == "Cancelado")
+                            {
+                                <b><mark style="background-color:crimson; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>
+                                @*<b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>*@
                             }
                             else if (item.EstatusCaptura == "Pausado")
                             {
@@ -790,53 +809,52 @@ else
                                                                 <option style="font-weight:bold" disabled selected>SELECCIONA UNA OPCIÓN</option>
                                                             }
 
-                                                            <option style="font-weight:bold" value="RUBEN SHTURMAN ELLSTEIN">RUBEN SHTURMAN ELLSTEIN</option>
-                                                            <option style="font-weight:bold" value="DIANA ELENA VILLA SCHEFER">DIANA ELENA VILLA SCHEFER</option>
+                                                            <option style="font-weight:bold" value="DEYANIRA DELGADO DÁVILA">DEYANIRA DELGADO DÁVILA</option>
                                                             <option style="font-weight:bold" value="SANDRA LIMA COSIO">SANDRA LIMA COSIO</option>
                                                             <option style="font-weight:bold" value="ARTURO ESCOBEDO GARCÍA">ARTURO ESCOBEDO GARCÍA</option>
 
                                                             @*foreach (var item1 in consultorios1)
-                    {
-                        <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
-                    }*@
+                                        {
+                                            <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
+                                        }*@
 
                                                         }
                                                     </select>
                                                 </div>
                                                 @*@{
-                                                    var consultaAereo1 = (from c in db.PacienteESP where c.idPacienteESP == item.idPacienteESP select c.TipoLicencia).FirstOrDefault();
-                                                    if (consultaAereo1 == "AEREO")
-                                                    {
-                                                        <input type="hidden" name="tipoL" id="tipoL" value="AEREO" />
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="form-group" style="width:80%; min-width:320px">
-                                                            <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
-                                                            <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                var consultaAereo1 = (from c in db.PacienteESP where c.idPacienteESP == item.idPacienteESP select c.TipoLicencia).FirstOrDefault();
+                                if (consultaAereo1 == "AEREO")
+                                {
+                                    <input type="hidden" name="tipoL" id="tipoL" value="AEREO" />
+                                }
+                                else
+                                {
+                                    <div class="form-group" style="width:80%; min-width:320px">
+                                        <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
+                                        <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
 
-                                                                @{
-                                                                    var revisionTL2 = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
+                                            @{
+                                                var revisionTL2 = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
 
-                                                                    if (revisionTL2.TipoLicencia != null)
-                                                                    {
-                                                                        <option value="@revisionTL2.TipoLicencia" selected>@revisionTL2.TipoLicencia</option>
-                                                                        <option disabled>----------------------------------------</option>
-                                                                        <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
-                                                                        <option value="MARITIMO">MARITIMO</option>
-                                                                        <option value="FERROVIARIO">FERROVIARIO</option>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
-                                                                        <option value="MARITIMO">MARITIMO</option>
-                                                                        <option value="FERROVIARIO">FERROVIARIO</option>
-                                                                    }
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    }
-                                                }*@
+                                                if (revisionTL2.TipoLicencia != null)
+                                                {
+                                                    <option value="@revisionTL2.TipoLicencia" selected>@revisionTL2.TipoLicencia</option>
+                                                    <option disabled>----------------------------------------</option>
+                                                    <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                                                    <option value="MARITIMO">MARITIMO</option>
+                                                    <option value="FERROVIARIO">FERROVIARIO</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                                                    <option value="MARITIMO">MARITIMO</option>
+                                                    <option value="FERROVIARIO">FERROVIARIO</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                }
+                            }*@
 
                                                 <div class="form-group" style="width:80%; min-width:320px">
                                                     <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
@@ -905,16 +923,16 @@ else
                                                     <input type="hidden" class="form-control" id="id" name="id" value="@item.idPacienteESP">
                                                 </div>
                                                 @*<div class="form-group">
-            @if (item.Metra == null)
-            {
-                <input type="checkbox" name="metra" />
-            }
-            else
-            {
-                <input type="checkbox" checked name="metra" />
-            }
-            <label for="file" class="col-form-label">¿Cita registrada en METRA?:</label>
-        </div>*@
+                                @if (item.Metra == null)
+                                {
+                                    <input type="checkbox" name="metra" />
+                                }
+                                else
+                                {
+                                    <input type="checkbox" checked name="metra" />
+                                }
+                                <label for="file" class="col-form-label">¿Cita registrada en METRA?:</label>
+                            </div>*@
                                                 <hr />
                                                 <div class="form-group">
                                                     <label for="file" class="col-form-label">Capturar Foto:</label>
@@ -939,6 +957,14 @@ else
                                                 <div class="form-group">
                                                     <label for="file" class="col-form-label">Hemoglobina Glucosilada (sólo si aplica):</label>
                                                     <input type="file" name="glucosilada" />
+                                                </div>
+                                                <hr />
+                                                <div class="form-group" style="background-color:ghostwhite; padding:5px; border:solid 1px darkblue; border-radius:4px">
+                                                    <label for="file" class="col-form-label">Cargar Huellas:</label><br />
+                                                    <b>Dedo #2</b><input type="file" name="" />
+                                                    <b>Dedo #3</b><input type="file" name="" />
+                                                    <b>Dedo #7</b><input type="file" name="" />
+                                                    <b>Dedo #8</b><input type="file" name="" /><br />
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -977,6 +1003,32 @@ else
                                     </div>
                                 </div>
                             </form>
+
+                            <!-- Modal para preguntar si quiere Cancelar Cita-->
+                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/CancelarCita")">
+                                @Html.AntiForgeryToken()
+                                <div class="modal fade" id="Cancelar_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea cancelar la cita de <span class="text-danger">@item.Nombre</span>?</b></h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label for="recipient-name" class="col-form-label">¿Cual es el motivo?:</label>
+                                                    <input type="text" maxlength="200" class="form-control" id="comentario" name="comentario" required>
+                                                    <input type="hidden" name="id" value="@item.idPacienteESP" />
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                <input type="submit" value="Enviar" class="btn btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
 
                         </div>
 
