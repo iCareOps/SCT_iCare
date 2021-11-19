@@ -64,6 +64,21 @@ namespace SCT_iCare.Controllers.Dictamenes
                 tomorrowDate = new DateTime(year, month, day);
             }
 
+            var urge = (from i in db.UrgentesCount select i).FirstOrDefault();
+            string mes = DateTime.Now.ToString("MMMM");
+
+            if(urge.Mes != mes)
+            {
+                urge.Mes = mes;
+                urge.Contador = 500;
+
+                if(ModelState.IsValid)
+                {
+                    db.Entry(urge).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
             inicio = (inicio ?? start1);
             final = (final ?? finish1);
 
@@ -217,6 +232,131 @@ namespace SCT_iCare.Controllers.Dictamenes
             }
 
             return Redirect("Citas"); ;
+        }
+
+
+        [HttpPost]
+        public ActionResult CreateVentas(string nombre, string usuario, /*string sucursal, */string cantidad, string cantidadAereo, string referido, string urgente)
+        {
+            PacienteESP paciente1 = new PacienteESP();
+
+            string canal = null;
+
+            int cantidadN;
+            int cantidadA;
+
+            if (cantidad == "")
+            {
+                cantidadN = 0;
+            }
+            else
+            {
+                cantidadN = Convert.ToInt32(cantidad);
+            }
+
+            if (cantidadAereo == "")
+            {
+                cantidadA = 0;
+            }
+            else
+            {
+                cantidadA = Convert.ToInt32(cantidadAereo);
+            }
+
+
+            if ((cantidadN + cantidadA) == 1)
+            {
+                PacienteESP paciente = new PacienteESP();
+                paciente.Nombre = nombre.ToUpper()/*.Normalize(System.Text.NormalizationForm.FormD).Replace(@"´¨", "")*/;
+                paciente.FechaCita = DateTime.Now;
+                //paciente.Sucursal = sucursal;
+                paciente.Solicita = usuario;
+                paciente.ReferidoPor = referido.ToUpper();
+
+                if(urgente == "on")
+                {
+                    paciente.CancelaComentario = "Urgente";
+                    var urge = (from i in db.UrgentesCount select i).FirstOrDefault();
+
+                    if(urge.Contador >= 1)
+                    {
+                        urge.Contador -= 1;
+
+                        if (ModelState.IsValid)
+                        {
+                            db.Entry(urge).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
+                    }          
+                }
+
+                string TIPOLIC = null;
+                if (cantidadA != 0)
+                {
+                    TIPOLIC = "AEREO";
+                }
+                else
+                {
+                    TIPOLIC = "AUTOTRANSPORTE";
+                }
+                paciente.TipoLicencia = TIPOLIC;
+
+
+                if (ModelState.IsValid)
+                {
+                    db.PacienteESP.Add(paciente);
+
+                    db.SaveChanges();
+                }
+
+            }
+            else
+            {
+                for (int n = 1; n <= Convert.ToInt32((cantidadN + cantidadA)); n++)
+                {
+                    PacienteESP paciente = new PacienteESP();
+                    paciente.Nombre = nombre.ToUpper() + " " + n;
+                    //paciente.Sucursal = sucursal;
+                    paciente.Solicita = usuario;
+                    paciente.FechaCita = DateTime.Now;
+                    paciente.ReferidoPor = referido.ToUpper();
+
+                    if (urgente == "on")
+                    {
+                        paciente.CancelaComentario = "Urgente";
+                        var urge = (from i in db.UrgentesCount select i).FirstOrDefault();
+
+                        if (urge.Contador >= Convert.ToInt32((cantidadN + cantidadA)))
+                        {
+                            urge.Contador -= Convert.ToInt32((cantidadN + cantidadA));
+
+                            if (ModelState.IsValid)
+                            {
+                                db.Entry(urge).State = EntityState.Modified;
+                                db.SaveChanges();
+                            }
+                        }
+                    }
+
+                    if (n > cantidadN)
+                    {
+                        paciente.TipoLicencia = "AEREO";
+                    }
+                    else
+                    {
+                        paciente.TipoLicencia = "AUTOTRANSPORTE";
+                    }
+
+
+                    if (ModelState.IsValid)
+                    {
+                        db.PacienteESP.Add(paciente);
+                        db.SaveChanges();
+                    }
+                }
+            }
+
+            return Redirect("VentasAlternativas"); ;
         }
 
         [HttpPost]
@@ -416,7 +556,7 @@ namespace SCT_iCare.Controllers.Dictamenes
 
                     peso = numeroDecimalRandom * ((altura / 100) * (altura / 100));
                     cadenaPeso = (float)(Math.Round((double)peso, 2));
-                    epi.Peso = cadenaPeso.ToString() ;
+                    epi.Peso = Convert.ToInt32(cadenaPeso).ToString();
                 }
                 else
                 {
@@ -427,12 +567,12 @@ namespace SCT_iCare.Controllers.Dictamenes
                         double peso = 0.00;
                         float cadenaPeso;
 
-                        epi.Estatura = revisionEPI.Estatura;
+                        epi.Estatura = estatura;
                         numeroDecimalRandom = random.Next(2223, 2878) / 100.00;
 
                         peso = numeroDecimalRandom * ((altura / 100) * (altura / 100));
                         cadenaPeso = (float)(Math.Round((double)peso, 2));
-                        epi.Peso = cadenaPeso.ToString();
+                        epi.Peso = Convert.ToInt32(cadenaPeso).ToString();
                     }
                 }
 
@@ -529,10 +669,25 @@ namespace SCT_iCare.Controllers.Dictamenes
 
                     peso = numeroDecimalRandom * ((altura /100 ) * (altura/100));
                     cadenaPeso = (float)(Math.Round((double)peso, 2));
-                    idEPI.Peso = cadenaPeso.ToString();
+                    idEPI.Peso = Convert.ToInt32(cadenaPeso).ToString();
                 }
 
-                if(ModelState.IsValid)
+                if (genero != null)
+                {
+                    epi.Genero = genero;
+
+                    if (genero == "F")
+                    {
+                        idEPI.URegla = DateTime.Now.AddDays(-20).ToString("yyyy-MM-dd").Replace("-", "");
+                        idEPI.Embarazos = "0";
+                        idEPI.Abortos = "0";
+                        idEPI.Parto = "0";
+                        idEPI.Cesarea = "0";
+                        idEPI.IVSexual = "0";
+                    }
+                }
+
+                if (ModelState.IsValid)
                 {
                     db.Entry(idEPI).State = EntityState.Modified;
                     db.SaveChanges();

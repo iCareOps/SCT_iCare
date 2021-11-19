@@ -77,5 +77,6 @@ namespace SCT_iCare
         public virtual DbSet<HemoglobinaGlucosiladaESP> HemoglobinaGlucosiladaESP { get; set; }
         public virtual DbSet<DictamenESP> DictamenESP { get; set; }
         public virtual DbSet<EPI_ESP> EPI_ESP { get; set; }
+        public virtual DbSet<UrgentesCount> UrgentesCount { get; set; }
     }
 }

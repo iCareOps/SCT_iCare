@@ -63,9 +63,9 @@
             idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
             Sucursal = Hospital.ToString();
 
-            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.Sucursal == Sucursal || s.M.Recepcionista == nombreUsuario))@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 
-            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal).Count();
+            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.Sucursal == Sucursal || s.M.Recepcionista == nombreUsuario)).Count();
 
             citasHoyConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Sucursal == Sucursal).Count();
             episHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.Sucursal == Sucursal).Count();
@@ -262,7 +262,16 @@
                         <label for="recipient-name" class="col-form-label">Email:</label>
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
-                    @if (idRol == 2)
+                    @{
+                        if (Sucursal == "TAPO" || Sucursal == "ASPA")
+                        {
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
+                                <input type="date" class="form-control" id="fecha" name="fecha" required>
+                            </div>
+                        }
+                    }
+                    @if (idRol == 2 || (Sucursal == "TAPO" || Sucursal == "ASPA"))
                     {
                         <div class="form-group" style="width:60%; min-width:320px">
                             <label for="recipient-name" class="col-form-label">Sucursal:</label>
@@ -276,7 +285,15 @@
                                 }
                             </select>
                         </div>
-                        <input type="hidden" name="usuario" asp-for="file" class="" required value="Administración Recepción" />
+                        if (Sucursal == "TAPO" || Sucursal == "ASPA")
+                        {
+                            <input type="hidden" name="usuario" asp-for="file" class="" required value="@nombreUsuario" />
+                        }
+                        else
+                        {
+                            <input type="hidden" name="usuario" asp-for="file" class="" required value="Administración Recepción" />
+                        }
+
                     }
                     else
                     {
@@ -287,12 +304,21 @@
                     <div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
                         <select name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                            <option value="Referencia OXXO">Referencia OXXO</option>
-                            <option value="Referencia Scotiabank">Referencia Scotiabank</option>
-                            <option value="Referencia BanBajío">Referencia BanBajío</option>
-                            <option value="Pago con Tarjeta">Pago con Tarjeta</option>
-                            <option value="Transferencia vía Scotiabank">Transferencia vía Scotiabank</option>
-                            <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                            @{
+                                if (Sucursal != "ASPA" && Sucursal != "TAPO")
+                                {
+                                    <option value="Referencia OXXO">Referencia OXXO</option>
+                                    <option value="Referencia Scotiabank">Referencia Scotiabank</option>
+                                    <option value="Referencia BanBajío">Referencia BanBajío</option>
+                                    <option value="Transferencia vía Scotiabank">Transferencia vía Scotiabank</option>
+                                    <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                                }
+                                else
+                                {
+                                    <option value="Referencia Scotiabank">Referencia Scotiabank</option>
+                                    <option value="Referencia BanBajío">Referencia BanBajío</option>
+                                }
+                            }
                         </select>
                     </div>
                     <div class="form-group">
@@ -359,7 +385,7 @@
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
-            </div>
+</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -508,7 +534,16 @@
                         <label for="recipient-name" class="col-form-label">Email:</label>
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
-                    @if (idRol == 2)
+                    @{
+                        if (Sucursal == "TAPO" || Sucursal == "ASPA")
+                        {
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
+                                <input type="date" class="form-control" id="fecha" name="fecha" required>
+                            </div>
+                        }
+                    }
+                    @if (idRol == 2 || (Sucursal == "TAPO" || Sucursal == "ASPA"))
                     {
                         <div class="form-group" style="width:60%; min-width:320px">
                             <label for="recipient-name" class="col-form-label">Sucursal:</label>
@@ -522,7 +557,15 @@
                                 }
                             </select>
                         </div>
-                        <input type="hidden" name="usuario" asp-for="file" class="" required value="Administración Recepción" />
+                        if (Sucursal == "TAPO" || Sucursal == "ASPA")
+                        {
+                            <input type="hidden" name="usuario" asp-for="file" class="" required value="@nombreUsuario" />
+                        }
+                        else
+                        {
+                            <input type="hidden" name="usuario" asp-for="file" class="" required value="Administración Recepción" />
+                        }
+
                     }
                     else
                     {
@@ -589,7 +632,7 @@
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
-            </div>
+</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -738,11 +781,20 @@
                         <label for="recipient-name" class="col-form-label">Email:</label>
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
+                    @{
+                        if (Sucursal == "TAPO" || Sucursal == "ASPA")
+                        {
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
+                                <input type="date" class="form-control" id="fecha" name="fecha" required>
+                            </div>
+                        }
+                    }
                     <div class="form-group">
                         <label for="recipient-name" class="col-form-label"><b>Terminación de Tarjeta (últimos 4 números):</b></label>
                         <input type="number" maxlength="4" min="4" class="form-control" id="card" name="card" required>
                     </div>
-                    @if (idRol == 2)
+                    @if (idRol == 2 || (Sucursal == "TAPO" || Sucursal == "ASPA"))
                     {
                         <div class="form-group" style="width:60%; min-width:320px">
                             <label for="recipient-name" class="col-form-label">Sucursal:</label>
@@ -756,7 +808,15 @@
                                 }
                             </select>
                         </div>
-                        <input type="hidden" name="usuario" asp-for="file" class="" required value="Administración Recepción" />
+                        if (Sucursal == "TAPO" || Sucursal == "ASPA")
+                        {
+                            <input type="hidden" name="usuario" asp-for="file" class="" required value="@nombreUsuario" />
+                        }
+                        else
+                        {
+                            <input type="hidden" name="usuario" asp-for="file" class="" required value="Administración Recepción" />
+                        }
+
                     }
                     else
                     {
@@ -823,7 +883,7 @@
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
-            </div>
+</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -1664,11 +1724,22 @@ else
                                             <div class="form-group" style="width:60%; min-width:320px">
                                                 <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
                                                 <select name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                                    <option value="Referencia OXXO">Referencia OXXO</option>
-                                                    <option value="Referencia Scotiabank">Referencia Scotiabank</option>
-                                                    <option value="Referencia BanBajío">Referencia BanBajío</option>
-                                                    <option value="Transferencia vía Scotiabank">Transferencia vía Scotiabank</option>
-                                                    <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                                                    @{
+                                                        if (Sucursal != "ASPA" && Sucursal != "TAPO")
+                                                        {
+                                                            <option value="Referencia OXXO">Referencia OXXO</option>
+                                                            <option value="Referencia Scotiabank">Referencia Scotiabank</option>
+                                                            <option value="Referencia BanBajío">Referencia BanBajío</option>
+                                                            <option value="Transferencia vía Scotiabank">Transferencia vía Scotiabank</option>
+                                                            <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="Referencia Scotiabank">Referencia Scotiabank</option>
+                                                            <option value="Referencia BanBajío">Referencia BanBajío</option>
+                                                        }
+                                                    }
+
                                                 </select>
                                             </div>
                                         </div>
@@ -1715,6 +1786,7 @@ else
                                         <label for="recipient-name" class="col-form-label">¿Cual es el motivo?:</label>
                                         <input type="text" maxlength="200" class="form-control" id="comentario" name="comentario" required>
                                         <input type="hidden" name="id" value="@item.N.idPaciente" />
+                                        <input type="hidden" name="pago" value="@item.M.TipoPago" />
                                     </div>
                                 </div>
                                 <div class="modal-footer">

@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<SCT_iCare.Paciente>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Ventas Alt";
 
     var oUser = (Usuarios)HttpContext.Current.Session["User"];
 
@@ -36,13 +36,13 @@
     string gestor = ViewBag.Gestor;
     string estatus = ViewBag.Estatus;
 
-    var modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate) /*&& s.EstatusCaptura == "Terminado"*/).OrderByDescending(o => o.FechaCita);
+    var modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate) /*&& s.EstatusCaptura == "Terminado"*/).OrderByDescending(o => o.FechaCita).OrderByDescending(o => o.CancelaComentario == "Urgente");
 
     if (gestor != null)
     {
         modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate) && s.ReferidoPor == gestor).OrderByDescending(o => o.FechaCita);
 
-        if(estatus != null)
+        if (estatus != null)
         {
             modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate) && s.ReferidoPor == gestor && s.EstatusCaptura == estatus).OrderByDescending(o => o.FechaCita);
         }
@@ -174,7 +174,181 @@
 </form>
 
 <br />
+<div class="form-inline">
+    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Nueva Cita</button>
+</div>
 
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Registrar cita previamente pagada</b></h3>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/CreateVentas")">
+                    @Html.AntiForgeryToken()
+                    <div class="form-inline">
+                        <label for="recipient-name" class="col-form-label">Cantidad de EPIs requeridos (Autotransporte, Marítimos y Ferroviarios):</label>
+                    </div>
+                    <div class="form-inline">
+                        <span class="">
+                            <button class="btn btn-info" id="menos" type="button"><b><span class="glyphicon glyphicon-minus"></span></b></button>
+                        </span>
+                        <input style="display:inline-block" type="number" class="form-control" id="contador" min="1" name="cantidad" placeholder="Ingresa una cantidad">
+                        <span class="">
+                            <button class="btn btn-info" id="mas" type="button"><b><span class="glyphicon glyphicon-plus"></span></b></button>
+                        </span>
+                        <br />
+                        <br />
+                    </div>
+                    <div class="form-inline">
+                        <label for="recipient-name" class="col-form-label">Cantidad de EPIs requeridos (Aéreos):</label>
+                    </div>
+                    <div class="form-inline">
+                        <span class="">
+                            <button class="btn btn-warning" id="menos0" type="button"><b><span class="glyphicon glyphicon-minus"></span></b></button>
+                        </span>
+                        <input style="display:inline-block" type="number" class="form-control" id="contador0" min="1" name="cantidadAereo" placeholder="Ingresa una cantidad">
+                        <span class="">
+                            <button class="btn btn-warning" id="mas0" type="button"><b><span class="glyphicon glyphicon-plus"></span></b></button>
+                        </span>
+                        <br />
+                        <br />
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Nombre del Paciente (o Gestor):</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required />
+                    </div>
+                    <input type="hidden" value="@nombreUsuario" name="usuario" />
+                    <div class="form-group" style="width:60%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Referido Por:</label>
+                        <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option style="font-weight:bold" value="AARON DIAZ">AARON DIAZ</option>
+                            <option style="font-weight:bold" value="ALEJANDRO VELAZQUEZ">ALEJANDRO VELAZQUEZ</option>
+                            <option style="font-weight:bold" value="ANTONIO">ANTONIO</option>
+                            <option style="font-weight:bold" value="ELIZABETH">ELIZABETH</option>
+                            <option style="font-weight:bold" value="LEOPOLDO MAZA">LEOPOLDO MAZA</option>
+                            <option style="font-weight:bold" value="LICENCIAS FEDERALES STINGRAY">LICENCIAS FEDERALES STINGRAY</option>
+                            <option style="font-weight:bold" value="LUIS CORTES">LUIS CORTES</option>
+                            <option style="font-weight:bold" value="LUIS ENRIQUE">LUIS ENRIQUE</option>
+                            <option style="font-weight:bold" value="LUIS GDL">LUIS GDL</option>
+                            <option style="font-weight:bold" value="MIRIAM SOL">MIRIAM SOL</option>
+                            <option style="font-weight:bold" value="NATALY">NATALY</option>
+                            <option style="font-weight:bold" value="PABLO">PABLO</option>
+                            <option style="font-weight:bold" value="ROBERTO BONIFACIO">ROBERTO BONIFACIO</option>
+                            <option style="font-weight:bold" value="ROYAL TRANSPORTS">ROYAL TRANSPORTS</option>
+                            <option style="font-weight:bold" value="SAYRA">SAYRA</option>
+                            <option style="font-weight:bold" value="VICTOR GERICO">VICTOR GERICO</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="background-color:ghostwhite; padding:5px; border:solid 1px darkblue; border-radius:4px">
+                        <input type="checkbox"  id="nombre" name="urgente" />
+                        <label for="recipient-name" class="col-form-label" > MARCAR COMO URGENTE</label>
+                        @{ 
+                            int? urgentes = (from i in db.UrgentesCount select i.Contador).FirstOrDefault();
+                            <br />
+                            <span class="text-danger" style="font-size:smaller">**Quedan <b>@urgentes</b> requisiciones de Dictámenes Urgentes para este mes. Si el número de creación de citas supera los @urgentes la requisición no será posible.</span>
+                        }
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <input type="submit" value="Enviar" class="btn btn-primary" />
+            </div></form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var sumar = document.getElementById("mas");
+    var restar = document.getElementById("menos");
+    var contador = document.getElementById("contador");
+    var importe = document.getElementById("importe");
+    var valorBase = 5.20;
+    var prevValue;
+
+    function calcular() {
+        var value = contador.value;
+        var isValid = /^[1-9][0-9]*$/.test(value);
+
+        if (!isValid) {
+            contador.value = prevValue;
+        } else {
+            prevValue = value;
+        }
+
+        importe.value = Number.parseFloat(contador.value * valorBase).toFixed(2);
+    }
+
+    sumar.onclick = function () {
+        contador.value = Number(contador.value) + 1;
+        calcular();
+    };
+
+    restar.onclick = function () {
+        contador.value = Number(contador.value) - 1;
+        calcular();
+    };
+
+    contador.onchange = function () {
+        calcular();
+    };
+
+    contador.onkeyup = function () {
+        if (contador.value === "") {
+            return;
+        }
+        calcular();
+    };
+
+    calcular();
+</script>
+
+<script type="text/javascript">
+    var sumar0 = document.getElementById("mas0");
+    var restar0 = document.getElementById("menos0");
+    var contador0 = document.getElementById("contador0");
+    var importe0 = document.getElementById("importe0");
+    var valorBase0 = 5.20;
+    var prevValue0;
+
+    function calcular0() {
+        var value0 = contador0.value;
+        var isValid0 = /^[1-9][0-9]*$/.test(value0);
+
+        if (!isValid0) {
+            contador0.value = prevValue0;
+        } else {
+            prevValue0 = value0;
+        }
+
+        importe0.value = Number.parseFloat(contador0.value * valorBase0).toFixed(2);
+    }
+
+    sumar0.onclick = function () {
+        contador0.value = Number(contador0.value) + 1;
+        calcular0();
+    };
+
+    restar0.onclick = function () {
+        contador0.value = Number(contador0.value) - 1;
+        calcular0();
+    };
+
+    contador0.onchange = function () {
+        calcular0();
+    };
+
+    contador0.onkeyup = function () {
+        if (contador0.value === "") {
+            return;
+        }
+        calcular0();
+    };
+
+    calcular0();
+</script>
 
 @section scripts{
 
@@ -297,6 +471,9 @@ else
                         Tipo de Trámite
                     </th>
                     <th>
+                        FechaSolicitud
+                    </th>
+                    <th>
                         Dictamen
                     </th>
                 </tr>
@@ -305,7 +482,7 @@ else
 
             @foreach (var item in modelo)
             {
-
+                
                 if (item.TipoTramite == "PRIMERA VEZ" && item.TipoLicencia != "AEREO")
                 {
                     fila = "#BBDEFB";
@@ -330,6 +507,13 @@ else
 
                     <td>
                         <b>@Html.DisplayFor(modelItem => item.Nombre) </b>
+                        @{ 
+                            if(item.CancelaComentario == "Urgente")
+                    {
+                                <br />
+                        <span style="font-size:x-small;color:red"><b>URGENTE!!</b></span>
+                    }
+                        }
 
                         @if (item.Entregado != null)
                         {
@@ -382,6 +566,9 @@ else
                     </td>
                     <td>
                         <b>@Html.DisplayFor(modelItem => item.TipoTramite)</b>
+                    </td>
+                    <td>
+                        <span style="font-size:smaller">@Convert.ToDateTime(item.FechaCita).ToString("dd-MMMM-yyyy")</span>
                     </td>
                     <td style="font-size: smaller">
                         @{

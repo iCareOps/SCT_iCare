@@ -696,6 +696,14 @@
           <Property Name="Contador" Type="int" />
           <Property Name="ContadorFecha" Type="datetime" />
         </EntityType>
+        <EntityType Name="UrgentesCount">
+          <Key>
+            <PropertyRef Name="idUrgentes" />
+          </Key>
+          <Property Name="idUrgentes" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Contador" Type="int" />
+          <Property Name="Mes" Type="varchar" MaxLength="20" />
+        </EntityType>
         <EntityType Name="Usuarios">
           <Key>
             <PropertyRef Name="idUsuario" />
@@ -1298,6 +1306,7 @@
           <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RolMenu" EntityType="Self.RolMenu" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Sucursales" EntityType="Self.Sucursales" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UrgentesCount" EntityType="Self.UrgentesCount" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Archivos_Paciente" Association="Self.FK_Archivos_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
@@ -2138,6 +2147,7 @@
             <End Role="PacienteESP" EntitySet="PacienteESP" />
             <End Role="EPI_ESP" EntitySet="EPI_ESP" />
           </AssociationSet>
+          <EntitySet Name="UrgentesCount" EntityType="DevModel.UrgentesCount" />
           </EntityContainer>
         <EntityType Name="CapturaIncidencia">
           <Key>
@@ -3049,6 +3059,14 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="UrgentesCount">
+          <Key>
+            <PropertyRef Name="idUrgentes" />
+          </Key>
+          <Property Name="idUrgentes" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Contador" Type="Int32" />
+          <Property Name="Mes" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3805,6 +3823,15 @@
                 <ScalarProperty Name="NoExpediente" ColumnName="NoExpediente" />
                 <ScalarProperty Name="idPacienteESP" ColumnName="idPacienteESP" />
                 <ScalarProperty Name="idEpiESP" ColumnName="idEpiESP" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UrgentesCount">
+            <EntityTypeMapping TypeName="DevModel.UrgentesCount">
+              <MappingFragment StoreEntitySet="UrgentesCount">
+                <ScalarProperty Name="Mes" ColumnName="Mes" />
+                <ScalarProperty Name="Contador" ColumnName="Contador" />
+                <ScalarProperty Name="idUrgentes" ColumnName="idUrgentes" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

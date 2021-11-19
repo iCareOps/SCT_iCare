@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<SCT_iCare.Paciente>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Citas";
 
     var oUser = (Usuarios)HttpContext.Current.Session["User"];
 
@@ -34,7 +34,7 @@
     DateTime thisDate = new DateTime(year, month, day);
     DateTime tomorrowDate = new DateTime(year1, month1, day1);
 
-    var modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate) || (s.EstatusCaptura == null)).OrderByDescending(o => o.FechaCita);
+    var modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate) || (s.EstatusCaptura == null)).OrderByDescending(o => o.FechaCita).OrderByDescending(o => o.CancelaComentario == "Urgente");
     int? idRol = 0;
 
     if (oUser != null)
@@ -283,6 +283,7 @@
                             <option style="font-weight:bold" value="LUIS ENRIQUE">LUIS ENRIQUE</option>
                             <option style="font-weight:bold" value="LUIS GDL">LUIS GDL</option>
                             <option style="font-weight:bold" value="MIRIAM SOL">MIRIAM SOL</option>
+                            <option style="font-weight:bold" value="NATALY">NATALY</option>
                             <option style="font-weight:bold" value="PABLO">PABLO</option>
                             <option style="font-weight:bold" value="ROBERTO BONIFACIO">ROBERTO BONIFACIO</option>
                             <option style="font-weight:bold" value="ROYAL TRANSPORTS">ROYAL TRANSPORTS</option>
@@ -435,6 +436,9 @@ else
                         Tipo de Trámite
                     </th>
                     <th>
+                        FechaSolicitud
+                    </th>
+                    <th>
                         Cita en METRA
                     </th>
                     <th>
@@ -472,6 +476,13 @@ else
 
                     <td>
                         <b>@Html.DisplayFor(modelItem => item.Nombre) </b>
+                        @{
+                            if (item.CancelaComentario == "Urgente")
+                            {
+                                <br />
+                                <span style="font-size:x-small;color:red"><b>URGENTE!!</b></span>
+                            }
+                        }
 
                         @if (item.Entregado != null)
                         {
@@ -524,6 +535,9 @@ else
                     </td>
                     <td>
                         <b>@Html.DisplayFor(modelItem => item.TipoTramite)</b>
+                    </td>
+                    <td>
+                        <span style="font-size:smaller">@Convert.ToDateTime(item.FechaCita).ToString("dd-MMMM-yyyy")</span>
                     </td>
                     <td style="font-size: larger; text-align:center">
                         @if (item.Metra != null)
@@ -795,8 +809,7 @@ else
                                                                 <option style="font-weight:bold" disabled selected>SELECCIONA UNA OPCIÓN</option>
                                                             }
 
-                                                            <option style="font-weight:bold" value="RUBEN SHTURMAN ELLSTEIN">RUBEN SHTURMAN ELLSTEIN</option>
-                                                            <option style="font-weight:bold" value="DIANA ELENA VILLA SCHEFER">DIANA ELENA VILLA SCHEFER</option>
+                                                            <option style="font-weight:bold" value="DEYANIRA DELGADO DÁVILA">DEYANIRA DELGADO DÁVILA</option>
                                                             <option style="font-weight:bold" value="SANDRA LIMA COSIO">SANDRA LIMA COSIO</option>
                                                             <option style="font-weight:bold" value="ARTURO ESCOBEDO GARCÍA">ARTURO ESCOBEDO GARCÍA</option>
 
