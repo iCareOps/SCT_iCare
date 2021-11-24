@@ -18,13 +18,129 @@ namespace SCT_iCare.Controllers.Dictamenes
             return View();
         }
 
-        public ActionResult Citas()
+        public ActionResult Citas(DateTime? inicio, DateTime? final)
         {
+            DateTime thisDate = new DateTime();
+            DateTime tomorrowDate = new DateTime();
+
+            DateTime start1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            DateTime finish1 = new DateTime(DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day);
+
+            int nulos = 0;
+
+            if (inicio != null || final != null)
+            {
+                nulos = 1;
+            }
+
+            if (inicio != null)
+            {
+                DateTime start = Convert.ToDateTime(inicio);
+                int year = start.Year;
+                int month = start.Month;
+                int day = start.Day;
+
+                inicio = new DateTime(year, month, day);
+                thisDate = new DateTime(year, month, day);
+            }
+            if (final != null)
+            {
+                DateTime finish = Convert.ToDateTime(final).AddDays(1);
+                int year = finish.Year;
+                int month = finish.Month;
+                int day = finish.Day;
+
+                final = new DateTime(year, month, day);
+                tomorrowDate = new DateTime(year, month, day);
+            }
+
+            var urge = (from i in db.UrgentesCount select i).FirstOrDefault();
+            string mes = DateTime.Now.ToString("MMMM");
+
+            if (urge.Mes != mes)
+            {
+                urge.Mes = mes;
+                urge.Contador = 500;
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(urge).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
+            inicio = (inicio ?? start1);
+            final = (final ?? finish1);
+
+            ViewBag.Inicio = inicio;
+            ViewBag.Final = final;
+            ViewBag.Estado = nulos;
+
+            ViewBag.Parameter = "";
+
             return View();
         }
 
-        public ActionResult Captura()
+        public ActionResult Captura(DateTime? inicio, DateTime? final)
         {
+            DateTime thisDate = new DateTime();
+            DateTime tomorrowDate = new DateTime();
+
+            DateTime start1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            DateTime finish1 = new DateTime(DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day);
+
+            int nulos = 0;
+
+            if (inicio != null || final != null)
+            {
+                nulos = 1;
+            }
+
+            if (inicio != null)
+            {
+                DateTime start = Convert.ToDateTime(inicio);
+                int year = start.Year;
+                int month = start.Month;
+                int day = start.Day;
+
+                inicio = new DateTime(year, month, day);
+                thisDate = new DateTime(year, month, day);
+            }
+            if (final != null)
+            {
+                DateTime finish = Convert.ToDateTime(final).AddDays(1);
+                int year = finish.Year;
+                int month = finish.Month;
+                int day = finish.Day;
+
+                final = new DateTime(year, month, day);
+                tomorrowDate = new DateTime(year, month, day);
+            }
+
+            var urge = (from i in db.UrgentesCount select i).FirstOrDefault();
+            string mes = DateTime.Now.ToString("MMMM");
+
+            if (urge.Mes != mes)
+            {
+                urge.Mes = mes;
+                urge.Contador = 500;
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(urge).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
+            inicio = (inicio ?? start1);
+            final = (final ?? finish1);
+
+            ViewBag.Inicio = inicio;
+            ViewBag.Final = final;
+            ViewBag.Estado = nulos;
+
+            ViewBag.Parameter = "";
+
             return View();
         }
 
@@ -176,6 +292,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                 PacienteESP paciente = new PacienteESP();
                 paciente.Nombre = nombre.ToUpper()/*.Normalize(System.Text.NormalizationForm.FormD).Replace(@"´¨", "")*/;
                 paciente.FechaCita = DateTime.Now;
+                paciente.FechaSolicitud = DateTime.Now;
                 //paciente.Sucursal = sucursal;
                 paciente.Solicita = usuario;
                 paciente.ReferidoPor = referido.ToUpper();
@@ -210,6 +327,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                     //paciente.Sucursal = sucursal;
                     paciente.Solicita = usuario;
                     paciente.FechaCita = DateTime.Now;
+                    paciente.FechaSolicitud = DateTime.Now;
                     paciente.ReferidoPor = referido.ToUpper();
 
 
@@ -269,6 +387,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                 PacienteESP paciente = new PacienteESP();
                 paciente.Nombre = nombre.ToUpper()/*.Normalize(System.Text.NormalizationForm.FormD).Replace(@"´¨", "")*/;
                 paciente.FechaCita = DateTime.Now;
+                paciente.FechaSolicitud = DateTime.Now;
                 //paciente.Sucursal = sucursal;
                 paciente.Solicita = usuario;
                 paciente.ReferidoPor = referido.ToUpper();
@@ -319,6 +438,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                     //paciente.Sucursal = sucursal;
                     paciente.Solicita = usuario;
                     paciente.FechaCita = DateTime.Now;
+                    paciente.FechaSolicitud = DateTime.Now;
                     paciente.ReferidoPor = referido.ToUpper();
 
                     if (urgente == "on")
@@ -602,7 +722,7 @@ namespace SCT_iCare.Controllers.Dictamenes
 
                 int [] profundidad = { 40, 50, 60 };
 
-                int numeroProfundidad = random.Next(0, 2);
+                int numeroProfundidad = random.Next(3);
                 epi.Estereopsis = profundidad[numeroProfundidad].ToString();
 
                 epi.Lentes = "NO";
@@ -613,7 +733,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                 epi.TestVC = "NORMAL";
 
                 string[] notaVisual = { "Sano", "Sano ve bien", "No presenta problema" };
-                int numeroNotaVisual = random.Next(0, 2);
+                int numeroNotaVisual = random.Next(3);
                 epi.Nota = notaVisual[numeroNotaVisual].ToString();
 
                 epi.MadreVive = "SI";
@@ -623,6 +743,42 @@ namespace SCT_iCare.Controllers.Dictamenes
                 epi.Patologias = "NINGUNO";
                 epi.Interpretacion = "NORMAL";
                 epi.NotaMedica = "NORMAL";
+
+                string[] tablaAudiologia = {"-5", "0", "5", "10", "15", "20", "25", "30", "35" };
+                //epi.D125 = tablaAudiologia[random.Next(8)];
+                //epi.D250 = tablaAudiologia[random.Next(8)];
+                //epi.D500 = tablaAudiologia[random.Next(8)];
+                //epi.D1000 = tablaAudiologia[random.Next(8)];
+                //epi.D2000 = tablaAudiologia[random.Next(8)];
+                //epi.D4000 = tablaAudiologia[random.Next(8)];
+                //epi.D8000 = tablaAudiologia[random.Next(8)];
+                //epi.D12000 = "35";
+                //epi.I125 = tablaAudiologia[random.Next(8)];
+                //epi.I250 = tablaAudiologia[random.Next(8)];
+                //epi.I500 = tablaAudiologia[random.Next(8)];
+                //epi.I1000 = tablaAudiologia[random.Next(8)];
+                //epi.I2000 = tablaAudiologia[random.Next(8)];
+                //epi.I4000 = tablaAudiologia[random.Next(8)];
+                //epi.I8000 = tablaAudiologia[random.Next(8)];
+                //epi.I12000 = "35";
+
+                epi.D125 = tablaAudiologia[random.Next(3,6)];
+                epi.D250 = tablaAudiologia[random.Next(3, 6)];
+                epi.D500 = tablaAudiologia[random.Next(3, 6)];
+                epi.D1000 = tablaAudiologia[random.Next(3, 6)];
+                epi.D2000 = tablaAudiologia[random.Next(3, 6)];
+                epi.D4000 = tablaAudiologia[random.Next(3, 6)];
+                epi.D8000 = tablaAudiologia[random.Next(3, 6)];
+                epi.D12000 = "35";
+                epi.I125 = tablaAudiologia[random.Next(3, 6)];
+                epi.I250 = tablaAudiologia[random.Next(3,6)];
+                epi.I500 = tablaAudiologia[random.Next(3,6)];
+                epi.I1000 = tablaAudiologia[random.Next(3,6)];
+                epi.I2000 = tablaAudiologia[random.Next(3,6)];
+                epi.I4000 = tablaAudiologia[random.Next(3,6)];
+                epi.I8000 = tablaAudiologia[random.Next(3,6)];
+                epi.I12000 = "35";
+
                 epi.VacCompletas = "SI";
                 epi.ECivil = "UNIONLIBRE";
                 epi.Religion = "OTRO";
@@ -638,11 +794,81 @@ namespace SCT_iCare.Controllers.Dictamenes
                 epi.Drogas = "NO";
                 epi.UsaLentes = "NO";
 
-                if(ModelState.IsValid)
+                if (ModelState.IsValid)
                 {
                     db.EPI_ESP.Add(epi);
                     db.SaveChanges();
                 }
+
+                string[] tablaAudio = { epi.D125, epi.D250, epi.D500, epi.D1000, epi.D2000, epi.D4000, epi.D8000, epi.D12000, epi.I125, epi.I250, epi.I500, epi.I1000, epi.I2000, epi.I4000, epi.I8000, epi.I12000 };
+
+                string[] posiciones = new string[16];
+                int posicionActual = 0;
+                int posicionDeseada = 0;
+                int operacion = 0;
+                string arribaAbajo = "";
+
+                for (int i = 0; i < 16; i++)
+                {
+                    if(i == 8)
+                    {
+                        operacion = 0;
+                        posicionActual = 0;
+                    }
+
+                    for (int n = 0; n < 9; n++)
+                    {
+                        if (Convert.ToString(tablaAudiologia[n]) == tablaAudio[i])
+                        {
+                            posicionDeseada = n + 1;
+                            break;
+                        }
+                    }
+
+                    operacion = posicionActual - posicionDeseada;
+                    posicionActual = posicionDeseada;
+                    posiciones[i] = operacion.ToString();
+
+                    //if (operacion == 0)
+                    //{
+                    //    arribaAbajo = "No se mueve";
+                    //}
+                    //else if (operacion < 0)
+                    //{
+                    //    arribaAbajo = "Se mueve para abajo";
+                    //}
+                    //else
+                    //{
+                    //    arribaAbajo = "Se mueve para arriba";
+                    //}
+
+                }
+
+                MovimientosAudio mov = new MovimientosAudio();
+                mov.D125 = posiciones[0];
+                mov.D250 = posiciones[1];
+                mov.D500 = posiciones[2];
+                mov.D1000 = posiciones[3];
+                mov.D2000 = posiciones[4];
+                mov.D4000 = posiciones[5];
+                mov.D8000 = posiciones[6];
+                mov.D12000 = posiciones[7];
+                mov.I125 = posiciones[8];
+                mov.I250 = posiciones[9];
+                mov.I500 = posiciones[10];
+                mov.I1000 = posiciones[11];
+                mov.I2000 = posiciones[12];
+                mov.I4000 = posiciones[13];
+                mov.I8000 = posiciones[14];
+                mov.I12000 = posiciones[15];
+                mov.idPacienteESP = id;
+
+                if (ModelState.IsValid)
+                {
+                    db.MovimientosAudio.Add(mov);
+                    db.SaveChanges();
+                }
+
             }
             else
             {
@@ -985,8 +1211,9 @@ namespace SCT_iCare.Controllers.Dictamenes
 
             paciente.EstatusCaptura = "En Proceso";
             paciente.Capturista = capturista;
+            paciente.FechaCaptura = DateTime.Now;
 
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 db.Entry(paciente).State = EntityState.Modified;
                 db.SaveChanges();

@@ -31,8 +31,8 @@
     int day1 = finish.Day;
 
     int tomorrorDay = day + 1;
-    DateTime thisDate = new DateTime(year, month, day);
-    DateTime tomorrowDate = new DateTime(year1, month1, day1);
+    DateTime thisDate = ViewBag.Inicio;
+    DateTime tomorrowDate = ViewBag.Final;
 
     var modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate) || (s.EstatusCaptura == null)).OrderByDescending(o => o.FechaCita).OrderByDescending(o => o.CancelaComentario == "Urgente");
     int? idRol = 0;
@@ -77,6 +77,26 @@
 <h3 style="color:#AC9070" class="text-center">@Sucursal, <span style="color:white"><a style="text-decoration:none; color:white">@DateTime.Now.ToString("dd-MMMM-yyyy")</a></span></h3>
 @*<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>
     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>*@
+
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/Citas")">
+    <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px">
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+        <input type="date" class="form-control" min="2021-08-02" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+        <input type="date" class="form-control" name="final"/> &nbsp; &nbsp;
+        <input type="submit" class="btn btn-primary" value="Enviar" />
+        <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+    </div>
+
+    <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
+        <div class="input-group">
+            <input type="text" class="form-control input-g" id="buscador" name="dato" placeholder="Paciente o Expediente">
+            <span class="input-group-btn">
+                <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+        </div>
+    </div>
+</form>
 
 <div class="form-inline">
     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Nueva Cita</button>
@@ -276,6 +296,7 @@
                             <option style="font-weight:bold" value="AARON DIAZ">AARON DIAZ</option>
                             <option style="font-weight:bold" value="ALEJANDRO VELAZQUEZ">ALEJANDRO VELAZQUEZ</option>
                             <option style="font-weight:bold" value="ANTONIO">ANTONIO</option>
+                            <option style="font-weight:bold" value="DANIEL SAUCEDO">DANIEL SAUCEDO</option>
                             <option style="font-weight:bold" value="ELIZABETH">ELIZABETH</option>
                             <option style="font-weight:bold" value="LEOPOLDO MAZA">LEOPOLDO MAZA</option>
                             <option style="font-weight:bold" value="LICENCIAS FEDERALES STINGRAY">LICENCIAS FEDERALES STINGRAY</option>
@@ -414,17 +435,17 @@ else
                         No. Exp.
                     </th>
                     @*@{
-                        if (idRol == 2)
-                        {
-                            <th>Sucursal</th>
-                        }
-                        else
-                        {
-                            <th>
-                                Doctor
-                            </th>
-                        }
-                    }*@
+            if (idRol == 2)
+            {
+                <th>Sucursal</th>
+            }
+            else
+            {
+                <th>
+                    Doctor
+                </th>
+            }
+        }*@
                     <th>
                         Doctor
                     </th>
@@ -440,6 +461,9 @@ else
                     </th>
                     <th>
                         Cita en METRA
+                    </th>
+                    <th>
+                        Datos Cita
                     </th>
                     <th>
                         Dictamen
@@ -475,19 +499,27 @@ else
                     </td>
 
                     <td>
-                        <b>@Html.DisplayFor(modelItem => item.Nombre) </b>
-                        @{
-                            if (item.CancelaComentario == "Urgente")
-                            {
-                                <br />
-                                <span style="font-size:x-small;color:red"><b>URGENTE!!</b></span>
+                        <span class="field-tip field-tip">
+                            <b>@Html.DisplayFor(modelItem => item.Nombre) </b>
+                            @{
+                                if (item.CancelaComentario == "Urgente")
+                                {
+                                    <br />
+                                    <span style="font-size:x-small;color:red"><b>URGENTE!!</b></span>
+                                }
                             }
-                        }
 
-                        @if (item.Entregado != null)
-                        {
-                            <span class="glyphicon glyphicon-thumbs-up"></span>
-                        }
+                            @if (item.Entregado != null)
+                            {
+                                <span class="glyphicon glyphicon-thumbs-up"></span>
+                            }
+                            @if (item.CURP != null)
+                            {
+                                <span class="tip-content">
+                                    <b>CURP: </b><span>@item.CURP</span>
+                                </span>
+                            }
+                        </span>
                     </td>
 
                     <td>
@@ -548,42 +580,26 @@ else
                                 {
                                     <b class="text-danger"><span class="glyphicon glyphicon-minus"></span></b>
                                 }
-                        @*@{
+                        </td>
+                    <td>
+                        @{
                             <span class="field-tip field-tip2">
                             @if (item.Asistencia == "NO")
                             {
                                 <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">Cancelado</mark></b>
                             }
-                            else if (item.Asistencia == null && (item.NoExpediente == null || item.TipoTramite == null || item.TipoLicencia == null
-                                     || item.Doctor == null || item.Genero == null || (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() == null)
-                                     || (from i in db.DocumentosESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() == null || item.Metra == null
-                                     || (from i in db.DictamenESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() == null)
+                            else if (item.Estatura == null || item.Metra == null || item.CURP == null || item.Doctor == null || item.Genero == null)
                             {
-                                <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">DatosIncompletos</mark></b>
+                                <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Incompletos</mark></b>
                             }
-                            else if (item.Asistencia == null && (item.NoExpediente != null && item.TipoTramite != null && item.TipoLicencia != null
-                                     && item.Doctor != null && item.Genero != null && (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() != null)
-                                     && (from i in db.DocumentosESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() != null && item.Metra != null
-                                     && ((from i in db.DictamenESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() == null))
+                            else
                             {
-                                <b><mark style="background-color: turquoise; padding:5px; border-radius:7px">DatosCompletos</mark></b>
-                            }
-                            else if((from i in db.DictamenESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() != null)
-                            {
-                                <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Completado</mark></b>
+                                <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Completos</mark></b>
                             }
 
-                            @if(item.Asistencia != "SI")
+                            @if(item.Asistencia != "NO")
                             {
                             <span class="tip-content">
-                                @{
-                                    var revisionFoto = (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                    var revisionDocumentos = (from i in db.DocumentosESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                    var revisionCartaNO = (from i in db.CartaNoAccidentesESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                    var revisionDeclaracion = (from i in db.DeclaracionSaludESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                    var revisionGlucosilada = (from i in db.HemoglobinaGlucosiladaESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                }
-
                                 @if (item.Metra != null)
                                 {
                                     <b>METRA: </b> <span class="glyphicon glyphicon-ok"></span> <br />
@@ -593,43 +609,46 @@ else
                                     <b>METRA: </b> <span class="glyphicon glyphicon-minus"></span> <br />
                                 }
 
-                                @if (revisionFoto != null)
+                                @if (item.Estatura != null)
                                 {
-                                    <b>Foto: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                    <b>Estatura: </b> <span class="glyphicon glyphicon-ok"></span> <br />
                                 }
                                 else
                                 {
-                                    <b>Foto: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                    <b>Estatura: </b> <span class="glyphicon glyphicon-minus"></span> <br />
                                 }
 
-                                @if (revisionDocumentos != null)
+                                @if (item.CURP != null)
                                 {
-                                    <b>Documentación: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                    <b>CURP: </b> <span class="glyphicon glyphicon-ok"></span> <br />
                                 }
                                 else
                                 {
-                                    <b>Documentación: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                    <b>CURP: </b> <span class="glyphicon glyphicon-minus"></span> <br />
                                 }
 
-                                @if (revisionCartaNO != null)
+                                @if (item.Doctor != null)
                                 {
-                                    <b>Carta de No Accidentes: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                    <b>Doctor: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                }
+                                else
+                                {
+                                    <b>Doctor: </b> <span class="glyphicon glyphicon-minus"></span> <br />
                                 }
 
-                                @if (revisionDeclaracion != null)
+                                @if (item.Genero != null)
                                 {
-                                    <b>Declaración de Salud: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                    <b>Sexo: </b> <span class="glyphicon glyphicon-ok"></span> <br />
                                 }
-
-                                @if (revisionGlucosilada != null)
+                                else
                                 {
-                                    <b>Hemoglobina Glucosilada: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                    <b>Sexo: </b> <span class="glyphicon glyphicon-minus"></span> <br />
                                 }
                             </span>
                             }
 
                             </span>
-                        }*@
+                        }
                     </td>
                     <td style="font-size: smaller">
                         @{

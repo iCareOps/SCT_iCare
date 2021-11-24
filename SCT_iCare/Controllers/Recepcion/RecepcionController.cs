@@ -2350,7 +2350,7 @@ namespace SCT_iCare.Controllers.Recepcion
             var idFlag = (from i in db.Cita where i.Referencia == referenciaRepetida orderby i.idPaciente descending select i).FirstOrDefault();
             var tipoPago = (from t in db.ReferenciasSB where t.idPaciente == idFlag.idPaciente select t).FirstOrDefault();
 
-            if(pago != "Pago con Tarjeta")
+            if(pago != "Pago con Tarjeta" || pago != "Transferencia vía Scotiabank" || pago != "Transferencia vía Banbajío")
             {
                 if ((from r in db.Cita where r.Referencia == referenciaRepetida select r).Count() == 1)
                 {

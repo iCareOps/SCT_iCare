@@ -46,11 +46,11 @@
     int day1 = finish.Day;
 
     int tomorrorDay = day + 1;
-    DateTime thisDate = new DateTime(year, month, day);
-    DateTime tomorrowDate = new DateTime(year1, month1, day1);
+    DateTime thisDate = ViewBag.Inicio;
+    DateTime tomorrowDate = ViewBag.Final;
 
     var modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && (s.NoExpediente != null || s.CURP != null) && s.Doctor != null && s.Asistencia == null && s.Estatura != null
-    && s.Metra != null) || (s.Metra != null && s.EstatusCaptura == null)).OrderByDescending(o => o.CancelaComentario == "Urgente").ThenByDescending(t => t.FechaCita);
+    && s.Metra != null) || (s.Metra != null && (s.EstatusCaptura == null || s.EstatusCaptura == "En Proceso"))).OrderByDescending(o => o.CancelaComentario == "Urgente").ThenByDescending(t => t.FechaCita);
     int? idRol = 0;
 
     if (oUser != null)
@@ -91,6 +91,25 @@
 <h3 style="color:#AC9070" class="text-center"><span style="color:white"><a style="text-decoration:none; color:white; cursor:pointer">Centro de Captura</a></span></h3>
 @*<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>
     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>*@
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/Captura")">
+    <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px">
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+        <input type="date" class="form-control" min="2021-08-02" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+        <input type="date" class="form-control" name="final"/> &nbsp; &nbsp;
+        <input type="submit" class="btn btn-primary" value="Enviar" />
+        <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+    </div>
+
+    <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
+        <div class="input-group">
+            <input type="text" class="form-control input-g" id="buscador" name="dato" placeholder="Paciente o Expediente">
+            <span class="input-group-btn">
+                <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+        </div>
+    </div>
+</form>
 
 
 @section scripts{
@@ -357,7 +376,7 @@ else
                                         <a href="#" data-toggle="modal" data-target="#DescargarEPI_@item.idPacienteESP"><b>Descargar EPI</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#DescargarEKG_@item.idPacienteESP">Electrocardiograma</a>*@
-                                        <b>@Html.ActionLink("Descargar EKG", "AbrirElectro", null, new { style = "text-decoration: none" })</b>
+                                        @*<b>@Html.ActionLink("Descargar EKG", "AbrirElectro", null, new { style = "text-decoration: none" })</b>
                                         <div class="dropdown-divider"></div>
                                         <b>@Html.ActionLink("Huella 2", "DescargarHuellasZIP", new { id = item.idPacienteESP, h2 = "SI"}, new { style = "text-decoration: none" })</b>
                                         <div class="dropdown-divider"></div>
@@ -366,7 +385,7 @@ else
                                         <b>@Html.ActionLink("Huella 7", "DescargarHuellasZIP", new { id = item.idPacienteESP, h7 = "SI"}, new { style = "text-decoration: none" })</b>
                                         <div class="dropdown-divider"></div>
                                         <b>@Html.ActionLink("Huella 8", "DescargarHuellasZIP", new { id = item.idPacienteESP, h8 = "SI"}, new { style = "text-decoration: none" })</b>
-                                        <div class="dropdown-divider"></div>
+                                        <div class="dropdown-divider"></div>*@
                                         @*<a href="#" data-toggle="modal" data-target="#DescargarDocumentos_@item.idPacienteESP">Documentación</a>*@
                                         <b>@Html.ActionLink("Documentos", "AbrirDocumentos", new { id = item.idPacienteESP }, new { style = "text-decoration: none" })</b>
                                         <div class="dropdown-divider"></div>

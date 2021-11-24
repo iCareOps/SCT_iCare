@@ -14,6 +14,7 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using SCT_iCare;
 using PdfFileWriter;
+using PagedList;
 
 namespace SCT_iCare.Controllers.Certificados
 {
@@ -22,9 +23,14 @@ namespace SCT_iCare.Controllers.Certificados
         private GMIEntities db = new GMIEntities();
 
         // GET: CERTIFICADOes
-        public ActionResult Index()
+        public ActionResult Index(/*int? pageSize, int? page*/)
         {
+            //pageSize = (pageSize ?? 10);
+            //page = (page ?? 1);
+            //ViewBag.PageSize = pageSize;
+
             return View(db.CERTIFICADO.ToList());
+            //return View(db.CERTIFICADO.OrderByDescending(i => i.idCertificado).ToPagedList(page.Value, pageSize.Value).);
         }
 
         // GET: CERTIFICADOes/Details/5
@@ -53,14 +59,14 @@ namespace SCT_iCare.Controllers.Certificados
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(string usuario, string nombre, string paterno, string materno, DateTime nacimiento, string resultado, string sexo, string pasaporte/*[Bind(Include = "idCertificado,Nombre,Pasaporte,Respuesta,FechaNacimiento,FechaToma,Sexo")] CERTIFICADO cERTIFICADO*/)
+        public ActionResult Create(string usuario, string nombre, string paterno, string materno, DateTime nacimiento, DateTime toma, string resultado, string sexo, string pasaporte/*[Bind(Include = "idCertificado,Nombre,Pasaporte,Respuesta,FechaNacimiento,FechaToma,Sexo")] CERTIFICADO cERTIFICADO*/)
         {
             CERTIFICADO cer = new CERTIFICADO();
 
             cer.Nombre = nombre + " " + paterno + " " + materno;
             cer.Sexo = sexo;
             cer.FechaNacimiento = nacimiento;
-            cer.FechaToma = DateTime.Now;
+            cer.FechaToma = toma;
             cer.Respuesta = resultado;
             cer.Pasaporte = pasaporte;
             cer.Usuario = usuario;

@@ -431,6 +431,22 @@
     <Property Name="Patologias" Type="varchar" MaxLength="20" />
     <Property Name="Interpretacion" Type="varchar" MaxLength="20" />
     <Property Name="NotaMedica" Type="varchar" MaxLength="20" />
+    <Property Name="D125" Type="varchar" MaxLength="10" />
+    <Property Name="D250" Type="varchar" MaxLength="10" />
+    <Property Name="D500" Type="varchar" MaxLength="10" />
+    <Property Name="D1000" Type="varchar" MaxLength="10" />
+    <Property Name="D2000" Type="varchar" MaxLength="10" />
+    <Property Name="D4000" Type="varchar" MaxLength="10" />
+    <Property Name="D8000" Type="varchar" MaxLength="10" />
+    <Property Name="D12000" Type="varchar" MaxLength="10" />
+    <Property Name="I125" Type="varchar" MaxLength="10" />
+    <Property Name="I250" Type="varchar" MaxLength="10" />
+    <Property Name="I500" Type="varchar" MaxLength="10" />
+    <Property Name="I1000" Type="varchar" MaxLength="10" />
+    <Property Name="I2000" Type="varchar" MaxLength="10" />
+    <Property Name="I4000" Type="varchar" MaxLength="10" />
+    <Property Name="I8000" Type="varchar" MaxLength="10" />
+    <Property Name="I12000" Type="varchar" MaxLength="10" />
   </EntityType>
   <EntityType Name="EPI_ExploracionFisica">
     <Key>
@@ -598,6 +614,29 @@
     <Property Name="idModulo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Nombre" Type="varchar" MaxLength="50" />
   </EntityType>
+  <EntityType Name="MovimientosAudio">
+    <Key>
+      <PropertyRef Name="idMovimientoAudio" />
+    </Key>
+    <Property Name="idMovimientoAudio" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="idPacienteESP" Type="int" />
+    <Property Name="D125" Type="varchar" MaxLength="10" />
+    <Property Name="D250" Type="varchar" MaxLength="10" />
+    <Property Name="D500" Type="varchar" MaxLength="10" />
+    <Property Name="D1000" Type="varchar" MaxLength="10" />
+    <Property Name="D2000" Type="varchar" MaxLength="10" />
+    <Property Name="D4000" Type="varchar" MaxLength="10" />
+    <Property Name="D8000" Type="varchar" MaxLength="10" />
+    <Property Name="D12000" Type="varchar" MaxLength="10" />
+    <Property Name="I125" Type="varchar" MaxLength="10" />
+    <Property Name="I250" Type="varchar" MaxLength="10" />
+    <Property Name="I500" Type="varchar" MaxLength="10" />
+    <Property Name="I1000" Type="varchar" MaxLength="10" />
+    <Property Name="I2000" Type="varchar" MaxLength="10" />
+    <Property Name="I4000" Type="varchar" MaxLength="10" />
+    <Property Name="I8000" Type="varchar" MaxLength="10" />
+    <Property Name="I12000" Type="varchar" MaxLength="10" />
+  </EntityType>
   <EntityType Name="Paciente">
     <Key>
       <PropertyRef Name="idPaciente" />
@@ -636,6 +675,8 @@
     <Property Name="Genero" Type="varchar" MaxLength="10" />
     <Property Name="Problema" Type="varchar" MaxLength="200" />
     <Property Name="Solicita" Type="varchar" MaxLength="100" />
+    <Property Name="FechaSolicitud" Type="datetime" />
+    <Property Name="FechaCaptura" Type="datetime" />
   </EntityType>
   <EntityType Name="Recepcionista">
     <Key>
@@ -1177,6 +1218,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_MovimientosAudio_PacienteESP">
+    <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+    <End Role="MovimientosAudio" Type="Self.MovimientosAudio" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="MovimientosAudio">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Recepcionista_Sucursales">
     <End Role="Sucursales" Type="Self.Sucursales" Multiplicity="0..1" />
     <End Role="Recepcionista" Type="Self.Recepcionista" Multiplicity="*" />
@@ -1293,6 +1346,7 @@
     <EntitySet Name="log_Movimientos" EntityType="Self.log_Movimientos" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Menu" EntityType="Self.Menu" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Modulos" EntityType="Self.Modulos" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="MovimientosAudio" EntityType="Self.MovimientosAudio" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Paciente" EntityType="Self.Paciente" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PacienteESP" EntityType="Self.PacienteESP" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Recepcionista" EntityType="Self.Recepcionista" Schema="dbo" store:Type="Tables" />
@@ -1458,6 +1512,10 @@
     <AssociationSet Name="FK_log_Movimientos_log_InicioGestor" Association="Self.FK_log_Movimientos_log_InicioGestor">
       <End Role="log_InicioGestor" EntitySet="log_InicioGestor" />
       <End Role="log_Movimientos" EntitySet="log_Movimientos" />
+    </AssociationSet>
+    <AssociationSet Name="FK_MovimientosAudio_PacienteESP" Association="Self.FK_MovimientosAudio_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="MovimientosAudio" EntitySet="MovimientosAudio" />
     </AssociationSet>
     <AssociationSet Name="FK_Recepcionista_Sucursales" Association="Self.FK_Recepcionista_Sucursales">
       <End Role="Sucursales" EntitySet="Sucursales" />

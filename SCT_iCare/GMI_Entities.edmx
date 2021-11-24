@@ -436,6 +436,22 @@
           <Property Name="Patologias" Type="varchar" MaxLength="20" />
           <Property Name="Interpretacion" Type="varchar" MaxLength="20" />
           <Property Name="NotaMedica" Type="varchar" MaxLength="20" />
+          <Property Name="D125" Type="varchar" MaxLength="10" />
+          <Property Name="D250" Type="varchar" MaxLength="10" />
+          <Property Name="D500" Type="varchar" MaxLength="10" />
+          <Property Name="D1000" Type="varchar" MaxLength="10" />
+          <Property Name="D2000" Type="varchar" MaxLength="10" />
+          <Property Name="D4000" Type="varchar" MaxLength="10" />
+          <Property Name="D8000" Type="varchar" MaxLength="10" />
+          <Property Name="D12000" Type="varchar" MaxLength="10" />
+          <Property Name="I125" Type="varchar" MaxLength="10" />
+          <Property Name="I250" Type="varchar" MaxLength="10" />
+          <Property Name="I500" Type="varchar" MaxLength="10" />
+          <Property Name="I1000" Type="varchar" MaxLength="10" />
+          <Property Name="I2000" Type="varchar" MaxLength="10" />
+          <Property Name="I4000" Type="varchar" MaxLength="10" />
+          <Property Name="I8000" Type="varchar" MaxLength="10" />
+          <Property Name="I12000" Type="varchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="EPI_ExploracionFisica">
           <Key>
@@ -603,6 +619,29 @@
           <Property Name="idModulo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Nombre" Type="varchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="MovimientosAudio">
+          <Key>
+            <PropertyRef Name="idMovimientoAudio" />
+          </Key>
+          <Property Name="idMovimientoAudio" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="idPacienteESP" Type="int" />
+          <Property Name="D125" Type="varchar" MaxLength="10" />
+          <Property Name="D250" Type="varchar" MaxLength="10" />
+          <Property Name="D500" Type="varchar" MaxLength="10" />
+          <Property Name="D1000" Type="varchar" MaxLength="10" />
+          <Property Name="D2000" Type="varchar" MaxLength="10" />
+          <Property Name="D4000" Type="varchar" MaxLength="10" />
+          <Property Name="D8000" Type="varchar" MaxLength="10" />
+          <Property Name="D12000" Type="varchar" MaxLength="10" />
+          <Property Name="I125" Type="varchar" MaxLength="10" />
+          <Property Name="I250" Type="varchar" MaxLength="10" />
+          <Property Name="I500" Type="varchar" MaxLength="10" />
+          <Property Name="I1000" Type="varchar" MaxLength="10" />
+          <Property Name="I2000" Type="varchar" MaxLength="10" />
+          <Property Name="I4000" Type="varchar" MaxLength="10" />
+          <Property Name="I8000" Type="varchar" MaxLength="10" />
+          <Property Name="I12000" Type="varchar" MaxLength="10" />
+        </EntityType>
         <EntityType Name="Paciente">
           <Key>
             <PropertyRef Name="idPaciente" />
@@ -641,6 +680,8 @@
           <Property Name="Genero" Type="varchar" MaxLength="10" />
           <Property Name="Problema" Type="varchar" MaxLength="200" />
           <Property Name="Solicita" Type="varchar" MaxLength="100" />
+          <Property Name="FechaSolicitud" Type="datetime" />
+          <Property Name="FechaCaptura" Type="datetime" />
         </EntityType>
         <EntityType Name="Recepcionista">
           <Key>
@@ -1182,6 +1223,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_MovimientosAudio_PacienteESP">
+          <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+          <End Role="MovimientosAudio" Type="Self.MovimientosAudio" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Principal>
+            <Dependent Role="MovimientosAudio">
+              <PropertyRef Name="idPacienteESP" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Recepcionista_Sucursales">
           <End Role="Sucursales" Type="Self.Sucursales" Multiplicity="0..1" />
           <End Role="Recepcionista" Type="Self.Recepcionista" Multiplicity="*" />
@@ -1298,6 +1351,7 @@
           <EntitySet Name="log_Movimientos" EntityType="Self.log_Movimientos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Menu" EntityType="Self.Menu" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Modulos" EntityType="Self.Modulos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MovimientosAudio" EntityType="Self.MovimientosAudio" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Paciente" EntityType="Self.Paciente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PacienteESP" EntityType="Self.PacienteESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Recepcionista" EntityType="Self.Recepcionista" Schema="dbo" store:Type="Tables" />
@@ -1463,6 +1517,10 @@
           <AssociationSet Name="FK_log_Movimientos_log_InicioGestor" Association="Self.FK_log_Movimientos_log_InicioGestor">
             <End Role="log_InicioGestor" EntitySet="log_InicioGestor" />
             <End Role="log_Movimientos" EntitySet="log_Movimientos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MovimientosAudio_PacienteESP" Association="Self.FK_MovimientosAudio_PacienteESP">
+            <End Role="PacienteESP" EntitySet="PacienteESP" />
+            <End Role="MovimientosAudio" EntitySet="MovimientosAudio" />
           </AssociationSet>
           <AssociationSet Name="FK_Recepcionista_Sucursales" Association="Self.FK_Recepcionista_Sucursales">
             <End Role="Sucursales" EntitySet="Sucursales" />
@@ -2142,12 +2200,17 @@
             <End Role="PacienteESP" EntitySet="PacienteESP" />
             <End Role="DictamenESP" EntitySet="DictamenESP" />
           </AssociationSet>
+          <EntitySet Name="UrgentesCount" EntityType="DevModel.UrgentesCount" />
           <EntitySet Name="EPI_ESP" EntityType="DevModel.EPI_ESP" />
+          <EntitySet Name="MovimientosAudio" EntityType="DevModel.MovimientosAudio" />
           <AssociationSet Name="FK_EPI_ESP_PacienteESP" Association="DevModel.FK_EPI_ESP_PacienteESP">
             <End Role="PacienteESP" EntitySet="PacienteESP" />
             <End Role="EPI_ESP" EntitySet="EPI_ESP" />
           </AssociationSet>
-          <EntitySet Name="UrgentesCount" EntityType="DevModel.UrgentesCount" />
+          <AssociationSet Name="FK_MovimientosAudio_PacienteESP" Association="DevModel.FK_MovimientosAudio_PacienteESP">
+            <End Role="PacienteESP" EntitySet="PacienteESP" />
+            <End Role="MovimientosAudio" EntitySet="MovimientosAudio" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="CapturaIncidencia">
           <Key>
@@ -2847,7 +2910,10 @@
           <Property Name="Genero" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="Problema" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="Solicita" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FechaSolicitud" Type="DateTime" Precision="3" />
+          <Property Name="FechaCaptura" Type="DateTime" Precision="3" />
           <NavigationProperty Name="EPI_ESP" Relationship="DevModel.FK_EPI_ESP_PacienteESP" FromRole="PacienteESP" ToRole="EPI_ESP" />
+          <NavigationProperty Name="MovimientosAudio" Relationship="DevModel.FK_MovimientosAudio_PacienteESP" FromRole="PacienteESP" ToRole="MovimientosAudio" />
           </EntityType>
         <EntityType Name="FotoPacienteESP">
           <Key>
@@ -2975,6 +3041,14 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="UrgentesCount">
+          <Key>
+            <PropertyRef Name="idUrgentes" />
+          </Key>
+          <Property Name="idUrgentes" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Contador" Type="Int32" />
+          <Property Name="Mes" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
         <EntityType Name="EPI_ESP">
           <Key>
             <PropertyRef Name="idEpiESP" />
@@ -3045,7 +3119,47 @@
           <Property Name="Patologias" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="Interpretacion" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="NotaMedica" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="D125" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D250" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D500" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D1000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D2000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D4000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D8000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D12000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I125" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I250" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I500" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I1000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I2000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I4000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I8000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I12000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_EPI_ESP_PacienteESP" FromRole="EPI_ESP" ToRole="PacienteESP" />
+        </EntityType>
+        <EntityType Name="MovimientosAudio">
+          <Key>
+            <PropertyRef Name="idMovimientoAudio" />
+          </Key>
+          <Property Name="idMovimientoAudio" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idPacienteESP" Type="Int32" />
+          <Property Name="D125" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D250" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D500" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D1000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D2000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D4000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D8000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D12000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I125" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I250" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I500" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I1000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I2000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I4000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I8000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I12000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_MovimientosAudio_PacienteESP" FromRole="MovimientosAudio" ToRole="PacienteESP" />
         </EntityType>
         <Association Name="FK_EPI_ESP_PacienteESP">
           <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
@@ -3059,14 +3173,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="UrgentesCount">
-          <Key>
-            <PropertyRef Name="idUrgentes" />
-          </Key>
-          <Property Name="idUrgentes" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Contador" Type="Int32" />
-          <Property Name="Mes" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-        </EntityType>
+        <Association Name="FK_MovimientosAudio_PacienteESP">
+          <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
+          <End Type="DevModel.MovimientosAudio" Role="MovimientosAudio" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteESP">
+              <PropertyRef Name="idPacienteESP" />
+            </Principal>
+            <Dependent Role="MovimientosAudio">
+              <PropertyRef Name="idPacienteESP" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3676,6 +3794,8 @@
           <EntitySetMapping Name="PacienteESP">
             <EntityTypeMapping TypeName="DevModel.PacienteESP">
               <MappingFragment StoreEntitySet="PacienteESP">
+                <ScalarProperty Name="FechaCaptura" ColumnName="FechaCaptura" />
+                <ScalarProperty Name="FechaSolicitud" ColumnName="FechaSolicitud" />
                 <ScalarProperty Name="Solicita" ColumnName="Solicita" />
                 <ScalarProperty Name="Problema" ColumnName="Problema" />
                 <ScalarProperty Name="Genero" ColumnName="Genero" />
@@ -3754,9 +3874,34 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="UrgentesCount">
+            <EntityTypeMapping TypeName="DevModel.UrgentesCount">
+              <MappingFragment StoreEntitySet="UrgentesCount">
+                <ScalarProperty Name="Mes" ColumnName="Mes" />
+                <ScalarProperty Name="Contador" ColumnName="Contador" />
+                <ScalarProperty Name="idUrgentes" ColumnName="idUrgentes" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="EPI_ESP">
             <EntityTypeMapping TypeName="DevModel.EPI_ESP">
               <MappingFragment StoreEntitySet="EPI_ESP">
+                <ScalarProperty Name="I12000" ColumnName="I12000" />
+                <ScalarProperty Name="I8000" ColumnName="I8000" />
+                <ScalarProperty Name="I4000" ColumnName="I4000" />
+                <ScalarProperty Name="I2000" ColumnName="I2000" />
+                <ScalarProperty Name="I1000" ColumnName="I1000" />
+                <ScalarProperty Name="I500" ColumnName="I500" />
+                <ScalarProperty Name="I250" ColumnName="I250" />
+                <ScalarProperty Name="I125" ColumnName="I125" />
+                <ScalarProperty Name="D12000" ColumnName="D12000" />
+                <ScalarProperty Name="D8000" ColumnName="D8000" />
+                <ScalarProperty Name="D4000" ColumnName="D4000" />
+                <ScalarProperty Name="D2000" ColumnName="D2000" />
+                <ScalarProperty Name="D1000" ColumnName="D1000" />
+                <ScalarProperty Name="D500" ColumnName="D500" />
+                <ScalarProperty Name="D250" ColumnName="D250" />
+                <ScalarProperty Name="D125" ColumnName="D125" />
                 <ScalarProperty Name="NotaMedica" ColumnName="NotaMedica" />
                 <ScalarProperty Name="Interpretacion" ColumnName="Interpretacion" />
                 <ScalarProperty Name="Patologias" ColumnName="Patologias" />
@@ -3826,12 +3971,27 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="UrgentesCount">
-            <EntityTypeMapping TypeName="DevModel.UrgentesCount">
-              <MappingFragment StoreEntitySet="UrgentesCount">
-                <ScalarProperty Name="Mes" ColumnName="Mes" />
-                <ScalarProperty Name="Contador" ColumnName="Contador" />
-                <ScalarProperty Name="idUrgentes" ColumnName="idUrgentes" />
+          <EntitySetMapping Name="MovimientosAudio">
+            <EntityTypeMapping TypeName="DevModel.MovimientosAudio">
+              <MappingFragment StoreEntitySet="MovimientosAudio">
+                <ScalarProperty Name="I12000" ColumnName="I12000" />
+                <ScalarProperty Name="I8000" ColumnName="I8000" />
+                <ScalarProperty Name="I4000" ColumnName="I4000" />
+                <ScalarProperty Name="I2000" ColumnName="I2000" />
+                <ScalarProperty Name="I1000" ColumnName="I1000" />
+                <ScalarProperty Name="I500" ColumnName="I500" />
+                <ScalarProperty Name="I250" ColumnName="I250" />
+                <ScalarProperty Name="I125" ColumnName="I125" />
+                <ScalarProperty Name="D12000" ColumnName="D12000" />
+                <ScalarProperty Name="D8000" ColumnName="D8000" />
+                <ScalarProperty Name="D4000" ColumnName="D4000" />
+                <ScalarProperty Name="D2000" ColumnName="D2000" />
+                <ScalarProperty Name="D1000" ColumnName="D1000" />
+                <ScalarProperty Name="D500" ColumnName="D500" />
+                <ScalarProperty Name="D250" ColumnName="D250" />
+                <ScalarProperty Name="D125" ColumnName="D125" />
+                <ScalarProperty Name="idPacienteESP" ColumnName="idPacienteESP" />
+                <ScalarProperty Name="idMovimientoAudio" ColumnName="idMovimientoAudio" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

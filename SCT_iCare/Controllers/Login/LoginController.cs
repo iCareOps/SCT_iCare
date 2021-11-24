@@ -14,6 +14,54 @@ namespace SCT_iCare.Controllers.Login
         // GET: Login
         public ActionResult Inicio()
         {
+            //Random random = new Random();
+
+            //int[] tablaAudiologia = { -5, 0, 5, 10, 15, 20, 25, 30, 35 };
+            //int posicionActual = 0;
+            //int posicionDeseada = 0;
+            //int operacion = 0;
+            //string valor = "";
+
+            //string arribaAbajo = "";
+            //int numeroRandom = 0;
+
+            //for (int i = 0; i <= 7; i++)
+            //{
+            //    numeroRandom = random.Next(9); //seteado, no viene de base de datos
+
+            //    valor = tablaAudiologia[numeroRandom].ToString();
+            //    if( i == 7)
+            //    {
+            //        valor = "35";
+            //    }
+
+            //    for (int n = 0; n < 8; n++)
+            //    {
+            //        if (Convert.ToString(tablaAudiologia[n]) == valor)
+            //        {
+            //            posicionDeseada = n + 1;
+            //            break;
+            //        }
+            //    }
+
+            //    operacion = posicionActual - posicionDeseada;
+            //    posicionActual = posicionDeseada;
+
+            //    if (operacion == 0)
+            //    {
+            //        arribaAbajo = "No se mueve";
+            //    }
+            //    else if (operacion < 0)
+            //    {
+            //        arribaAbajo = "Se mueve para abajo";
+            //    }
+            //    else
+            //    {
+            //        arribaAbajo = "Se mueve para arriba";
+            //    }
+
+            //}
+
             return View();
         }
 
