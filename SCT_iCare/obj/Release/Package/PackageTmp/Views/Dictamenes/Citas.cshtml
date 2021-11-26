@@ -17,6 +17,15 @@
     string fila = "";
     int registros;
 
+    string noExpediente = "";
+    string idRepetido = "";
+    if (TempData["Expediente"] != null)
+    {
+        noExpediente = TempData["Expediente"].ToString();
+        idRepetido = TempData["id"].ToString();
+        
+    }
+
     int flag = 1; //contador de la tabla
 
     DateTime start = DateTime.Now;
@@ -85,7 +94,7 @@
         <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
         <input type="date" class="form-control" name="final"/> &nbsp; &nbsp;
         <input type="submit" class="btn btn-primary" value="Enviar" />
-        <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+        <a href="~/Dictamenes/Citas"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
     </div>
 
     <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
@@ -98,6 +107,8 @@
     </div>
 </form>
 
+<br />
+
 <div class="form-inline">
     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Nueva Cita</button>
 </div>
@@ -106,7 +117,7 @@
 
     <script>
         var input = document.getElementById("buscador");
-        input.addEventListener("keyup", function (event) {
+        input.addEventListener("keydown", function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
                 document.getElementById("buscar").click();
@@ -118,7 +129,7 @@
     <script>
     $(function () {
         $(".buscar").click(function () {
-            var url = "@Url.Action("Buscar", "Recepcion")";
+            var url = "@Url.Action("Buscar", "Dictamenes")";
             var dato = $("#buscador").val();
             var data = { dato: dato };
 
@@ -129,28 +140,69 @@
                     miResultado = "<h3>No se encontraron registros!!</h3>"
                 }
                 else {
-                    miResultado +=  "<tr class=\"bg-primary\"><th>Nombre</th><th>Sucursal</th><th>Tipo Tramite</th><th>Tipo Licencia</th><th>Estatus Dictamen</th><th>Fecha Cita</th><th></th></tr>"
+                    miResultado +=  "<thead><tr class=\"bg-primary \"><th>Nombre</th><th>CURP</th><th>NoExpediente</th><th>Tipo Trámite</th><th>Fecha</th><th>Datos</th><th>Estatus</th><th></th></tr></thead>"
                     for (let i = 0; i < data.length; i++) {
 
-                        if (data[i].EstatusDictamen == null) {
-                            miResultado += "<tr style=\"border:1px solid gray\">" +
-                                "<td><b>" + data[i].Nombre + "</b></td>" +
-                                "<td><b>" + data[i].Sucursal + "</b></td>" +
-                                "<td><b>" + data[i].TipoTramite + "</b></td>" +
-                                "<td><b>" + data[i].TipoLicencia + "</b></td>" +
-                                "<td><b>Pendiente</b></td>" +
-                                "<td><b>" + data[i].FechaCita + "</b></td>" +
-                                "</tr>"
+                        if (data[i].EstatusCaptura == null) {
+                            if (data[i].Estatura == null || data[i].Doctor == null || data[i].Metra == null || data[i].Genero == null || data[i].CURP == null || data[i].NoExpediente == null) {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><span class=\"field-tip field-tip3\"><b><mark style=\"background-color: #FFFF00; padding: 5px; border-radius: 7px\">Incompletos</b></mark><span class=\"tip-content\">" +
+                                    "<b>CURP: </b><span>" + data[i].CURP + "</span><br/>" +
+                                    "<b>NoExpediente: </b><span>" + data[i].NoExpediente + "</span><br/>" +
+                                    "<b>Metra: </b><span>" + data[i].Metra + "</span><br/>" +
+                                    "<b>Género: </b><span>" + data[i].Genero + "</span><br/>" +
+                                    "<b>Estatura: </b><span>" + data[i].Estatura + "</span><br/>" +
+                                    "<b>Doctor: </b><span>" + data[i].Doctor + "</span><br/>" +
+                                    "</span ></span ></td > " +
+                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "</tr>"
+                            } else {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "</tr>"
+                            }
+
 
                         } else {
-                            miResultado += "<tr style=\"border:1px solid gray\">" +
-                                "<td><b>" + data[i].Nombre + "</b></td>" +
-                                "<td><b>" + data[i].Sucursal + "</b></td>" +
-                                "<td><b>" + data[i].TipoTramite + "</b></td>" +
-                                "<td><b>" + data[i].TipoLicencia + "</b></td>" +
-                                "<td><b>" + data[i].EstatusDictamen + "</b></td>" +
-                                "<td><b>" + data[i].FechaCita + "</b></td>" +
-                                "</tr>"
+                            if (data[i].Estatura == null && data[i].Doctor == null && data[i].Metra == null && data[i].Genero == null && data[i].CURP == null && data[i].NoExpediente == null) {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><span class=\"field-tip field-tip3\"><b><mark style=\"background-color: #FFFF00; padding: 5px; border-radius: 7px\">Incompletos</b></mark><span class=\"tip-content\">" +
+                                    "<b>CURP: </b><span>" + data[i].CURP + "</span><br/>" +
+                                    "<b>NoExpediente: </b><span>" + data[i].NoExpediente + "</span><br/>" +
+                                    "<b>Metra: </b><span>" + data[i].Metra + "</span><br/>" +
+                                    "<b>Género: </b><span>" + data[i].Genero + "</span><br/>" +
+                                    "<b>Estatura: </b><span>" + data[i].Estatura + "</span><br/>" +
+                                    "<b>Doctor: </b><span>" + data[i].Doctor + "</span><br/>" +
+                                    "</span ></span ></td > " +
+                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "</tr>"
+                            } else {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "</tr>"
+                            }
 
                         }
 
@@ -174,10 +226,38 @@
             window.open('@TempData["Link"]');
         </script>
     }
+
+    @if(TempData["Expediente"] != null)
+    {
+        <script>
+            $('#repetido').modal('show');
+        </script>
+    }
+
 }
 
 <br />
 
+
+<div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width:70%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body" id="">
+                <div class="tablaScroll">
+                    <table class="table table-hover tablas table-responsive" id="tablaEjemploSS" style="color: #2F2D6B">
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -573,13 +653,13 @@ else
                     </td>
                     <td style="font-size: larger; text-align:center">
                         @if (item.Metra != null)
-                                {
+                        {
                                     <b class="text-info"><span class="glyphicon glyphicon-ok"></span></b>
-                                }
-                                else
-                                {
+                        }
+                        else
+                        {
                                     <b class="text-danger"><span class="glyphicon glyphicon-minus"></span></b>
-                                }
+                        }
                         </td>
                     <td>
                         @{
@@ -597,7 +677,7 @@ else
                                 <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Completos</mark></b>
                             }
 
-                            @if(item.Asistencia != "NO")
+                            @if (item.Asistencia != "NO")
                             {
                             <span class="tip-content">
                                 @if (item.Metra != null)
@@ -1047,6 +1127,85 @@ else
                                     </div>
                                 </div>
                             </form>
+
+                            @{
+                                if (TempData["Expediente"] != null)
+                                {
+                                    var pacienteRepetido = (from i in db.PacienteESP where i.NoExpediente == noExpediente orderby i.idPacienteESP descending select i).FirstOrDefault();
+
+                                    <!-- Modal para Completar Datos -->
+                                    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/CompletarDatos")">
+                                        @Html.AntiForgeryToken()
+                                        <div class="modal fade" id="repetido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title text-primary" id="exampleModalLabel"><b>El número de Expediente @noExpediente ya está asignado al siguiente paciente.</b></h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        @if (pacienteRepetido != null)
+                                                        {
+                                                            <h5><b>Nombre: </b>@pacienteRepetido.Nombre</h5>
+                                                            <h5><b>No. Expediente: </b>@pacienteRepetido.NoExpediente</h5>
+
+                                                            if (pacienteRepetido.CURP != null)
+                                                            {
+                                                                <h5><b>CURP: </b>@pacienteRepetido.CURP</h5>
+                                                            }
+                                                            if (pacienteRepetido.TipoLicencia != null)
+                                                            {
+                                                                <h5><b>Tipo de Licencia: </b>@pacienteRepetido.TipoLicencia</h5>
+                                                            }
+                                                        }
+                                                        <input type="hidden" name="id" value="@idRepetido" />
+                                                        <input type="hidden" name="nombre" value="@pacienteRepetido.Nombre" />
+                                                        <input type="hidden" name="numero" value="@pacienteRepetido.NoExpediente" />
+                                                        <input type="hidden" name="tipoT" value="REVALIDACIÓN" />
+                                                        <input type="hidden" name="doctor" value="" />
+                                                        @{
+                                                            if (pacienteRepetido.Estatura != null)
+                                                            {
+                                                                <input type="hidden" name="estatura" value="@pacienteRepetido.Estatura" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="hidden" name="numero" value="" />
+                                                            }
+
+                                                            if (pacienteRepetido.CURP != null)
+                                                            {
+                                                                <input type="hidden" name="curp" value="@pacienteRepetido.CURP" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="hidden" name="curp" value="" />
+                                                            }
+
+                                                            if (pacienteRepetido.Genero != null)
+                                                            {
+                                                                <input type="hidden" name="genero" value="@pacienteRepetido.Genero" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="hidden" name="genero" value="" />
+                                                            }
+                                                        }
+
+                                                        <hr />
+                                                        <h5 class="text-danger" id="exampleModalLabel">Si el Expediente corresponde al paciente al cual se le hará la cita seleccione "Aceptar". En caso contrario cierre la ventana y busque el número correcto o solicite correción</h5>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                        <input type="submit" name="repetido" value="Aceptar" class="btn btn-primary" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                }
+
+                            }
+
 
 
                         </div>

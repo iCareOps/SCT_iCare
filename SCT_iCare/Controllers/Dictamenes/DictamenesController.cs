@@ -595,13 +595,27 @@ namespace SCT_iCare.Controllers.Dictamenes
 
         public ActionResult CompletarDatos(int? id, string nombre, string estatura, string curp, string numero, /*string metra,*/ string genero,
             string doctor, /*string tipoL, */string tipoT, HttpPostedFileBase file,
-            HttpPostedFileBase documentos, HttpPostedFileBase declaracion, HttpPostedFileBase carta, HttpPostedFileBase glucosilada)
+            HttpPostedFileBase documentos, HttpPostedFileBase declaracion, HttpPostedFileBase carta, HttpPostedFileBase glucosilada, string repetido)
         {
             var revisionPacienteESP = (from i in db.PacienteESP where i.idPacienteESP == id select i).FirstOrDefault();
 
             EPI_ESP epi = new EPI_ESP();
             var revisionEPI = (from i in db.EPI_ESP where i.idPacienteESP == id select i).FirstOrDefault();
             var idEPI = db.EPI_ESP.Find(0);
+
+            var revisionRepetido = (from i in db.PacienteESP where i.idPacienteESP == id orderby i.idPacienteESP descending select i).FirstOrDefault();
+
+            if (numero != ""  && repetido != "Aceptar" && numero != revisionRepetido.NoExpediente)
+            {
+                var revisionExpediente = (from i in db.PacienteESP where i.NoExpediente == numero orderby i.idPacienteESP descending select i).FirstOrDefault();
+                if (revisionExpediente != null)
+                {
+                    TempData["Expediente"] = numero;
+                    TempData["id"] = id;
+                    return RedirectToAction("Citas");
+                }
+            }
+            
 
             if(revisionEPI != null)
             {
@@ -619,9 +633,9 @@ namespace SCT_iCare.Controllers.Dictamenes
                 }
                 else
                 {
-                    if(revisionEPI != null)
+                    if(revisionPacienteESP.NoExpediente != null)
                     {
-                        epi.NoExpediente = revisionEPI.NoExpediente;
+                        epi.NoExpediente = revisionPacienteESP.NoExpediente;
                     }
                 }
 
@@ -641,11 +655,11 @@ namespace SCT_iCare.Controllers.Dictamenes
                 }
                 else
                 {
-                    if (revisionEPI != null)
+                    if (revisionPacienteESP.Genero!= null)
                     {
-                        epi.Genero = revisionEPI.Genero;
+                        epi.Genero = revisionPacienteESP.Genero;
 
-                        if (revisionEPI.Genero == "F")
+                        if (revisionPacienteESP.Genero == "F")
                         {
                             epi.URegla = DateTime.Now.AddDays(-20).ToString("yyyy-MM-dd").Replace("-", "");
                             epi.Embarazos = "0";
@@ -680,14 +694,14 @@ namespace SCT_iCare.Controllers.Dictamenes
                 }
                 else
                 {
-                    if (revisionEPI != null)
+                    if (revisionPacienteESP != null)
                     {
                         double numeroDecimalRandom = 0;
                         double altura = Convert.ToDouble(estatura);
                         double peso = 0.00;
                         float cadenaPeso;
 
-                        epi.Estatura = estatura;
+                        epi.Estatura = revisionPacienteESP.Estatura;
                         numeroDecimalRandom = random.Next(2223, 2878) / 100.00;
 
                         peso = numeroDecimalRandom * ((altura / 100) * (altura / 100));
@@ -745,22 +759,6 @@ namespace SCT_iCare.Controllers.Dictamenes
                 epi.NotaMedica = "NORMAL";
 
                 string[] tablaAudiologia = {"-5", "0", "5", "10", "15", "20", "25", "30", "35" };
-                //epi.D125 = tablaAudiologia[random.Next(8)];
-                //epi.D250 = tablaAudiologia[random.Next(8)];
-                //epi.D500 = tablaAudiologia[random.Next(8)];
-                //epi.D1000 = tablaAudiologia[random.Next(8)];
-                //epi.D2000 = tablaAudiologia[random.Next(8)];
-                //epi.D4000 = tablaAudiologia[random.Next(8)];
-                //epi.D8000 = tablaAudiologia[random.Next(8)];
-                //epi.D12000 = "35";
-                //epi.I125 = tablaAudiologia[random.Next(8)];
-                //epi.I250 = tablaAudiologia[random.Next(8)];
-                //epi.I500 = tablaAudiologia[random.Next(8)];
-                //epi.I1000 = tablaAudiologia[random.Next(8)];
-                //epi.I2000 = tablaAudiologia[random.Next(8)];
-                //epi.I4000 = tablaAudiologia[random.Next(8)];
-                //epi.I8000 = tablaAudiologia[random.Next(8)];
-                //epi.I12000 = "35";
 
                 epi.D125 = tablaAudiologia[random.Next(3,6)];
                 epi.D250 = tablaAudiologia[random.Next(3, 6)];
@@ -829,19 +827,6 @@ namespace SCT_iCare.Controllers.Dictamenes
                     posicionActual = posicionDeseada;
                     posiciones[i] = operacion.ToString();
 
-                    //if (operacion == 0)
-                    //{
-                    //    arribaAbajo = "No se mueve";
-                    //}
-                    //else if (operacion < 0)
-                    //{
-                    //    arribaAbajo = "Se mueve para abajo";
-                    //}
-                    //else
-                    //{
-                    //    arribaAbajo = "Se mueve para arriba";
-                    //}
-
                 }
 
                 MovimientosAudio mov = new MovimientosAudio();
@@ -875,10 +860,12 @@ namespace SCT_iCare.Controllers.Dictamenes
                 if(genero != "")
                 {
                     idEPI.Genero = genero;
+                    revisionPacienteESP.Genero = genero;
                 }
                 if(numero != "")
                 {
                     idEPI.NoExpediente = numero;
+                    revisionPacienteESP.NoExpediente = numero;
                 }
                 if(estatura != "")
                 {
@@ -891,6 +878,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                     float cadenaPeso;
 
                     idEPI.Estatura = estatura;
+                    revisionPacienteESP.Estatura = estatura;
                     numeroDecimalRandom = random.Next(2223, 2878) / 100.00;
 
                     peso = numeroDecimalRandom * ((altura /100 ) * (altura/100));
@@ -916,28 +904,11 @@ namespace SCT_iCare.Controllers.Dictamenes
                 if (ModelState.IsValid)
                 {
                     db.Entry(idEPI).State = EntityState.Modified;
+                    db.Entry(revisionPacienteESP).State = EntityState.Modified;
                     db.SaveChanges();
                 }
 
             }
-
-            //int numeroRandom = 0;
-            //double numeroDecimalRandom = 0;
-            //double decimalRandom = 0.00;
-            //double altura = 1.74;
-            //double peso = 0.00;
-            //float cadenaPeso;
-
-            //for(int i  = 0; i < 10; i++)
-            //{
-            //    Random ran = new Random();
-            //    //numeroRandom = ran.Next(57);
-
-            //    numeroDecimalRandom = ran.Next(2223, 2878)/100.00;
-
-            //    peso = numeroDecimalRandom * (altura * altura);
-            //    cadenaPeso = (float)(Math.Round((double)peso, 2));
-            //}
 
             if(revisionPacienteESP.NoExpediente != null && revisionPacienteESP.TipoLicencia != null && revisionPacienteESP.TipoTramite != null && revisionPacienteESP.Doctor != null 
                 && revisionPacienteESP.Estatura != null && revisionPacienteESP.Metra != null 
@@ -950,8 +921,6 @@ namespace SCT_iCare.Controllers.Dictamenes
             {
                 revisionPacienteESP.Nombre = nombre != "" ? nombre.ToUpper() : revisionPacienteESP.Nombre;
             }
-
-            //revisionPacienteESP.Metra = metra == "on" ? revisionPacienteESP.Metra = "SI" : revisionPacienteESP.Metra = null;
 
             if(estatura != "")
             {
@@ -972,11 +941,6 @@ namespace SCT_iCare.Controllers.Dictamenes
             {
                 revisionPacienteESP.Doctor = doctor != "" ? doctor : revisionPacienteESP.Doctor;
             }
-
-            //if (tipoL != "")
-            //{
-            //    revisionPacienteESP.TipoLicencia = tipoL != "" ? tipoL : revisionPacienteESP.TipoLicencia;
-            //}
 
             if (tipoT != "")
             {
@@ -1517,6 +1481,38 @@ namespace SCT_iCare.Controllers.Dictamenes
             }
 
             return RedirectToAction("Citas");
+        }
+
+        public JsonResult Buscar(string dato)
+        {
+            string parametro;
+
+            if (dato.All(char.IsDigit))
+            {
+                parametro = dato;
+            }
+            else
+            {
+                parametro = dato.ToUpper();
+            }
+
+            List<PacienteESP> data = db.PacienteESP.ToList();
+            var selected = data.Where(r => r.Nombre.Contains(parametro) || r.NoExpediente == parametro)
+                .Select(S => new {
+                    idPacienteESP = S.idPacienteESP,
+                    S.Nombre,
+                    S.CURP,
+                    S.NoExpediente,
+                    S.TipoTramite,
+                    FechaCita = Convert.ToDateTime(S.FechaCita).ToString("dd-MMMM-yyyy"),
+                    S.EstatusCaptura,
+                    S.Estatura,
+                    S.Genero,
+                    S.Metra,
+                    S.Doctor
+                }).ToList();
+
+            return Json(selected, JsonRequestBehavior.AllowGet);
         }
 
     }

@@ -96,9 +96,9 @@
         <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
         <input type="date" class="form-control" min="2021-08-02" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
         <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
-        <input type="date" class="form-control" name="final"/> &nbsp; &nbsp;
+        <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
         <input type="submit" class="btn btn-primary" value="Enviar" />
-        <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+        <a href="~/Dictamenes/Citas"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
     </div>
 
     <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
@@ -116,7 +116,7 @@
 
     <script>
         var input = document.getElementById("buscador");
-        input.addEventListener("keyup", function (event) {
+        input.addEventListener("keydown", function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
                 document.getElementById("buscar").click();
@@ -128,7 +128,7 @@
     <script>
     $(function () {
         $(".buscar").click(function () {
-            var url = "@Url.Action("Buscar", "Recepcion")";
+            var url = "@Url.Action("Buscar", "Dictamenes")";
             var dato = $("#buscador").val();
             var data = { dato: dato };
 
@@ -139,28 +139,69 @@
                     miResultado = "<h3>No se encontraron registros!!</h3>"
                 }
                 else {
-                    miResultado +=  "<tr class=\"bg-primary\"><th>Nombre</th><th>Sucursal</th><th>Tipo Tramite</th><th>Tipo Licencia</th><th>Estatus Dictamen</th><th>Fecha Cita</th><th></th></tr>"
+                    miResultado +=  "<thead><tr class=\"bg-primary \"><th>Nombre</th><th>CURP</th><th>NoExpediente</th><th>Tipo Trámite</th><th>Fecha</th><th>Datos</th><th>Estatus</th><th></th></tr></thead>"
                     for (let i = 0; i < data.length; i++) {
 
-                        if (data[i].EstatusDictamen == null) {
-                            miResultado += "<tr style=\"border:1px solid gray\">" +
-                                "<td><b>" + data[i].Nombre + "</b></td>" +
-                                "<td><b>" + data[i].Sucursal + "</b></td>" +
-                                "<td><b>" + data[i].TipoTramite + "</b></td>" +
-                                "<td><b>" + data[i].TipoLicencia + "</b></td>" +
-                                "<td><b>Pendiente</b></td>" +
-                                "<td><b>" + data[i].FechaCita + "</b></td>" +
-                                "</tr>"
+                        if (data[i].EstatusCaptura == null) {
+                            if (data[i].Estatura == null || data[i].Doctor == null || data[i].Metra == null || data[i].Genero == null || data[i].CURP == null || data[i].NoExpediente == null) {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><span class=\"field-tip field-tip3\"><b><mark style=\"background-color: #FFFF00; padding: 5px; border-radius: 7px\">Incompletos</b></mark><span class=\"tip-content\">" +
+                                    "<b>CURP: </b><span>" + data[i].CURP + "</span><br/>" +
+                                    "<b>NoExpediente: </b><span>" + data[i].NoExpediente + "</span><br/>" +
+                                    "<b>Metra: </b><span>" + data[i].Metra + "</span><br/>" +
+                                    "<b>Género: </b><span>" + data[i].Genero + "</span><br/>" +
+                                    "<b>Estatura: </b><span>" + data[i].Estatura + "</span><br/>" +
+                                    "<b>Doctor: </b><span>" + data[i].Doctor + "</span><br/>" +
+                                    "</span ></span ></td > " +
+                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "</tr>"
+                            } else {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "</tr>"
+                            }
+
 
                         } else {
-                            miResultado += "<tr style=\"border:1px solid gray\">" +
-                                "<td><b>" + data[i].Nombre + "</b></td>" +
-                                "<td><b>" + data[i].Sucursal + "</b></td>" +
-                                "<td><b>" + data[i].TipoTramite + "</b></td>" +
-                                "<td><b>" + data[i].TipoLicencia + "</b></td>" +
-                                "<td><b>" + data[i].EstatusDictamen + "</b></td>" +
-                                "<td><b>" + data[i].FechaCita + "</b></td>" +
-                                "</tr>"
+                            if (data[i].Estatura == null && data[i].Doctor == null && data[i].Metra == null && data[i].Genero == null && data[i].CURP == null && data[i].NoExpediente == null) {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><span class=\"field-tip field-tip3\"><b><mark style=\"background-color: #FFFF00; padding: 5px; border-radius: 7px\">Incompletos</b></mark><span class=\"tip-content\">" +
+                                    "<b>CURP: </b><span>" + data[i].CURP + "</span><br/>" +
+                                    "<b>NoExpediente: </b><span>" + data[i].NoExpediente + "</span><br/>" +
+                                    "<b>Metra: </b><span>" + data[i].Metra + "</span><br/>" +
+                                    "<b>Género: </b><span>" + data[i].Genero + "</span><br/>" +
+                                    "<b>Estatura: </b><span>" + data[i].Estatura + "</span><br/>" +
+                                    "<b>Doctor: </b><span>" + data[i].Doctor + "</span><br/>" +
+                                    "</span ></span ></td > " +
+                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "</tr>"
+                            } else {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "</tr>"
+                            }
 
                         }
 
@@ -353,9 +394,9 @@ else
                                 else if (item.EstatusCaptura == "Terminado")
                                 {
                                     @*<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/IniciarCaptura")">
-                                        <input type="submit" class="btn btn-warning" value="Descargar" />
-                                        <input type="hidden" value="@item.idPacienteESP" name="id" />
-                                    </form>*@
+                                            <input type="submit" class="btn btn-warning" value="Descargar" />
+                                            <input type="hidden" value="@item.idPacienteESP" name="id" />
+                                        </form>*@
                                     <a href=@Url.Action("DescargarPDF", "Dictamenes", new { id = item.idPacienteESP })><button class="btn btn-warning">Descargar</button></a>
                                 }
                                 else
@@ -377,15 +418,15 @@ else
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#DescargarEKG_@item.idPacienteESP">Electrocardiograma</a>*@
                                         @*<b>@Html.ActionLink("Descargar EKG", "AbrirElectro", null, new { style = "text-decoration: none" })</b>
-                                        <div class="dropdown-divider"></div>
-                                        <b>@Html.ActionLink("Huella 2", "DescargarHuellasZIP", new { id = item.idPacienteESP, h2 = "SI"}, new { style = "text-decoration: none" })</b>
-                                        <div class="dropdown-divider"></div>
-                                        <b>@Html.ActionLink("Huella 3", "DescargarHuellasZIP", new { id = item.idPacienteESP, h3 = "SI"}, new { style = "text-decoration: none" })</b>
-                                        <div class="dropdown-divider"></div>
-                                        <b>@Html.ActionLink("Huella 7", "DescargarHuellasZIP", new { id = item.idPacienteESP, h7 = "SI"}, new { style = "text-decoration: none" })</b>
-                                        <div class="dropdown-divider"></div>
-                                        <b>@Html.ActionLink("Huella 8", "DescargarHuellasZIP", new { id = item.idPacienteESP, h8 = "SI"}, new { style = "text-decoration: none" })</b>
-                                        <div class="dropdown-divider"></div>*@
+                                            <div class="dropdown-divider"></div>
+                                            <b>@Html.ActionLink("Huella 2", "DescargarHuellasZIP", new { id = item.idPacienteESP, h2 = "SI"}, new { style = "text-decoration: none" })</b>
+                                            <div class="dropdown-divider"></div>
+                                            <b>@Html.ActionLink("Huella 3", "DescargarHuellasZIP", new { id = item.idPacienteESP, h3 = "SI"}, new { style = "text-decoration: none" })</b>
+                                            <div class="dropdown-divider"></div>
+                                            <b>@Html.ActionLink("Huella 7", "DescargarHuellasZIP", new { id = item.idPacienteESP, h7 = "SI"}, new { style = "text-decoration: none" })</b>
+                                            <div class="dropdown-divider"></div>
+                                            <b>@Html.ActionLink("Huella 8", "DescargarHuellasZIP", new { id = item.idPacienteESP, h8 = "SI"}, new { style = "text-decoration: none" })</b>
+                                            <div class="dropdown-divider"></div>*@
                                         @*<a href="#" data-toggle="modal" data-target="#DescargarDocumentos_@item.idPacienteESP">Documentación</a>*@
                                         <b>@Html.ActionLink("Documentos", "AbrirDocumentos", new { id = item.idPacienteESP }, new { style = "text-decoration: none" })</b>
                                         <div class="dropdown-divider"></div>
@@ -720,5 +761,26 @@ else
         </table>
     </div>
 }
+
+
+<div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width:70%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body" id="">
+                <div class="tablaScroll">
+                    <table class="table table-hover tablas table-responsive" id="tablaEjemploSS" style="color: #2F2D6B">
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 

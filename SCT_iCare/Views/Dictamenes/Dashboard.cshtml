@@ -119,7 +119,7 @@
     <script>
     $(function () {
         $(".buscar").click(function () {
-            var url = "@Url.Action("BuscarTodo", "Admin")";
+            var url = "@Url.Action("Buscar", "Dictamenes")";
             var dato = $("#buscador").val();
             var data = { dato: dato };
 
@@ -127,38 +127,86 @@
                 console.log(data);
                 let miResultado = "";
                 if ($.isEmptyObject(data)) {
-                    miResultado = "<h3>No se encontraron registros.</h3>"
+                    miResultado = "<h3>No se encontraron registros!!</h3>"
                 }
                 else {
-                    miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>Expediente</th><th>Email</th><th>Teléfono</th><th>Fecha Cita</th><th>Sucursal</th><th></th></tr>"
+                    miResultado +=  "<thead><tr class=\"bg-primary \"><th>Nombre</th><th>CURP</th><th>NoExpediente</th><th>Tipo Trámite</th><th>Fecha</th><th>Datos</th><th>Estatus</th><th></th></tr></thead>"
                     for (let i = 0; i < data.length; i++) {
-                        var url = '@Url.Action("DescargarPDF", "EPIs", new { id = "xxxx" })';
-                        var epi = '<b>@Html.ActionLink("XXX", "AbrirEPI_EC", new { id = "xxxxx" }, new { style = "color: black; text-decoration: none" })</b>';
-                        url = url.replace("xxxx", data[i].idCaptura);
-                        epi = epi.replace("XXX", data[i].Nombre);
-                        epi = epi.replace("xxxxx", data[i].idCaptura);
-                        miResultado += "<tr style=\"border:1px solid gray\">" +
-                            "<td><b>" + epi + "</b></td>" +
-                            "<td><b>" + data[i].NoExpediente + "</b></td>" +
-                            "<td><b>" + data[i].Email + "</b></td>" +
-                            "<td><b>" + data[i].Telefono + "</b></td>" +
-                            "<td><b>" + data[i].FechaReferencia + "</b></td>" +
-                            "<td><b>" + data[i].Sucursal + "</b></td>" +
-                            "<td><a href="+url+"> <b.autton type=\"button\" class=\"btn btn-danger\">Descargar</button></a></td>" +
 
-                            "</tr>"
+                        if (data[i].EstatusCaptura == null) {
+                            if (data[i].Estatura == null || data[i].Doctor == null || data[i].Metra == null || data[i].Genero == null || data[i].CURP == null || data[i].NoExpediente == null) {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><span class=\"field-tip field-tip3\"><b><mark style=\"background-color: #FFFF00; padding: 5px; border-radius: 7px\">Incompletos</b></mark><span class=\"tip-content\">" +
+                                    "<b>CURP: </b><span>" + data[i].CURP + "</span><br/>" +
+                                    "<b>NoExpediente: </b><span>" + data[i].NoExpediente + "</span><br/>" +
+                                    "<b>Metra: </b><span>" + data[i].Metra + "</span><br/>" +
+                                    "<b>Género: </b><span>" + data[i].Genero + "</span><br/>" +
+                                    "<b>Estatura: </b><span>" + data[i].Estatura + "</span><br/>" +
+                                    "<b>Doctor: </b><span>" + data[i].Doctor + "</span><br/>" +
+                                    "</span ></span ></td > " +
+                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "</tr>"
+                            } else {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "</tr>"
+                            }
+
+
+                        } else {
+                            if (data[i].Estatura == null && data[i].Doctor == null && data[i].Metra == null && data[i].Genero == null && data[i].CURP == null && data[i].NoExpediente == null) {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><span class=\"field-tip field-tip3\"><b><mark style=\"background-color: #FFFF00; padding: 5px; border-radius: 7px\">Incompletos</b></mark><span class=\"tip-content\">" +
+                                    "<b>CURP: </b><span>" + data[i].CURP + "</span><br/>" +
+                                    "<b>NoExpediente: </b><span>" + data[i].NoExpediente + "</span><br/>" +
+                                    "<b>Metra: </b><span>" + data[i].Metra + "</span><br/>" +
+                                    "<b>Género: </b><span>" + data[i].Genero + "</span><br/>" +
+                                    "<b>Estatura: </b><span>" + data[i].Estatura + "</span><br/>" +
+                                    "<b>Doctor: </b><span>" + data[i].Doctor + "</span><br/>" +
+                                    "</span ></span ></td > " +
+                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "</tr>"
+                            } else {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "</tr>"
+                            }
+
+                        }
+
                     }
                 }
 
-                $('#exampleModal10').modal('show');
-                document.getElementById("tablaEjemplo").innerHTML = miResultado;
+                $('#exampleModal5').modal('show');
+                document.getElementById("tablaEjemploSS").innerHTML = miResultado;
 
             }).fail().always(function () {
 
             });
         });
     });
-
     </script>
 
     @if (TempData["ID"] != null)
@@ -357,7 +405,7 @@
                     foreach (var item in gestor2)
                     {
                         string nombreGestor = item.ToString();
-                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= mesInicio && e.FechaCita < mesFinal  select e).Count();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= mesInicio && e.FechaCita < mesFinal select e).Count();
 
                         <h4><b>@item:</b> @elemento</h4>
                     }
@@ -470,5 +518,25 @@ else
         </table>
     </div>
 }
+
+<div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width:70%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body" id="">
+                <div class="tablaScroll">
+                    <table class="table table-hover tablas table-responsive" id="tablaEjemploSS" style="color: #2F2D6B">
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 

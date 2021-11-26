@@ -31,63 +31,76 @@
     int day1 = finish.Day;
 
     int tomorrorDay = day + 1;
-    DateTime thisDate = new DateTime(year, month, day);
-    DateTime tomorrowDate = new DateTime(year1, month1, day1);
+    DateTime thisDate = ViewBag.Inicio; //new DateTime(year, month, day);
+    DateTime tomorrowDate = ViewBag.Final; //new DateTime(year1, month1, day1);
 
     var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
-    int modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate).Count()@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+int modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate).Count()@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 
-    var modelo2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
-    int modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate).Count()@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
-
-
-    int? idRol = 0;
-
-    if (oUser != null)
-    {
-        idUser = oUser.idUsuario;
-        nombreUsuario = oUser.Nombre;
-        idRol = oUser.idRol;
+var modelo2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+int modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate).Count()@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 
 
-        Hospital = "GENERAL";
-        Sucursal = Hospital.ToString();
+int? idRol = 0;
 
-        if (oUser.idRol == 2 || nombreUsuario == "Royer Plata" || nombreUsuario == "Pamela Rodriguez Saucedo")
-        {
-            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC != null) && (s.M.Canal == "Call Center"));
+if (oUser != null)
+{
+idUser = oUser.idUsuario;
+nombreUsuario = oUser.Nombre;
+idRol = oUser.idRol;
 
-            modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+
+Hospital = "GENERAL";
+Sucursal = Hospital.ToString();
+
+if (oUser.idRol == 2 || nombreUsuario == "Royer Plata" || nombreUsuario == "Pamela Rodriguez Saucedo" || nombreUsuario == "Supervisor Anexa")
+{
+modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+.Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC != null) && (s.M.Canal == "Call Center"));
+
+modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
 .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC != null) && (s.M.Canal == "Call Center")).Count();
 
-            modelo2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC != null ) && (s.M.Canal == "Call Center"));
+modelo2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC != null) && (s.M.Canal == "Call Center"));
 
-            modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
 .Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC != null) && (s.M.Canal == "Call Center")).Count();
-        }
-        else
-        {
-            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == nombreUsuario));
+}
+else
+{
+modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+.Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == nombreUsuario));
 
-            modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == nombreUsuario)).Count();
+modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+.Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == nombreUsuario)).Count();
 
-            modelo2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-    .Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.Recepcionista == nombreUsuario));
+modelo2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.Recepcionista == nombreUsuario));
 
-            modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-    .Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.Recepcionista == nombreUsuario)).Count();
-        }
+modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.Recepcionista == nombreUsuario)).Count();
+}
 
 
-        registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC == "Call Center" || s.M.CC == "Administrador")).Count();
-    }
+registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC == "Call Center" || s.M.CC == "Administrador")).Count();
+}
 
-    int noEnviados = db.DictamenProblema.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaExpdiente >= thisDate && s.M.FechaExpdiente < tomorrowDate && s.N.EstatusEnvio == "SI").Count();
-    int cita = (from c in db.Captura select c).Where(s => s.FechaExpdiente >= thisDate && s.FechaExpdiente < tomorrowDate).Count();
+int noEnviados = db.DictamenProblema.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaExpdiente >= thisDate && s.M.FechaExpdiente < tomorrowDate && s.N.EstatusEnvio == "SI").Count();
+int cita = (from c in db.Captura select c).Where(s => s.FechaExpdiente >= thisDate && s.FechaExpdiente < tomorrowDate).Count();
+
+
+int citasEfectuadas = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Canal == "Call Center").Count();
+var citasCompletadas = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Canal == "Call Center" && w.Asistencia == null && (w.EstatusPago == "Pagado" || w.EstatusPago == "paid") && w.Doctor != null).Count();
+var citasPendientes = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Canal == "Call Center" && w.Doctor == null && w.Asistencia == null).Count();
+int citasCanceladas = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Canal == "Call Center" && w.Asistencia != null).Count();
+
+int efectividad = 0;
+
+if (citasCompletadas != 0)
+{
+efectividad = ((citasCompletadas * 100) / citasEfectuadas);
+}
 
 }
 
@@ -95,6 +108,34 @@
 <br />
 
 <h3 style="color:white" class="text-center">Call Center</h3>
+
+@{
+    if (nombreUsuario == "Administrador" || nombreUsuario == "Supervisor Anexa")
+    {
+        <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/CallCenter/Index")">
+            <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px">
+                <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+                <input type="date" class="form-control" min="2021-08-02" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+                <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
+                <input type="submit" class="btn btn-primary" value="Enviar" />
+                <a href="~/CallCenter/Index"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+            </div>
+
+            <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
+                <div class="input-group">
+                    <input type="text" class="form-control input-g" id="buscador" name="dato" placeholder="Paciente o Expediente">
+                    <span class="input-group-btn">
+                        <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                    </span>
+                </div>
+            </div>
+        </form>
+        <br />
+    }
+}
+
+
 @*<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>*@
 <div class="form-inline">
     @*<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>*@
@@ -103,7 +144,7 @@
 
     <a href=@Url.Action("Index", "ControlDictamen")><button style="color:white" type="button" class="btn btn-info"><span class="glyphicon glyphicon-th-list"></span> &nbsp; &nbsp;Dictámenes</button></a>
     @{
-        if (idRol == 2 || idUser == 93 || idUser == 83)
+        if (idRol == 2 || idUser == 93 || idUser == 83 || nombreUsuario == "Supervisor Anexa")
         {
             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#crearCC"><span class="glyphicon glyphicon-plus"></span> Crear Usuario</button>
             <button type="button" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> No Enviados: <b>@(cita - noEnviados)</b></button>
@@ -111,15 +152,62 @@
     }
 
 
-    <div class="input-group pull-right">
-        <input type="text" class="form-control" id="buscador" name="dato" placeholder="Paciente o Expediente">
-        <span class="input-group-btn">
-            si
-            <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
-        </span>
-    </div>
+
+
+    @*<div class="input-group pull-right">
+            <input type="text" class="form-control" id="buscador" name="dato" placeholder="Paciente o Expediente">
+            <span class="input-group-btn">
+                si
+                <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+        </div>*@
 </div>
 <br />
+
+@{
+    if (nombreUsuario == "Administrador" || nombreUsuario == "Supervisor Anexa")
+    {
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-outline-warning boton-transparenteIndicador1 botonesGral col-md-4" data-toggle="modal" data-target="#efectividad" style="color:white">
+            @{
+                if (citasEfectuadas == 0)
+                {
+                    <h4><span class="glyphicon glyphicon-stats"></span> &nbsp; &nbsp;Sin citas de ANEXA</h4>
+                }
+                else
+                {
+                    <h4><span class="glyphicon glyphicon-stats"></span> &nbsp; &nbsp;Efectividad ANEXA: @efectividad%</h4>
+                }
+            }
+
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="efectividad" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:aquamarine">
+                        <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-stats"></span> &nbsp; &nbsp;Efectividad ANEXA</h3>
+                    </div>
+                    <div class="modal-body">
+                        <h4><b>Citas desde ANEXA:</b> @citasEfectuadas</h4>
+                        <h4><b>Citas completadas:</b> @citasCompletadas</h4>
+                        <h4><b>Citas pendientes:</b> @citasPendientes</h4>
+                        <h4><b>Citas canceladas:</b> @citasCanceladas</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br />
+        <br />
+        <br />
+        <br />
+
+    }
+
+}
 
 @section scripts{
     @*<script>
@@ -186,7 +274,7 @@
 
     <script>
         var input = document.getElementById("buscador");
-        input.addEventListener("keyup", function (event) {
+        input.addEventListener("keydown", function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
                 document.getElementById("buscar").click();
@@ -465,7 +553,7 @@
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
-</div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -695,7 +783,7 @@
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
-</div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
