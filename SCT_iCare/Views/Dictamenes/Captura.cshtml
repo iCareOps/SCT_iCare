@@ -49,8 +49,8 @@
     DateTime thisDate = ViewBag.Inicio;
     DateTime tomorrowDate = ViewBag.Final;
 
-    var modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && (s.NoExpediente != null || s.CURP != null) && s.Doctor != null && s.Asistencia == null && s.Estatura != null
-    && s.Metra != null) || (s.Metra != null && (s.EstatusCaptura == null || s.EstatusCaptura == "En Proceso"))).OrderByDescending(o => o.CancelaComentario == "Urgente").ThenByDescending(t => t.FechaCita);
+    var modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && (s.NoExpediente != null || s.CURP != null) && s.Genero != null && s.Doctor != null && s.Asistencia == null && s.Estatura != null
+    && s.Metra != null) || (s.Metra != null && s.Genero != null && s.Doctor != null && s.Asistencia == null && s.Estatura != null && (s.EstatusCaptura == null || s.EstatusCaptura == "En Proceso"))).OrderByDescending(o => o.CancelaComentario == "Urgente").ThenByDescending(t => t.FechaCita);
     int? idRol = 0;
 
     if (oUser != null)
@@ -98,6 +98,7 @@
         <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
         <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
         <input type="submit" class="btn btn-primary" value="Enviar" />
+        <input type="hidden" id="usuarioJS" value="@nombreUsuario" /> @*Se inserta el nombre de usuario para obtenerlo en la modal*@
         <a href="~/Dictamenes/Citas"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
     </div>
 
@@ -142,8 +143,8 @@
                     miResultado +=  "<thead><tr class=\"bg-primary \"><th>Nombre</th><th>CURP</th><th>NoExpediente</th><th>Tipo Trámite</th><th>Fecha</th><th>Datos</th><th>Estatus</th><th></th></tr></thead>"
                     for (let i = 0; i < data.length; i++) {
 
-                        if (data[i].EstatusCaptura == null) {
-                            if (data[i].Estatura == null || data[i].Doctor == null || data[i].Metra == null || data[i].Genero == null || data[i].CURP == null || data[i].NoExpediente == null) {
+                        if (data[i].EstatusCaptura === null) {
+                            if (data[i].Estatura === null || data[i].Doctor === null || data[i].Metra === null || data[i].Genero === null || data[i].CURP === null || data[i].NoExpediente === null) {
                                 miResultado += "<tr style=\"border:1px solid gray\">" +
                                     "<td><b>" + data[i].Nombre + "</b></td>" +
                                     "<td><b>" + data[i].CURP + "</b></td>" +
@@ -158,23 +159,32 @@
                                     "<b>Estatura: </b><span>" + data[i].Estatura + "</span><br/>" +
                                     "<b>Doctor: </b><span>" + data[i].Doctor + "</span><br/>" +
                                     "</span ></span ></td > " +
-                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "<td><b>Sin iniciar</b></td>" +
+                                    "<td><b>Sin iniciar</b></td>" +
                                     "</tr>"
                             } else {
+
+                                var usuario = document.getElementById('usuarioJS');
+                                    var url = '<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/IniciarCaptura")">'+
+                                        '<input type="hidden" class="form-control" id="id" name="id" value="' + data[i].idPacienteESP + '">' +
+                                        '<input type="hidden" class="form-control" id="id" name="capturista" value="' + usuario.value + '">' +
+                                            '<input type="submit" value="Iniciar" class="btn btn-primary" />'+
+                                        '</form>';
+
                                 miResultado += "<tr style=\"border:1px solid gray\">" +
-                                    "<td><b>" + data[i].Nombre + "</b></td>" +
-                                    "<td><b>" + data[i].CURP + "</b></td>" +
-                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
-                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
-                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
-                                    "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
-                                    "<td><b>Sin Iniciar</b></td>" +
-                                    "</tr>"
+                                        "<td><b>" + data[i].Nombre + "</b></td>" +
+                                        "<td><b>" + data[i].CURP + "</b></td>" +
+                                        "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                        "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                        "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                        "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                        "<td><b>Sin iniciar</td>" +
+                                        "<td><b>"+url+"</td>" +
+                                        "</tr>"
+
                             }
-
-
                         } else {
-                            if (data[i].Estatura == null && data[i].Doctor == null && data[i].Metra == null && data[i].Genero == null && data[i].CURP == null && data[i].NoExpediente == null) {
+                            if (data[i].Estatura === null && data[i].Doctor === null && data[i].Metra === null && data[i].Genero === null && data[i].CURP === null && data[i].NoExpediente === null) {
                                 miResultado += "<tr style=\"border:1px solid gray\">" +
                                     "<td><b>" + data[i].Nombre + "</b></td>" +
                                     "<td><b>" + data[i].CURP + "</b></td>" +
@@ -189,18 +199,67 @@
                                     "<b>Estatura: </b><span>" + data[i].Estatura + "</span><br/>" +
                                     "<b>Doctor: </b><span>" + data[i].Doctor + "</span><br/>" +
                                     "</span ></span ></td > " +
-                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
                                     "</tr>"
                             } else {
-                                miResultado += "<tr style=\"border:1px solid gray\">" +
-                                    "<td><b>" + data[i].Nombre + "</b></td>" +
-                                    "<td><b>" + data[i].CURP + "</b></td>" +
-                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
-                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
-                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
-                                    "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
-                                    "<td><b>Sin Iniciar</b></td>" +
-                                    "</tr>"
+
+                                if (data[i].EstatusCaptura === "Terminado") {
+                                    var url = '@Url.Action("DescargarPDF","Dictamenes", new {id="xxxx"})';
+                                    url = url.replace("xxxx", data[i].idPacienteESP);
+
+                                    miResultado += "<tr style=\"border:1px solid gray\">" +
+                                        "<td><b>" + data[i].Nombre + "</b></td>" +
+                                        "<td><b>" + data[i].CURP + "</b></td>" +
+                                        "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                        "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                        "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                        "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                        "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                        "<td><a href=" + url + "><button type=\"button\" class=\"btn btn-warning\">Descargar</button></a></td>" +
+                                        "</tr>"
+                                }
+                                else {
+                                    var usuario = document.getElementById('usuarioJS');
+                                    var url = '<button type=\"button\" class=\"btn btn-info\" data-toggle=\"modal\"  onclick=\"$(\'#ModalEdit2_' + data[i].idPacienteESP + '\').modal(\'show\');\">Dictaminar</button>' +
+                                        '<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/Dictaminar")">'+
+                            '<div class="modal fade" id="ModalEdit2_'+data[i].idPacienteESP+'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">'+
+                                '<div class="modal-dialog" role="document">'+
+                                    '<div class="modal-content">'+
+                                        '<div class="modal-header">'+
+                                        '</div>'+
+                                        '<div class="modal-body">'+
+                                            '<div class="form-group">'+
+                                                '<label for="recipient-name" class="col-form-label">Dictamen:</label>'+
+                                        '<input type="file"  id="nombre" name="dictamen" required>' +
+                                        '<input type="hidden" class="form-control" id="id" name="id" value="' + data[i].idPacienteESP + '">' +
+                                        '<input type="hidden" class="form-control" id="id" name="usuario" value="' + usuario.value + '">' +
+                                        '</div>'+
+                                        '<div class="modal-footer">'+
+                                            '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>'+
+                                            '<input type="submit" value="Guardar" class="btn btn-primary" />'+
+                                        '</div>'+
+                                    '</div>'+
+                                '</div>'+
+                            '</div>'+
+                                        '</form>';
+
+                                    $(document).on('hidden.bs.modal', function (event) {
+                                        if ($('.modal:visible').length) {
+                                            $('body').addClass('modal-open');
+                                        }
+                                    });
+
+                                    miResultado += "<tr style=\"border:1px solid gray\">" +
+                                        "<td><b>" + data[i].Nombre + "</b></td>" +
+                                        "<td><b>" + data[i].CURP + "</b></td>" +
+                                        "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                        "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                        "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                        "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                        "<td><b>" + data[i].EstatusCaptura + "</td>" +
+                                        "<td>"+url+"</td>" +
+                                        "</tr>"
+                                }
                             }
 
                         }
@@ -383,7 +442,7 @@ else
                         <div class="btn-group">
 
                             @{
-                                if (item.EstatusCaptura == null)
+                                if (item.EstatusCaptura == null || (item.EstatusCaptura == "En Proceso" && item.Capturista == null))
                                 {
                                     <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/IniciarCaptura")">
                                         <input type="submit" class="btn btn-primary" value="Iniciar" />

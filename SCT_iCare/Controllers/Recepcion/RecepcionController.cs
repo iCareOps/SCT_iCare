@@ -34,8 +34,67 @@ namespace SCT_iCare.Controllers.Recepcion
         }
 
         // GET: Pacientes
-        public ActionResult Index()
+        public ActionResult Index(DateTime? inicio, DateTime? final, string sucursal)
         {
+            DateTime thisDate = new DateTime();
+            DateTime tomorrowDate = new DateTime();
+
+            DateTime start1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            DateTime finish1 = new DateTime(DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day);
+
+            int nulos = 0;
+
+            if (inicio != null || final != null)
+            {
+                nulos = 1;
+            }
+
+            if (inicio != null)
+            {
+                DateTime start = Convert.ToDateTime(inicio);
+                int year = start.Year;
+                int month = start.Month;
+                int day = start.Day;
+
+                inicio = new DateTime(year, month, day);
+                thisDate = new DateTime(year, month, day);
+            }
+            if (final != null)
+            {
+                DateTime finish = Convert.ToDateTime(final).AddDays(1);
+                int year = finish.Year;
+                int month = finish.Month;
+                int day = finish.Day;
+
+                final = new DateTime(year, month, day);
+                tomorrowDate = new DateTime(year, month, day);
+            }
+
+            var urge = (from i in db.UrgentesCount select i).FirstOrDefault();
+            string mes = DateTime.Now.ToString("MMMM");
+
+            if (urge.Mes != mes)
+            {
+                urge.Mes = mes;
+                urge.Contador = 500;
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(urge).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
+            inicio = (inicio ?? start1);
+            final = (final ?? finish1);
+
+            ViewBag.Inicio = inicio;
+            ViewBag.Final = final;
+            ViewBag.Estado = nulos;
+            ViewBag.Sucursal = sucursal;
+
+            ViewBag.Parameter = "";
+
             return View(db.Paciente.ToList());
         }
 
@@ -2387,54 +2446,94 @@ namespace SCT_iCare.Controllers.Recepcion
             if(dato.All(char.IsDigit))
             {
                 parametro = dato;
+
+                List<Paciente> data = db.Paciente.ToList();
+                JavaScriptSerializer js = new JavaScriptSerializer();
+                var selected = data.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+                    //.Where(r => r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro)
+                    .Where(r => r.M.NoExpediente == parametro )
+                    .Join(db.Captura, o => o.N.idPaciente, p => p.idPaciente, (o, p) => new { O = o, P = p })
+                    .Select(S => new {
+                        S.O.N.idPaciente,
+                        S.O.N.Nombre,
+                        S.O.M.TipoPago,
+                        FechaCita = Convert.ToDateTime(S.O.M.FechaCita).ToString("dd-MMMM-yyyy"),
+                        S.O.M.TipoLicencia,
+                        S.O.M.NoExpediente,
+                        S.O.M.Sucursal,
+                        S.O.M.TipoTramite,
+                        S.P.EstatusCaptura
+                    });
+
+                return Json(selected, JsonRequestBehavior.AllowGet);
             }
             else
             {
                 parametro = dato.ToUpper();
+
+                double porcentaje = 1;
+
+                if(db.Paciente.Count() > 5000 && db.Paciente.Count() < 9000)
+                {
+                    porcentaje = 0.5;
+                }
+                else if (db.Paciente.Count() >= 9000 && db.Paciente.Count() < 14000)
+                {
+                    porcentaje = 0.6;
+                }
+                else if (db.Paciente.Count() >= 14000 && db.Paciente.Count() < 18000)
+                {
+                    porcentaje = 0.7;
+                }
+                else if (db.Paciente.Count() >= 18000 && db.Paciente.Count() < 22000)
+                {
+                    porcentaje = 0.8;
+                }
+                else if (db.Paciente.Count() >= 22000)
+                {
+                    porcentaje = 0.9;
+                }
+
+                List<Paciente> data = db.Paciente.Where(w => w.idPaciente > (db.Paciente.Count() * porcentaje)).ToList();
+                JavaScriptSerializer js = new JavaScriptSerializer();
+                var selected = data.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+                    //.Where(r => r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro)
+                    .Where(r => r.N.Nombre == parametro)
+                    .Join(db.Captura, o => o.N.idPaciente, p => p.idPaciente, (o, p) => new { O = o, P = p })
+                    .Select(S => new {
+                        S.O.N.idPaciente,
+                        S.O.N.Nombre,
+                        S.O.M.TipoPago,
+                        FechaCita = Convert.ToDateTime(S.O.M.FechaCita).ToString("dd-MMMM-yyyy"),
+                        S.O.M.TipoLicencia,
+                        S.O.M.NoExpediente,
+                        S.O.M.Sucursal,
+                        S.O.M.TipoTramite,
+                        S.P.EstatusCaptura
+                    });
+
+                return Json(selected, JsonRequestBehavior.AllowGet);
             }
 
-            List<Paciente> data = db.Paciente.ToList();
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            var selected = data.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
-                .Where(r => r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro)
-                .Join(db.Captura, o => o.N.idPaciente, p => p.idPaciente, (o, p) => new { O = o, P = p })
-                .Select(S => new {
-                    S.O.N.idPaciente,
-                    S.O.N.Nombre,
-                    S.O.M.TipoPago,
-                    FechaCita = Convert.ToDateTime(S.O.M.FechaCita).ToString("dd-MMMM-yyyy"),
-                    S.O.M.TipoLicencia,
-                    S.O.M.NoExpediente,
-                    S.O.M.Sucursal,
-                    S.O.M.TipoTramite,
-                    S.P.EstatusCaptura
-                });
-
-            //var joinSelected = selected.Join(db.Captura, n => n.idPaciente, d => d.idPaciente, (n, d) => new { N = n, D = d })
+            //List<Paciente> data = db.Paciente.Where(w => w.idPaciente > (db.Paciente.Count() / 3)).ToList();
+            //JavaScriptSerializer js = new JavaScriptSerializer();
+            //var selected = data.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+            //    //.Where(r => r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro)
+            //    .Where(r => r.N.Nombre == parametro || r.M.NoExpediente == parametro)
+            //    .Join(db.Captura, o => o.N.idPaciente, p => p.idPaciente, (o, p) => new { O = o, P = p })
             //    .Select(S => new {
-            //        S.N.idPaciente,
-            //        S.N.Nombre,
-            //        S.N.Telefono,
-            //        S.N.Email,
-            //        S.N.Folio,
-            //        S.N.CURP,
-            //        S.N.TipoPago,
-            //        FechaCita = S.N.FechaCita.ToString(),
-            //        S.N.NoOrden,
-            //        S.N.EstatusPago,
-            //        S.N.TipoLicencia,
-            //        S.N.NoExpediente,
-            //        FechaReferencia = S.N.FechaReferencia.ToString(),
-            //        S.N.Referencia,
-            //        S.N.Sucursal,
-            //        S.N.Doctor,
-            //        S.N.TipoTramite,
-            //        S.D.EstatusCaptura
-            //    }); ;
+            //        S.O.N.idPaciente,
+            //        S.O.N.Nombre,
+            //        S.O.M.TipoPago,
+            //        FechaCita = Convert.ToDateTime(S.O.M.FechaCita).ToString("dd-MMMM-yyyy"),
+            //        S.O.M.TipoLicencia,
+            //        S.O.M.NoExpediente,
+            //        S.O.M.Sucursal,
+            //        S.O.M.TipoTramite,
+            //        S.P.EstatusCaptura
+            //    });
 
-            //string nombre = selected.Nombre.ToString();
-
-            return Json(selected, JsonRequestBehavior.AllowGet);
+            //return Json(selected, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -2884,29 +2983,79 @@ namespace SCT_iCare.Controllers.Recepcion
             if (dato.All(char.IsDigit))
             {
                 parametro = dato;
+
+                List<Captura> data = db.Captura.ToList();
+                JavaScriptSerializer js = new JavaScriptSerializer();
+                var selected = data.Where(r => r.NoExpediente == parametro)
+                    .Select(S => new {
+                        idCaptura = S.idCaptura,
+                        S.NombrePaciente,
+                        S.TipoTramite,
+                        S.NoExpediente,
+                        S.Sucursal,
+                        S.Doctor,
+                        S.EstatusCaptura
+                    }).FirstOrDefault();
+
+                return Json(selected, JsonRequestBehavior.AllowGet);
             }
             else
             {
                 parametro = dato.ToUpper();
+
+                double porcentaje = 1;
+
+                if (db.Paciente.Count() > 5000 && db.Paciente.Count() < 9000)
+                {
+                    porcentaje = 0.5;
+                }
+                else if (db.Paciente.Count() >= 9000 && db.Paciente.Count() < 14000)
+                {
+                    porcentaje = 0.6;
+                }
+                else if (db.Paciente.Count() >= 14000 && db.Paciente.Count() < 18000)
+                {
+                    porcentaje = 0.7;
+                }
+                else if (db.Paciente.Count() >= 18000 && db.Paciente.Count() < 22000)
+                {
+                    porcentaje = 0.8;
+                }
+                else if (db.Paciente.Count() >= 22000)
+                {
+                    porcentaje = 0.9;
+                }
+
+                List<Captura> data = db.Captura.Where(w => w.idPaciente > (db.Paciente.Count() * porcentaje)).ToList();
+                JavaScriptSerializer js = new JavaScriptSerializer();
+                var selected = data.Where(r => r.NombrePaciente == parametro)
+                    .Select(S => new {
+                        idCaptura = S.idCaptura,
+                        S.NombrePaciente,
+                        S.TipoTramite,
+                        S.NoExpediente,
+                        S.Sucursal,
+                        S.Doctor,
+                        S.EstatusCaptura
+                    }).FirstOrDefault();
+
+                return Json(selected, JsonRequestBehavior.AllowGet);
             }
 
-            List<Captura> data = db.Captura.ToList();
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            var selected = data.Where(r => r.NombrePaciente.Contains(parametro) || r.NoExpediente == parametro)
-                .Select(S => new {
-                    idCaptura = S.idCaptura,
-                    S.NombrePaciente,
-                    S.TipoTramite,
-                    S.NoExpediente,
-                    S.Sucursal,
-                    S.Doctor,
-                    S.EstatusCaptura
-                }).FirstOrDefault();
+            //List<Captura> data = db.Captura.ToList();
+            //JavaScriptSerializer js = new JavaScriptSerializer();
+            //var selected = data.Where(r => r.NombrePaciente == parametro || r.NoExpediente == parametro)
+            //    .Select(S => new {
+            //        idCaptura = S.idCaptura,
+            //        S.NombrePaciente,
+            //        S.TipoTramite,
+            //        S.NoExpediente,
+            //        S.Sucursal,
+            //        S.Doctor,
+            //        S.EstatusCaptura
+            //    }).FirstOrDefault();
 
-            //string estatus = selected.EstatusCaptura;
-
-
-            return Json(selected, JsonRequestBehavior.AllowGet);
+            //return Json(selected, JsonRequestBehavior.AllowGet);
         }
 
     }

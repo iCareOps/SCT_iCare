@@ -694,7 +694,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                 }
                 else
                 {
-                    if (revisionPacienteESP != null)
+                    if (revisionEPI != null) //-------------------------------
                     {
                         double numeroDecimalRandom = 0;
                         double altura = Convert.ToDouble(estatura);
@@ -929,7 +929,7 @@ namespace SCT_iCare.Controllers.Dictamenes
 
             if (curp != "")
             {
-                revisionPacienteESP.CURP = curp.ToUpper() != "" ? curp : revisionPacienteESP.CURP;
+                revisionPacienteESP.CURP = curp != "" ? curp.ToUpper() : revisionPacienteESP.CURP;
             }
 
             if (numero != "")
@@ -1481,6 +1481,28 @@ namespace SCT_iCare.Controllers.Dictamenes
             }
 
             return RedirectToAction("Citas");
+        }
+
+        public ActionResult HabilitarDoctores(string id_1, string id_2, string id_3, string id_4, string id_5, string id_6, string id_7, string id_8, string id_9, string id_10, string id_11, string id_12, string id_13, string id_14,
+            string id_15, string id_16, string id_17, string id_18, string id_19, string id_20 )
+        {
+            string[] doctores = { id_1, id_2, id_3, id_4, id_5, id_6, id_7, id_8, id_9, id_10, id_11, id_12, id_13, id_14, id_15, id_16, id_17, id_18, id_19, id_20 };
+
+            for(int i = 1; i <= doctores.Length; i++)
+            {
+                var doctor = db.Doctores.Find(i);
+
+                doctor.ALT = doctores[i - 1] == "on" ? "SI" : "NO";
+
+                if(ModelState.IsValid)
+                {
+                    db.Entry(doctor).State = EntityState.Modified;
+                }
+            }
+
+            db.SaveChanges();
+
+            return Redirect("Citas");
         }
 
         public JsonResult Buscar(string dato)

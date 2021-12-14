@@ -41,68 +41,80 @@ var modelo2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => ne
 int modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate).Count()@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
 
 
-int? idRol = 0;
+    int? idRol = 0;
 
-if (oUser != null)
-{
-idUser = oUser.idUsuario;
-nombreUsuario = oUser.Nombre;
-idRol = oUser.idRol;
-
-
-Hospital = "GENERAL";
-Sucursal = Hospital.ToString();
-
-if (oUser.idRol == 2 || nombreUsuario == "Royer Plata" || nombreUsuario == "Pamela Rodriguez Saucedo" || nombreUsuario == "Supervisor Anexa")
-{
-modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-.Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC != null) && (s.M.Canal == "Call Center"));
-
-modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-.Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC != null) && (s.M.Canal == "Call Center")).Count();
-
-modelo2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC != null) && (s.M.Canal == "Call Center"));
-
-modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC != null) && (s.M.Canal == "Call Center")).Count();
-}
-else
-{
-modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-.Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == nombreUsuario));
-
-modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-.Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == nombreUsuario)).Count();
-
-modelo2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.Recepcionista == nombreUsuario));
-
-modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
-.Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.Recepcionista == nombreUsuario)).Count();
-}
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
 
 
-registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC == "Call Center" || s.M.CC == "Administrador")).Count();
-}
+        Hospital = "GENERAL";
+        Sucursal = Hospital.ToString();
 
-int noEnviados = db.DictamenProblema.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaExpdiente >= thisDate && s.M.FechaExpdiente < tomorrowDate && s.N.EstatusEnvio == "SI").Count();
-int cita = (from c in db.Captura select c).Where(s => s.FechaExpdiente >= thisDate && s.FechaExpdiente < tomorrowDate).Count();
+        if (oUser.idRol == 2 || nombreUsuario == "Royer Plata" || nombreUsuario == "Pamela Rodriguez Saucedo" || nombreUsuario == "Supervisor Anexa")
+        {
+            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC != null) && (s.M.Canal == "Call Center"));
+
+            modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC != null) && (s.M.Canal == "Call Center")).Count();
+
+            modelo2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+            .Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC != null) && (s.M.Canal == "Call Center"));
+
+            modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+            .Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.CC != null) && (s.M.Canal == "Call Center")).Count();
+        }
+        else
+        {
+            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == nombreUsuario));
+
+            modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+            .Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == nombreUsuario)).Count();
+
+            modelo2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+            .Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.Recepcionista == nombreUsuario));
+
+            modeloCount2 = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+            .Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.Recepcionista == nombreUsuario)).Count();
+        }
 
 
-int citasEfectuadas = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Canal == "Call Center").Count();
-var citasCompletadas = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Canal == "Call Center" && w.Asistencia == null && (w.EstatusPago == "Pagado" || w.EstatusPago == "paid") && w.Doctor != null).Count();
-var citasPendientes = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Canal == "Call Center" && w.Doctor == null && w.Asistencia == null).Count();
-int citasCanceladas = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Canal == "Call Center" && w.Asistencia != null).Count();
+        registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC == "Call Center" || s.M.CC == "Administrador")).Count();
+    }
 
-int efectividad = 0;
+    int noEnviados = db.DictamenProblema.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaExpdiente >= thisDate && s.M.FechaExpdiente < tomorrowDate && s.N.EstatusEnvio == "SI").Count();
+    int cita = (from c in db.Captura select c).Where(s => s.FechaExpdiente >= thisDate && s.FechaExpdiente < tomorrowDate).Count();
 
-if (citasCompletadas != 0)
-{
-efectividad = ((citasCompletadas * 100) / citasEfectuadas);
-}
+    var enProcesoHoy = db.Cita.Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && (w.Doctor == null || w.NoExpediente == null) && w.Canal == "Call Center");
 
-}
+    int enProcesoHoyConteo = db.Cita.Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && (w.Doctor == null || w.NoExpediente == null) && w.Canal == "Call Center").Count();
+
+    var dictamenesHoy = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+                    .Where(w => w.N.FechaCita >= thisDate && w.N.FechaCita < tomorrowDate && (w.N.Doctor != null && w.N.NoExpediente != null) && w.N.Canal == "Call Center");
+
+    int dictamenesHoyConteo = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+                .Where(w => w.N.FechaCita >= thisDate && w.N.FechaCita < tomorrowDate && (w.N.Doctor != null && w.N.NoExpediente != null) && w.N.Canal == "Call Center").Count();
+
+
+    var sucursalesLista = from s in db.Sucursales select s;
+
+    int citasEfectuadas = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Canal == "Call Center").Count();
+    var citasCompletadas = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Canal == "Call Center" && w.Asistencia == null && (w.EstatusPago == "Pagado" || w.EstatusPago == "paid") && w.Doctor != null).Count();
+    var citasPendientes = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Canal == "Call Center" && w.Doctor == null && w.Asistencia == null).Count();
+    int citasCanceladas = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Canal == "Call Center" && w.Asistencia != null).Count();
+
+    int efectividad = 0;
+
+    if (citasCompletadas != 0)
+    {
+        efectividad = ((citasCompletadas * 100) / citasEfectuadas);
+    }
+
+            }
 
 <br />
 <br />
@@ -110,8 +122,8 @@ efectividad = ((citasCompletadas * 100) / citasEfectuadas);
 <h3 style="color:white" class="text-center">Call Center</h3>
 
 @{
-    if (nombreUsuario == "Administrador" || nombreUsuario == "Supervisor Anexa")
-    {
+                if (nombreUsuario == "Administrador" || nombreUsuario == "Supervisor Anexa")
+                {
         <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/CallCenter/Index")">
             <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px">
                 <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
@@ -133,7 +145,7 @@ efectividad = ((citasCompletadas * 100) / citasEfectuadas);
         </form>
         <br />
     }
-}
+    }
 
 
 @*<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>*@
@@ -195,6 +207,77 @@ efectividad = ((citasCompletadas * 100) / citasEfectuadas);
                         <h4><b>Citas completadas:</b> @citasCompletadas</h4>
                         <h4><b>Citas pendientes:</b> @citasPendientes</h4>
                         <h4><b>Citas canceladas:</b> @citasCanceladas</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-outline-warning boton-transparenteIndicador4 botonesGral col-md-4" data-toggle="modal" data-target="#enProcesoHoy" style="color:white">
+            <h4><span class="glyphicon glyphicon-copy"></span> &nbsp; &nbsp;Epis Pendientes: <b>@enProcesoHoyConteo</b></h4>
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="enProcesoHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:gold">
+                        <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-copy"></span> &nbsp; &nbsp;Epis Pendientes: <b>@enProcesoHoyConteo</b></h3>
+                    </div>
+                    <div class="modal-body">
+                        @{
+                            foreach (var item in sucursalesLista)
+                            {
+                                var elemento = enProcesoHoy.Where(s => s.Sucursal == item.Nombre).Count();
+
+                                if (elemento > 0)
+                                {
+                                    <h4><b>@item.Nombre:</b> @elemento</h4>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-outline-warning boton-transparenteIndicador3 botonesGral col-md-4" data-toggle="modal" data-target="#dictamenesHoy" style="color:white">
+            <h4><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;Realizados en Sucursal: <b>@dictamenesHoyConteo</b></h4>
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="dictamenesHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:aquamarine">
+                        <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;Realizados por Sucursal: <b>@dictamenesHoyConteo</b></h3>
+                    </div>
+                    <div class="modal-body">
+                        @{
+                            foreach (var item in sucursalesLista)
+                            {
+                                var elemento = dictamenesHoy.Where(s => s.N.Sucursal == item.Nombre && s.N.TipoTramite != "REVALORACIÓN").Count();
+
+                                if (elemento > 0)
+                                {
+                                    <h4><b>@item.Nombre:</b> @elemento</h4>
+                                }
+                            }
+                            if ((from e in db.Captura where e.FechaExpdiente >= thisDate && e.FechaExpdiente < tomorrowDate && e.TipoTramite == "REVALORACIÓN" && e.EstatusCaptura == "Terminado" select e).Count() > 0)
+                            {
+                                <hr />
+                                <h3 class="text-primary">Revaloraciones:</h3>
+                                foreach (var item in sucursalesLista)
+                                {
+                                    var elemento = dictamenesHoy.Where(s => s.N.Sucursal == item.Nombre && s.N.TipoTramite == "REVALORACIÓN").Count();
+                                    if (elemento > 0)
+                                    {
+                                        <h4><b>@item.Nombre:</b> @elemento</h4>
+                                    }
+                                }
+                            }
+                        }
                     </div>
                 </div>
             </div>
@@ -281,6 +364,30 @@ efectividad = ((citasCompletadas * 100) / citasEfectuadas);
             }
         });
 
+    </script>
+
+    <script>
+        $(function () {
+            $("#fechaFestivo").change(function () {
+                var festivo = document.getElementById("fechaFestivo").value;
+                if (festivo == "2021-12-24" || festivo == "2021-12-25" || festivo == "2021-12-31" || festivo == "2022-01-01") {
+                    alert("Esta fecha no está disponible");
+                    document.getElementById("fechaFestivo").value = null;
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(function () {
+            $("#fechaFestivo2").change(function () {
+                var festivo = document.getElementById("fechaFestivo2").value;
+                if (festivo == "2021-12-24" || festivo == "2021-12-25" || festivo == "2021-12-31" || festivo == "2022-01-01") {
+                    alert("Esta fecha no está disponible");
+                    document.getElementById("fechaFestivo2").value = null;
+                }
+            });
+        });
     </script>
 
     <script>
@@ -479,7 +586,7 @@ efectividad = ((citasCompletadas * 100) / citasEfectuadas);
 
                     <div class="form-group">
                         <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
-                        <input type="date" class="form-control" id="fecha" name="fecha" required>
+                        <input type="date" class="form-control" id="fechaFestivo" name="fecha" required>
                     </div>
                     <div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Sucursal:</label>
@@ -720,7 +827,7 @@ efectividad = ((citasCompletadas * 100) / citasEfectuadas);
                     </div>
                     <div class="form-group">
                         <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
-                        <input type="date" class="form-control" id="fecha" name="fecha" required>
+                        <input type="date" class="form-control" id="fechaFestivo2" name="fecha" required>
                     </div>
                     <input type="hidden" name="usuario" asp-for="file" class="" required value="Call Center" />
                     <div class="form-group" style="width:60%; min-width:320px">
@@ -908,9 +1015,7 @@ else
                     <th>
                         Teléfono
                     </th>
-                    <th>
-                        Referencia
-                    </th>
+
                     <th>
                         Sucursal
                     </th>
@@ -919,6 +1024,9 @@ else
                     </th>
                     <th>
                         Fecha Cita
+                    </th>
+                    <th>
+                        Administración
                     </th>
                     <th></th>
                 </tr>
@@ -975,18 +1083,6 @@ else
                         @Html.DisplayFor(modelItem => item.N.Telefono)
                     </td>
                     <td>
-                        @{
-                            if (item.M.TipoPago == "Pago con Tarjeta")
-                            {
-                                <b><a href=@item.M.NoOrden target="_blank">Terminación: @item.M.Referencia</a></b>
-                            }
-                            else
-                            {
-                                <b>@Html.DisplayFor(modelItem => item.M.Referencia)</b>
-                            }
-                        }
-                    </td>
-                    <td>
                         <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
                     </td>
                     <td>
@@ -995,6 +1091,59 @@ else
                     <td>
                         @*@Html.DisplayFor(modelItem => item.M.FechaCita)*@
                         @Convert.ToDateTime(item.M.FechaCita).ToString("dd-MMMM-yyyy")
+                    </td>
+                    <td style="font-size: smaller">
+                        @{
+                            var revisionEPI2 = (from e in db.Expedientes where e.idPaciente == item.N.idPaciente select e.idPaciente).FirstOrDefault();
+                            var revisionDictamen2 = (from e in db.EPI_DictamenAptitud where e.idPaciente == item.N.idPaciente select e).FirstOrDefault();
+
+                            if (item.M.Asistencia == "NO")
+                            {
+                                <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">Cancelado</mark></b>
+                            }
+                            else if (revisionEPI2 == null)
+                            {
+                                if (revisionDictamen2 == null)
+                                {
+                                    if (item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico == null)
+                                    {
+                                        <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Pendiente</mark></b>
+                                    }
+                                    else if (item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico != null)
+                                    {
+                                        <b><mark style="background-color: dodgerblue; padding:5px; border-radius:7px">EnProceso</mark></b>
+                                    }
+                                    else if (item.M.Asistencia != "NO" && item.M.Entregado != null && item.M.CarruselMedico == null)
+                                    {
+                                        <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Entregado</mark></b>
+                                    }
+                                }
+                                else
+                                {
+                                    if (item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico != null && (revisionDictamen2.Motivo != "Revalorado NO APTO" || revisionDictamen2.Motivo != "Revalorado APTO"))
+                                    {
+                                        <b><mark style="background-color: turquoise; padding:5px; border-radius:7px">Terminado</mark></b>
+                                    }
+                                    else
+                                    {
+                                        <b><mark style="background-color: turquoise; padding:5px; border-radius:7px">Revalorado</mark></b>
+                                    }
+                                }
+                            }
+                            else if (revisionEPI2 != null)
+                            {
+                                if (revisionEPI2 != null && item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico == null)
+                                {
+                                    <b><mark style="background-color: turquoise; padding:5px; border-radius:7px">Digitalizado</mark></b>
+                                }
+                                else if (item.M.Entregado != null)
+                                {
+                                    <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Entregado</mark></b>
+                                }
+                            }
+
+
+                        }
                     </td>
                     <td>
                         <div class="btn-group">
@@ -1107,9 +1256,6 @@ else
                         Teléfono
                     </th>
                     <th>
-                        Referencia
-                    </th>
-                    <th>
                         Sucursal
                     </th>
                     <th>
@@ -1117,6 +1263,9 @@ else
                     </th>
                     <th>
                         Fecha Cita
+                    </th>
+                    <th>
+                        Administración
                     </th>
                     <th></th>
                 </tr>
@@ -1173,18 +1322,6 @@ else
                         @Html.DisplayFor(modelItem => item.N.Telefono)
                     </td>
                     <td>
-                        @{
-                            if (item.M.TipoPago == "Pago con Tarjeta")
-                            {
-                                <b><a href=@item.M.NoOrden target="_blank">Terminación: @item.M.Referencia</a></b>
-                            }
-                            else
-                            {
-                                <b>@Html.DisplayFor(modelItem => item.M.Referencia)</b>
-                            }
-                        }
-                    </td>
-                    <td>
                         <span class="field-tip">
                             <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
                             <span class="tip-content">@item.M.Doctor</span>
@@ -1196,6 +1333,59 @@ else
                     <td>
                         @*@Html.DisplayFor(modelItem => item.M.FechaCita)*@
                         @Convert.ToDateTime(item.M.FechaCita).ToString("dd-MMMM-yyyy")
+                    </td>
+                    <td style="font-size: smaller">
+                        @{
+                            var revisionEPI2 = (from e in db.Expedientes where e.idPaciente == item.N.idPaciente select e.idPaciente).FirstOrDefault();
+                            var revisionDictamen2 = (from e in db.EPI_DictamenAptitud where e.idPaciente == item.N.idPaciente select e).FirstOrDefault();
+
+                            if (item.M.Asistencia == "NO")
+                            {
+                                <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">Cancelado</mark></b>
+                            }
+                            else if (revisionEPI2 == null)
+                            {
+                                if (revisionDictamen2 == null)
+                                {
+                                    if (item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico == null)
+                                    {
+                                        <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Pendiente</mark></b>
+                                    }
+                                    else if (item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico != null)
+                                    {
+                                        <b><mark style="background-color: dodgerblue; padding:5px; border-radius:7px">EnProceso</mark></b>
+                                    }
+                                    else if (item.M.Asistencia != "NO" && item.M.Entregado != null && item.M.CarruselMedico == null)
+                                    {
+                                        <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Entregado</mark></b>
+                                    }
+                                }
+                                else
+                                {
+                                    if (item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico != null && (revisionDictamen2.Motivo != "Revalorado NO APTO" || revisionDictamen2.Motivo != "Revalorado APTO"))
+                                    {
+                                        <b><mark style="background-color: turquoise; padding:5px; border-radius:7px">Terminado</mark></b>
+                                    }
+                                    else
+                                    {
+                                        <b><mark style="background-color: turquoise; padding:5px; border-radius:7px">Revalorado</mark></b>
+                                    }
+                                }
+                            }
+                            else if (revisionEPI2 != null)
+                            {
+                                if (revisionEPI2 != null && item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico == null)
+                                {
+                                    <b><mark style="background-color: turquoise; padding:5px; border-radius:7px">Digitalizado</mark></b>
+                                }
+                                else if (item.M.Entregado != null)
+                                {
+                                    <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Entregado</mark></b>
+                                }
+                            }
+
+
+                        }
                     </td>
                     <td>
                         <div class="btn-group">

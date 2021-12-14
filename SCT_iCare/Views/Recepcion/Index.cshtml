@@ -8,6 +8,8 @@
     GMIEntities db = new GMIEntities();
     System.Web.Script.Serialization.JavaScriptSerializer js = new System.Web.Script.Serialization.JavaScriptSerializer();
 
+    string sucursalParametro = ViewBag.Sucursal;
+
     var Recepcion = new int?();
     var Hospital = "";
     var idHospital = 0;
@@ -31,67 +33,77 @@
     int day1 = finish.Day;
 
     int tomorrorDay = day + 1;
-    DateTime thisDate = new DateTime(year, month, day);
-    DateTime tomorrowDate = new DateTime(year1, month1, day1);
+    DateTime thisDate = ViewBag.Inicio; //new DateTime(year, month, day);
+    DateTime tomorrowDate = ViewBag.Final; //new DateTime(year1, month1, day1);
 
     var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
-    int? idRol = 0;
+int? idRol = 0;
 
-    int citasHoyConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Sucursal == Sucursal).Count();
-    int episHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.Sucursal == Sucursal).Count();
-    int dictamenHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Terminado" && w.Sucursal == Sucursal).Count();
-    int enProcesoHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && (w.EstatusCaptura == "En captura..." || w.EstatusCaptura == "No iniciado") && w.Sucursal == Sucursal).Count();
-    int entregadosConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Entregado == "SI" && w.Sucursal == Sucursal).Count();
-    int enviadosCount = db.Cita.Join(db.DictamenProblema, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
-                .Where(w => w.N.FechaCita >= thisDate && w.N.FechaCita < tomorrowDate && w.M.EstatusEnvio == "SI" && w.N.Sucursal == Sucursal)
-                .Select(S => new
-                {
-                    S.N.Sucursal,
-                    S.N.FechaCita
-                }).Count();
+int citasHoyConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Sucursal == Sucursal).Count();
+int episHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.Sucursal == Sucursal).Count();
+int dictamenHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Terminado" && w.Sucursal == Sucursal).Count();
+int enProcesoHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && (w.EstatusCaptura == "En captura..." || w.EstatusCaptura == "No iniciado") && w.Sucursal == Sucursal).Count();
+int entregadosConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Entregado == "SI" && w.Sucursal == Sucursal).Count();
+int enviadosCount = db.Cita.Join(db.DictamenProblema, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+.Where(w => w.N.FechaCita >= thisDate && w.N.FechaCita < tomorrowDate && w.M.EstatusEnvio == "SI" && w.N.Sucursal == Sucursal)
+.Select(S => new
+{
+S.N.Sucursal,
+S.N.FechaCita
+}).Count();
 
-    if (oUser != null)
-    {
-        idUser = oUser.idUsuario;
-        nombreUsuario = oUser.Nombre;
-        idRol = oUser.idRol;
+if (oUser != null)
+{
+idUser = oUser.idUsuario;
+nombreUsuario = oUser.Nombre;
+idRol = oUser.idRol;
 
-        if (idUser != 14 && oUser.idRol != 2)
+if (idUser != 14 && oUser.idRol != 2)
+{
+Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
+Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
+idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
+Sucursal = Hospital.ToString();
+
+@*Sustituir el where para medicosgmi*@
+@*(s => ((s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate) || (s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)) && (s.M.Sucursal == Sucursal || s.M.Recepcionista == nombreUsuario));*@
+
+@*Sustituir el where para medicinagmi*@
+@*.Where(s => ((s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate)/* || (s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)*/) && (s.M.Sucursal == Sucursal || s.M.Recepcionista == nombreUsuario));*@
+        modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => ((s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate)/* || (s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)*/) && (s.M.Sucursal == Sucursal || s.M.Recepcionista == nombreUsuario));
+
+        registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.Sucursal == Sucursal || s.M.Recepcionista == nombreUsuario)).Count();
+
+        citasHoyConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Sucursal == Sucursal).Count();
+        episHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.Sucursal == Sucursal).Count();
+        dictamenHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Terminado" && w.Sucursal == Sucursal).Count();
+        enProcesoHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && (w.EstatusCaptura == "En captura..." || w.EstatusCaptura == "No iniciado") && w.Sucursal == Sucursal).Count();
+        entregadosConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Entregado == "SI" && w.Sucursal == Sucursal).Count();
+        enviadosCount = db.Cita.Join(db.DictamenProblema, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+        .Where(w => w.N.FechaCita >= thisDate && w.N.FechaCita < tomorrowDate && w.M.EstatusEnvio == "SI" && w.N.Sucursal == Sucursal)
+        .Select(S => new
         {
-            Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
-            Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
-            idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
-            Sucursal = Hospital.ToString();
+            S.N.Sucursal,
+            S.N.FechaCita
+        }).Count();
 
-            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.Sucursal == Sucursal || s.M.Recepcionista == nombreUsuario))@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
-
-            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.Sucursal == Sucursal || s.M.Recepcionista == nombreUsuario)).Count();
-
-            citasHoyConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Sucursal == Sucursal).Count();
-            episHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.Sucursal == Sucursal).Count();
-            dictamenHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Terminado" && w.Sucursal == Sucursal).Count();
-            enProcesoHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && (w.EstatusCaptura == "En captura..." || w.EstatusCaptura == "No iniciado") && w.Sucursal == Sucursal).Count();
-            entregadosConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Entregado == "SI" && w.Sucursal == Sucursal).Count();
-            enviadosCount = db.Cita.Join(db.DictamenProblema, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
-                        .Where(w => w.N.FechaCita >= thisDate && w.N.FechaCita < tomorrowDate && w.M.EstatusEnvio == "SI" && w.N.Sucursal == Sucursal)
-                        .Select(S => new
-                        {
-                            S.N.Sucursal,
-                            S.N.FechaCita
-                        }).Count();
-
-        }
-        else
-        {
-            Hospital = "GENERAL";
-            Sucursal = Hospital.ToString();
-
-            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate)/*.OrderByDescending(o => o.M.TipoTramite)*/;
-
-            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
-
-        }
     }
+    else
+    {
+        Hospital = "GENERAL";
+        Sucursal = Hospital.ToString();
+
+        modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate)/*.OrderByDescending(o => o.M.TipoTramite)*/;
+
+        if(sucursalParametro != null)
+        {
+            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == sucursalParametro)/*.OrderByDescending(o => o.M.TipoTramite)*/;
+        }
+
+        registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
+
+    }
+}
 
 
 
@@ -103,23 +115,98 @@
 @*<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>
     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>*@
 
-<div class="form-inline">
-    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>
-    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal3"><span class="glyphicon glyphicon-credit-card"></span> Pago con Tarjeta</button>
-    <div class="input-group pull-right">
-        <input type="text" class="form-control" id="buscador" name="dato" placeholder="Paciente o Expediente">
-        <span class="input-group-btn">
-            <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
-        </span>
-    </div>
-</div>
+@{
+    if (idRol == 2)
+    {
+        <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/Index")">
+            <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px; width:100%; border:2px solid white">
+
+                <select name="sucursal" style="font-size:2vh" class="form-select">
+                    @{
+                        if (sucursalParametro != null)
+                        {
+                            <option style="font-weight:bold" value="@sucursalParametro" selected>@sucursalParametro</option>
+                        }
+                        else
+                        {
+                            <option style="font-weight:bold" value="" selected disabled>Sucursal</option>
+                        }
+
+                        foreach (var item in db.Sucursales)
+                        {
+                            <option style="font-weight:bold" value="@item.Nombre">@item.Nombre</option>
+                        }
+
+                    }
+                </select>
+                &nbsp;
+                &nbsp;
+                &nbsp;
+                <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+                <input type="date" class="form-control" min="2021-08-02" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+                <input type="date" class="form-control" name="final" @*max="@fechaMAX"*@ /> &nbsp; &nbsp;
+                <input type="submit" class="btn btn-primary" value="Enviar" />
+                <a href="~/Recepcion/Index"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+            </div>
+        </form>
+        <br />
+    }
+
+}
+
+@{ if (Sucursal == "TAPO" || Sucursal == "ASPA")
+    {
+        <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/Index")">
+            <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px">
+                <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+                <input type="date" class="form-control" min="2021-08-02" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+                <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
+                <input type="submit" class="btn btn-primary" value="Enviar" />
+                <a href="~/Recepcion/Index"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+            </div>
+
+            <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
+                <div class="input-group">
+                    <input type="text" class="form-control input-g" id="buscador" name="dato" placeholder="Paciente o Expediente">
+                    <span class="input-group-btn">
+                        <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                    </span>
+                </div>
+            </div>
+        </form>
+        <br />
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>
+        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal3"><span class="glyphicon glyphicon-credit-card"></span> Pago con Tarjeta</button>
+    }
+    else
+    {
+        <div class="form-inline">
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal3"><span class="glyphicon glyphicon-credit-card"></span> Pago con Tarjeta</button>
+            <div class="input-group pull-right">
+                <input type="text" class="form-control" id="buscador" name="dato" placeholder="Paciente o Expediente">
+                <span class="input-group-btn">
+                    <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                </span>
+            </div>
+        </div>
+    }
+
+}
+
+
+
+
 
 @section scripts{
 
     <script>
         var input = document.getElementById("buscador");
-        input.addEventListener("keyup", function (event) {
+        input.addEventListener("keydown", function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
                 document.getElementById("buscar").click();
@@ -385,7 +472,7 @@
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
-</div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -492,6 +579,7 @@
                 <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Generar referencia de pago</b></h3>
             </div>
             <div class="modal-body">
+                <!--  Cambiar de Orden a OrdenScotiabank cuando se edite medicosgmi -->
                 <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/Orden")">
                     @Html.AntiForgeryToken()
                     <div class="form-inline">
@@ -632,7 +720,7 @@
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
-</div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -883,7 +971,7 @@
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
-</div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -993,24 +1081,24 @@
 
     <!-- Modal -->
     @*<div class="modal fade" id="citasHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color:aquamarine">
-                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-list-alt"></span> &nbsp; &nbsp;Citas generadas: <b>@citasHoyConteo</b></h3>
-                </div>
-                <div class="modal-body">
-                    @{
-                        foreach (var item in sucursalesLista)
-                        {
-                            var elemento = (from e in db.Cita where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow select e).Count();
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:aquamarine">
+                        <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-list-alt"></span> &nbsp; &nbsp;Citas generadas: <b>@citasHoyConteo</b></h3>
+                    </div>
+                    <div class="modal-body">
+                        @{
+                            foreach (var item in sucursalesLista)
+                            {
+                                var elemento = (from e in db.Cita where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow select e).Count();
 
-                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                                <h4><b>@item.Nombre:</b> @elemento</h4>
+                            }
                         }
-                    }
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>*@
+        </div>*@
 
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-outline-warning boton-transparenteIndicador2 botonesGral col-md-4" data-toggle="modal" data-target="#episHoy" style="color:white">
@@ -1019,24 +1107,24 @@
 
     <!-- Modal -->
     @*<div class="modal fade" id="episHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color:aquamarine">
-                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs digitalizados: <b>@episHoyConteo</b></h3>
-                </div>
-                <div class="modal-body">
-                    @{
-                        foreach (var item in sucursalesLista)
-                        {
-                            var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow select e).Count();
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:aquamarine">
+                        <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs digitalizados: <b>@episHoyConteo</b></h3>
+                    </div>
+                    <div class="modal-body">
+                        @{
+                            foreach (var item in sucursalesLista)
+                            {
+                                var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow select e).Count();
 
-                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                                <h4><b>@item.Nombre:</b> @elemento</h4>
+                            }
                         }
-                    }
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>*@
+        </div>*@
 
 
     <!-- Button trigger modal -->
@@ -1046,24 +1134,24 @@
 
     <!-- Modal -->
     @*<div class="modal fade" id="dictamenesHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color:aquamarine">
-                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;Dictámenes generados: <b>@dictamenHoyConteo</b></h3>
-                </div>
-                <div class="modal-body">
-                    @{
-                        foreach (var item in sucursalesLista)
-                        {
-                            var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.EstatusCaptura == "Terminado" select e).Count();
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:aquamarine">
+                        <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;Dictámenes generados: <b>@dictamenHoyConteo</b></h3>
+                    </div>
+                    <div class="modal-body">
+                        @{
+                            foreach (var item in sucursalesLista)
+                            {
+                                var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.EstatusCaptura == "Terminado" select e).Count();
 
-                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                                <h4><b>@item.Nombre:</b> @elemento</h4>
+                            }
                         }
-                    }
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>*@
+        </div>*@
 
 
     <!-- Button trigger modal -->
@@ -1073,24 +1161,24 @@
 
     <!-- Modal -->
     @*<div class="modal fade" id="enProcesoHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color:gold">
-                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-copy"></span> &nbsp; &nbsp;Dictámenes en Proceso: <b>@enProcesoHoyConteo</b></h3>
-                </div>
-                <div class="modal-body">
-                    @{
-                        foreach (var item in sucursalesLista)
-                        {
-                            var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && (e.EstatusCaptura == "En captura..." || e.EstatusCaptura == "No iniciado") select e).Count();
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:gold">
+                        <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-copy"></span> &nbsp; &nbsp;Dictámenes en Proceso: <b>@enProcesoHoyConteo</b></h3>
+                    </div>
+                    <div class="modal-body">
+                        @{
+                            foreach (var item in sucursalesLista)
+                            {
+                                var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && (e.EstatusCaptura == "En captura..." || e.EstatusCaptura == "No iniciado") select e).Count();
 
-                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                                <h4><b>@item.Nombre:</b> @elemento</h4>
+                            }
                         }
-                    }
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>*@
+        </div>*@
 
 
     <!-- Button trigger modal -->
@@ -1100,24 +1188,24 @@
 
     <!-- Modal -->
     @*<div class="modal fade" id="entregados" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color:aquamarine">
-                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-thumbs-up"></span> &nbsp; &nbsp;Dictámenes Entregados: <b>@entregadosConteo</b></h3>
-                </div>
-                <div class="modal-body">
-                    @{
-                        foreach (var item in sucursalesLista)
-                        {
-                            var elemento = (from e in db.Cita where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && (e.Entregado == "SI") select e).Count();
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:aquamarine">
+                        <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-thumbs-up"></span> &nbsp; &nbsp;Dictámenes Entregados: <b>@entregadosConteo</b></h3>
+                    </div>
+                    <div class="modal-body">
+                        @{
+                            foreach (var item in sucursalesLista)
+                            {
+                                var elemento = (from e in db.Cita where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && (e.Entregado == "SI") select e).Count();
 
-                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                                <h4><b>@item.Nombre:</b> @elemento</h4>
+                            }
                         }
-                    }
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>*@
+        </div>*@
 
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-outline-warning boton-transparenteIndicador7 botonesGral col-md-4" data-toggle="modal" data-target="#enviados" style="color:white">
@@ -1126,24 +1214,24 @@
 
     <!-- Modal -->
     @*<div class="modal fade" id="enviados" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color:aquamarine">
-                    <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-send"></span> &nbsp; &nbsp;Dictámenes Enviados: <b>@enviadosCount</b></h3>
-                </div>
-                <div class="modal-body">
-                    @{
-                        foreach (var item in sucursalesLista)
-                        {
-                            var elemento = (from e in enviados where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusEnvio == "SI" select e).Count();
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:aquamarine">
+                        <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-send"></span> &nbsp; &nbsp;Dictámenes Enviados: <b>@enviadosCount</b></h3>
+                    </div>
+                    <div class="modal-body">
+                        @{
+                            foreach (var item in sucursalesLista)
+                            {
+                                var elemento = (from e in enviados where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusEnvio == "SI" select e).Count();
 
-                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                                <h4><b>@item.Nombre:</b> @elemento</h4>
+                            }
                         }
-                    }
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>*@
+        </div>*@
 
 
     <br />
@@ -1204,11 +1292,11 @@ else
                         Administración
                     </th>
                     @*@if (idRol == 2)
-                    {
-                        <th>
-                            Estatus Médico
-                        </th>
-                    }*@
+                        {
+                            <th>
+                                Estatus Médico
+                            </th>
+                        }*@
 
                     <th>
                         Dictamen
@@ -1238,1058 +1326,1068 @@ else
                     fila = "white";
                 }
 
-        <tr style="background-color:@fila">
-            <td>
-                @flag
-            </td>
-
-            <td>
-                <span class="field-tip">
-                    <b>@Html.DisplayFor(modelItem => item.N.Nombre) </b>
-                    <span class="tip-content">
-                        <h6>
-                            <b>Teléfono:</b><br />
-                            @item.N.Telefono <br />
-                            <b>Email:</b><br />
-                            @item.N.Email <br />
-                            <b>Folio:</b><br />
-                            @item.N.Folio <br />
-                        </h6>
-                    </span>
-                </span>
-
-
-
-                @if (item.M.Entregado != null)
-                {
-                    <span class="glyphicon glyphicon-thumbs-up"></span>
-                }
-            </td>
-
-            <td>
-                <b>@Html.DisplayFor(modelItem => item.M.NoExpediente)</b>
-            </td>
-            @{
-                if (idRol == 2)
-                {
-                    <th>
-                        @{
-                            if (item.M.Doctor != null)
-                            {
-                                <span class="field-tip">
-                                    <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
-                                    <span class="tip-content">@item.M.Doctor</span>
-                                </span>
-                            }
-                            else
-                            {
-                                <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
-                            }
-                        }
-
-                    </th>
-
-
-                }
-                else
-                {
+                <tr style="background-color:@fila">
                     <td>
-                        @Html.DisplayFor(modelItem => item.M.Doctor)
+                        @flag
                     </td>
-                }
-            }
-            <td>
-                <span class="field-tip">
-                    <b>@item.M.Canal</b>
-                    <span class="tip-content">
-                        <b>Realiza la cita: </b>@item.M.Recepcionista <br />
-                        <b>Canal: </b>@item.M.Canal <br />
-                        <b>Referido por: </b>@item.M.ReferidoPor
-                    </span>
-                </span>
-            </td>
-            <td>
-                @{
-                    if (item.M.TipoPago == "Pago con Tarjeta")
-                    {
-                        <b style="font-size:xx-small"><a href=@item.M.NoOrden target="_blank">Terminación: @item.M.Referencia</a></b>
-                    }
-                    else
-                    {
-                        <b style="font-size:x-small">@Html.DisplayFor(modelItem => item.M.Referencia)</b>
 
-                        var referenciaNormal = (from i in db.Cita where i.Referencia == item.M.Referencia orderby i.idCita descending select i.idPaciente).FirstOrDefault();
-                        var referenciaSB = (from i in db.ReferenciasSB where i.idPaciente == referenciaNormal select i).FirstOrDefault();
-                        if (referenciaSB != null)
+                    <td>
+                        <span class="field-tip">
+                            <b>@Html.DisplayFor(modelItem => item.N.Nombre) </b>
+                            <span class="tip-content">
+                                <h6>
+                                    <b>Teléfono:</b><br />
+                                    @item.N.Telefono <br />
+                                    <b>Email:</b><br />
+                                    @item.N.Email <br />
+                                    <b>Folio:</b><br />
+                                    @item.N.Folio <br />
+                                </h6>
+                            </span>
+                        </span>
+
+
+
+                        @if (item.M.Entregado != null)
                         {
-                            <br />
-
-                            <b style="font-size:x-small" class="text-primary">SB: @referenciaSB.ReferenciaSB</b>
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
                         }
-                    }
-                }
-            </td>
+                    </td>
 
-
-            <td>
-                <b>@Html.DisplayFor(modelItem => item.M.TipoTramite)</b>
-            </td>
-            <td style="font-size: smaller">
-                @if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
-                {
-                    <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Pendiente</mark></b>
-                }
-                else if (item.M.EstatusPago == "paid" || item.M.EstatusPago == "Pagado")
-                {
-                    <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Pagado</mark></b>
-                }
-            </td>
-            <td style="font-size: smaller">
-                @{
-                    var revisionEPI2 = (from e in db.Expedientes where e.idPaciente == item.N.idPaciente select e.idPaciente).FirstOrDefault();
-                    var revisionDictamen2 = (from e in db.EPI_DictamenAptitud where e.idPaciente == item.N.idPaciente select e).FirstOrDefault();
-
-                    if (item.M.Asistencia == "NO")
-                    {
-                        <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">Cancelado</mark></b>
-                    }
-                    else if (revisionEPI2 == null)
-                    {
-                        if (revisionDictamen2 == null)
+                    <td>
+                        <b>@Html.DisplayFor(modelItem => item.M.NoExpediente)</b>
+                    </td>
+                    @{
+                        if (idRol == 2)
                         {
-                            if (item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico == null)
-                            {
-                                <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Pendiente</mark></b>
-                            }
-                            else if (item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico != null)
-                            {
-                                <b><mark style="background-color: dodgerblue; padding:5px; border-radius:7px">EnProceso</mark></b>
-                            }
-                            else if (item.M.Asistencia != "NO" && item.M.Entregado != null && item.M.CarruselMedico == null)
-                            {
-                                <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Entregado</mark></b>
-                            }
+                            <th>
+                                @{
+                                    if (item.M.Doctor != null)
+                                    {
+                                        <span class="field-tip">
+                                            <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
+                                            <span class="tip-content">@item.M.Doctor</span>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <b>@Html.DisplayFor(modelItem => item.M.Sucursal)</b>
+                                    }
+                                }
+
+                            </th>
+
+
                         }
                         else
                         {
-                            if (item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico != null && (revisionDictamen2.Motivo != "Revalorado NO APTO" || revisionDictamen2.Motivo != "Revalorado APTO"))
+                            <td>
+                                @Html.DisplayFor(modelItem => item.M.Doctor)
+                            </td>
+                        }
+                    }
+                    <td>
+                        <span class="field-tip">
+                            <b>@item.M.Canal</b>
+                            <span class="tip-content">
+                                <b>Realiza la cita: </b>@item.M.Recepcionista <br />
+                                <b>Canal: </b>@item.M.Canal <br />
+                                <b>Referido por: </b>@item.M.ReferidoPor
+                                @{
+                                    if (Sucursal == "TAPO" || Sucursal == "ASPA")
+                                    {
+                                        <br />
+                                        <b>Cita: </b>@Convert.ToDateTime(item.M.FechaCita).ToString("dd-MMMM-yyyy")
+                                    }
+                                }
+                            </span>
+                        </span>
+                    </td>
+                    <td>
+                        @{
+                            if (item.M.TipoPago == "Pago con Tarjeta")
                             {
-                                <b><mark style="background-color: turquoise; padding:5px; border-radius:7px">Terminado</mark></b>
+                                <b style="font-size:xx-small"><a href=@item.M.NoOrden target="_blank">Terminación: @item.M.Referencia</a></b>
                             }
                             else
                             {
-                                <b><mark style="background-color: turquoise; padding:5px; border-radius:7px">Revalorado</mark></b>
+                                <b style="font-size:x-small">@Html.DisplayFor(modelItem => item.M.Referencia)</b>
+
+                                var referenciaNormal = (from i in db.Cita where i.Referencia == item.M.Referencia orderby i.idCita descending select i.idPaciente).FirstOrDefault();
+                                var referenciaSB = (from i in db.ReferenciasSB where i.idPaciente == referenciaNormal select i).FirstOrDefault();
+                                if (referenciaSB != null)
+                                {
+                                    <br />
+
+                                    <b style="font-size:x-small" class="text-primary">SB: @referenciaSB.ReferenciaSB</b>
+                                }
                             }
                         }
-                    }
-                    else if (revisionEPI2 != null)
-                    {
-                        if (revisionEPI2 != null && item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico == null)
+                    </td>
+
+
+                    <td>
+                        <b>@Html.DisplayFor(modelItem => item.M.TipoTramite)</b>
+                    </td>
+                    <td style="font-size: smaller">
+                        @if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
                         {
-                            <b><mark style="background-color: turquoise; padding:5px; border-radius:7px">Digitalizado</mark></b>
+                            <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Pendiente</mark></b>
                         }
-                        else if (item.M.Entregado != null)
+                        else if (item.M.EstatusPago == "paid" || item.M.EstatusPago == "Pagado")
                         {
-                            <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Entregado</mark></b>
+                            <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Pagado</mark></b>
                         }
-                    }
+                    </td>
+                    <td style="font-size: smaller">
+                        @{
+                            var revisionEPI2 = (from e in db.Expedientes where e.idPaciente == item.N.idPaciente select e.idPaciente).FirstOrDefault();
+                            var revisionDictamen2 = (from e in db.EPI_DictamenAptitud where e.idPaciente == item.N.idPaciente select e).FirstOrDefault();
 
-
-                }
-            </td>
-            @if (idRol == 2)
-            {
-                <!--<td style="font-size: smaller">
-                    @{
-                        var revisionEPI = (from e in db.Expedientes where e.idPaciente == item.N.idPaciente select e.idPaciente).FirstOrDefault();
-                        var revisionDictamen = (from e in db.EPI_DictamenAptitud where e.idPaciente == item.N.idPaciente select e).FirstOrDefault();
-
-                        if (item.M.Asistencia == "NO")
-                        {
-                            <b class="text-danger">- - - - - - - -</b>
-                        }
-                        else
-                        {
-                            <span class="field-tip field-tip2">
-
-
-                                @if (revisionEPI != null)
+                            if (item.M.Asistencia == "NO")
+                            {
+                                <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">Cancelado</mark></b>
+                            }
+                            else if (revisionEPI2 == null)
+                            {
+                                if (revisionDictamen2 == null)
                                 {
-                                    if (revisionEPI != null && item.M.CarruselMedico == null)
+                                    if (item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico == null)
                                     {
-                                        <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Digitalizado</mark></b>
+                                        <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Pendiente</mark></b>
+                                    }
+                                    else if (item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico != null)
+                                    {
+                                        <b><mark style="background-color: dodgerblue; padding:5px; border-radius:7px">EnProceso</mark></b>
+                                    }
+                                    else if (item.M.Asistencia != "NO" && item.M.Entregado != null && item.M.CarruselMedico == null)
+                                    {
+                                        <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Entregado</mark></b>
                                     }
                                 }
                                 else
                                 {
-                                    if (item.M.CarruselMedico == null)
+                                    if (item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico != null && (revisionDictamen2.Motivo != "Revalorado NO APTO" || revisionDictamen2.Motivo != "Revalorado APTO"))
                                     {
-                                        <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Pendiente</mark></b>
+                                        <b><mark style="background-color: turquoise; padding:5px; border-radius:7px">Terminado</mark></b>
                                     }
-                                    else if (item.M.CarruselMedico != null && revisionDictamen == null)
+                                    else
                                     {
-                                        <b><mark style="background-color: dodgerblue; padding:5px; border-radius:7px">EnProceso</mark></b>
-                                    }
-                                    else if (revisionDictamen != null && (revisionDictamen.Motivo == "APTO" || revisionDictamen.Motivo == "Concluir examen como APTO"))
-                                    {
-                                        <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">APTO</mark></b>
-                                    }
-                                    else if (revisionDictamen != null && revisionDictamen.Motivo == "Conluir examen como NO APTO")
-                                    {
-                                        <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">NO APTO</mark></b>
-                                    }
-                                    else if (revisionDictamen != null && revisionDictamen.Motivo == "Enviar a Revaloración")
-                                    {
-                                        <b><mark style="background-color: orange; padding:5px; border-radius:7px">En Revaloración</mark></b>
-                                    }
-                                    else if (revisionDictamen != null && revisionDictamen.Motivo == "Revalorado APTO")
-                                    {
-                                        <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Rev APTO</mark></b>
-                                    }
-                                    else if (revisionDictamen != null && revisionDictamen.Motivo == "Revalorado NO APTO")
-                                    {
-                                        <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">Rev NO APTO</mark></b>
+                                        <b><mark style="background-color: turquoise; padding:5px; border-radius:7px">Revalorado</mark></b>
                                     }
                                 }
-
-                                @if (item.M.CarruselMedico == "SI")
+                            }
+                            else if (revisionEPI2 != null)
+                            {
+                                if (revisionEPI2 != null && item.M.Asistencia != "NO" && item.M.Entregado == null && item.M.CarruselMedico == null)
                                 {
-                                    var CM = (from i in db.CarruselMedico where i.idPaciente == item.M.idPaciente select i).FirstOrDefault();
+                                    <b><mark style="background-color: turquoise; padding:5px; border-radius:7px">Digitalizado</mark></b>
+                                }
+                                else if (item.M.Entregado != null)
+                                {
+                                    <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Entregado</mark></b>
+                                }
+                            }
 
-                                    <span class="tip-content">
-                                        @if (CM.Fin_SignosVitales != null)
+
+                        }
+                    </td>
+
+
+
+                    @if (idRol == 2)
+                    {
+                        <!--<td style="font-size: smaller">
+                            @{
+                                var revisionEPI = (from e in db.Expedientes where e.idPaciente == item.N.idPaciente select e.idPaciente).FirstOrDefault();
+                                var revisionDictamen = (from e in db.EPI_DictamenAptitud where e.idPaciente == item.N.idPaciente select e).FirstOrDefault();
+
+                                if (item.M.Asistencia == "NO")
+                                {
+                                    <b class="text-danger">- - - - - - - -</b>
+                                }
+                                else
+                                {
+                                    <span class="field-tip field-tip2">
+
+
+                                        @if (revisionEPI != null)
                                         {
-                                            <b>S.Vitales: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                            if (revisionEPI != null && item.M.CarruselMedico == null)
+                                            {
+                                                <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Digitalizado</mark></b>
+                                            }
                                         }
                                         else
                                         {
-                                            <b>S.Vitales: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                            if (item.M.CarruselMedico == null)
+                                            {
+                                                <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Pendiente</mark></b>
+                                            }
+                                            else if (item.M.CarruselMedico != null && revisionDictamen == null)
+                                            {
+                                                <b><mark style="background-color: dodgerblue; padding:5px; border-radius:7px">EnProceso</mark></b>
+                                            }
+                                            else if (revisionDictamen != null && (revisionDictamen.Motivo == "APTO" || revisionDictamen.Motivo == "Concluir examen como APTO"))
+                                            {
+                                                <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">APTO</mark></b>
+                                            }
+                                            else if (revisionDictamen != null && revisionDictamen.Motivo == "Conluir examen como NO APTO")
+                                            {
+                                                <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">NO APTO</mark></b>
+                                            }
+                                            else if (revisionDictamen != null && revisionDictamen.Motivo == "Enviar a Revaloración")
+                                            {
+                                                <b><mark style="background-color: orange; padding:5px; border-radius:7px">En Revaloración</mark></b>
+                                            }
+                                            else if (revisionDictamen != null && revisionDictamen.Motivo == "Revalorado APTO")
+                                            {
+                                                <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Rev APTO</mark></b>
+                                            }
+                                            else if (revisionDictamen != null && revisionDictamen.Motivo == "Revalorado NO APTO")
+                                            {
+                                                <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">Rev NO APTO</mark></b>
+                                            }
                                         }
 
-                                        @if (CM.Fin_Laboratorio != null)
+                                        @if (item.M.CarruselMedico == "SI")
                                         {
-                                            <b>Laboratorio: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                        }
-                                        else
-                                        {
-                                            <b>Laboratorio: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                            var CM = (from i in db.CarruselMedico where i.idPaciente == item.M.idPaciente select i).FirstOrDefault();
+
+                                            <span class="tip-content">
+                                                @if (CM.Fin_SignosVitales != null)
+                                                {
+                                                    <b>S.Vitales: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                                }
+                                                else
+                                                {
+                                                    <b>S.Vitales: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                                }
+
+                                                @if (CM.Fin_Laboratorio != null)
+                                                {
+                                                    <b>Laboratorio: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                                }
+                                                else
+                                                {
+                                                    <b>Laboratorio: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                                }
+
+                                                @if (CM.Fin_Cardiologia != null)
+                                                {
+                                                    <b>Cardiología: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                                }
+                                                else
+                                                {
+                                                    <b>Cardiología: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                                }
+
+                                                @if (CM.Fin_Oftalmologia != null)
+                                                {
+                                                    <b>Oftalmología: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                                }
+                                                else
+                                                {
+                                                    <b>Oftalmología: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                                }
+
+                                                @if (CM.Fin_Odontologia != null)
+                                                {
+                                                    <b>Odontología: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                                }
+                                                else
+                                                {
+                                                    <b>Odontología: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                                }
+
+                                                @if (CM.Fin_HistoriaClinica != null)
+                                                {
+                                                    <b>H. Clínica: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                                }
+                                                else
+                                                {
+                                                    <b>H. Clínica: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                                }
+
+                                                @if (CM.Fin_Audiologia != null)
+                                                {
+                                                    <b>Audiología: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                                }
+                                                else
+                                                {
+                                                    <b>Audiología: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                                }
+
+                                            </span>
                                         }
 
-                                        @if (CM.Fin_Cardiologia != null)
-                                        {
-                                            <b>Cardiología: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                        }
-                                        else
-                                        {
-                                            <b>Cardiología: </b> <span class="glyphicon glyphicon-minus"></span> <br />
-                                        }
-
-                                        @if (CM.Fin_Oftalmologia != null)
-                                        {
-                                            <b>Oftalmología: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                        }
-                                        else
-                                        {
-                                            <b>Oftalmología: </b> <span class="glyphicon glyphicon-minus"></span> <br />
-                                        }
-
-                                        @if (CM.Fin_Odontologia != null)
-                                        {
-                                            <b>Odontología: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                        }
-                                        else
-                                        {
-                                            <b>Odontología: </b> <span class="glyphicon glyphicon-minus"></span> <br />
-                                        }
-
-                                        @if (CM.Fin_HistoriaClinica != null)
-                                        {
-                                            <b>H. Clínica: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                        }
-                                        else
-                                        {
-                                            <b>H. Clínica: </b> <span class="glyphicon glyphicon-minus"></span> <br />
-                                        }
-
-                                        @if (CM.Fin_Audiologia != null)
-                                        {
-                                            <b>Audiología: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                        }
-                                        else
-                                        {
-                                            <b>Audiología: </b> <span class="glyphicon glyphicon-minus"></span> <br />
-                                        }
 
                                     </span>
                                 }
 
-
-                            </span>
-                        }
-
-                    }-->
+                            }-->
 
 
-                    @*@if (item.M.Doctor == null && item.M.Asistencia != "NO")
-                {
-                    <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Pendiente</mark></b>
-                }
-                else if ((item.M.EstatusPago == "paid" || item.M.EstatusPago == "Pagado") && item.M.Asistencia != "NO")
-                {
-                    <b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">Digitalizado</mark></b>
-                }
-                else if (item.M.Asistencia == "NO")
-                {
-                    <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px">Cancelado</mark></b>
-                }*@
-                <!--</td>-->
-            }
-
-            <td style="font-size: smaller">
-                @{
-                    var estatusDictamen = (from e in db.Captura where e.idPaciente == item.M.idPaciente select e).FirstOrDefault();
-
-                    if (estatusDictamen == null)
-                    {
-                        <b>@*<mark style="background-color: darkgray; padding:5px; border-radius:10px">Sin EPI</mark>*@</b>
-                    }
-                    else if (estatusDictamen.EstatusCaptura == "Pendiente")
-                    {
-                        <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px"><span class="glyphicon glyphicon-alert"></span> Error</mark></b>
-                    }
-                    else if (estatusDictamen.EstatusCaptura == "En captura..." || estatusDictamen.EstatusCaptura == "No iniciado" || estatusDictamen.EstatusCaptura == "Pausado")
-                    {
-                        <b><mark style="background-color: dodgerblue; padding:5px; border-radius:7px">EnProceso</mark></b>
-                    }
-                    else if (estatusDictamen.EstatusCaptura == "Terminado" && estatusDictamen.Aptitud == "APTO")
-                    {
-                        var idCaptura = (from i in db.Captura where i.idPaciente == item.M.idPaciente select i.idCaptura).FirstOrDefault();
-                        <a href=@Url.Action("DescargarPDF", "EPIs", new { id = idCaptura })><b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">APTO</mark></b></a>
-                    }
-                    else if (estatusDictamen.EstatusCaptura == "Terminado" && estatusDictamen.Aptitud == "NO APTO")
-                    {
-                        var idCaptura = (from i in db.Captura where i.idPaciente == item.M.idPaciente select i.idCaptura).FirstOrDefault();
-                        <a href=@Url.Action("DescargarPDF", "EPIs", new { id = idCaptura })><b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">NO APTO</mark></b></a>
-                    }
-
-                }
-            </td>
-            <td>
-                <div class="btn-group">
-
-                    @{
-                        if (item.M.Asistencia == null)
-                        {
-                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
-                            </button>
-                        }
-
-                    }
-
-                <div class="dropdown-menu" style="padding:10px">
-                    @{
-                        if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
-                        {
-                            <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Pagado</b></a>
-                            <div class="dropdown-divider"></div>
-                            if (item.M.Canal == "Recepción")
+                        @*@if (item.M.Doctor == null && item.M.Asistencia != "NO")
                             {
-                                <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
-                                <div class="dropdown-divider"></div>
+                                <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Pendiente</mark></b>
+                            }
+                            else if ((item.M.EstatusPago == "paid" || item.M.EstatusPago == "Pagado") && item.M.Asistencia != "NO")
+                            {
+                                <b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">Digitalizado</mark></b>
+                            }
+                            else if (item.M.Asistencia == "NO")
+                            {
+                                <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px">Cancelado</mark></b>
+                            }*@
+                        <!--</td>-->
+                    }
+
+                    <td style="font-size: smaller">
+                        @{
+                            var estatusDictamen = (from e in db.Captura where e.idPaciente == item.M.idPaciente select e).FirstOrDefault();
+
+                            if (estatusDictamen == null)
+                            {
+                                <b>@*<mark style="background-color: darkgray; padding:5px; border-radius:10px">Sin EPI</mark>*@</b>
+                            }
+                            else if (estatusDictamen.EstatusCaptura == "Pendiente")
+                            {
+                                <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px"><span class="glyphicon glyphicon-alert"></span> Error</mark></b>
+                            }
+                            else if (estatusDictamen.EstatusCaptura == "En captura..." || estatusDictamen.EstatusCaptura == "No iniciado" || estatusDictamen.EstatusCaptura == "Pausado")
+                            {
+                                <b><mark style="background-color: dodgerblue; padding:5px; border-radius:7px">EnProceso</mark></b>
+                            }
+                            else if (estatusDictamen.EstatusCaptura == "Terminado" && estatusDictamen.Aptitud == "APTO")
+                            {
+                                var idCaptura = (from i in db.Captura where i.idPaciente == item.M.idPaciente select i.idCaptura).FirstOrDefault();
+                                <a href=@Url.Action("DescargarPDF", "EPIs", new { id = idCaptura })><b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">APTO</mark></b></a>
+                            }
+                            else if (estatusDictamen.EstatusCaptura == "Terminado" && estatusDictamen.Aptitud == "NO APTO")
+                            {
+                                var idCaptura = (from i in db.Captura where i.idPaciente == item.M.idPaciente select i.idCaptura).FirstOrDefault();
+                                <a href=@Url.Action("DescargarPDF", "EPIs", new { id = idCaptura })><b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">NO APTO</mark></b></a>
                             }
 
                         }
-                        else if (item.M.EstatusPago == "Pagado" && item.M.Doctor == null)
-                        {
-                            if (item.M.idCanal == null)
-                            {
-                                <a href="#" data-toggle="modal" data-target="#Nombre_@item.M.idPaciente"><b>Editar Nombre</b></a>
-                                <div class="dropdown-divider"></div>
-                            }
-                            //
-                            else
-                            {
-                                <a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>Completar Datos</b></a>
-                                <div class="dropdown-divider"></div>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+
+                            @{
+                                if (item.M.Asistencia == null)
+                                {
+                                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                    </button>
+                                }
 
                             }
 
-
-                            var carruselActivo = (from i in db.Cita where i.idPaciente == item.M.idPaciente && i.CarruselMedico != "SI" select i.CarruselMedico).FirstOrDefault();
-                            var expedienteActivo = (from i in db.Expedientes where i.idPaciente == item.M.idPaciente select i.idPaciente).FirstOrDefault();
-
-                            if ((from i in db.Cita where i.idPaciente == item.M.idPaciente && i.CarruselMedico == "SI" select i.CarruselMedico).FirstOrDefault() == null &&
-                                (from i in db.Expedientes where i.idPaciente == item.M.idPaciente select i.idPaciente).FirstOrDefault() == null)
-                            {
-                                <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
-                                <div class="dropdown-divider"></div>
-                            }
-                            if (item.M.Canal == "Recepción")
-                            {
-                                <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
-                                <div class="dropdown-divider"></div>
-                            }
-
-                        }
-                        else if (item.M.EstatusPago == "Pagado" && item.M.Doctor != null)
-                        {
-                            <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
-                            <div class="dropdown-divider"></div>
-                            if ((from i in db.Expedientes where i.idPaciente == item.M.idPaciente select i.idPaciente).FirstOrDefault() == null)
-                            {
-                                <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
-                                <div class="dropdown-divider"></div>
-                            }
-
-                            //Subir Archivo
-                            @*var revisionCarrusel = (from i in db.Cita where i.idPaciente == item.M.idPaciente && i.CarruselMedico == "SI" select i).FirstOrDefault();
-                {
-                    <a href="#" data-toggle="modal" data-target="#subirArchivos_@item.M.idPaciente"><b>Subir Archivos</b></a>
-                    <div class="dropdown-divider"></div>
-                }*@
-
-
-                            var entregado = (from e in db.Captura where e.idPaciente == item.M.idPaciente && e.EstatusCaptura == "Terminado" select e.EstatusCaptura).FirstOrDefault();
-                            if (entregado != null && item.M.Entregado == null)
-                            {
-                                <a href="#" data-toggle="modal" data-target="#entregar_@item.M.idPaciente"><b style="color:limegreen">Entregado</b></a>
-                            }
-
-                            var aptitud = (from i in db.EPI_DictamenAptitud where i.idPaciente == item.N.idPaciente orderby i.idDictamenAptitud descending select i).FirstOrDefault();
-
-                            if (aptitud != null && aptitud.Aptitud == "NO APTO")
-                            {
-                                <a href="#" data-toggle="modal" data-target="#revaloracion_@item.M.idPaciente"><b>Revaloración</b></a>
-                                <div class="dropdown-divider"></div>
-                            }
-                        }
-                    }
-
-                    @*@if (item.M.EstatusPago == "Pagado")
-        {
-            var aptitud = (from i in db.EPI_DictamenAptitud where i.idPaciente == item.N.idPaciente orderby i.idDictamenAptitud descending select i).FirstOrDefault();
-
-            if (aptitud != null && aptitud.Aptitud == "NO APTO")
-            {
-                <a href="#" data-toggle="modal" data-target="#revaloracion_@item.M.idPaciente"><b>Revaloración</b></a>
-                <div class="dropdown-divider"></div>
-            }
-
-            <a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>Completar Datos</b></a>
-            <div class="dropdown-divider"></div>
-            <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
-            <div class="dropdown-divider"></div>
-            <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
-            <div class="dropdown-divider"></div>
-        }
-        else if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
-        {
-            <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Pagado</b></a>
-            <div class="dropdown-divider"></div>
-            <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
-            <div class="dropdown-divider"></div>
-        }
-        else if (item.M.NoExpediente != null && item.M.EstatusPago == "Pagado")
-        {
-
-
-            <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
-            <div class="dropdown-divider"></div>
-
-            var entregado = (from e in db.Captura where e.idPaciente == item.M.idPaciente && e.EstatusCaptura == "Terminado" select e.EstatusCaptura).FirstOrDefault();
-            if (entregado != null && item.M.Entregado == null)
-            {
-                <a href="#" data-toggle="modal" data-target="#entregar_@item.M.idPaciente"><b style="color:limegreen">Entregado</b></a>
-            }
-        }*@
-
-                </div>
-                </div>
-
-                <!-- Modal para elegir el método de pago una vez que se concrete el mismo -->
-                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/CambiarEstatus")">
-                    @Html.AntiForgeryToken()
-                    <div class="modal fade" id="ModalPago_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
+                            <div class="dropdown-menu" style="padding:10px">
                                 @{
-                                    if (item.M.TipoPago != "Pago con Tarjeta")
+                                    if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
                                     {
+                                        <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Pagado</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        if (item.M.Canal == "Recepción")
+                                        {
+                                            <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
+                                            <div class="dropdown-divider"></div>
+                                        }
+
+                                    }
+                                    else if (item.M.EstatusPago == "Pagado" && item.M.Doctor == null)
+                                    {
+                                        if (item.M.idCanal == null)
+                                        {
+                                            <a href="#" data-toggle="modal" data-target="#Nombre_@item.M.idPaciente"><b>Editar Nombre</b></a>
+                                            <div class="dropdown-divider"></div>
+                                        }
+                                        //
+                                        else
+                                        {
+                                            <a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>Completar Datos</b></a>
+                                            <div class="dropdown-divider"></div>
+
+                                        }
+
+
+                                        var carruselActivo = (from i in db.Cita where i.idPaciente == item.M.idPaciente && i.CarruselMedico != "SI" select i.CarruselMedico).FirstOrDefault();
+                                        var expedienteActivo = (from i in db.Expedientes where i.idPaciente == item.M.idPaciente select i.idPaciente).FirstOrDefault();
+
+                                        if ((from i in db.Cita where i.idPaciente == item.M.idPaciente && i.CarruselMedico == "SI" select i.CarruselMedico).FirstOrDefault() == null &&
+                                            (from i in db.Expedientes where i.idPaciente == item.M.idPaciente select i.idPaciente).FirstOrDefault() == null)
+                                        {
+                                            <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
+                                            <div class="dropdown-divider"></div>
+                                        }
+                                        if (item.M.Canal == "Recepción")
+                                        {
+                                            <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
+                                            <div class="dropdown-divider"></div>
+                                        }
+
+                                    }
+                                    else if (item.M.EstatusPago == "Pagado" && item.M.Doctor != null)
+                                    {
+                                        <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        if ((from i in db.Expedientes where i.idPaciente == item.M.idPaciente select i.idPaciente).FirstOrDefault() == null)
+                                        {
+                                            <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
+                                            <div class="dropdown-divider"></div>
+                                        }
+
+                                        //Subir Archivo
+                                        @*var revisionCarrusel = (from i in db.Cita where i.idPaciente == item.M.idPaciente && i.CarruselMedico == "SI" select i).FirstOrDefault();
+                                            {
+                                                <a href="#" data-toggle="modal" data-target="#subirArchivos_@item.M.idPaciente"><b>Subir Archivos</b></a>
+                                                <div class="dropdown-divider"></div>
+                                            }*@
+
+
+                                        var entregado = (from e in db.Captura where e.idPaciente == item.M.idPaciente && e.EstatusCaptura == "Terminado" select e.EstatusCaptura).FirstOrDefault();
+                                        if (entregado != null && item.M.Entregado == null)
+                                        {
+                                            <a href="#" data-toggle="modal" data-target="#entregar_@item.M.idPaciente"><b style="color:limegreen">Entregado</b></a>
+                                        }
+
+                                        var aptitud = (from i in db.EPI_DictamenAptitud where i.idPaciente == item.N.idPaciente orderby i.idDictamenAptitud descending select i).FirstOrDefault();
+
+                                        if (aptitud != null && aptitud.Aptitud == "NO APTO")
+                                        {
+                                            <a href="#" data-toggle="modal" data-target="#revaloracion_@item.M.idPaciente"><b>Revaloración</b></a>
+                                            <div class="dropdown-divider"></div>
+                                        }
+                                    }
+                                }
+
+                                @*@if (item.M.EstatusPago == "Pagado")
+                                    {
+                                        var aptitud = (from i in db.EPI_DictamenAptitud where i.idPaciente == item.N.idPaciente orderby i.idDictamenAptitud descending select i).FirstOrDefault();
+
+                                        if (aptitud != null && aptitud.Aptitud == "NO APTO")
+                                        {
+                                            <a href="#" data-toggle="modal" data-target="#revaloracion_@item.M.idPaciente"><b>Revaloración</b></a>
+                                            <div class="dropdown-divider"></div>
+                                        }
+
+                                        <a href="#" data-toggle="modal" data-target="#ModalEditar_@item.M.idPaciente"><b>Completar Datos</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="#" data-toggle="modal" data-target="#Modal_@item.M.idPaciente"><b>Digitalizar</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
+                                        <div class="dropdown-divider"></div>
+                                    }
+                                    else if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
+                                    {
+                                        <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Pagado</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
+                                        <div class="dropdown-divider"></div>
+                                    }
+                                    else if (item.M.NoExpediente != null && item.M.EstatusPago == "Pagado")
+                                    {
+
+
+                                        <a href="#" data-toggle="modal" data-target="#ModalEdit2_@item.M.idPaciente"><b>Editar Datos</b></a>
+                                        <div class="dropdown-divider"></div>
+
+                                        var entregado = (from e in db.Captura where e.idPaciente == item.M.idPaciente && e.EstatusCaptura == "Terminado" select e.EstatusCaptura).FirstOrDefault();
+                                        if (entregado != null && item.M.Entregado == null)
+                                        {
+                                            <a href="#" data-toggle="modal" data-target="#entregar_@item.M.idPaciente"><b style="color:limegreen">Entregado</b></a>
+                                        }
+                                    }*@
+
+                            </div>
+                        </div>
+
+                        <!-- Modal para elegir el método de pago una vez que se concrete el mismo -->
+                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/CambiarEstatus")">
+                            @Html.AntiForgeryToken()
+                            <div class="modal fade" id="ModalPago_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        @{
+                                            if (item.M.TipoPago != "Pago con Tarjeta")
+                                            {
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>Elegir el método de pago</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="id" value="@item.M.idPaciente" />
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                                        <select name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                            @{
+                                                                if (Sucursal != "ASPA" && Sucursal != "TAPO")
+                                                                {
+                                                                    <option value="Referencia OXXO">Referencia OXXO</option>
+                                                                    <option value="Referencia Scotiabank">Referencia Scotiabank</option>
+                                                                    <option value="Referencia BanBajío">Referencia BanBajío</option>
+                                                                    <option value="Transferencia vía Scotiabank">Transferencia vía Scotiabank</option>
+                                                                    <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <option value="Referencia Scotiabank">Referencia Scotiabank</option>
+                                                                    <option value="Referencia BanBajío">Referencia BanBajío</option>
+                                                                }
+                                                            }
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>Datos del cliente</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="id" value="@item.M.idPaciente" />
+                                                    <input type="hidden" name="pago" value="@item.M.TipoPago" />
+                                                    <label for="recipient-name" class="col-form-label"><b style="color:black">Paciente o Gestor:</b> @item.N.Nombre</label><br />
+                                                    <label for="recipient-name" class="col-form-label"><b style="color:black">Teléfono:</b> @item.N.Telefono</label><br />
+                                                    <label for="recipient-name" class="col-form-label"><b style="color:black">Email:</b> @item.N.Email</label><br />
+                                                    <label for="recipient-name" class="col-form-label"><b style="color:black">Tipo de Pago:</b> @item.M.TipoPago</label><br />
+                                                    <label for="recipient-name" class="col-form-label"><b style="color:black">Sucursal:</b> @item.M.Sucursal</label><br />
+                                                    <label for="recipient-name" class="col-form-label"><b style="color:black">Fecha:</b> @item.M.FechaCita</label><br />
+                                                    <label for="recipient-name" class="col-form-label"><b style="color:black">Terminación de Tarjeta:</b> @item.M.Referencia</label>
+                                                </div>
+                                            }
+                                        }
+
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <input type="submit" value="Enviar" class="btn btn-primary" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Modal para preguntar si quiere Cancelar Cita-->
+                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/NoLlego")">
+                            @Html.AntiForgeryToken()
+                            <div class="modal fade" id="cancela_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
                                         <div class="modal-header">
-                                            <h4 class="modal-title" id="exampleModalLabel"><b>Elegir el método de pago</b></h4>
+                                            <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea cancelar la cita de <span class="text-danger">@item.N.Nombre</span>?</b></h4>
                                         </div>
                                         <div class="modal-body">
-                                            <input type="hidden" name="id" value="@item.M.idPaciente" />
-                                            <div class="form-group" style="width:60%; min-width:320px">
-                                                <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
-                                                <select name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">¿Cual es el motivo?:</label>
+                                                <input type="text" maxlength="200" class="form-control" id="comentario" name="comentario" required>
+                                                <input type="hidden" name="id" value="@item.N.idPaciente" />
+                                                <input type="hidden" name="pago" value="@item.M.TipoPago" />
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <input type="submit" value="Enviar" class="btn btn-primary" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Modal para digitalización-->
+                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/Digitalizar")">
+                            @Html.AntiForgeryToken()
+                            <div class="modal fade" id="Modal_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        @{
+                                            var consultaAereo = (from c in db.Cita where c.idPaciente == item.N.idPaciente select c.TipoLicencia).FirstOrDefault();
+
+                                            if (consultaAereo != null && consultaAereo == "AEREO")
+                                            {
+                                                <div class="modal-header" style="background-color: orangered">
+                                                    <h4 class="modal-title" style="color:white" id="exampleModalLabel"><b>Está digitalizando un EPI Aéreo</b></h4>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Digitalizar Expediente de @item.N.Nombre</b></h4>
+                                                </div>
+                                            }
+                                        }
+
+                                        <div class="modal-body">
+                                            @{
+                                                var consulta = (from c in db.Cita where c.Referencia == item.M.Referencia select c).Count();
+                                                var consulta1 = (from c in db.Cita where c.Referencia == item.M.Referencia select c.Referencia).FirstOrDefault();
+                                                if (consulta > 1)
+                                                {
+                                                    <div class="form-group">
+                                                        <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
+                                                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.N.Nombre">
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <input type="hidden" value="@item.N.Nombre" name="nombre" />
+                                                }
+                                            }
+
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">CURP:</label>
+                                                @{
+                                                    var consulta4 = (from c in db.Paciente where c.idPaciente == item.M.idPaciente select c.CURP).FirstOrDefault();
+                                                    if (consulta4 == null)
+                                                    {
+                                                        <input type="text" class="form-control" id="curp" name="curp" required>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="text" class="form-control" id="curp" name="curp" placeholder="@item.N.CURP">
+                                                    }
+                                                }
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Número de Expediente:</label>
+                                                @{
+                                                    var consulta5 = (from c in db.Cita where c.idPaciente == item.M.idPaciente select c.NoExpediente).FirstOrDefault();
+                                                    if (consulta5 == null)
+                                                    {
+                                                        <input type="text" class="form-control" id="numero" name="numero" required>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="text" class="form-control" id="numero" name="numero" placeholder="@item.M.NoExpediente">
+                                                    }
+                                                }
+                                                @*<input type="text" class="form-control" id="numero" name="numero" placeholder="@item.M.NoExpediente" required>*@
+                                            </div>
+                                            @{
+                                                if (consultaAereo == "AEREO")
+                                                {
+                                                    <input type="hidden" name="tipoL" id="tipoL" value="AEREO" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group" style="width:80%; min-width:320px">
+                                                        <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
+                                                        <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                            <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                                                            <option value="MARITIMO">MARITIMO</option>
+                                                            <option value="FERROVIARIO">FERROVIARIO</option>
+                                                        </select>
+                                                    </div>
+                                                }
+                                            }
+
+                                            <div class="form-group" style="width:80%; min-width:320px">
+                                                <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
+                                                <select name="tipoT" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                    <option value="REVALIDACIÓN">REVALIDACIÓN</option>
+                                                    <option value="PRIMERA VEZ">PRIMERA VEZ</option>
+                                                    <option disabled>----------------------------------------</option>
+                                                    <option value="REVALORACIÓN">REVALORACIÓN</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                <label class="form-check-label" for="flexCheckDefault">
+                                                    Cita registrada en METRA
+                                                </label>
+                                            </div>
+                                            <br />
+                                            <div class="form-group">
+                                                <label for="file" class="col-form-label">Archivo:</label>
+                                                <input type="file" name="file" asp-for="file" class="" required value="file" />
+                                                <input type="hidden" name="id" asp-for="file" class="" required value="@item.N.idPaciente" />
+                                                <input type="hidden" value="@oUser.Nombre" name="usuario" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Establecer Fecha de Captura:</label>
+                                                <input type="date" class="form-control" id="fecha" name="fecha">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Doctor Dictaminador:</label>
+                                                <select name="doctor" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
                                                     @{
-                                                        if (Sucursal != "ASPA" && Sucursal != "TAPO")
+                                                        var doctoresSucursal = from d in db.Doctores where d.idSucursal == idHospital select d;
+                                                        var doctoresNO = from d in db.Doctores where d.idSucursal != idHospital select d;
+                                                        var consultorios = from c in db.Doctores select c;
+
+                                                        foreach (var item1 in doctoresSucursal)
                                                         {
-                                                            <option value="Referencia OXXO">Referencia OXXO</option>
-                                                            <option value="Referencia Scotiabank">Referencia Scotiabank</option>
-                                                            <option value="Referencia BanBajío">Referencia BanBajío</option>
-                                                            <option value="Transferencia vía Scotiabank">Transferencia vía Scotiabank</option>
-                                                            <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                                                            <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
                                                         }
-                                                        else
+                                                        <option disabled>----------------------------------------------</option>
+                                                        foreach (var item1 in doctoresNO)
                                                         {
-                                                            <option value="Referencia Scotiabank">Referencia Scotiabank</option>
-                                                            <option value="Referencia BanBajío">Referencia BanBajío</option>
+                                                            <option value="@item1.Nombre">@item1.Nombre</option>
                                                         }
                                                     }
-
                                                 </select>
                                             </div>
                                         </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="modal-header">
-                                            <h4 class="modal-title" id="exampleModalLabel"><b>Datos del cliente</b></h4>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <input type="submit" value="Guardar" class="btn btn-primary" />
                                         </div>
-                                        <div class="modal-body">
-                                            <input type="hidden" name="id" value="@item.M.idPaciente" />
-                                            <input type="hidden" name="pago" value="@item.M.TipoPago" />
-                                            <label for="recipient-name" class="col-form-label"><b style="color:black">Paciente o Gestor:</b> @item.N.Nombre</label><br />
-                                            <label for="recipient-name" class="col-form-label"><b style="color:black">Teléfono:</b> @item.N.Telefono</label><br />
-                                            <label for="recipient-name" class="col-form-label"><b style="color:black">Email:</b> @item.N.Email</label><br />
-                                            <label for="recipient-name" class="col-form-label"><b style="color:black">Tipo de Pago:</b> @item.M.TipoPago</label><br />
-                                            <label for="recipient-name" class="col-form-label"><b style="color:black">Sucursal:</b> @item.M.Sucursal</label><br />
-                                            <label for="recipient-name" class="col-form-label"><b style="color:black">Fecha:</b> @item.M.FechaCita</label><br />
-                                            <label for="recipient-name" class="col-form-label"><b style="color:black">Terminación de Tarjeta:</b> @item.M.Referencia</label>
-                                        </div>
-                                    }
-                                }
-
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                    <input type="submit" value="Enviar" class="btn btn-primary" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-
-                <!-- Modal para preguntar si quiere Cancelar Cita-->
-                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/NoLlego")">
-                    @Html.AntiForgeryToken()
-                    <div class="modal fade" id="cancela_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea cancelar la cita de <span class="text-danger">@item.N.Nombre</span>?</b></h4>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">¿Cual es el motivo?:</label>
-                                        <input type="text" maxlength="200" class="form-control" id="comentario" name="comentario" required>
-                                        <input type="hidden" name="id" value="@item.N.idPaciente" />
-                                        <input type="hidden" name="pago" value="@item.M.TipoPago" />
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                    <input type="submit" value="Enviar" class="btn btn-primary" />
+                            </div>
+                        </form>
+
+
+                        <!-- Modal para digitalización de Electrocardiograma u otros archivos-->
+                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/SubirArchivosEKG")">
+                            @Html.AntiForgeryToken()
+                            <div class="modal fade" id="subirArchivos_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Subir Archivos para EPI de @item.N.Nombre</b></h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="file" class="col-form-label">ElectroCardiograma:</label>
+                                                <input type="file" name="EKG" asp-for="file" class="" value="file" />
+                                                <input type="hidden" name="id" asp-for="file" class="" value="@item.N.idPaciente" />
+                                            </div>
+                                            <br />
+                                            <div class="form-group">
+                                                <label for="file" class="col-form-label">Carta de "NO ACCIDENTES":</label>
+                                                <input type="file" name="NoAccidentes" asp-for="file" class="" value="file" />
+                                            </div>
+                                            <br />
+                                            <div class="form-group">
+                                                <label for="file" class="col-form-label">Hemoglobina Glucosilada:</label>
+                                                <input type="file" name="Glucosilada" asp-for="file" class="" value="file" />
+                                            </div>
+                                            <br />
+                                            <div class="form-group">
+                                                <label for="file" class="col-form-label">Otros Archivos:</label>
+                                                <input type="file" name="Otros" asp-for="file" class="" value="file" />
+                                            </div>
+                                            <br />
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <input type="submit" value="Guardar" class="btn btn-primary" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </form>
+                        </form>
 
-                <!-- Modal para digitalización-->
-                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/Digitalizar")">
-                    @Html.AntiForgeryToken()
-                    <div class="modal fade" id="Modal_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                @{
-                                    var consultaAereo = (from c in db.Cita where c.idPaciente == item.N.idPaciente select c.TipoLicencia).FirstOrDefault();
-
-                                    if (consultaAereo != null && consultaAereo == "AEREO")
-                                    {
-                                        <div class="modal-header" style="background-color: orangered">
-                                            <h4 class="modal-title" style="color:white" id="exampleModalLabel"><b>Está digitalizando un EPI Aéreo</b></h4>
-                                        </div>
-                                    }
-                                    else
-                                    {
+                        <!-- -------------------------------------------------------------------------------------------------------------- -->
+                        <!-- Modal para insertar CURP y NoExpediente-->
+                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/CURP_Expediente")">
+                            @Html.AntiForgeryToken()
+                            <div class="modal fade" id="ModalEditar_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
                                         <div class="modal-header">
-                                            <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Digitalizar Expediente de @item.N.Nombre</b></h4>
+                                            <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Completar Datos</b></h4>
                                         </div>
-                                    }
-                                }
-
-                                <div class="modal-body">
-                                    @{
-                                        var consulta = (from c in db.Cita where c.Referencia == item.M.Referencia select c).Count();
-                                        var consulta1 = (from c in db.Cita where c.Referencia == item.M.Referencia select c.Referencia).FirstOrDefault();
-                                        if (consulta > 1)
-                                        {
+                                        <div class="modal-body">
                                             <div class="form-group">
                                                 <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
                                                 <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.N.Nombre">
                                             </div>
-                                        }
-                                        else
-                                        {
-                                            <input type="hidden" value="@item.N.Nombre" name="nombre" />
-                                        }
-                                    }
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Email:</label>
+                                                <input type="text" class="form-control" id="email" name="email" placeholder="@item.N.Email">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Teléfono:</label>
+                                                <input type="text" class="form-control" id="tel" name="tel" placeholder="@item.N.Telefono">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">CURP (Clave Única de Registro de Población):</label>
+                                                @{
+                                                    var consultaCURP = (from c in db.Paciente where c.idPaciente == item.N.idPaciente select c.CURP).FirstOrDefault();
+                                                    if (consultaCURP != null)
+                                                    {
+                                                        <input type="text" class="form-control" id="curp" name="curp" maxlength="18" placeholder="@item.N.CURP" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="text" class="form-control" id="curp" name="curp" maxlength="18" required />
+                                                    }
+                                                }
+                                                <input type="hidden" class="form-control" id="id" name="id" value="@item.N.idPaciente">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">No. de Expediente:</label>
+                                                @{
+                                                    var consultaEXP = (from c in db.Cita where c.idPaciente == item.N.idPaciente select c.NoExpediente).FirstOrDefault();
+                                                    if (consultaEXP != null)
+                                                    {
+                                                        <input type="text" class="form-control" id="numero" name="numero" placeholder="@item.M.NoExpediente" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="text" class="form-control" id="numero" name="numero" required" />
+                                                    }
+                                                }
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Doctor Dictaminador:</label>
+                                                <select name="doctor" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                    @{
+                                                        var doctoresSucursal1 = from d in db.Doctores where d.idSucursal == idHospital select d;
+                                                        var doctoresNO1 = from d in db.Doctores where d.idSucursal != idHospital select d;
+                                                        var consultorios1 = from c in db.Doctores select c;
 
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">CURP:</label>
-                                        @{
-                                            var consulta4 = (from c in db.Paciente where c.idPaciente == item.M.idPaciente select c.CURP).FirstOrDefault();
-                                            if (consulta4 == null)
-                                            {
-                                                <input type="text" class="form-control" id="curp" name="curp" required>
+                                                        foreach (var item1 in doctoresSucursal1)
+                                                        {
+                                                            <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
+                                                        }
+                                                        <option disabled>----------------------------------------------</option>
+                                                        foreach (var item1 in doctoresNO1)
+                                                        {
+                                                            <option value="@item1.Nombre">@item1.Nombre</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+                                            @{
+                                                var consultaAereo1 = (from c in db.Cita where c.idPaciente == item.N.idPaciente select c.TipoLicencia).FirstOrDefault();
+                                                if (consultaAereo1 != null)
+                                                {
+                                                    <input type="hidden" name="tipoL" id="tipoL" value="AEREO" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group" style="width:80%; min-width:320px">
+                                                        <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
+                                                        <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                            <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                                                            <option value="MARITIMO">MARITIMO</option>
+                                                            <option value="FERROVIARIO">FERROVIARIO</option>
+                                                        </select>
+                                                    </div>
+                                                }
                                             }
-                                            else
-                                            {
-                                                <input type="text" class="form-control" id="curp" name="curp" placeholder="@item.N.CURP">
-                                            }
-                                        }
+
+                                            <div class="form-group" style="width:80%; min-width:320px">
+                                                <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
+                                                <select name="tipoT" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                    <option value="REVALIDACIÓN">REVALIDACIÓN</option>
+                                                    <option value="PRIMERA VEZ">PRIMERA VEZ</option>
+                                                    <option disabled>----------------------------------------</option>
+                                                    <option value="REVALORACIÓN">REVALORACIÓN</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <input type="submit" value="Guardar" class="btn btn-primary" />
+                                        </div>
                                     </div>
+                                </div>
+                            </div>
+                        </form>
 
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">Número de Expediente:</label>
-                                        @{
-                                            var consulta5 = (from c in db.Cita where c.idPaciente == item.M.idPaciente select c.NoExpediente).FirstOrDefault();
-                                            if (consulta5 == null)
-                                            {
-                                                <input type="text" class="form-control" id="numero" name="numero" required>
-                                            }
-                                            else
-                                            {
+
+                        <!-- Modal para poner nombre si es gestor -->
+                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/EditarNombre")">
+                            @Html.AntiForgeryToken()
+                            <div class="modal fade" id="Nombre_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Editar Nombre</b></h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
+                                                <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                            </div>
+                                            <input type="hidden" value="@item.M.idPaciente" name="id" />
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <input type="submit" value="Guardar" class="btn btn-primary" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Modal para digitalización completa-->
+                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/EditarCompleto")">
+                            @Html.AntiForgeryToken()
+                            <div class="modal fade" id="ModalEdit2_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Editar Datos</b></h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
+                                                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.N.Nombre">
+                                                <input type="hidden" class="form-control" id="id" name="id" value="@item.N.idPaciente">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Teléfono:</label>
+                                                <input type="text" class="form-control" id="telefono" name="telefono" placeholder="@item.N.Telefono" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Email:</label>
+                                                <input type="email" class="form-control" id="email" name="email" placeholder="@item.N.Email" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Número de Expediente:</label>
                                                 <input type="text" class="form-control" id="numero" name="numero" placeholder="@item.M.NoExpediente">
-                                            }
-                                        }
-                                        @*<input type="text" class="form-control" id="numero" name="numero" placeholder="@item.M.NoExpediente" required>*@
-                                    </div>
-                                    @{
-                                        if (consultaAereo == "AEREO")
-                                        {
-                                            <input type="hidden" name="tipoL" id="tipoL" value="AEREO" />
-                                        }
-                                        else
-                                        {
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">CURP:</label>
+                                                <input type="text" class="form-control" id="curp" name="curp" placeholder="@item.N.CURP">
+                                            </div>
                                             <div class="form-group" style="width:80%; min-width:320px">
                                                 <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
                                                 <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                    <option value="@item.M.TipoLicencia">@item.M.TipoLicencia</option>
                                                     <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
                                                     <option value="MARITIMO">MARITIMO</option>
+                                                    <option value="AEREO">AEREO</option>
                                                     <option value="FERROVIARIO">FERROVIARIO</option>
                                                 </select>
                                             </div>
-                                        }
-                                    }
-
-                                    <div class="form-group" style="width:80%; min-width:320px">
-                                        <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
-                                        <select name="tipoT" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                            <option value="REVALIDACIÓN">REVALIDACIÓN</option>
-                                            <option value="PRIMERA VEZ">PRIMERA VEZ</option>
-                                            <option disabled>----------------------------------------</option>
-                                            <option value="REVALORACIÓN">REVALORACIÓN</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                        <label class="form-check-label" for="flexCheckDefault">
-                                            Cita registrada en METRA
-                                        </label>
-                                    </div>
-                                    <br />
-                                    <div class="form-group">
-                                        <label for="file" class="col-form-label">Archivo:</label>
-                                        <input type="file" name="file" asp-for="file" class="" required value="file" />
-                                        <input type="hidden" name="id" asp-for="file" class="" required value="@item.N.idPaciente" />
-                                        <input type="hidden" value="@oUser.Nombre" name="usuario" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">Establecer Fecha de Captura:</label>
-                                        <input type="date" class="form-control" id="fecha" name="fecha">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">Doctor Dictaminador:</label>
-                                        <select name="doctor" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                            @{
-                                                var doctoresSucursal = from d in db.Doctores where d.idSucursal == idHospital select d;
-                                                var doctoresNO = from d in db.Doctores where d.idSucursal != idHospital select d;
-                                                var consultorios = from c in db.Doctores select c;
-
-                                                foreach (var item1 in doctoresSucursal)
-                                                {
-                                                    <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
-                                                }
-                                                <option disabled>----------------------------------------------</option>
-                                                foreach (var item1 in doctoresNO)
-                                                {
-                                                    <option value="@item1.Nombre">@item1.Nombre</option>
-                                                }
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                    <input type="submit" value="Guardar" class="btn btn-primary" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-
-
-                <!-- Modal para digitalización de Electrocardiograma u otros archivos-->
-                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/SubirArchivosEKG")">
-                    @Html.AntiForgeryToken()
-                    <div class="modal fade" id="subirArchivos_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Subir Archivos para EPI de @item.N.Nombre</b></h4>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="file" class="col-form-label">ElectroCardiograma:</label>
-                                        <input type="file" name="EKG" asp-for="file" class="" value="file" />
-                                        <input type="hidden" name="id" asp-for="file" class="" value="@item.N.idPaciente" />
-                                    </div>
-                                    <br />
-                                    <div class="form-group">
-                                        <label for="file" class="col-form-label">Carta de "NO ACCIDENTES":</label>
-                                        <input type="file" name="NoAccidentes" asp-for="file" class="" value="file" />
-                                    </div>
-                                    <br />
-                                    <div class="form-group">
-                                        <label for="file" class="col-form-label">Hemoglobina Glucosilada:</label>
-                                        <input type="file" name="Glucosilada" asp-for="file" class="" value="file" />
-                                    </div>
-                                    <br />
-                                    <div class="form-group">
-                                        <label for="file" class="col-form-label">Otros Archivos:</label>
-                                        <input type="file" name="Otros" asp-for="file" class="" value="file" />
-                                    </div>
-                                    <br />
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                    <input type="submit" value="Guardar" class="btn btn-primary" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-
-                <!-- -------------------------------------------------------------------------------------------------------------- -->
-                <!-- Modal para insertar CURP y NoExpediente-->
-                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/CURP_Expediente")">
-                    @Html.AntiForgeryToken()
-                    <div class="modal fade" id="ModalEditar_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Completar Datos</b></h4>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
-                                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.N.Nombre">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">Email:</label>
-                                        <input type="text" class="form-control" id="email" name="email" placeholder="@item.N.Email">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">Teléfono:</label>
-                                        <input type="text" class="form-control" id="tel" name="tel" placeholder="@item.N.Telefono">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">CURP (Clave Única de Registro de Población):</label>
-                                        @{
-                                            var consultaCURP = (from c in db.Paciente where c.idPaciente == item.N.idPaciente select c.CURP).FirstOrDefault();
-                                            if (consultaCURP != null)
-                                            {
-                                                <input type="text" class="form-control" id="curp" name="curp" maxlength="18" placeholder="@item.N.CURP" />
-                                            }
-                                            else
-                                            {
-                                                <input type="text" class="form-control" id="curp" name="curp" maxlength="18" required />
-                                            }
-                                        }
-                                        <input type="hidden" class="form-control" id="id" name="id" value="@item.N.idPaciente">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">No. de Expediente:</label>
-                                        @{
-                                            var consultaEXP = (from c in db.Cita where c.idPaciente == item.N.idPaciente select c.NoExpediente).FirstOrDefault();
-                                            if (consultaEXP != null)
-                                            {
-                                                <input type="text" class="form-control" id="numero" name="numero" placeholder="@item.M.NoExpediente" />
-                                            }
-                                            else
-                                            {
-                                                <input type="text" class="form-control" id="numero" name="numero" required" />
-                                            }
-                                        }
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">Doctor Dictaminador:</label>
-                                        <select name="doctor" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                            @{
-                                                var doctoresSucursal1 = from d in db.Doctores where d.idSucursal == idHospital select d;
-                                                var doctoresNO1 = from d in db.Doctores where d.idSucursal != idHospital select d;
-                                                var consultorios1 = from c in db.Doctores select c;
-
-                                                foreach (var item1 in doctoresSucursal1)
-                                                {
-                                                    <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
-                                                }
-                                                <option disabled>----------------------------------------------</option>
-                                                foreach (var item1 in doctoresNO1)
-                                                {
-                                                    <option value="@item1.Nombre">@item1.Nombre</option>
-                                                }
-                                            }
-                                        </select>
-                                    </div>
-                                    @{
-                                        var consultaAereo1 = (from c in db.Cita where c.idPaciente == item.N.idPaciente select c.TipoLicencia).FirstOrDefault();
-                                        if (consultaAereo1 != null)
-                                        {
-                                            <input type="hidden" name="tipoL" id="tipoL" value="AEREO" />
-                                        }
-                                        else
-                                        {
                                             <div class="form-group" style="width:80%; min-width:320px">
-                                                <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
-                                                <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                                    <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
-                                                    <option value="MARITIMO">MARITIMO</option>
-                                                    <option value="FERROVIARIO">FERROVIARIO</option>
+                                                <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
+                                                <select name="tipoT" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                    <option value="@item.M.TipoTramite">@item.M.TipoTramite</option>
+                                                    <option value="REVALIDACIÓN">REVALIDACIÓN</option>
+                                                    <option value="PRIMERA VEZ">PRIMERA VEZ</option>
+                                                    <option disabled>----------------------------------------</option>
+                                                    <option value="REVALORACIÓN">REVALORACIÓN</option>
                                                 </select>
                                             </div>
-                                        }
-                                    }
-
-                                    <div class="form-group" style="width:80%; min-width:320px">
-                                        <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
-                                        <select name="tipoT" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                            <option value="REVALIDACIÓN">REVALIDACIÓN</option>
-                                            <option value="PRIMERA VEZ">PRIMERA VEZ</option>
-                                            <option disabled>----------------------------------------</option>
-                                            <option value="REVALORACIÓN">REVALORACIÓN</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                    <input type="submit" value="Guardar" class="btn btn-primary" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-
-
-                <!-- Modal para poner nombre si es gestor -->
-                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/EditarNombre")">
-                    @Html.AntiForgeryToken()
-                    <div class="modal fade" id="Nombre_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Editar Nombre</b></h4>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
-                                        <input type="text" class="form-control" id="nombre" name="nombre" required>
-                                    </div>
-                                    <input type="hidden" value="@item.M.idPaciente" name="id" />
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                    <input type="submit" value="Guardar" class="btn btn-primary" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-
-                <!-- Modal para digitalización completa-->
-                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/EditarCompleto")">
-                    @Html.AntiForgeryToken()
-                    <div class="modal fade" id="ModalEdit2_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Editar Datos</b></h4>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
-                                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.N.Nombre">
-                                        <input type="hidden" class="form-control" id="id" name="id" value="@item.N.idPaciente">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">Teléfono:</label>
-                                        <input type="text" class="form-control" id="telefono" name="telefono" placeholder="@item.N.Telefono" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">Email:</label>
-                                        <input type="email" class="form-control" id="email" name="email" placeholder="@item.N.Email" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">Número de Expediente:</label>
-                                        <input type="text" class="form-control" id="numero" name="numero" placeholder="@item.M.NoExpediente">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">CURP:</label>
-                                        <input type="text" class="form-control" id="curp" name="curp" placeholder="@item.N.CURP">
-                                    </div>
-                                    <div class="form-group" style="width:80%; min-width:320px">
-                                        <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
-                                        <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                            <option value="@item.M.TipoLicencia">@item.M.TipoLicencia</option>
-                                            <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
-                                            <option value="MARITIMO">MARITIMO</option>
-                                            <option value="AEREO">AEREO</option>
-                                            <option value="FERROVIARIO">FERROVIARIO</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group" style="width:80%; min-width:320px">
-                                        <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
-                                        <select name="tipoT" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                            <option value="@item.M.TipoTramite">@item.M.TipoTramite</option>
-                                            <option value="REVALIDACIÓN">REVALIDACIÓN</option>
-                                            <option value="PRIMERA VEZ">PRIMERA VEZ</option>
-                                            <option disabled>----------------------------------------</option>
-                                            <option value="REVALORACIÓN">REVALORACIÓN</option>
-                                        </select>
-                                    </div>
-                                    @if ((from c in db.Cita where c.Referencia == item.M.Referencia select c).Count() < 2 && item.M.NoOrden == null)
-                                    {
-                                        <div class="form-group" style="width:60%; min-width:320px">
-                                            <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
-                                            <select name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                                <option value="@item.M.TipoPago">@item.M.TipoPago</option>
-                                                <option value="Referencia OXXO">Referencia OXXO</option>
-                                                <option value="Referencia Scotiabank">Referencia Scotiabank</option>
-                                                <option value="Referencia BanBajío">Referencia BanBajío</option>
-                                                <option value="Transferencia vía Scotiabank">Transferencia vía Scotiabank</option>
-                                                <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="recipient-name" class="col-form-label">Referencia de Pago:</label>
-                                            <input type="text" class="form-control" id="referencia" name="referencia" placeholder="@item.M.Referencia" />
-                                        </div>
-                                    }
-
-                                    <div class="form-group">
-                                        <label for="file" class="col-form-label">Archivo:</label>
-                                        <input type="file" name="file" asp-for="file" class="" value="file" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">Establecer Fecha de Captura:</label>
-                                        <input type="date" class="form-control" id="fecha" name="fecha">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="recipient-name" class="col-form-label">Doctor Dictaminador:</label>
-                                        <select name="doctor" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                            <option value="@item.M.Doctor">@item.M.Doctor</option>
-                                            @{
-                                                doctoresSucursal = from d in db.Doctores where d.idSucursal == idHospital select d;
-                                                doctoresNO = from d in db.Doctores where d.idSucursal != idHospital select d;
-                                                consultorios = from c in db.Doctores select c;
-
-                                                foreach (var item1 in doctoresSucursal)
-                                                {
-                                                    <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
-                                                }
-                                                <option disabled>----------------------------------------------</option>
-                                                foreach (var item1 in doctoresNO)
-                                                {
-                                                    <option value="@item1.Nombre">@item1.Nombre</option>
-                                                }
+                                            @if ((from c in db.Cita where c.Referencia == item.M.Referencia select c).Count() < 2 && item.M.NoOrden == null)
+                                            {
+                                                <div class="form-group" style="width:60%; min-width:320px">
+                                                    <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                                    <select name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                        <option value="@item.M.TipoPago">@item.M.TipoPago</option>
+                                                        <option value="Referencia OXXO">Referencia OXXO</option>
+                                                        <option value="Referencia Scotiabank">Referencia Scotiabank</option>
+                                                        <option value="Referencia BanBajío">Referencia BanBajío</option>
+                                                        <option value="Transferencia vía Scotiabank">Transferencia vía Scotiabank</option>
+                                                        <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="recipient-name" class="col-form-label">Referencia de Pago:</label>
+                                                    <input type="text" class="form-control" id="referencia" name="referencia" placeholder="@item.M.Referencia" />
+                                                </div>
                                             }
-                                        </select>
+
+                                            <div class="form-group">
+                                                <label for="file" class="col-form-label">Archivo:</label>
+                                                <input type="file" name="file" asp-for="file" class="" value="file" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Establecer Fecha de Captura:</label>
+                                                <input type="date" class="form-control" id="fecha" name="fecha">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Doctor Dictaminador:</label>
+                                                <select name="doctor" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                    <option value="@item.M.Doctor">@item.M.Doctor</option>
+                                                    @{
+                                                        doctoresSucursal = from d in db.Doctores where d.idSucursal == idHospital select d;
+                                                        doctoresNO = from d in db.Doctores where d.idSucursal != idHospital select d;
+                                                        consultorios = from c in db.Doctores select c;
+
+                                                        foreach (var item1 in doctoresSucursal)
+                                                        {
+                                                            <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
+                                                        }
+                                                        <option disabled>----------------------------------------------</option>
+                                                        foreach (var item1 in doctoresNO)
+                                                        {
+                                                            <option value="@item1.Nombre">@item1.Nombre</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <input type="submit" value="Guardar" class="btn btn-primary" />
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                    <input type="submit" value="Guardar" class="btn btn-primary" />
-                                </div>
                             </div>
-                        </div>
-                    </div>
-                </form>
+                        </form>
 
-                <!-- Modal para subir REVALORACIÓN-->
-                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/SubirRevaloracion")">
-                    @Html.AntiForgeryToken()
-                    <div class="modal fade" id="revaloracion_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    @{
-                                        var pacienteRevaloracion = (from e in db.Paciente where e.idPaciente == item.M.idPaciente select e).FirstOrDefault();
-                                        <h4 class="modal-title text-primary" id="exampleModalLabel"><b>¿Desea cargar el expediente Revaloración de @pacienteRevaloracion.Nombre?</b></h4>
-                                    }
-                                </div>
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="file" class="col-form-label">Archivo de Revaloración:</label>
-                                        <input type="file" name="file" asp-for="file" class="" value="file" />
-                                        <input type="hidden" name="id" value="@item.M.idPaciente" />
+                        <!-- Modal para subir REVALORACIÓN-->
+                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/SubirRevaloracion")">
+                            @Html.AntiForgeryToken()
+                            <div class="modal fade" id="revaloracion_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            @{
+                                                var pacienteRevaloracion = (from e in db.Paciente where e.idPaciente == item.M.idPaciente select e).FirstOrDefault();
+                                                <h4 class="modal-title text-primary" id="exampleModalLabel"><b>¿Desea cargar el expediente Revaloración de @pacienteRevaloracion.Nombre?</b></h4>
+                                            }
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="file" class="col-form-label">Archivo de Revaloración:</label>
+                                                <input type="file" name="file" asp-for="file" class="" value="file" />
+                                                <input type="hidden" name="id" value="@item.M.idPaciente" />
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <input type="submit" value="Guardar" class="btn btn-primary" />
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                            </div>
+                        </form>
+
+                        <!-- Modal para confirmar entrega-->
+                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/Entregado")">
+                            @Html.AntiForgeryToken()
+                            <div class="modal fade" id="entregar_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="exampleModalLabel"><b>¿Está seguro que ha entregado el dictamen de la siguiente persona?</b></h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="id" value="@item.M.idPaciente" />
+                                            <h5>
+                                                <label for="recipient-name" class="col-form-label">Nombre: <span class="text-danger">@item.N.Nombre</span></label><br />
+                                                <label for="recipient-name" class="col-form-label">Email: <span class="text-danger">@item.N.Email</span></label><br />
+                                                <label for="recipient-name" class="col-form-label">Teléfono: <span class="text-danger">@item.N.Telefono</span></label><br />
+                                                <label for="recipient-name" class="col-form-label">CURP: <span class="text-danger">@item.N.CURP</span></label><br />
+                                                <label for="recipient-name" class="col-form-label">Sucursal: <span class="text-danger">@item.M.Sucursal</span></label><br />
+                                                <label for="recipient-name" class="col-form-label">Doctor: <span class="text-danger">@item.M.Doctor</span></label><br />
+                                                <label for="recipient-name" class="col-form-label">Fecha Expediente: <span class="text-danger">@Convert.ToDateTime(item.M.FechaCita).ToString("dd-MMMM-yyyy")</span></label>
+                                            </h5>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <input type="submit" value="El dictamen ha sido entregado!!" class="btn btn-success" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </form>
+                        </form>
 
-                <!-- Modal para confirmar entrega-->
-                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/Entregado")">
-                    @Html.AntiForgeryToken()
-                    <div class="modal fade" id="entregar_@item.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Está seguro que ha entregado el dictamen de la siguiente persona?</b></h4>
-                                </div>
-                                <div class="modal-body">
-                                    <input type="hidden" name="id" value="@item.M.idPaciente" />
-                                    <h5>
-                                        <label for="recipient-name" class="col-form-label">Nombre: <span class="text-danger">@item.N.Nombre</span></label><br />
-                                        <label for="recipient-name" class="col-form-label">Email: <span class="text-danger">@item.N.Email</span></label><br />
-                                        <label for="recipient-name" class="col-form-label">Teléfono: <span class="text-danger">@item.N.Telefono</span></label><br />
-                                        <label for="recipient-name" class="col-form-label">CURP: <span class="text-danger">@item.N.CURP</span></label><br />
-                                        <label for="recipient-name" class="col-form-label">Sucursal: <span class="text-danger">@item.M.Sucursal</span></label><br />
-                                        <label for="recipient-name" class="col-form-label">Doctor: <span class="text-danger">@item.M.Doctor</span></label><br />
-                                        <label for="recipient-name" class="col-form-label">Fecha Expediente: <span class="text-danger">@Convert.ToDateTime(item.M.FechaCita).ToString("dd-MMMM-yyyy")</span></label>
-                                    </h5>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                    <input type="submit" value="El dictamen ha sido entregado!!" class="btn btn-success" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-
-            </td>
-        </tr>
+                    </td>
+                </tr>
 
                 flag += 1;
 

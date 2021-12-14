@@ -182,8 +182,16 @@ namespace SCT_iCare.Controllers.Login
                             ViewBag.Nombre = oUser.Nombre.ToString();
                             return Redirect("~/Dictamenes/Captura");
                         case 24:
-                            ViewBag.Nombre = oUser.Nombre.ToString();
-                            return Redirect("~/EPIs/DescargasReporte");
+                            if (oUser.Nombre.ToString() == "Eduardo Neria")
+                            {
+                                ViewBag.Nombre = oUser.Nombre.ToString();
+                                return Redirect("~/Dictamenes/VentasAlternativas");
+                            }
+                            else
+                            {
+                                ViewBag.Nombre = oUser.Nombre.ToString();
+                                return Redirect("~/EPIs/DescargasReporte");
+                            }
 
                         default:
                             //return Redirect("~/Login/Login");
