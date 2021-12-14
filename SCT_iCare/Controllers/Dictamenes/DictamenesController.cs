@@ -605,12 +605,12 @@ namespace SCT_iCare.Controllers.Dictamenes
 
             var revisionRepetido = (from i in db.PacienteESP where i.idPacienteESP == id orderby i.idPacienteESP descending select i).FirstOrDefault();
 
-            if (numero != ""  && repetido != "Aceptar" && numero != revisionRepetido.NoExpediente)
+            if (numero.Trim() != ""  && repetido != "Aceptar" && numero.Trim() != revisionRepetido.NoExpediente)
             {
                 var revisionExpediente = (from i in db.PacienteESP where i.NoExpediente == numero orderby i.idPacienteESP descending select i).FirstOrDefault();
                 if (revisionExpediente != null)
                 {
-                    TempData["Expediente"] = numero;
+                    TempData["Expediente"] = numero.Trim();
                     TempData["id"] = id;
                     return RedirectToAction("Citas");
                 }
@@ -627,9 +627,9 @@ namespace SCT_iCare.Controllers.Dictamenes
             {
                 epi.idPacienteESP = id;
 
-                if (numero != null)
+                if (numero.Trim() != null)
                 {
-                    epi.NoExpediente = numero;
+                    epi.NoExpediente = numero.Trim();
                 }
                 else
                 {
@@ -862,10 +862,10 @@ namespace SCT_iCare.Controllers.Dictamenes
                     idEPI.Genero = genero;
                     revisionPacienteESP.Genero = genero;
                 }
-                if(numero != "")
+                if(numero.Trim() != "")
                 {
-                    idEPI.NoExpediente = numero;
-                    revisionPacienteESP.NoExpediente = numero;
+                    idEPI.NoExpediente = numero.Trim();
+                    revisionPacienteESP.NoExpediente = numero.Trim();
                 }
                 if(estatura != "")
                 {
@@ -932,9 +932,9 @@ namespace SCT_iCare.Controllers.Dictamenes
                 revisionPacienteESP.CURP = curp != "" ? curp.ToUpper() : revisionPacienteESP.CURP;
             }
 
-            if (numero != "")
+            if (numero.Trim() != "")
             {
-                revisionPacienteESP.NoExpediente = numero != "" ? numero : revisionPacienteESP.NoExpediente;
+                revisionPacienteESP.NoExpediente = numero.Trim() != "" ? numero.Trim() : revisionPacienteESP.NoExpediente;
             }
 
             if (doctor != "")
