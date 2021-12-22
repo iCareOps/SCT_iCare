@@ -70,39 +70,39 @@ Sucursal = Hospital.ToString();
 
 @*Sustituir el where para medicinagmi*@
 @*.Where(s => ((s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate)/* || (s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)*/) && (s.M.Sucursal == Sucursal || s.M.Recepcionista == nombreUsuario));*@
-        modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => ((s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate)/* || (s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)*/) && (s.M.Sucursal == Sucursal || s.M.Recepcionista == nombreUsuario));
+modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => ((s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate)/* || (s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)*/) && (s.M.Sucursal == Sucursal || s.M.Recepcionista == nombreUsuario));
 
-        registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.Sucursal == Sucursal || s.M.Recepcionista == nombreUsuario)).Count();
+registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && (s.M.Sucursal == Sucursal || s.M.Recepcionista == nombreUsuario)).Count();
 
-        citasHoyConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Sucursal == Sucursal).Count();
-        episHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.Sucursal == Sucursal).Count();
-        dictamenHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Terminado" && w.Sucursal == Sucursal).Count();
-        enProcesoHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && (w.EstatusCaptura == "En captura..." || w.EstatusCaptura == "No iniciado") && w.Sucursal == Sucursal).Count();
-        entregadosConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Entregado == "SI" && w.Sucursal == Sucursal).Count();
-        enviadosCount = db.Cita.Join(db.DictamenProblema, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
-        .Where(w => w.N.FechaCita >= thisDate && w.N.FechaCita < tomorrowDate && w.M.EstatusEnvio == "SI" && w.N.Sucursal == Sucursal)
-        .Select(S => new
-        {
-            S.N.Sucursal,
-            S.N.FechaCita
-        }).Count();
+citasHoyConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Sucursal == Sucursal).Count();
+episHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.Sucursal == Sucursal).Count();
+dictamenHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Terminado" && w.Sucursal == Sucursal).Count();
+enProcesoHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && (w.EstatusCaptura == "En captura..." || w.EstatusCaptura == "No iniciado") && w.Sucursal == Sucursal).Count();
+entregadosConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Entregado == "SI" && w.Sucursal == Sucursal).Count();
+enviadosCount = db.Cita.Join(db.DictamenProblema, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+.Where(w => w.N.FechaCita >= thisDate && w.N.FechaCita < tomorrowDate && w.M.EstatusEnvio == "SI" && w.N.Sucursal == Sucursal)
+.Select(S => new
+{
+    S.N.Sucursal,
+    S.N.FechaCita
+}).Count();
 
-    }
-    else
-    {
-        Hospital = "GENERAL";
-        Sucursal = Hospital.ToString();
+}
+else
+{
+Hospital = "GENERAL";
+Sucursal = Hospital.ToString();
 
-        modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate)/*.OrderByDescending(o => o.M.TipoTramite)*/;
+modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate)/*.OrderByDescending(o => o.M.TipoTramite)*/;
 
-        if(sucursalParametro != null)
-        {
-            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == sucursalParametro)/*.OrderByDescending(o => o.M.TipoTramite)*/;
-        }
+if (sucursalParametro != null)
+{
+    modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == sucursalParametro)/*.OrderByDescending(o => o.M.TipoTramite)*/;
+}
 
-        registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
+registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
 
-    }
+}
 }
 
 
@@ -118,6 +118,10 @@ Sucursal = Hospital.ToString();
 @{
     if (idRol == 2)
     {
+        if (ViewBag.Estado == 1)
+        {
+            <h5 style="color:darkgray">Mostrando resultados de: <span style="color:white">@ViewBag.Inicio.ToString("dd-MMMM-yyyy")</span> hasta <span style="color:white">@Convert.ToDateTime(ViewBag.Final).AddDays(-1).ToString("dd-MMMM-yyyy")</span></h5>
+        }
         <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Recepcion/Index")">
             <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px; width:100%; border:2px solid white">
 
@@ -372,6 +376,10 @@ Sucursal = Hospital.ToString();
                                 }
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
+                            <input type="date" class="form-control" id="fecha" name="fecha">
+                        </div>
                         if (Sucursal == "TAPO" || Sucursal == "ASPA")
                         {
                             <input type="hidden" name="usuario" asp-for="file" class="" required value="@nombreUsuario" />
@@ -472,7 +480,7 @@ Sucursal = Hospital.ToString();
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
-            </div>
+</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -645,6 +653,10 @@ Sucursal = Hospital.ToString();
                                 }
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
+                            <input type="date" class="form-control" id="fecha" name="fecha">
+                        </div>
                         if (Sucursal == "TAPO" || Sucursal == "ASPA")
                         {
                             <input type="hidden" name="usuario" asp-for="file" class="" required value="@nombreUsuario" />
@@ -720,7 +732,7 @@ Sucursal = Hospital.ToString();
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
-            </div>
+</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -896,6 +908,10 @@ Sucursal = Hospital.ToString();
                                 }
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
+                            <input type="date" class="form-control" id="fecha" name="fecha">
+                        </div>
                         if (Sucursal == "TAPO" || Sucursal == "ASPA")
                         {
                             <input type="hidden" name="usuario" asp-for="file" class="" required value="@nombreUsuario" />
@@ -971,7 +987,7 @@ Sucursal = Hospital.ToString();
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
-            </div>
+</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -1691,7 +1707,7 @@ else
                                     {
                                         <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Pagado</b></a>
                                         <div class="dropdown-divider"></div>
-                                        if (item.M.Canal == "Recepción")
+                                        if (item.M.Canal == "Recepción" || idRol == 2)
                                         {
                                             <a href="#" data-toggle="modal" data-target="#cancela_@item.M.idPaciente"><b class="text-danger">Cancelar Cita</b></a>
                                             <div class="dropdown-divider"></div>

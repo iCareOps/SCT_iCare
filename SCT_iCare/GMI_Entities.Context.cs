@@ -79,5 +79,7 @@ namespace SCT_iCare
         public virtual DbSet<UrgentesCount> UrgentesCount { get; set; }
         public virtual DbSet<EPI_ESP> EPI_ESP { get; set; }
         public virtual DbSet<MovimientosAudio> MovimientosAudio { get; set; }
+        public virtual DbSet<CallCenter> CallCenter { get; set; }
+        public virtual DbSet<Tipificaciones> Tipificaciones { get; set; }
     }
 }

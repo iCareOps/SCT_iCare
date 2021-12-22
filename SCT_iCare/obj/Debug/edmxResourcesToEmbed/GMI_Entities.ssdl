@@ -27,6 +27,17 @@
     <Property Name="Foto" Type="varbinary(max)" />
     <Property Name="idPaciente" Type="int" />
   </EntityType>
+  <EntityType Name="CallCenter">
+    <Key>
+      <PropertyRef Name="idCallCenter" />
+    </Key>
+    <Property Name="idCallCenter" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre" Type="varchar" MaxLength="100" />
+    <Property Name="Telefono" Type="varchar" MaxLength="50" />
+    <Property Name="FechaVigencia" Type="datetime" />
+    <Property Name="Rechazado" Type="varchar" MaxLength="10" />
+    <Property Name="Llamadas" Type="int" />
+  </EntityType>
   <EntityType Name="Canal">
     <Key>
       <PropertyRef Name="idCanal" />
@@ -733,6 +744,17 @@
     <Property Name="Contador" Type="int" />
     <Property Name="ContadorFecha" Type="datetime" />
   </EntityType>
+  <EntityType Name="Tipificaciones">
+    <Key>
+      <PropertyRef Name="idTipificacion" />
+    </Key>
+    <Property Name="idTipificacion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre" Type="varchar" MaxLength="100" />
+    <Property Name="Operador" Type="varchar" MaxLength="100" />
+    <Property Name="FechaLlamada" Type="datetime" />
+    <Property Name="Tipificacion" Type="varchar" MaxLength="200" />
+    <Property Name="idCallCenter" Type="int" />
+  </EntityType>
   <EntityType Name="UrgentesCount">
     <Key>
       <PropertyRef Name="idUrgentes" />
@@ -755,6 +777,7 @@
     <EntitySet Name="Aptitud" EntityType="Self.Aptitud" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Archivos" EntityType="Self.Archivos" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Biometricos" EntityType="Self.Biometricos" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CallCenter" EntityType="Self.CallCenter" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Canal" EntityType="Self.Canal" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Captura" EntityType="Self.Captura" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CapturaIncidencia" EntityType="Self.CapturaIncidencia" Schema="dbo" store:Type="Tables" />
@@ -804,6 +827,7 @@
     <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="RolMenu" EntityType="Self.RolMenu" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Sucursales" EntityType="Self.Sucursales" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Tipificaciones" EntityType="Self.Tipificaciones" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="UrgentesCount" EntityType="Self.UrgentesCount" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
   </EntityContainer>

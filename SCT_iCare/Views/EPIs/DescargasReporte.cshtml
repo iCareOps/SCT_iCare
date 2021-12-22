@@ -61,7 +61,7 @@
 
     var tablaFinal = db.Paciente.
         Join(db.Cita, a => a.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
-        Where(w => w.B.FechaReferencia >= thisDate && w.B.FechaReferencia < tomorrowDate).
+        Where(w => w.B.FechaCita >= thisDate && w.B.FechaCita < tomorrowDate).
         Join(db.Captura, c => c.A.idPaciente, d => d.idPaciente, (c, d) => new { C = c, D = d }).
         Select(s => new
         {
@@ -254,6 +254,7 @@
         <tr>
             <th></th>
             <th>Fecha Creación</th>
+            <th>Hora Creación</th>
             <th>Fecha Cita</th>
             <th>Nombre</th>
             <th>No. Expediente</th>
@@ -295,7 +296,8 @@
                 <tr style="background-color:@fila_1">
 
                     <td>@flag</td>
-                    <td>@Convert.ToDateTime(n.FechaReferencia)</td>
+                    <td>@Convert.ToDateTime(n.FechaReferencia).ToString("dd/MM/yyyy")</td>
+                    <td>@Convert.ToDateTime(n.FechaReferencia).ToString("HH:mm")</td>
                     <td>@Convert.ToDateTime(n.FechaCita)</td>
                     <td>@n.Nombre</td>
                     <td>@n.NoExpediente</td>

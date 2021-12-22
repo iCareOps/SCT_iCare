@@ -96,6 +96,69 @@ namespace SCT_iCare.Controllers.CallCenter
             return View(db.Paciente.ToList());
         }
 
+        public ActionResult Vigencias(DateTime? inicio, DateTime? final)
+        {
+            DateTime thisDate = new DateTime();
+            DateTime tomorrowDate = new DateTime();
+
+            DateTime start1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            DateTime finish1 = new DateTime(DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day);
+
+            int nulos = 0;
+
+            if (inicio != null || final != null)
+            {
+                nulos = 1;
+            }
+
+            if (inicio != null)
+            {
+                DateTime start = Convert.ToDateTime(inicio);
+                int year = start.Year;
+                int month = start.Month;
+                int day = start.Day;
+
+                inicio = new DateTime(year, month, day);
+                thisDate = new DateTime(year, month, day);
+            }
+            if (final != null)
+            {
+                DateTime finish = Convert.ToDateTime(final).AddDays(1);
+                int year = finish.Year;
+                int month = finish.Month;
+                int day = finish.Day;
+
+                final = new DateTime(year, month, day);
+                tomorrowDate = new DateTime(year, month, day);
+            }
+
+            var urge = (from i in db.UrgentesCount select i).FirstOrDefault();
+            string mes = DateTime.Now.ToString("MMMM");
+
+            if (urge.Mes != mes)
+            {
+                urge.Mes = mes;
+                urge.Contador = 500;
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(urge).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
+            inicio = (inicio ?? start1);
+            final = (final ?? finish1);
+
+            ViewBag.Inicio = inicio;
+            ViewBag.Final = final;
+            ViewBag.Estado = nulos;
+
+            ViewBag.Parameter = "";
+
+            return View(db.Paciente.ToList());
+        }
+
         // GET: Pacientes/Details/5
         public ActionResult Details(int? id)
         {
@@ -963,19 +1026,33 @@ namespace SCT_iCare.Controllers.CallCenter
             return Redirect("Index");
         }
 
-        // GET: Pacientes/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Tipificacion(int? id, string operador, string tipificacion)
         {
-            if (id == null)
+            var cliente = db.CallCenter.Find(id);
+
+            cliente.Llamadas += 1;
+
+            if(tipificacion == "NO ESTÁ INTERESADO" || tipificacion == "NÚMERO EQUIVOCADO")
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                cliente.Rechazado = "SI";
             }
-            Paciente paciente = db.Paciente.Find(id);
-            if (paciente == null)
+
+            Tipificaciones tipi = new Tipificaciones();
+
+            tipi.Operador = operador;
+            tipi.FechaLlamada = DateTime.Now;
+            tipi.Tipificacion = tipificacion;
+            tipi.Nombre = cliente.Nombre;
+            tipi.idCallCenter = id;
+
+            if(ModelState.IsValid)
             {
-                return HttpNotFound();
+                db.Entry(cliente).State = EntityState.Modified;
+                db.Tipificaciones.Add(tipi);
+                db.SaveChanges();
             }
-            return View(paciente);
+
+            return Redirect("Vigencias");
         }
 
         // POST: Pacientes/Edit/5

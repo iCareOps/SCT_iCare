@@ -1917,10 +1917,25 @@ namespace SCT_iCare.Controllers.Recepcion
                 //return RedirectToAction("Index");
             }
 
-            //Se crea el número de Folio
-            //string numFolio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + doc + num;
-            //cita.Folio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + doc + num;
-            //paciente.Folio = (DateTime.Now.Year).ToString() + mes + (DateTime.Now.Day).ToString() + SUC + doc + num;
+            var capturaExistente = (from i in db.Captura where i.idPaciente == ide select i).FirstOrDefault();
+
+            if (capturaExistente != null)
+            {
+                if (ModelState.IsValid)
+                {
+                    db.Entry(captura).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    db.Captura.Add(captura);
+                    db.SaveChanges();
+                }
+            }
+
 
             if (ModelState.IsValid)
             {
@@ -1928,7 +1943,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 db.Entry(cita).State = EntityState.Modified;
                 //db.Cita.Add(cita);
                 db.Expedientes.Add(exp);
-                db.Captura.Add(captura);
+                //db.Captura.Add(captura);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -2404,12 +2419,11 @@ namespace SCT_iCare.Controllers.Recepcion
 
             //Proceso para cancelar también las referencias Scotiabank que no se utilicen
             var referenciaRepetida = (from r in db.Cita where r.idPaciente == id select r.Referencia).FirstOrDefault();
-            cita.Referencia = "Cancelada " +referenciaRepetida;
 
             var idFlag = (from i in db.Cita where i.Referencia == referenciaRepetida orderby i.idPaciente descending select i).FirstOrDefault();
             var tipoPago = (from t in db.ReferenciasSB where t.idPaciente == idFlag.idPaciente select t).FirstOrDefault();
 
-            if(pago != "Pago con Tarjeta" || pago != "Transferencia vía Scotiabank" || pago != "Transferencia vía Banbajío")
+            if(pago != "Pago con Tarjeta" && pago != "Transferencia vía Scotiabank" && pago != "Transferencia vía Banbajío")
             {
                 if ((from r in db.Cita where r.Referencia == referenciaRepetida select r).Count() == 1)
                 {

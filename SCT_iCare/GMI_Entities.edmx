@@ -32,6 +32,17 @@
           <Property Name="Foto" Type="varbinary(max)" />
           <Property Name="idPaciente" Type="int" />
         </EntityType>
+        <EntityType Name="CallCenter">
+          <Key>
+            <PropertyRef Name="idCallCenter" />
+          </Key>
+          <Property Name="idCallCenter" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="100" />
+          <Property Name="Telefono" Type="varchar" MaxLength="50" />
+          <Property Name="FechaVigencia" Type="datetime" />
+          <Property Name="Rechazado" Type="varchar" MaxLength="10" />
+          <Property Name="Llamadas" Type="int" />
+        </EntityType>
         <EntityType Name="Canal">
           <Key>
             <PropertyRef Name="idCanal" />
@@ -738,6 +749,17 @@
           <Property Name="Contador" Type="int" />
           <Property Name="ContadorFecha" Type="datetime" />
         </EntityType>
+        <EntityType Name="Tipificaciones">
+          <Key>
+            <PropertyRef Name="idTipificacion" />
+          </Key>
+          <Property Name="idTipificacion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="100" />
+          <Property Name="Operador" Type="varchar" MaxLength="100" />
+          <Property Name="FechaLlamada" Type="datetime" />
+          <Property Name="Tipificacion" Type="varchar" MaxLength="200" />
+          <Property Name="idCallCenter" Type="int" />
+        </EntityType>
         <EntityType Name="UrgentesCount">
           <Key>
             <PropertyRef Name="idUrgentes" />
@@ -760,6 +782,7 @@
           <EntitySet Name="Aptitud" EntityType="Self.Aptitud" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Archivos" EntityType="Self.Archivos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Biometricos" EntityType="Self.Biometricos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CallCenter" EntityType="Self.CallCenter" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Canal" EntityType="Self.Canal" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Captura" EntityType="Self.Captura" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CapturaIncidencia" EntityType="Self.CapturaIncidencia" Schema="dbo" store:Type="Tables" />
@@ -809,6 +832,7 @@
           <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RolMenu" EntityType="Self.RolMenu" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Sucursales" EntityType="Self.Sucursales" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tipificaciones" EntityType="Self.Tipificaciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UrgentesCount" EntityType="Self.UrgentesCount" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
@@ -1477,6 +1501,8 @@
             <End Role="PacienteESP" EntitySet="PacienteESP" />
             <End Role="MovimientosAudio" EntitySet="MovimientosAudio" />
           </AssociationSet>
+          <EntitySet Name="CallCenter" EntityType="DevModel.CallCenter" />
+          <EntitySet Name="Tipificaciones" EntityType="DevModel.Tipificaciones" />
           </EntityContainer>
         <EntityType Name="CapturaIncidencia">
           <Key>
@@ -2451,6 +2477,28 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="CallCenter">
+          <Key>
+            <PropertyRef Name="idCallCenter" />
+          </Key>
+          <Property Name="idCallCenter" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Telefono" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FechaVigencia" Type="DateTime" Precision="3" />
+          <Property Name="Rechazado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Llamadas" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Tipificaciones">
+          <Key>
+            <PropertyRef Name="idTipificacion" />
+          </Key>
+          <Property Name="idTipificacion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Operador" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FechaLlamada" Type="DateTime" Precision="3" />
+          <Property Name="Tipificacion" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="idCallCenter" Type="Int32" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3262,7 +3310,31 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-        </EntityContainerMapping>
+          <EntitySetMapping Name="CallCenter">
+            <EntityTypeMapping TypeName="DevModel.CallCenter">
+              <MappingFragment StoreEntitySet="CallCenter">
+                <ScalarProperty Name="Llamadas" ColumnName="Llamadas" />
+                <ScalarProperty Name="Rechazado" ColumnName="Rechazado" />
+                <ScalarProperty Name="FechaVigencia" ColumnName="FechaVigencia" />
+                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="idCallCenter" ColumnName="idCallCenter" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tipificaciones">
+            <EntityTypeMapping TypeName="DevModel.Tipificaciones">
+              <MappingFragment StoreEntitySet="Tipificaciones">
+                <ScalarProperty Name="idCallCenter" ColumnName="idCallCenter" />
+                <ScalarProperty Name="Tipificacion" ColumnName="Tipificacion" />
+                <ScalarProperty Name="FechaLlamada" ColumnName="FechaLlamada" />
+                <ScalarProperty Name="Operador" ColumnName="Operador" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="idTipificacion" ColumnName="idTipificacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>

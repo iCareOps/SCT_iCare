@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 @{
     ViewBag.Title = "Administrador";
 
@@ -25,30 +25,32 @@
     dateToday = Convert.ToDateTime(ViewBag.Inicio);
     dateTomorrow = Convert.ToDateTime(ViewBag.Final);
 
+    var episTotal = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow);
+    int episTotalConteo = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow).Count();
 
-    var episHoy = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow);
-    int episHoyConteo = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow).Count();
+    var episHoy = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow);
+    int episHoyConteo = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow).Count();
 
-    var dictaminados = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.EstatusCaptura == "Terminado");
-    int dictaminadosCount = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.EstatusCaptura == "Terminado").Count();
+    var dictaminados = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow && w.EstatusCaptura == "Terminado");
+    int dictaminadosCount = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow && w.EstatusCaptura == "Terminado").Count();
 
-    var pendientes = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && (w.EstatusCaptura == "Pendiente" || w.EstatusCaptura == null));
-    int pendientesCount = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && (w.EstatusCaptura == "Pendiente" || w.EstatusCaptura == null)).Count();
+    var pendientes = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow && (w.EstatusCaptura == "Pendiente" || w.EstatusCaptura == null));
+    int pendientesCount = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow && (w.EstatusCaptura == "Pendiente" || w.EstatusCaptura == null)).Count();
 
-    var pausados = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.EstatusCaptura == "Pausado");
-    int pausadosCount = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.EstatusCaptura == "Pausado").Count();
+    var pausados = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow && w.EstatusCaptura == "Pausado");
+    int pausadosCount = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow && w.EstatusCaptura == "Pausado").Count();
 
-    var enProceso = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.EstatusCaptura == "En Proceso");
-    int enProcesoCount = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.EstatusCaptura == "En Proceso").Count();
+    var enProceso = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow && w.EstatusCaptura == "En Proceso");
+    int enProcesoCount = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow && w.EstatusCaptura == "En Proceso").Count();
 
     DateTime mesInicio = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
     DateTime mesFinal = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddDays(-1);
 
-    var mes = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= mesInicio && w.FechaCita < mesFinal);
-    int mesCount = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= mesInicio && w.FechaCita < mesFinal).Count();
+    var mes = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= mesInicio && w.FechaCaptura < mesFinal);
+    int mesCount = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= mesInicio && w.FechaCaptura < mesFinal).Count();
 
-    var gestor = (from i in db.PacienteESP where i.FechaCita >= dateToday && i.FechaCita < dateTomorrow select i.ReferidoPor).Distinct();
-    var gestor2 = (from i in db.PacienteESP where i.FechaCita >= mesInicio && i.FechaCita < mesFinal select i.ReferidoPor).Distinct();
+    var gestor = (from i in db.PacienteESP where i.FechaCaptura >= dateToday && i.FechaCaptura < dateTomorrow select i.ReferidoPor).Distinct();
+    var gestor2 = (from i in db.PacienteESP where i.FechaCaptura >= mesInicio && i.FechaCaptura < mesFinal select i.ReferidoPor).Distinct();
 
     int flag = 1;
 
@@ -241,7 +243,7 @@
 
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-outline-warning boton-transparenteIndicador1 botonesGral col-md-4" data-toggle="modal" data-target="#citasHoy" style="color:white">
-    <h4><span class="glyphicon glyphicon-list-alt"></span> &nbsp; &nbsp;EPIs: <b>@episHoyConteo</b></h4>
+    <h4><span class="glyphicon glyphicon-list-alt"></span> &nbsp; &nbsp;EPIs: <b>@episTotalConteo</b></h4>
 </button>
 
 <!-- Modal -->
@@ -249,7 +251,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header" style="background-color:aquamarine">
-                <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-list-alt"></span> &nbsp; &nbsp;EPIs Generados: <b>@episHoyConteo</b></h3>
+                <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-list-alt"></span> &nbsp; &nbsp;EPIs Generados: <b>@episTotalConteo</b></h3>
             </div>
             <div class="modal-body">
                 @{
@@ -538,5 +540,4 @@ else
 
     </div>
 </div>
-
 

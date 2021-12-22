@@ -340,6 +340,7 @@
                     <div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Referido Por:</label>
                         <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option value="NINGUNO">NINGUNO</option>
                             @{
                                 foreach (var referido in (from i in db.Referido where i.Tipo == "GESTOR ALT" orderby i.Nombre select i))
                                 {
@@ -969,11 +970,11 @@ else
                                                     @{
                                                         if (item.Estatura == null)
                                                         {
-                                                            <input type="number" class="form-control" id="curp" name="estatura" />
+                                                            <input type="number" class="form-control" id="curp" max="210" min="140" name="estatura" />
                                                         }
                                                         else
                                                         {
-                                                            <input type="number" class="form-control" id="curp" name="estatura" maxlength="18" value="@item.Estatura" placeholder="@item.Estatura" />
+                                                            <input type="number" class="form-control" id="curp" name="estatura" max="210" min="140" value="@item.Estatura" placeholder="@item.Estatura" />
                                                         }
                                                     }
                                                     <input type="hidden" class="form-control" id="id" name="id" value="@item.idPacienteESP">
@@ -1185,7 +1186,7 @@ else
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Seleccione los Doctores a habilitar o deshabilitar (Chucho es puñal)</b></h4>
+                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Seleccione los Doctores a habilitar o deshabilitar</b></h4>
                 </div>
                 <div class="modal-body">
                     @{

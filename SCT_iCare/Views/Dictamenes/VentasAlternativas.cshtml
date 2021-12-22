@@ -36,25 +36,25 @@
     string gestor = ViewBag.Gestor;
     string estatus = ViewBag.Estatus;
 
-    var modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate) /*&& s.EstatusCaptura == "Terminado"*/).OrderByDescending(o => o.FechaCita).OrderByDescending(o => o.CancelaComentario == "Urgente");
+    var modelo = db.PacienteESP.Where(s => (s.FechaCaptura >= thisDate && s.FechaCaptura < tomorrowDate) /*&& s.EstatusCaptura == "Terminado"*/).OrderByDescending(o => o.FechaCaptura).OrderByDescending(o => o.CancelaComentario == "Urgente");
 
     if (gestor != null)
     {
-        modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate) && s.ReferidoPor == gestor).OrderByDescending(o => o.FechaCita);
+        modelo = db.PacienteESP.Where(s => (s.FechaCaptura >= thisDate && s.FechaCaptura < tomorrowDate) && s.ReferidoPor == gestor).OrderByDescending(o => o.FechaCaptura);
 
         if (estatus != null)
         {
-            modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate) && s.ReferidoPor == gestor && s.EstatusCaptura == estatus).OrderByDescending(o => o.FechaCita);
+            modelo = db.PacienteESP.Where(s => (s.FechaCaptura >= thisDate && s.FechaCaptura < tomorrowDate) && s.ReferidoPor == gestor && s.EstatusCaptura == estatus).OrderByDescending(o => o.FechaCaptura);
         }
     }
 
     if (estatus != null)
     {
-        modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate) && s.EstatusCaptura == estatus).OrderByDescending(o => o.FechaCita);
+        modelo = db.PacienteESP.Where(s => (s.FechaCaptura >= thisDate && s.FechaCaptura < tomorrowDate) && s.EstatusCaptura == estatus).OrderByDescending(o => o.FechaCaptura);
 
         if (gestor != null)
         {
-            modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate) && s.ReferidoPor == gestor && s.EstatusCaptura == estatus).OrderByDescending(o => o.FechaCita);
+            modelo = db.PacienteESP.Where(s => (s.FechaCaptura >= thisDate && s.FechaCaptura < tomorrowDate) && s.ReferidoPor == gestor && s.EstatusCaptura == estatus).OrderByDescending(o => o.FechaCaptura);
         }
     }
 
