@@ -34,26 +34,26 @@
     dateToday = Convert.ToDateTime(ViewBag.Inicio);
     dateTomorrow = Convert.ToDateTime(ViewBag.Final);
 
-    var citasHoy = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow);
-    int citasHoyConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow).Count();
+    var citasHoy = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.TipoTramite != "REVALORACIÓN");
+    int citasHoyConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.TipoTramite != "REVALORACIÓN").Count();
 
-    var episHoy = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow);
-    int episHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow).Count();
+    var episHoy = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.TipoTramite != "REVALORACIÓN");
+    int episHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.TipoTramite != "REVALORACIÓN").Count();
 
-    var dictamenHoy = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.EstatusCaptura == "Terminado");
-    int dictamenHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.EstatusCaptura == "Terminado").Count();
+    var dictamenHoy = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.EstatusCaptura == "Terminado" && w.TipoTramite != "REVALORACIÓN");
+    int dictamenHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.EstatusCaptura == "Terminado" && w.TipoTramite != "REVALORACIÓN").Count();
 
-    var enProcesoHoy = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && (w.EstatusCaptura == "En captura..." || w.EstatusCaptura == "No iniciado"));
-    int enProcesoHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && (w.EstatusCaptura == "En captura..." || w.EstatusCaptura == "No iniciado")).Count();
+    var enProcesoHoy = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && (w.EstatusCaptura == "En captura..." || w.EstatusCaptura == "No iniciado") && w.TipoTramite != "REVALORACIÓN");
+    int enProcesoHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && (w.EstatusCaptura == "En captura..." || w.EstatusCaptura == "No iniciado") && w.TipoTramite != "REVALORACIÓN").Count();
 
-    var pendientesHoy = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.EstatusCaptura == "Pendiente");
-    int pendientesHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.EstatusCaptura == "Pendiente").Count();
+    var pendientesHoy = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.EstatusCaptura == "Pendiente" && w.TipoTramite != "REVALORACIÓN");
+    int pendientesHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.EstatusCaptura == "Pendiente" && w.TipoTramite != "REVALORACIÓN").Count();
 
-    var pausadosHoy = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.EstatusCaptura == "Pausado");
-    int pausadosHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.EstatusCaptura == "Pausado").Count();
+    var pausadosHoy = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.EstatusCaptura == "Pausado" && w.TipoTramite != "REVALORACIÓN");
+    int pausadosHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.EstatusCaptura == "Pausado" && w.TipoTramite != "REVALORACIÓN").Count();
 
-    var entregados = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.Entregado == "SI");
-    int entregadosConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.Entregado == "SI").Count();
+    var entregados = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.Entregado == "SI" && w.TipoTramite != "REVALORACIÓN");
+    int entregadosConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.Entregado == "SI" && w.TipoTramite != "REVALORACIÓN").Count();
 
     var enviados = db.Cita.Join(db.DictamenProblema, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
                 .Where(w => w.N.FechaCita >= dateToday && w.N.FechaCita < dateTomorrow && w.M.EstatusEnvio == "SI")
@@ -137,7 +137,7 @@
         <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
         <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
         <input type="submit" class="btn btn-primary" value="Enviar" />
-        <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+        <a href="~/Admin/Index"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
     </div>
 
     <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
@@ -260,7 +260,10 @@
                     {
                         var elemento = (from e in db.Cita where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow select e).Count();
 
-                        <h4><b>@item.Nombre:</b> @elemento</h4>
+                        if (elemento > 0)
+                        {
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
                     }
                 }
             </div>
@@ -284,11 +287,29 @@
                 @{
                     foreach (var item in sucursalesLista)
                     {
-                        var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow select e).Count();
+                        var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.TipoTramite != "REVALORACIÓN" select e).Count();
 
-                        <h4><b>@item.Nombre:</b> @elemento</h4>
+                        if (elemento > 0)
+                        {
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
+                    }
+                    if ((from e in db.Captura where e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.TipoTramite == "REVALORACIÓN" select e).Count() > 0)
+                    {
+                        <hr />
+                        <h3 class="text-primary">Revaloraciones:</h3>
+                        foreach (var item in sucursalesLista)
+                        {
+                            var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.TipoTramite == "REVALORACIÓN" select e).Count();
+
+                            if (elemento > 0)
+                            {
+                                <h4><b>@item.Nombre:</b> @elemento</h4>
+                            }
+                        }
                     }
                 }
+
             </div>
         </div>
     </div>
@@ -311,9 +332,26 @@
                 @{
                     foreach (var item in sucursalesLista)
                     {
-                        var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.EstatusCaptura == "Terminado" select e).Count();
+                        var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.EstatusCaptura == "Terminado" && e.TipoTramite != "REVALORACIÓN" select e).Count();
 
-                        <h4><b>@item.Nombre:</b> @elemento</h4>
+                        if (elemento > 0)
+                        {
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
+                    }
+                    if ((from e in db.Captura where e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.TipoTramite == "REVALORACIÓN" && e.EstatusCaptura == "Terminado" select e).Count() > 0)
+                    {
+                        <hr />
+                        <h3 class="text-primary">Revaloraciones:</h3>
+                        foreach (var item in sucursalesLista)
+                        {
+                            var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.TipoTramite == "REVALORACIÓN" && e.EstatusCaptura == "Terminado" select e).Count();
+
+                            if (elemento > 0)
+                            {
+                                <h4><b>@item.Nombre:</b> @elemento</h4>
+                            }
+                        }
                     }
                 }
             </div>
@@ -340,7 +378,10 @@
                     {
                         var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && (e.EstatusCaptura == "En captura..." || e.EstatusCaptura == "No iniciado") select e).Count();
 
-                        <h4><b>@item.Nombre:</b> @elemento</h4>
+                        if (elemento > 0)
+                        {
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
                     }
                 }
             </div>
@@ -366,7 +407,10 @@
                     {
                         var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.EstatusCaptura == "Pausado" select e).Count();
 
-                        <h4><b>@item.Nombre:</b> @elemento</h4>
+                        if (elemento > 0)
+                        {
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
                     }
                 }
             </div>
@@ -389,16 +433,19 @@
             <div class="modal-body">
                 @{
                     @*foreach (var item in sucursalesLista)
-                    {
-                        var elemento = (from e in db.Cita where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && (e.Entregado == "SI") select e).Count();
+            {
+                var elemento = (from e in db.Cita where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && (e.Entregado == "SI") select e).Count();
 
-                        <h4><b>@item.Nombre:</b> @elemento</h4>
-                    }*@
+                <h4><b>@item.Nombre:</b> @elemento</h4>
+            }*@
                     foreach (var item in sucursalesLista)
                     {
                         var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.EstatusCaptura == "Pausado" select e).Count();
 
-                        <h4><b>@item.Nombre:</b> @elemento</h4>
+                        if (elemento > 0)
+                        {
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
                     }
                 }
             </div>
@@ -425,7 +472,10 @@
                     {
                         var elemento = (from e in enviados where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusEnvio == "SI" select e).Count();
 
-                        <h4><b>@item.Nombre:</b> @elemento</h4>
+                        if (elemento > 0)
+                        {
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
                     }
 
                     <hr />
@@ -434,7 +484,10 @@
                     {
                         var elemento = (from e in db.Cita where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && (e.Entregado == "SI") select e).Count();
 
-                        <h4><b>@item.Nombre:</b> @elemento</h4>
+                        if (elemento > 0)
+                        {
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
                     }
                 }
             </div>

@@ -17,6 +17,7 @@ namespace SCT_iCare
         public int idDoctor { get; set; }
         public string Nombre { get; set; }
         public Nullable<int> idSucursal { get; set; }
+        public string ALT { get; set; }
     
         public virtual Sucursales Sucursales { get; set; }
     }

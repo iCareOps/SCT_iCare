@@ -18,13 +18,129 @@ namespace SCT_iCare.Controllers.Dictamenes
             return View();
         }
 
-        public ActionResult Citas()
+        public ActionResult Citas(DateTime? inicio, DateTime? final)
         {
+            DateTime thisDate = new DateTime();
+            DateTime tomorrowDate = new DateTime();
+
+            DateTime start1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            DateTime finish1 = new DateTime(DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day);
+
+            int nulos = 0;
+
+            if (inicio != null || final != null)
+            {
+                nulos = 1;
+            }
+
+            if (inicio != null)
+            {
+                DateTime start = Convert.ToDateTime(inicio);
+                int year = start.Year;
+                int month = start.Month;
+                int day = start.Day;
+
+                inicio = new DateTime(year, month, day);
+                thisDate = new DateTime(year, month, day);
+            }
+            if (final != null)
+            {
+                DateTime finish = Convert.ToDateTime(final).AddDays(1);
+                int year = finish.Year;
+                int month = finish.Month;
+                int day = finish.Day;
+
+                final = new DateTime(year, month, day);
+                tomorrowDate = new DateTime(year, month, day);
+            }
+
+            var urge = (from i in db.UrgentesCount select i).FirstOrDefault();
+            string mes = DateTime.Now.ToString("MMMM");
+
+            if (urge.Mes != mes)
+            {
+                urge.Mes = mes;
+                urge.Contador = 500;
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(urge).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
+            inicio = (inicio ?? start1);
+            final = (final ?? finish1);
+
+            ViewBag.Inicio = inicio;
+            ViewBag.Final = final;
+            ViewBag.Estado = nulos;
+
+            ViewBag.Parameter = "";
+
             return View();
         }
 
-        public ActionResult Captura()
+        public ActionResult Captura(DateTime? inicio, DateTime? final)
         {
+            DateTime thisDate = new DateTime();
+            DateTime tomorrowDate = new DateTime();
+
+            DateTime start1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            DateTime finish1 = new DateTime(DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day);
+
+            int nulos = 0;
+
+            if (inicio != null || final != null)
+            {
+                nulos = 1;
+            }
+
+            if (inicio != null)
+            {
+                DateTime start = Convert.ToDateTime(inicio);
+                int year = start.Year;
+                int month = start.Month;
+                int day = start.Day;
+
+                inicio = new DateTime(year, month, day);
+                thisDate = new DateTime(year, month, day);
+            }
+            if (final != null)
+            {
+                DateTime finish = Convert.ToDateTime(final).AddDays(1);
+                int year = finish.Year;
+                int month = finish.Month;
+                int day = finish.Day;
+
+                final = new DateTime(year, month, day);
+                tomorrowDate = new DateTime(year, month, day);
+            }
+
+            var urge = (from i in db.UrgentesCount select i).FirstOrDefault();
+            string mes = DateTime.Now.ToString("MMMM");
+
+            if (urge.Mes != mes)
+            {
+                urge.Mes = mes;
+                urge.Contador = 500;
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(urge).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
+            inicio = (inicio ?? start1);
+            final = (final ?? finish1);
+
+            ViewBag.Inicio = inicio;
+            ViewBag.Final = final;
+            ViewBag.Estado = nulos;
+
+            ViewBag.Parameter = "";
+
             return View();
         }
 
@@ -176,6 +292,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                 PacienteESP paciente = new PacienteESP();
                 paciente.Nombre = nombre.ToUpper()/*.Normalize(System.Text.NormalizationForm.FormD).Replace(@"´¨", "")*/;
                 paciente.FechaCita = DateTime.Now;
+                paciente.FechaSolicitud = DateTime.Now;
                 //paciente.Sucursal = sucursal;
                 paciente.Solicita = usuario;
                 paciente.ReferidoPor = referido.ToUpper();
@@ -210,6 +327,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                     //paciente.Sucursal = sucursal;
                     paciente.Solicita = usuario;
                     paciente.FechaCita = DateTime.Now;
+                    paciente.FechaSolicitud = DateTime.Now;
                     paciente.ReferidoPor = referido.ToUpper();
 
 
@@ -269,6 +387,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                 PacienteESP paciente = new PacienteESP();
                 paciente.Nombre = nombre.ToUpper()/*.Normalize(System.Text.NormalizationForm.FormD).Replace(@"´¨", "")*/;
                 paciente.FechaCita = DateTime.Now;
+                paciente.FechaSolicitud = DateTime.Now;
                 //paciente.Sucursal = sucursal;
                 paciente.Solicita = usuario;
                 paciente.ReferidoPor = referido.ToUpper();
@@ -319,6 +438,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                     //paciente.Sucursal = sucursal;
                     paciente.Solicita = usuario;
                     paciente.FechaCita = DateTime.Now;
+                    paciente.FechaSolicitud = DateTime.Now;
                     paciente.ReferidoPor = referido.ToUpper();
 
                     if (urgente == "on")
@@ -475,7 +595,8 @@ namespace SCT_iCare.Controllers.Dictamenes
 
         public ActionResult CompletarDatos(int? id, string nombre, string estatura, string curp, string numero, /*string metra,*/ string genero,
             string doctor, /*string tipoL, */string tipoT, HttpPostedFileBase file,
-            HttpPostedFileBase documentos, HttpPostedFileBase declaracion, HttpPostedFileBase carta, HttpPostedFileBase glucosilada)
+            HttpPostedFileBase documentos, HttpPostedFileBase declaracion, HttpPostedFileBase carta, HttpPostedFileBase glucosilada, string repetido,
+            HttpPostedFileBase huella2, HttpPostedFileBase huella3, HttpPostedFileBase huella7, HttpPostedFileBase huella8, HttpPostedFileBase firma)
         {
             var revisionPacienteESP = (from i in db.PacienteESP where i.idPacienteESP == id select i).FirstOrDefault();
 
@@ -483,7 +604,214 @@ namespace SCT_iCare.Controllers.Dictamenes
             var revisionEPI = (from i in db.EPI_ESP where i.idPacienteESP == id select i).FirstOrDefault();
             var idEPI = db.EPI_ESP.Find(0);
 
-            if(revisionEPI != null)
+            var revisionRepetido = (from i in db.PacienteESP where i.idPacienteESP == id orderby i.idPacienteESP descending select i).FirstOrDefault();
+
+            if (numero.Trim() != ""  && repetido != "Aceptar" && numero.Trim() != revisionRepetido.NoExpediente)
+            {
+                var revisionExpediente = (from i in db.PacienteESP where i.NoExpediente == numero orderby i.idPacienteESP descending select i).FirstOrDefault();
+                if (revisionExpediente != null)
+                {
+                    TempData["Expediente"] = numero.Trim();
+                    TempData["id"] = id;
+                    return RedirectToAction("Citas");
+                }
+            }
+
+            /*CARGA DE HUELLAS Y FIRMA*/
+            if(firma != null)
+            {
+                if (firma.ContentLength > 0)
+                {
+                    byte [] bytesFirma = null;
+                    var fileName = Path.GetFileName(firma.FileName);
+
+                    byte[] bytes;
+
+                    using (BinaryReader br = new BinaryReader(firma.InputStream))
+                    {
+                        bytes = br.ReadBytes(firma.ContentLength);
+                        bytesFirma = bytes;
+                    }
+
+                    if(ModelState.IsValid)
+                    {
+                        var revisionFirma = (from i in db.FirmaESP where i.idPadienteESP == id select i.idFirmaESP).FirstOrDefault();
+
+                        if(revisionFirma != 0)
+                        {
+                            var fir = db.FirmaESP.Find(revisionFirma);
+                            fir.Firma = bytesFirma;
+                            db.Entry(fir).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            FirmaESP fir = new FirmaESP();
+                            fir.idPadienteESP = id;
+                            fir.Firma = bytesFirma;
+                            db.FirmaESP.Add(fir);
+                            db.SaveChanges();
+                        }
+                    }
+                }
+            }
+
+
+            if (huella2 != null)
+            {
+                if (huella2.ContentLength > 0)
+                {
+                    byte[] bytesHuella2 = null;
+                    var fileName = Path.GetFileName(huella2.FileName);
+
+                    byte[] bytes;
+
+                    using (BinaryReader br = new BinaryReader(huella2.InputStream))
+                    {
+                        bytes = br.ReadBytes(huella2.ContentLength);
+                        bytesHuella2 = bytes;
+                    }
+
+                    if (ModelState.IsValid)
+                    {
+                        var revisionHuella2 = (from i in db.HuellasESP where i.idPacienteESP == id select i).FirstOrDefault();
+
+                        if (revisionHuella2 != null)
+                        {
+                            var hue2 = db.HuellasESP.Find(revisionHuella2.idHuellasESP);
+                            hue2.Huella2 = bytesHuella2;
+                            db.Entry(hue2).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            HuellasESP hue2 = new HuellasESP();
+                            hue2.idPacienteESP = id;
+                            hue2.Huella2 = bytesHuella2;
+                            db.HuellasESP.Add(hue2);
+                            db.SaveChanges();
+                        }
+                    }
+                }
+            }
+
+            if (huella3 != null)
+            {
+                if (huella3.ContentLength > 0)
+                {
+                    byte[] bytesHuella3 = null;
+                    var fileName = Path.GetFileName(huella3.FileName);
+
+                    byte[] bytes;
+
+                    using (BinaryReader br = new BinaryReader(huella3.InputStream))
+                    {
+                        bytes = br.ReadBytes(huella3.ContentLength);
+                        bytesHuella3 = bytes;
+                    }
+
+                    if (ModelState.IsValid)
+                    {
+                        var revisionHuella3 = (from i in db.HuellasESP where i.idPacienteESP == id select i).FirstOrDefault();
+
+                        if (revisionHuella3 != null)
+                        {
+                            var hue3 = db.HuellasESP.Find(revisionHuella3.idHuellasESP);
+                            hue3.Huella3 = bytesHuella3;
+                            db.Entry(hue3).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            HuellasESP hue3 = new HuellasESP();
+                            hue3.idPacienteESP = id;
+                            hue3.Huella3 = bytesHuella3;
+                            db.HuellasESP.Add(hue3);
+                            db.SaveChanges();
+                        }
+                    }
+                }
+            }
+
+            if (huella7 != null)
+            {
+                if (huella7.ContentLength > 0)
+                {
+                    byte[] bytesHuella7 = null;
+                    var fileName = Path.GetFileName(huella7.FileName);
+
+                    byte[] bytes;
+
+                    using (BinaryReader br = new BinaryReader(huella7.InputStream))
+                    {
+                        bytes = br.ReadBytes(huella7.ContentLength);
+                        bytesHuella7 = bytes;
+                    }
+
+                    if (ModelState.IsValid)
+                    {
+                        var revisionHuella7 = (from i in db.HuellasESP where i.idPacienteESP == id select i).FirstOrDefault();
+
+                        if (revisionHuella7 != null)
+                        {
+                            var hue7 = db.HuellasESP.Find(revisionHuella7.idHuellasESP);
+                            hue7.Huella7 = bytesHuella7;
+                            db.Entry(hue7).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            HuellasESP hue7 = new HuellasESP();
+                            hue7.idPacienteESP = id;
+                            hue7.Huella7 = bytesHuella7;
+                            db.HuellasESP.Add(hue7);
+                            db.SaveChanges();
+                        }
+                    }
+                }
+            }
+
+            if (huella8 != null)
+            {
+                if (huella8.ContentLength > 0)
+                {
+                    byte[] bytesHuella8 = null;
+                    var fileName = Path.GetFileName(huella8.FileName);
+
+                    byte[] bytes;
+
+                    using (BinaryReader br = new BinaryReader(huella8.InputStream))
+                    {
+                        bytes = br.ReadBytes(huella8.ContentLength);
+                        bytesHuella8 = bytes;
+                    }
+
+                    if (ModelState.IsValid)
+                    {
+                        var revisionHuella8 = (from i in db.HuellasESP where i.idPacienteESP == id select i).FirstOrDefault();
+
+                        if (revisionHuella8 != null)
+                        {
+                            var hue8 = db.HuellasESP.Find(revisionHuella8.idHuellasESP);
+                            hue8.Huella8 = bytesHuella8;
+                            db.Entry(hue8).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            HuellasESP hue8 = new HuellasESP();
+                            hue8.idPacienteESP = id;
+                            hue8.Huella8 = bytesHuella8;
+                            db.HuellasESP.Add(hue8);
+                            db.SaveChanges();
+                        }
+                    }
+                }
+            }
+            /*---------------------------------------------------------------------*/
+
+
+            if (revisionEPI != null)
             {
                 idEPI = db.EPI_ESP.Find(revisionEPI.idEpiESP);
             }
@@ -493,15 +821,15 @@ namespace SCT_iCare.Controllers.Dictamenes
             {
                 epi.idPacienteESP = id;
 
-                if (numero != null)
+                if (numero.Trim() != null)
                 {
-                    epi.NoExpediente = numero;
+                    epi.NoExpediente = numero.Trim();
                 }
                 else
                 {
-                    if(revisionEPI != null)
+                    if(revisionPacienteESP.NoExpediente != null)
                     {
-                        epi.NoExpediente = revisionEPI.NoExpediente;
+                        epi.NoExpediente = revisionPacienteESP.NoExpediente;
                     }
                 }
 
@@ -521,11 +849,11 @@ namespace SCT_iCare.Controllers.Dictamenes
                 }
                 else
                 {
-                    if (revisionEPI != null)
+                    if (revisionPacienteESP.Genero!= null)
                     {
-                        epi.Genero = revisionEPI.Genero;
+                        epi.Genero = revisionPacienteESP.Genero;
 
-                        if (revisionEPI.Genero == "F")
+                        if (revisionPacienteESP.Genero == "F")
                         {
                             epi.URegla = DateTime.Now.AddDays(-20).ToString("yyyy-MM-dd").Replace("-", "");
                             epi.Embarazos = "0";
@@ -560,14 +888,14 @@ namespace SCT_iCare.Controllers.Dictamenes
                 }
                 else
                 {
-                    if (revisionEPI != null)
+                    if (revisionEPI != null) //-------------------------------
                     {
                         double numeroDecimalRandom = 0;
                         double altura = Convert.ToDouble(estatura);
                         double peso = 0.00;
                         float cadenaPeso;
 
-                        epi.Estatura = estatura;
+                        epi.Estatura = revisionPacienteESP.Estatura;
                         numeroDecimalRandom = random.Next(2223, 2878) / 100.00;
 
                         peso = numeroDecimalRandom * ((altura / 100) * (altura / 100));
@@ -602,7 +930,7 @@ namespace SCT_iCare.Controllers.Dictamenes
 
                 int [] profundidad = { 40, 50, 60 };
 
-                int numeroProfundidad = random.Next(0, 2);
+                int numeroProfundidad = random.Next(3);
                 epi.Estereopsis = profundidad[numeroProfundidad].ToString();
 
                 epi.Lentes = "NO";
@@ -613,7 +941,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                 epi.TestVC = "NORMAL";
 
                 string[] notaVisual = { "Sano", "Sano ve bien", "No presenta problema" };
-                int numeroNotaVisual = random.Next(0, 2);
+                int numeroNotaVisual = random.Next(3);
                 epi.Nota = notaVisual[numeroNotaVisual].ToString();
 
                 epi.MadreVive = "SI";
@@ -623,6 +951,26 @@ namespace SCT_iCare.Controllers.Dictamenes
                 epi.Patologias = "NINGUNO";
                 epi.Interpretacion = "NORMAL";
                 epi.NotaMedica = "NORMAL";
+
+                string[] tablaAudiologia = {"-5", "0", "5", "10", "15", "20", "25", "30", "35" };
+
+                epi.D125 = tablaAudiologia[random.Next(3,6)];
+                epi.D250 = tablaAudiologia[random.Next(3, 6)];
+                epi.D500 = tablaAudiologia[random.Next(3, 6)];
+                epi.D1000 = tablaAudiologia[random.Next(3, 6)];
+                epi.D2000 = tablaAudiologia[random.Next(3, 6)];
+                epi.D4000 = tablaAudiologia[random.Next(3, 6)];
+                epi.D8000 = tablaAudiologia[random.Next(3, 6)];
+                epi.D12000 = "35";
+                epi.I125 = tablaAudiologia[random.Next(3, 6)];
+                epi.I250 = tablaAudiologia[random.Next(3,6)];
+                epi.I500 = tablaAudiologia[random.Next(3,6)];
+                epi.I1000 = tablaAudiologia[random.Next(3,6)];
+                epi.I2000 = tablaAudiologia[random.Next(3,6)];
+                epi.I4000 = tablaAudiologia[random.Next(3,6)];
+                epi.I8000 = tablaAudiologia[random.Next(3,6)];
+                epi.I12000 = "35";
+
                 epi.VacCompletas = "SI";
                 epi.ECivil = "UNIONLIBRE";
                 epi.Religion = "OTRO";
@@ -638,21 +986,80 @@ namespace SCT_iCare.Controllers.Dictamenes
                 epi.Drogas = "NO";
                 epi.UsaLentes = "NO";
 
-                if(ModelState.IsValid)
+                if (ModelState.IsValid)
                 {
                     db.EPI_ESP.Add(epi);
                     db.SaveChanges();
                 }
+
+                string[] tablaAudio = { epi.D125, epi.D250, epi.D500, epi.D1000, epi.D2000, epi.D4000, epi.D8000, epi.D12000, epi.I125, epi.I250, epi.I500, epi.I1000, epi.I2000, epi.I4000, epi.I8000, epi.I12000 };
+
+                string[] posiciones = new string[16];
+                int posicionActual = 0;
+                int posicionDeseada = 0;
+                int operacion = 0;
+                string arribaAbajo = "";
+
+                for (int i = 0; i < 16; i++)
+                {
+                    if(i == 8)
+                    {
+                        operacion = 0;
+                        posicionActual = 0;
+                    }
+
+                    for (int n = 0; n < 9; n++)
+                    {
+                        if (Convert.ToString(tablaAudiologia[n]) == tablaAudio[i])
+                        {
+                            posicionDeseada = n + 1;
+                            break;
+                        }
+                    }
+
+                    operacion = posicionActual - posicionDeseada;
+                    posicionActual = posicionDeseada;
+                    posiciones[i] = operacion.ToString();
+
+                }
+
+                MovimientosAudio mov = new MovimientosAudio();
+                mov.D125 = posiciones[0];
+                mov.D250 = posiciones[1];
+                mov.D500 = posiciones[2];
+                mov.D1000 = posiciones[3];
+                mov.D2000 = posiciones[4];
+                mov.D4000 = posiciones[5];
+                mov.D8000 = posiciones[6];
+                mov.D12000 = posiciones[7];
+                mov.I125 = posiciones[8];
+                mov.I250 = posiciones[9];
+                mov.I500 = posiciones[10];
+                mov.I1000 = posiciones[11];
+                mov.I2000 = posiciones[12];
+                mov.I4000 = posiciones[13];
+                mov.I8000 = posiciones[14];
+                mov.I12000 = posiciones[15];
+                mov.idPacienteESP = id;
+
+                if (ModelState.IsValid)
+                {
+                    db.MovimientosAudio.Add(mov);
+                    db.SaveChanges();
+                }
+
             }
             else
             {
                 if(genero != "")
                 {
                     idEPI.Genero = genero;
+                    revisionPacienteESP.Genero = genero;
                 }
-                if(numero != "")
+                if(numero.Trim() != "")
                 {
-                    idEPI.NoExpediente = numero;
+                    idEPI.NoExpediente = numero.Trim();
+                    revisionPacienteESP.NoExpediente = numero.Trim();
                 }
                 if(estatura != "")
                 {
@@ -665,6 +1072,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                     float cadenaPeso;
 
                     idEPI.Estatura = estatura;
+                    revisionPacienteESP.Estatura = estatura;
                     numeroDecimalRandom = random.Next(2223, 2878) / 100.00;
 
                     peso = numeroDecimalRandom * ((altura /100 ) * (altura/100));
@@ -690,28 +1098,11 @@ namespace SCT_iCare.Controllers.Dictamenes
                 if (ModelState.IsValid)
                 {
                     db.Entry(idEPI).State = EntityState.Modified;
+                    db.Entry(revisionPacienteESP).State = EntityState.Modified;
                     db.SaveChanges();
                 }
 
             }
-
-            //int numeroRandom = 0;
-            //double numeroDecimalRandom = 0;
-            //double decimalRandom = 0.00;
-            //double altura = 1.74;
-            //double peso = 0.00;
-            //float cadenaPeso;
-
-            //for(int i  = 0; i < 10; i++)
-            //{
-            //    Random ran = new Random();
-            //    //numeroRandom = ran.Next(57);
-
-            //    numeroDecimalRandom = ran.Next(2223, 2878)/100.00;
-
-            //    peso = numeroDecimalRandom * (altura * altura);
-            //    cadenaPeso = (float)(Math.Round((double)peso, 2));
-            //}
 
             if(revisionPacienteESP.NoExpediente != null && revisionPacienteESP.TipoLicencia != null && revisionPacienteESP.TipoTramite != null && revisionPacienteESP.Doctor != null 
                 && revisionPacienteESP.Estatura != null && revisionPacienteESP.Metra != null 
@@ -725,8 +1116,6 @@ namespace SCT_iCare.Controllers.Dictamenes
                 revisionPacienteESP.Nombre = nombre != "" ? nombre.ToUpper() : revisionPacienteESP.Nombre;
             }
 
-            //revisionPacienteESP.Metra = metra == "on" ? revisionPacienteESP.Metra = "SI" : revisionPacienteESP.Metra = null;
-
             if(estatura != "")
             {
                 revisionPacienteESP.Estatura = estatura != "" ? estatura: revisionPacienteESP.Estatura;
@@ -734,23 +1123,18 @@ namespace SCT_iCare.Controllers.Dictamenes
 
             if (curp != "")
             {
-                revisionPacienteESP.CURP = curp.ToUpper() != "" ? curp : revisionPacienteESP.CURP;
+                revisionPacienteESP.CURP = curp != "" ? curp.ToUpper() : revisionPacienteESP.CURP;
             }
 
-            if (numero != "")
+            if (numero.Trim() != "")
             {
-                revisionPacienteESP.NoExpediente = numero != "" ? numero : revisionPacienteESP.NoExpediente;
+                revisionPacienteESP.NoExpediente = numero.Trim() != "" ? numero.Trim() : revisionPacienteESP.NoExpediente;
             }
 
             if (doctor != "")
             {
                 revisionPacienteESP.Doctor = doctor != "" ? doctor : revisionPacienteESP.Doctor;
             }
-
-            //if (tipoL != "")
-            //{
-            //    revisionPacienteESP.TipoLicencia = tipoL != "" ? tipoL : revisionPacienteESP.TipoLicencia;
-            //}
 
             if (tipoT != "")
             {
@@ -985,8 +1369,9 @@ namespace SCT_iCare.Controllers.Dictamenes
 
             paciente.EstatusCaptura = "En Proceso";
             paciente.Capturista = capturista;
+            paciente.FechaCaptura = DateTime.Now;
 
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 db.Entry(paciente).State = EntityState.Modified;
                 db.SaveChanges();
@@ -1290,6 +1675,60 @@ namespace SCT_iCare.Controllers.Dictamenes
             }
 
             return RedirectToAction("Citas");
+        }
+
+        public ActionResult HabilitarDoctores(string id_1, string id_2, string id_3, string id_4, string id_5, string id_6, string id_7, string id_8, string id_9, string id_10, string id_11, string id_12, string id_13, string id_14,
+            string id_15, string id_16, string id_17, string id_18, string id_19, string id_20 )
+        {
+            string[] doctores = { id_1, id_2, id_3, id_4, id_5, id_6, id_7, id_8, id_9, id_10, id_11, id_12, id_13, id_14, id_15, id_16, id_17, id_18, id_19, id_20 };
+
+            for(int i = 1; i <= doctores.Length; i++)
+            {
+                var doctor = db.Doctores.Find(i);
+
+                doctor.ALT = doctores[i - 1] == "on" ? "SI" : "NO";
+
+                if(ModelState.IsValid)
+                {
+                    db.Entry(doctor).State = EntityState.Modified;
+                }
+            }
+
+            db.SaveChanges();
+
+            return Redirect("Citas");
+        }
+
+        public JsonResult Buscar(string dato)
+        {
+            string parametro;
+
+            if (dato.All(char.IsDigit))
+            {
+                parametro = dato;
+            }
+            else
+            {
+                parametro = dato.ToUpper();
+            }
+
+            List<PacienteESP> data = db.PacienteESP.ToList();
+            var selected = data.Where(r => r.Nombre.Contains(parametro) || r.NoExpediente == parametro)
+                .Select(S => new {
+                    idPacienteESP = S.idPacienteESP,
+                    S.Nombre,
+                    S.CURP,
+                    S.NoExpediente,
+                    S.TipoTramite,
+                    FechaCita = Convert.ToDateTime(S.FechaCita).ToString("dd-MMMM-yyyy"),
+                    S.EstatusCaptura,
+                    S.Estatura,
+                    S.Genero,
+                    S.Metra,
+                    S.Doctor
+                }).ToList();
+
+            return Json(selected, JsonRequestBehavior.AllowGet);
         }
 
     }

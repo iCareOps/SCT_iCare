@@ -17,6 +17,15 @@
     string fila = "";
     int registros;
 
+    string noExpediente = "";
+    string idRepetido = "";
+    if (TempData["Expediente"] != null)
+    {
+        noExpediente = TempData["Expediente"].ToString();
+        idRepetido = TempData["id"].ToString();
+
+    }
+
     int flag = 1; //contador de la tabla
 
     DateTime start = DateTime.Now;
@@ -31,10 +40,10 @@
     int day1 = finish.Day;
 
     int tomorrorDay = day + 1;
-    DateTime thisDate = new DateTime(year, month, day);
-    DateTime tomorrowDate = new DateTime(year1, month1, day1);
+    DateTime thisDate = ViewBag.Inicio;
+    DateTime tomorrowDate = ViewBag.Final;
 
-    var modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate) || (s.EstatusCaptura == null)).OrderByDescending(o => o.FechaCita).OrderByDescending(o => o.CancelaComentario == "Urgente");
+    var modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate) || (s.EstatusCaptura != "Terminado" && s.EstatusCaptura != "Cancelado")).OrderByDescending(o => o.FechaCita).OrderByDescending(o => o.CancelaComentario == "Urgente");
     int? idRol = 0;
 
     if (oUser != null)
@@ -78,15 +87,43 @@
 @*<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>
     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>*@
 
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/Citas")">
+    <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px">
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+        <input type="date" class="form-control" min="2021-08-02" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+        <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
+        <input type="submit" class="btn btn-primary" value="Enviar" />
+        <a href="~/Dictamenes/Citas"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+    </div>
+
+    <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
+        <div class="input-group">
+            <input type="text" class="form-control input-g" id="buscador" name="dato" placeholder="Paciente o Expediente">
+            <span class="input-group-btn">
+                <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+        </div>
+    </div>
+</form>
+
+<br />
+
 <div class="form-inline">
     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Nueva Cita</button>
+    @{
+        if (nombreUsuario == "Jesús Zenteno" || nombreUsuario == "Ángel Muñoz" || nombreUsuario == "Administrador")
+        {
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#doctores"><span class="glyphicon glyphicon-off"></span> Habilitar/Deshabilitar Doctor</button>
+        }
+    }
 </div>
 
 @section scripts{
 
     <script>
         var input = document.getElementById("buscador");
-        input.addEventListener("keyup", function (event) {
+        input.addEventListener("keydown", function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
                 document.getElementById("buscar").click();
@@ -98,7 +135,7 @@
     <script>
     $(function () {
         $(".buscar").click(function () {
-            var url = "@Url.Action("Buscar", "Recepcion")";
+            var url = "@Url.Action("Buscar", "Dictamenes")";
             var dato = $("#buscador").val();
             var data = { dato: dato };
 
@@ -109,28 +146,86 @@
                     miResultado = "<h3>No se encontraron registros!!</h3>"
                 }
                 else {
-                    miResultado +=  "<tr class=\"bg-primary\"><th>Nombre</th><th>Sucursal</th><th>Tipo Tramite</th><th>Tipo Licencia</th><th>Estatus Dictamen</th><th>Fecha Cita</th><th></th></tr>"
+                    miResultado +=  "<thead><tr class=\"bg-primary \"><th>Nombre</th><th>CURP</th><th>NoExpediente</th><th>Tipo Trámite</th><th>Fecha</th><th>Datos</th><th>Estatus</th><th>dkdk</th></tr></thead>"
                     for (let i = 0; i < data.length; i++) {
 
-                        if (data[i].EstatusDictamen == null) {
-                            miResultado += "<tr style=\"border:1px solid gray\">" +
-                                "<td><b>" + data[i].Nombre + "</b></td>" +
-                                "<td><b>" + data[i].Sucursal + "</b></td>" +
-                                "<td><b>" + data[i].TipoTramite + "</b></td>" +
-                                "<td><b>" + data[i].TipoLicencia + "</b></td>" +
-                                "<td><b>Pendiente</b></td>" +
-                                "<td><b>" + data[i].FechaCita + "</b></td>" +
-                                "</tr>"
+                        if (data[i].EstatusCaptura === null) {
+                            if (data[i].Estatura === null || data[i].Doctor === null || data[i].Metra === null || data[i].Genero === null || data[i].CURP === null || data[i].NoExpediente === null) {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><span class=\"field-tip field-tip3\"><b><mark style=\"background-color: #FFFF00; padding: 5px; border-radius: 7px\">Incompletos</b></mark><span class=\"tip-content\">" +
+                                    "<b>CURP: </b><span>" + data[i].CURP + "</span><br/>" +
+                                    "<b>NoExpediente: </b><span>" + data[i].NoExpediente + "</span><br/>" +
+                                    "<b>Metra: </b><span>" + data[i].Metra + "</span><br/>" +
+                                    "<b>Género: </b><span>" + data[i].Genero + "</span><br/>" +
+                                    "<b>Estatura: </b><span>" + data[i].Estatura + "</span><br/>" +
+                                    "<b>Doctor: </b><span>" + data[i].Doctor + "</span><br/>" +
+                                    "</span ></span ></td > " +
+                                    "<td><b>Sin iniciar</b></td>" +
+                                    "</tr>"
+                            } else {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                        "<td><b>" + data[i].Nombre + "</b></td>" +
+                                        "<td><b>" + data[i].CURP + "</b></td>" +
+                                        "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                        "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                        "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                        "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                        "<td><b>Sin iniciar</td>" +
+                                        "</tr>"
 
+                            }
                         } else {
-                            miResultado += "<tr style=\"border:1px solid gray\">" +
-                                "<td><b>" + data[i].Nombre + "</b></td>" +
-                                "<td><b>" + data[i].Sucursal + "</b></td>" +
-                                "<td><b>" + data[i].TipoTramite + "</b></td>" +
-                                "<td><b>" + data[i].TipoLicencia + "</b></td>" +
-                                "<td><b>" + data[i].EstatusDictamen + "</b></td>" +
-                                "<td><b>" + data[i].FechaCita + "</b></td>" +
-                                "</tr>"
+                            if (data[i].Estatura === null && data[i].Doctor === null && data[i].Metra === null && data[i].Genero === null && data[i].CURP === null && data[i].NoExpediente === null) {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><span class=\"field-tip field-tip3\"><b><mark style=\"background-color: #FFFF00; padding: 5px; border-radius: 7px\">Incompletos</b></mark><span class=\"tip-content\">" +
+                                    "<b>CURP: </b><span>" + data[i].CURP + "</span><br/>" +
+                                    "<b>NoExpediente: </b><span>" + data[i].NoExpediente + "</span><br/>" +
+                                    "<b>Metra: </b><span>" + data[i].Metra + "</span><br/>" +
+                                    "<b>Género: </b><span>" + data[i].Genero + "</span><br/>" +
+                                    "<b>Estatura: </b><span>" + data[i].Estatura + "</span><br/>" +
+                                    "<b>Doctor: </b><span>" + data[i].Doctor + "</span><br/>" +
+                                    "</span ></span ></td > " +
+                                    "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                    "</tr>"
+                            } else {
+
+                                if (data[i].EstatusCaptura === "Terminado") {
+                                    var url = '@Url.Action("DescargarPDF","Dictamenes", new {id="xxxx"})';
+                                    url = url.replace("xxxx", data[i].idPacienteESP);
+
+                                    miResultado += "<tr style=\"border:1px solid gray\">" +
+                                        "<td><b>" + data[i].Nombre + "</b></td>" +
+                                        "<td><b>" + data[i].CURP + "</b></td>" +
+                                        "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                        "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                        "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                        "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                        "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                        "<td><a href=" + url + "><button type=\"button\" class=\"btn btn-warning\">Descargar</button></a></td>" +
+                                        "</tr>"
+                                }
+                                else {
+                                    miResultado += "<tr style=\"border:1px solid gray\">" +
+                                        "<td><b>" + data[i].Nombre + "</b></td>" +
+                                        "<td><b>" + data[i].CURP + "</b></td>" +
+                                        "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                        "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                        "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                        "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                        "<td><b>" + data[i].EstatusCaptura + "</td>" +
+                                        "</tr>"
+                                }
+                            }
 
                         }
 
@@ -154,10 +249,38 @@
             window.open('@TempData["Link"]');
         </script>
     }
+
+    @if (TempData["Expediente"] != null)
+    {
+        <script>
+            $('#repetido').modal('show');
+        </script>
+    }
+
 }
 
 <br />
 
+
+<div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width:70%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body" id="">
+                <div class="tablaScroll">
+                    <table class="table table-hover tablas table-responsive" id="tablaEjemploSS" style="color: #2F2D6B">
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -202,93 +325,28 @@
                         <input type="text" class="form-control" id="nombre" name="nombre" required />
                     </div>
                     @*<div class="form-group" style="width:60%; min-width:320px">
-                        <label for="recipient-name" class="col-form-label">Sucursal:</label>
-                        <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                            @{
-                                var sucursalesOption = from s in db.Sucursales select s.Nombre;
-                                foreach (var opcion in sucursalesOption)
-                                {
-                                    <option value="@opcion">@opcion</option>
+                            <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                            <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                @{
+                                    var sucursalesOption = from s in db.Sucursales select s.Nombre;
+                                    foreach (var opcion in sucursalesOption)
+                                    {
+                                        <option value="@opcion">@opcion</option>
+                                    }
                                 }
-                            }
-                        </select>
-                    </div>*@
+                            </select>
+                        </div>*@
                     <input type="hidden" value="@nombreUsuario" name="usuario" />
                     <div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Referido Por:</label>
                         <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                            @*<option selected value="NINGUNO">NINGUNO</option>
+                            <option value="NINGUNO">NINGUNO</option>
                             @{
-                                //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
-                                var referidosGestor = (from r in db.Referido where r.Tipo == "Gestor" select r).OrderBy(o => o.Nombre);
-                                var referidosGMI = (from r in db.Referido where r.Tipo == "GMI" select r).OrderBy(o => o.Nombre);
-                                var referidosEmpresa = (from r in db.Referido where r.Tipo == "Empresa" select r).OrderBy(o => o.Nombre);
-                                var referidosCanacar = (from r in db.Referido where r.Tipo == "Canacar" select r).OrderBy(o => o.Nombre);
-                                var referidosParticular = (from r in db.Referido where r.Tipo == "Particular" select r).OrderBy(o => o.Nombre);
-                                var referidosSindicato = (from r in db.Referido where r.Tipo == "Sindicato" select r).OrderBy(o => o.Nombre);
-                                var referidosAnexa = (from r in db.Referido where r.Tipo == "Anexa" select r).OrderBy(o => o.Nombre);
-
-                                <option disabled>--------GESTORES--------</option>
-                                foreach (var item in referidosGestor)
+                                foreach (var referido in (from i in db.Referido where i.Tipo == "GESTOR ALT" orderby i.Nombre select i))
                                 {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------GMI--------</b></option>
-                                foreach (var item in referidosGMI)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------EMPRESAS--------</b></option>
-                                foreach (var item in referidosEmpresa)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------CANACAR--------</b></option>
-                                foreach (var item in referidosCanacar)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------PARTICULAR--------</b></option>
-                                foreach (var item in referidosParticular)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------SINDICATOS--------</b></option>
-                                foreach (var item in referidosSindicato)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------ANEXA--------</b></option>
-                                foreach (var item in referidosAnexa)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
+                                    <option style="font-weight:bold" value="@referido.Nombre">@referido.Nombre</option>
                                 }
                             }
-                            <option disabled><b>--------OTROS--------</b></option>
-                            <option value="OTRO">OTRO</option>*@
-
-                            <option style="font-weight:bold" value="AARON DIAZ">AARON DIAZ</option>
-                            <option style="font-weight:bold" value="ALEJANDRO VELAZQUEZ">ALEJANDRO VELAZQUEZ</option>
-                            <option style="font-weight:bold" value="ANTONIO">ANTONIO</option>
-                            <option style="font-weight:bold" value="ELIZABETH">ELIZABETH</option>
-                            <option style="font-weight:bold" value="LEOPOLDO MAZA">LEOPOLDO MAZA</option>
-                            <option style="font-weight:bold" value="LICENCIAS FEDERALES STINGRAY">LICENCIAS FEDERALES STINGRAY</option>
-                            <option style="font-weight:bold" value="LUIS CORTES">LUIS CORTES</option>
-                            <option style="font-weight:bold" value="LUIS ENRIQUE">LUIS ENRIQUE</option>
-                            <option style="font-weight:bold" value="LUIS GDL">LUIS GDL</option>
-                            <option style="font-weight:bold" value="MIRIAM SOL">MIRIAM SOL</option>
-                            <option style="font-weight:bold" value="NATALY">NATALY</option>
-                            <option style="font-weight:bold" value="PABLO">PABLO</option>
-                            <option style="font-weight:bold" value="ROBERTO BONIFACIO">ROBERTO BONIFACIO</option>
-                            <option style="font-weight:bold" value="ROYAL TRANSPORTS">ROYAL TRANSPORTS</option>
-                            <option style="font-weight:bold" value="SAYRA">SAYRA</option>
-                            <option style="font-weight:bold" value="VICTOR GERICO">VICTOR GERICO</option>
                         </select>
                     </div>
             </div>
@@ -414,17 +472,17 @@ else
                         No. Exp.
                     </th>
                     @*@{
-                        if (idRol == 2)
-                        {
-                            <th>Sucursal</th>
-                        }
-                        else
-                        {
-                            <th>
-                                Doctor
-                            </th>
-                        }
-                    }*@
+                            if (idRol == 2)
+                            {
+                                <th>Sucursal</th>
+                            }
+                            else
+                            {
+                                <th>
+                                    Doctor
+                                </th>
+                            }
+                        }*@
                     <th>
                         Doctor
                     </th>
@@ -440,6 +498,9 @@ else
                     </th>
                     <th>
                         Cita en METRA
+                    </th>
+                    <th>
+                        Datos Cita
                     </th>
                     <th>
                         Dictamen
@@ -475,55 +536,63 @@ else
                     </td>
 
                     <td>
-                        <b>@Html.DisplayFor(modelItem => item.Nombre) </b>
-                        @{
-                            if (item.CancelaComentario == "Urgente")
-                            {
-                                <br />
-                                <span style="font-size:x-small;color:red"><b>URGENTE!!</b></span>
+                        <span class="field-tip field-tip">
+                            <b>@Html.DisplayFor(modelItem => item.Nombre) </b>
+                            @{
+                                if (item.CancelaComentario == "Urgente")
+                                {
+                                    <br />
+                                    <span style="font-size:x-small;color:red"><b>URGENTE!!</b></span>
+                                }
                             }
-                        }
 
-                        @if (item.Entregado != null)
-                        {
-                            <span class="glyphicon glyphicon-thumbs-up"></span>
-                        }
+                            @if (item.Entregado != null)
+                            {
+                                <span class="glyphicon glyphicon-thumbs-up"></span>
+                            }
+                            @if (item.CURP != null)
+                            {
+                                <span class="tip-content">
+                                    <b>CURP: </b><span>@item.CURP</span>
+                                </span>
+                            }
+                        </span>
                     </td>
 
                     <td>
                         <b>@Html.DisplayFor(modelItem => item.NoExpediente)</b>
                     </td>
                     @*@{
-                        if (idRol == 2)
-                        {
-                            <th>
-                                @{
-                                    if (item.Doctor != null)
-                                    {
-                                        <span class="field-tip">
+                            if (idRol == 2)
+                            {
+                                <th>
+                                    @{
+                                        if (item.Doctor != null)
+                                        {
+                                            <span class="field-tip">
+                                                <b>@Html.DisplayFor(modelItem => item.Sucursal)</b>
+                                                <span class="tip-content">@item.Doctor</span>
+                                            </span>
+                                        }
+                                        else
+                                        {
                                             <b>@Html.DisplayFor(modelItem => item.Sucursal)</b>
-                                            <span class="tip-content">@item.Doctor</span>
-                                        </span>
+                                        }
                                     }
-                                    else
-                                    {
-                                        <b>@Html.DisplayFor(modelItem => item.Sucursal)</b>
-                                    }
-                                }
 
-                            </th>
+                                </th>
 
 
-                        }
-                        else
-                        {
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Doctor)
-                            </td>
-                        }
-                    }*@
+                            }
+                            else
+                            {
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Doctor)
+                                </td>
+                            }
+                        }*@
                     <td>
-                                @Html.DisplayFor(modelItem => item.Doctor)       
+                        @Html.DisplayFor(modelItem => item.Doctor)
                     <td>
                         <span class="field-tip">
                             <b>@item.ReferidoPor</b>
@@ -541,95 +610,82 @@ else
                     </td>
                     <td style="font-size: larger; text-align:center">
                         @if (item.Metra != null)
-                                {
-                                    <b class="text-info"><span class="glyphicon glyphicon-ok"></span></b>
-                                }
-                                else
-                                {
-                                    <b class="text-danger"><span class="glyphicon glyphicon-minus"></span></b>
-                                }
-                        @*@{
+                        {
+                            <b class="text-info"><span class="glyphicon glyphicon-ok"></span></b>
+                        }
+                        else
+                        {
+                            <b class="text-danger"><span class="glyphicon glyphicon-minus"></span></b>
+                        }
+                    </td>
+                    <td>
+                        @{
                             <span class="field-tip field-tip2">
-                            @if (item.Asistencia == "NO")
-                            {
-                                <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">Cancelado</mark></b>
-                            }
-                            else if (item.Asistencia == null && (item.NoExpediente == null || item.TipoTramite == null || item.TipoLicencia == null
-                                     || item.Doctor == null || item.Genero == null || (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() == null)
-                                     || (from i in db.DocumentosESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() == null || item.Metra == null
-                                     || (from i in db.DictamenESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() == null)
-                            {
-                                <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">DatosIncompletos</mark></b>
-                            }
-                            else if (item.Asistencia == null && (item.NoExpediente != null && item.TipoTramite != null && item.TipoLicencia != null
-                                     && item.Doctor != null && item.Genero != null && (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() != null)
-                                     && (from i in db.DocumentosESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() != null && item.Metra != null
-                                     && ((from i in db.DictamenESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() == null))
-                            {
-                                <b><mark style="background-color: turquoise; padding:5px; border-radius:7px">DatosCompletos</mark></b>
-                            }
-                            else if((from i in db.DictamenESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault() != null)
-                            {
-                                <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Completado</mark></b>
-                            }
-
-                            @if(item.Asistencia != "SI")
-                            {
-                            <span class="tip-content">
-                                @{
-                                    var revisionFoto = (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                    var revisionDocumentos = (from i in db.DocumentosESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                    var revisionCartaNO = (from i in db.CartaNoAccidentesESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                    var revisionDeclaracion = (from i in db.DeclaracionSaludESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                    var revisionGlucosilada = (from i in db.HemoglobinaGlucosiladaESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
-                                }
-
-                                @if (item.Metra != null)
+                                @if (item.Asistencia == "NO")
                                 {
-                                    <b>METRA: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                    <b><mark style="background-color: #FC4B08; padding:5px; border-radius:7px">Cancelado</mark></b>
+                                }
+                                else if (item.Estatura == null || item.Metra == null || item.CURP == null || item.Doctor == null || item.Genero == null)
+                                {
+                                    <b><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Incompletos</mark></b>
                                 }
                                 else
                                 {
-                                    <b>METRA: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                    <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Completos</mark></b>
                                 }
 
-                                @if (revisionFoto != null)
+                                @if (item.Asistencia != "NO")
                                 {
-                                    <b>Foto: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                }
-                                else
-                                {
-                                    <b>Foto: </b> <span class="glyphicon glyphicon-minus"></span> <br />
-                                }
+                                    <span class="tip-content">
+                                        @if (item.Metra != null)
+                                        {
+                                            <b>METRA: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                        }
+                                        else
+                                        {
+                                            <b>METRA: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                        }
 
-                                @if (revisionDocumentos != null)
-                                {
-                                    <b>Documentación: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                }
-                                else
-                                {
-                                    <b>Documentación: </b> <span class="glyphicon glyphicon-minus"></span> <br />
-                                }
+                                        @if (item.Estatura != null)
+                                        {
+                                            <b>Estatura: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                        }
+                                        else
+                                        {
+                                            <b>Estatura: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                        }
 
-                                @if (revisionCartaNO != null)
-                                {
-                                    <b>Carta de No Accidentes: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                }
+                                        @if (item.CURP != null)
+                                        {
+                                            <b>CURP: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                        }
+                                        else
+                                        {
+                                            <b>CURP: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                        }
 
-                                @if (revisionDeclaracion != null)
-                                {
-                                    <b>Declaración de Salud: </b> <span class="glyphicon glyphicon-ok"></span> <br />
-                                }
+                                        @if (item.Doctor != null)
+                                        {
+                                            <b>Doctor: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                        }
+                                        else
+                                        {
+                                            <b>Doctor: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                        }
 
-                                @if (revisionGlucosilada != null)
-                                {
-                                    <b>Hemoglobina Glucosilada: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                        @if (item.Genero != null)
+                                        {
+                                            <b>Sexo: </b> <span class="glyphicon glyphicon-ok"></span> <br />
+                                        }
+                                        else
+                                        {
+                                            <b>Sexo: </b> <span class="glyphicon glyphicon-minus"></span> <br />
+                                        }
+                                    </span>
                                 }
-                            </span>
-                            }
 
                             </span>
-                        }*@
+                        }
                     </td>
                     <td style="font-size: smaller">
                         @{
@@ -698,27 +754,27 @@ else
                                             <a href="#" data-toggle="modal" data-target="#CompletarDatos_@item.idPacienteESP"><b>Editar Datos</b></a>
                                             <div class="dropdown-divider"></div>
                                             @*<a href="#" data-toggle="modal" data-target="#DescargarEPI_@item.idPacienteESP"><b>Descargar EPI</b></a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" data-toggle="modal" data-target="#DescargarEKG_@item.idPacienteESP">Electrocardiograma</a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" data-toggle="modal" data-target="#DescargarDocumentos_@item.idPacienteESP">Documentación</a>
-                        <div class="dropdown-divider"></div>
+                                                <div class="dropdown-divider"></div>
+                                                <a href="#" data-toggle="modal" data-target="#DescargarEKG_@item.idPacienteESP">Electrocardiograma</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a href="#" data-toggle="modal" data-target="#DescargarDocumentos_@item.idPacienteESP">Documentación</a>
+                                                <div class="dropdown-divider"></div>
 
-                        if (revisionCartaNO2 != null)
-                        {
-                            <a href="#" data-toggle="modal" data-target="#DescargarNoAccidentes_@item.idPacienteESP">Carta NoAccidentes</a>
-                            <div class="dropdown-divider"></div>
-                        }
-                        if (revisionDeclaracion2 != null)
-                        {
-                            <a href="#" data-toggle="modal" data-target="#DescargarDeclaracionSalud_@item.idPacienteESP">Declaración Salud</a>
-                            <div class="dropdown-divider"></div>
-                        }
-                        if (revisionGlucosilada2 != null)
-                        {
-                            <a href="#" data-toggle="modal" data-target="#DescargarGlucosilada_@item.idPacienteESP">H. Glucosilada</a>
-                            <div class="dropdown-divider"></div>
-                        }*@
+                                                if (revisionCartaNO2 != null)
+                                                {
+                                                    <a href="#" data-toggle="modal" data-target="#DescargarNoAccidentes_@item.idPacienteESP">Carta NoAccidentes</a>
+                                                    <div class="dropdown-divider"></div>
+                                                }
+                                                if (revisionDeclaracion2 != null)
+                                                {
+                                                    <a href="#" data-toggle="modal" data-target="#DescargarDeclaracionSalud_@item.idPacienteESP">Declaración Salud</a>
+                                                    <div class="dropdown-divider"></div>
+                                                }
+                                                if (revisionGlucosilada2 != null)
+                                                {
+                                                    <a href="#" data-toggle="modal" data-target="#DescargarGlucosilada_@item.idPacienteESP">H. Glucosilada</a>
+                                                    <div class="dropdown-divider"></div>
+                                                }*@
 
                                             if (item.Metra == null)
                                             {
@@ -771,7 +827,7 @@ else
                                                         }
                                                         else
                                                         {
-                                                            <input type="text" class="form-control" id="numero" name="numero" value="@item.NoExpediente" placeholder="@item.NoExpediente" />
+                                                            <input type="text" class="form-control" id="numero" name="numero" placeholder="@item.NoExpediente" />
                                                         }
                                                     }
                                                 </div>
@@ -809,52 +865,53 @@ else
                                                                 <option style="font-weight:bold" disabled selected>SELECCIONA UNA OPCIÓN</option>
                                                             }
 
-                                                            <option style="font-weight:bold" value="DEYANIRA DELGADO DÁVILA">DEYANIRA DELGADO DÁVILA</option>
-                                                            <option style="font-weight:bold" value="SANDRA LIMA COSIO">SANDRA LIMA COSIO</option>
-                                                            <option style="font-weight:bold" value="ARTURO ESCOBEDO GARCÍA">ARTURO ESCOBEDO GARCÍA</option>
+                                                            foreach (var i in db.Doctores.Where(w => w.ALT == "SI"))
+                                                            {
+                                                                <option style="font-weight:bold" value="@i.Nombre">@i.Nombre</option>
+                                                            }
 
                                                             @*foreach (var item1 in consultorios1)
-                                        {
-                                            <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
-                                        }*@
+                    {
+                        <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
+                    }*@
 
                                                         }
                                                     </select>
                                                 </div>
                                                 @*@{
-                                var consultaAereo1 = (from c in db.PacienteESP where c.idPacienteESP == item.idPacienteESP select c.TipoLicencia).FirstOrDefault();
-                                if (consultaAereo1 == "AEREO")
-                                {
-                                    <input type="hidden" name="tipoL" id="tipoL" value="AEREO" />
-                                }
-                                else
-                                {
-                                    <div class="form-group" style="width:80%; min-width:320px">
-                                        <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
-                                        <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+            var consultaAereo1 = (from c in db.PacienteESP where c.idPacienteESP == item.idPacienteESP select c.TipoLicencia).FirstOrDefault();
+            if (consultaAereo1 == "AEREO")
+            {
+                <input type="hidden" name="tipoL" id="tipoL" value="AEREO" />
+            }
+            else
+            {
+                <div class="form-group" style="width:80%; min-width:320px">
+                    <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
+                    <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
 
-                                            @{
-                                                var revisionTL2 = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
+                        @{
+                            var revisionTL2 = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
 
-                                                if (revisionTL2.TipoLicencia != null)
-                                                {
-                                                    <option value="@revisionTL2.TipoLicencia" selected>@revisionTL2.TipoLicencia</option>
-                                                    <option disabled>----------------------------------------</option>
-                                                    <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
-                                                    <option value="MARITIMO">MARITIMO</option>
-                                                    <option value="FERROVIARIO">FERROVIARIO</option>
-                                                }
-                                                else
-                                                {
-                                                    <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
-                                                    <option value="MARITIMO">MARITIMO</option>
-                                                    <option value="FERROVIARIO">FERROVIARIO</option>
-                                                }
-                                            }
-                                        </select>
-                                    </div>
-                                }
-                            }*@
+                            if (revisionTL2.TipoLicencia != null)
+                            {
+                                <option value="@revisionTL2.TipoLicencia" selected>@revisionTL2.TipoLicencia</option>
+                                <option disabled>----------------------------------------</option>
+                                <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                                <option value="MARITIMO">MARITIMO</option>
+                                <option value="FERROVIARIO">FERROVIARIO</option>
+                            }
+                            else
+                            {
+                                <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                                <option value="MARITIMO">MARITIMO</option>
+                                <option value="FERROVIARIO">FERROVIARIO</option>
+                            }
+                        }
+                    </select>
+                </div>
+            }
+        }*@
 
                                                 <div class="form-group" style="width:80%; min-width:320px">
                                                     <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
@@ -913,26 +970,26 @@ else
                                                     @{
                                                         if (item.Estatura == null)
                                                         {
-                                                            <input type="number" class="form-control" id="curp" name="estatura" />
+                                                            <input type="number" class="form-control" id="curp" max="210" min="140" name="estatura" />
                                                         }
                                                         else
                                                         {
-                                                            <input type="number" class="form-control" id="curp" name="estatura" maxlength="18" value="@item.Estatura" placeholder="@item.Estatura" />
+                                                            <input type="number" class="form-control" id="curp" name="estatura" max="210" min="140" value="@item.Estatura" placeholder="@item.Estatura" />
                                                         }
                                                     }
                                                     <input type="hidden" class="form-control" id="id" name="id" value="@item.idPacienteESP">
                                                 </div>
                                                 @*<div class="form-group">
-                                @if (item.Metra == null)
-                                {
-                                    <input type="checkbox" name="metra" />
-                                }
-                                else
-                                {
-                                    <input type="checkbox" checked name="metra" />
-                                }
-                                <label for="file" class="col-form-label">¿Cita registrada en METRA?:</label>
-                            </div>*@
+            @if (item.Metra == null)
+            {
+                <input type="checkbox" name="metra" />
+            }
+            else
+            {
+                <input type="checkbox" checked name="metra" />
+            }
+            <label for="file" class="col-form-label">¿Cita registrada en METRA?:</label>
+        </div>*@
                                                 <hr />
                                                 <div class="form-group">
                                                     <label for="file" class="col-form-label">Capturar Foto:</label>
@@ -961,10 +1018,14 @@ else
                                                 <hr />
                                                 <div class="form-group" style="background-color:ghostwhite; padding:5px; border:solid 1px darkblue; border-radius:4px">
                                                     <label for="file" class="col-form-label">Cargar Huellas:</label><br />
-                                                    <b>Dedo #2</b><input type="file" name="" />
-                                                    <b>Dedo #3</b><input type="file" name="" />
-                                                    <b>Dedo #7</b><input type="file" name="" />
-                                                    <b>Dedo #8</b><input type="file" name="" /><br />
+                                                    <b>Dedo #2</b><input type="file" name="huella2" />
+                                                    <b>Dedo #3</b><input type="file" name="huella3" />
+                                                    <b>Dedo #7</b><input type="file" name="huella7" />
+                                                    <b>Dedo #8</b><input type="file" name="huella8" /><br />
+                                                </div>
+                                                <div class="form-group" style="background-color:ghostwhite; padding:5px; border:solid 1px darkblue; border-radius:4px">
+                                                    <label for="file" class="col-form-label">Cargar Firma:</label><br />
+                                                    <input type="file" name="firma" />
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -1029,6 +1090,85 @@ else
                                 </div>
                             </form>
 
+                            @{
+                                if (TempData["Expediente"] != null)
+                                {
+                                    var pacienteRepetido = (from i in db.PacienteESP where i.NoExpediente == noExpediente orderby i.idPacienteESP descending select i).FirstOrDefault();
+
+                                    <!-- Modal para Completar Datos -->
+                                    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/CompletarDatos")">
+                                        @Html.AntiForgeryToken()
+                                        <div class="modal fade" id="repetido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title text-primary" id="exampleModalLabel"><b>El número de Expediente @noExpediente ya está asignado al siguiente paciente.</b></h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        @if (pacienteRepetido != null)
+                                                        {
+                                                            <h5><b>Nombre: </b>@pacienteRepetido.Nombre</h5>
+                                                            <h5><b>No. Expediente: </b>@pacienteRepetido.NoExpediente</h5>
+
+                                                            if (pacienteRepetido.CURP != null)
+                                                            {
+                                                                <h5><b>CURP: </b>@pacienteRepetido.CURP</h5>
+                                                            }
+                                                            if (pacienteRepetido.TipoLicencia != null)
+                                                            {
+                                                                <h5><b>Tipo de Licencia: </b>@pacienteRepetido.TipoLicencia</h5>
+                                                            }
+                                                        }
+                                                        <input type="hidden" name="id" value="@idRepetido" />
+                                                        <input type="hidden" name="nombre" value="@pacienteRepetido.Nombre" />
+                                                        <input type="hidden" name="numero" value="@pacienteRepetido.NoExpediente" />
+                                                        <input type="hidden" name="tipoT" value="REVALIDACIÓN" />
+                                                        <input type="hidden" name="doctor" value="" />
+                                                        @{
+                                                            if (pacienteRepetido.Estatura != null)
+                                                            {
+                                                                <input type="hidden" name="estatura" value="@pacienteRepetido.Estatura" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="hidden" name="numero" value="" />
+                                                            }
+
+                                                            if (pacienteRepetido.CURP != null)
+                                                            {
+                                                                <input type="hidden" name="curp" value="@pacienteRepetido.CURP" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="hidden" name="curp" value="" />
+                                                            }
+
+                                                            if (pacienteRepetido.Genero != null)
+                                                            {
+                                                                <input type="hidden" name="genero" value="@pacienteRepetido.Genero" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="hidden" name="genero" value="" />
+                                                            }
+                                                        }
+
+                                                        <hr />
+                                                        <h5 class="text-danger" id="exampleModalLabel">Si el Expediente corresponde al paciente al cual se le hará la cita seleccione "Aceptar". En caso contrario cierre la ventana y busque el número correcto o solicite correción</h5>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                        <input type="submit" name="repetido" value="Aceptar" class="btn btn-primary" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                }
+
+                            }
+
+
 
                         </div>
 
@@ -1037,10 +1177,54 @@ else
 
                 flag += 1;
 
-                                                            }
+            }
 
         </table>
     </div>
 }
+
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/HabilitarDoctores")">
+    @Html.AntiForgeryToken()
+    <div class="modal fade" id="doctores" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Seleccione los Doctores a habilitar o deshabilitar</b></h4>
+                </div>
+                <div class="modal-body">
+                    @{
+                        var doctores = from i in db.Doctores orderby i.Nombre select i;
+
+                        foreach (var item in doctores)
+                        {
+                                        <div class="form-group">
+                                            @{
+                                                if (item.ALT == "SI")
+                                                {
+                                                    <input type="checkbox" id="" name="id_@item.idDoctor" checked>
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" id="" name="id_@item.idDoctor">
+                                                }
+                                            }
+
+                                            <label>@item.Nombre</label>
+                                        </div>
+                        }
+                    }
+
+                    @*<input type="hidden" name="id" value="@item.idPacienteESP" />
+        <input type="hidden" name="usuario" value="@nombreUsuario" />*@
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input type="submit" value="Confirmar" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 
 

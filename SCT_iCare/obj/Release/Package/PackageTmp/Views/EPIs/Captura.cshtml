@@ -243,7 +243,10 @@
                                 foreach (var item in sucursalesLista)
                                 {
                                     var elemento = (from v in db.Captura where v.Sucursal == item select v).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).Count();
-                                    <h4><b>@item:</b> @elemento</h4>
+                                    if (elemento > 0)
+                                    {
+                                        <h4><b>@item:</b> @elemento</h4>
+                                    }
                                 }
                             }
                         </div>
@@ -268,7 +271,12 @@
                                 foreach (var item in sucursalesLista)
                                 {
                                     var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "Terminado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate select v).Count();
-                                    <h4><b>@item:</b> @elemento</h4>
+                                    {
+                                        if (elemento > 0)
+                                        {
+                                            <h4><b>@item:</b> @elemento</h4>
+                                        }
+                                    }
                                 }
                             }
                         </div>
@@ -293,7 +301,12 @@
                                 foreach (var item in sucursalesLista)
                                 {
                                     var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "No iniciado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate select v).Count();
-                                    <h4><b>@item:</b> @elemento</h4>
+                                    {
+                                        if (elemento > 0)
+                                        {
+                                            <h4><b>@item:</b> @elemento</h4>
+                                        }
+                                    }
                                 }
                             }
                         </div>
@@ -318,7 +331,12 @@
                                 foreach (var item in sucursalesLista)
                                 {
                                     var elemento = (from v in db.Captura where v.Sucursal == item select v).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "En captura...").Count();
-                                    <h4><b>@item:</b> @elemento</h4>
+                                    {
+                                        if (elemento > 0)
+                                        {
+                                            <h4><b>@item:</b> @elemento</h4>
+                                        }
+                                    }
                                 }
                             }
                         </div>
@@ -379,7 +397,10 @@
                                 foreach (var item in sucursalesLista)
                                 {
                                     var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "Pendiente" select v).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).Count();
-                                    <h4><b>@item:</b> @elemento</h4>
+                                    if (elemento > 0)
+                                    {
+                                        <h4><b>@item:</b> @elemento</h4>
+                                    }
                                 }
                             }
                         </div>
@@ -450,7 +471,10 @@
                                 foreach (var item in sucursalesLista)
                                 {
                                     var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "Pendiente" select v).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).Count();
-                                    <h4><b>@item:</b> @elemento</h4>
+                                    if (elemento > 0)
+                                    {
+                                        <h4><b>@item:</b> @elemento</h4>
+                                    }
                                 }
                             }
                         </div>

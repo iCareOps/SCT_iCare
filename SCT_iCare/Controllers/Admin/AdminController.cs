@@ -107,6 +107,12 @@ namespace SCT_iCare.Controllers.Admin
             return View();
         }
 
+
+        public ActionResult TablaDinamica()
+        {
+            return View();
+        }
+
         [HttpPost]
         public JsonResult ChartSucursal()
         {
@@ -138,27 +144,81 @@ namespace SCT_iCare.Controllers.Admin
             if (dato.All(char.IsDigit))
             {
                 parametro = dato;
+
+                List<Paciente> data = db.Paciente.ToList();
+                var selected = data.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+                    .Where(r => r.M.NoExpediente == parametro)
+                    .Select(S => new {
+                        S.M.idCaptura,
+                        S.N.Nombre,
+                        S.M.NoExpediente,
+                        S.N.Email,
+                        S.N.Telefono,
+                        FechaReferencia = Convert.ToDateTime(S.M.FechaExpdiente).ToString("dd-MMMM-yyyy"),
+                        S.M.Sucursal
+                    });
+
+
+                return Json(selected, JsonRequestBehavior.AllowGet);
             }
             else
             {
                 parametro = dato.ToUpper();
+
+                double porcentaje = 1;
+
+                if (db.Paciente.Count() > 5000 && db.Paciente.Count() < 9000)
+                {
+                    porcentaje = 0.5;
+                }
+                else if (db.Paciente.Count() >= 9000 && db.Paciente.Count() < 14000)
+                {
+                    porcentaje = 0.6;
+                }
+                else if (db.Paciente.Count() >= 14000 && db.Paciente.Count() < 18000)
+                {
+                    porcentaje = 0.7;
+                }
+                else if (db.Paciente.Count() >= 18000 && db.Paciente.Count() < 22000)
+                {
+                    porcentaje = 0.8;
+                }
+                else if (db.Paciente.Count() >= 22000)
+                {
+                    porcentaje = 0.9;
+                }
+
+                List<Paciente> data = db.Paciente.Where(w => w.idPaciente > (db.Paciente.Count() * porcentaje)).ToList();
+                var selected = data.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+                    .Where(r => r.N.Nombre.Contains(parametro))
+                    .Select(S => new {
+                        S.M.idCaptura,
+                        S.N.Nombre,
+                        S.M.NoExpediente,
+                        S.N.Email,
+                        S.N.Telefono,
+                        FechaReferencia = Convert.ToDateTime(S.M.FechaExpdiente).ToString("dd-MMMM-yyyy"),
+                        S.M.Sucursal
+                    });
+
+
+                return Json(selected, JsonRequestBehavior.AllowGet);
             }
 
-            List<Paciente> data = db.Paciente.ToList();
-            var selected = data.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
-                .Where(r => (r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro))
-                .Select(S => new {
-                    S.M.idCaptura,
-                    S.N.Nombre,
-                    S.M.NoExpediente,
-                    S.N.Email,
-                    S.N.Telefono,
-                    FechaReferencia = Convert.ToDateTime(S.M.FechaExpdiente).ToString("dd-MMMM-yyyy"),
-                    S.M.Sucursal
-                });
+            //List<Paciente> data = db.Paciente.Where(w => w.idPaciente > (db.Paciente.Count() / 3)).ToList();
+            //var selected = data.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+            //    .Where(r => (r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro))
+            //    .Select(S => new {
+            //        S.M.idCaptura,
+            //        S.N.Nombre,
+            //        S.M.NoExpediente,
+            //        S.N.Email,
+            //        S.N.Telefono,
+            //        FechaReferencia = Convert.ToDateTime(S.M.FechaExpdiente).ToString("dd-MMMM-yyyy"),
+            //        S.M.Sucursal
+            //    });
 
-
-            return Json(selected, JsonRequestBehavior.AllowGet);
+            //return Json(selected, JsonRequestBehavior.AllowGet);
         }
     }
 }

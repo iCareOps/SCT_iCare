@@ -746,32 +746,76 @@ namespace SCT_iCare.Controllers.EPICenter
             if (dato.All(char.IsDigit))
             {
                 parametro = dato;
+
+                List<Paciente> data = db.Paciente.ToList();
+                var selected = data.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+                    //.Where(r => r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro)
+                    .Where(r => r.M.NoExpediente == parametro)
+                    .Join(db.Captura, o => o.N.idPaciente, p => p.idPaciente, (o, p) => new { O = o, P = p })
+                    .Select(S => new {
+                        idCaptura = S.P.idCaptura,
+                        S.O.N.idPaciente,
+                        S.O.N.Nombre,
+                        S.O.M.TipoPago,
+                        FechaReferencia = Convert.ToDateTime(S.O.M.FechaReferencia).ToString("dd-MMMM-yyyy"),
+                        S.O.M.TipoLicencia,
+                        S.O.M.NoExpediente,
+                        S.O.M.Sucursal,
+                        S.O.M.Doctor,
+                        S.O.M.TipoTramite,
+                        S.P.EstatusCaptura
+                    });
+
+                return Json(selected, JsonRequestBehavior.AllowGet);
             }
             else
             {
                 parametro = dato.ToUpper();
+
+                double porcentaje = 1;
+
+                if (db.Paciente.Count() > 5000 && db.Paciente.Count() < 9000)
+                {
+                    porcentaje = 0.5;
+                }
+                else if (db.Paciente.Count() >= 9000 && db.Paciente.Count() < 14000)
+                {
+                    porcentaje = 0.6;
+                }
+                else if (db.Paciente.Count() >= 14000 && db.Paciente.Count() < 18000)
+                {
+                    porcentaje = 0.7;
+                }
+                else if (db.Paciente.Count() >= 18000 && db.Paciente.Count() < 22000)
+                {
+                    porcentaje = 0.8;
+                }
+                else if (db.Paciente.Count() >= 22000)
+                {
+                    porcentaje = 0.9;
+                }
+
+                List<Paciente> data = db.Paciente.Where(w => w.idPaciente > (db.Paciente.Count() * porcentaje)).ToList();
+                var selected = data.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+                    //.Where(r => r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro)
+                    .Where(r => r.N.Nombre.Contains(parametro))
+                    .Join(db.Captura, o => o.N.idPaciente, p => p.idPaciente, (o, p) => new { O = o, P = p })
+                    .Select(S => new {
+                        idCaptura = S.P.idCaptura,
+                        S.O.N.idPaciente,
+                        S.O.N.Nombre,
+                        S.O.M.TipoPago,
+                        FechaReferencia = Convert.ToDateTime(S.O.M.FechaReferencia).ToString("dd-MMMM-yyyy"),
+                        S.O.M.TipoLicencia,
+                        S.O.M.NoExpediente,
+                        S.O.M.Sucursal,
+                        S.O.M.Doctor,
+                        S.O.M.TipoTramite,
+                        S.P.EstatusCaptura
+                    });
+
+                return Json(selected, JsonRequestBehavior.AllowGet);
             }
-
-            List<Paciente> data = db.Paciente.ToList();
-            var selected = data.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
-                .Where(r => (r.N.Nombre.Contains(parametro) || r.M.NoExpediente == parametro))
-                .Join(db.Cita, o => o.N.idPaciente, p => p.idPaciente, (o, p) => new { O = o, P = p })
-                .Select(S => new {
-                    S.O.N.idPaciente,
-                    S.O.N.Nombre,
-                    S.O.M.NoExpediente,
-                    S.O.N.Email,
-                    S.O.M.TipoTramite,
-                    S.O.M.EstatusCaptura,
-                    S.O.N.Telefono,
-                    FechaReferencia = Convert.ToDateTime(S.O.M.FechaExpdiente).ToString("dd-MMMM-yyyy"),
-                    S.O.M.Sucursal,
-                    S.O.M.Doctor,
-                    S.P.TipoLicencia,
-                    S.O.M.idCaptura
-                });
-
-            return Json(selected, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]

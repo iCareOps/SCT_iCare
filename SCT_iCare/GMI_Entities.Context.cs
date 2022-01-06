@@ -76,7 +76,12 @@ namespace SCT_iCare
         public virtual DbSet<DocumentosESP> DocumentosESP { get; set; }
         public virtual DbSet<HemoglobinaGlucosiladaESP> HemoglobinaGlucosiladaESP { get; set; }
         public virtual DbSet<DictamenESP> DictamenESP { get; set; }
-        public virtual DbSet<EPI_ESP> EPI_ESP { get; set; }
         public virtual DbSet<UrgentesCount> UrgentesCount { get; set; }
+        public virtual DbSet<EPI_ESP> EPI_ESP { get; set; }
+        public virtual DbSet<MovimientosAudio> MovimientosAudio { get; set; }
+        public virtual DbSet<CallCenter> CallCenter { get; set; }
+        public virtual DbSet<Tipificaciones> Tipificaciones { get; set; }
+        public virtual DbSet<FirmaESP> FirmaESP { get; set; }
+        public virtual DbSet<HuellasESP> HuellasESP { get; set; }
     }
 }

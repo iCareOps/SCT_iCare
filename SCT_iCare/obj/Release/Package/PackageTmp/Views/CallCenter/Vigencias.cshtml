@@ -1,0 +1,626 @@
+﻿@model IEnumerable<SCT_iCare.Paciente>
+
+@{
+    ViewBag.Title = "Vigencias";
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    GMIEntities db = new GMIEntities();
+
+    var Recepcion = new int?();
+    var Hospital = "";
+    var idHospital = 0;
+    string Sucursal = null;
+    int idUser = 3;
+    string nombreUsuario = null;
+    string fila = "";
+    int registros;
+
+    int flag = 1; //contador de la tabla
+    int flag2 = 1;
+
+    DateTime start = DateTime.Now;
+    DateTime finish = DateTime.Now.AddDays(1);
+
+    int year = start.Year;
+    int month = start.Month;
+    int day = start.Day;
+
+    int year1 = finish.Year;
+    int month1 = finish.Month;
+    int day1 = finish.Day;
+
+    int tomorrorDay = day + 1;
+    DateTime thisDate = ViewBag.Inicio; //new DateTime(year, month, day);
+    DateTime tomorrowDate = ViewBag.Final; //new DateTime(year1, month1, day1);
+
+    var modelo = db.CallCenter.Where(s => s.FechaVigencia >= thisDate && s.FechaVigencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+int modeloCount = db.CallCenter.Where(s => s.FechaVigencia >= thisDate && s.FechaVigencia < tomorrowDate).Count()@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+
+var modelo2 = db.CallCenter.Where(s => s.FechaVigencia >= thisDate && s.FechaVigencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+int modeloCount2 = db.CallCenter.Where(s => s.FechaVigencia >= thisDate && s.FechaVigencia < tomorrowDate).Count()@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+
+
+int? idRol = 0;
+
+if (oUser != null)
+{
+idUser = oUser.idUsuario;
+nombreUsuario = oUser.Nombre;
+idRol = oUser.idRol;
+
+
+Hospital = "GENERAL";
+Sucursal = Hospital.ToString();
+
+registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.CC == "Call Center" || s.M.CC == "Administrador")).Count();
+}
+
+int noEnviados = db.DictamenProblema.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaExpdiente >= thisDate && s.M.FechaExpdiente < tomorrowDate && s.N.EstatusEnvio == "SI").Count();
+int cita = (from c in db.Captura select c).Where(s => s.FechaExpdiente >= thisDate && s.FechaExpdiente < tomorrowDate).Count();
+
+var enProcesoHoy = db.Cita.Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && (w.Doctor == null || w.NoExpediente == null) && w.Canal == "Call Center");
+
+int enProcesoHoyConteo = db.Cita.Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && (w.Doctor == null || w.NoExpediente == null) && w.Canal == "Call Center").Count();
+
+var dictamenesHoy = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+.Where(w => w.N.FechaCita >= thisDate && w.N.FechaCita < tomorrowDate && (w.N.Doctor != null && w.N.NoExpediente != null) && w.N.Canal == "Call Center");
+
+int dictamenesHoyConteo = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+.Where(w => w.N.FechaCita >= thisDate && w.N.FechaCita < tomorrowDate && (w.N.Doctor != null && w.N.NoExpediente != null) && w.N.Canal == "Call Center").Count();
+
+
+var sucursalesLista = from s in db.Sucursales select s;
+
+int citasEfectuadas = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Canal == "Call Center").Count();
+var citasCompletadas = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Canal == "Call Center" && w.Asistencia == null && (w.EstatusPago == "Pagado" || w.EstatusPago == "paid") && w.Doctor != null).Count();
+var citasPendientes = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Canal == "Call Center" && w.Doctor == null && w.Asistencia == null).Count();
+int citasCanceladas = (from c in db.Cita select c).Where(w => w.FechaCita >= thisDate && w.FechaCita < tomorrowDate && w.Canal == "Call Center" && w.Asistencia != null).Count();
+
+int efectividad = 0;
+
+if (citasCompletadas != 0)
+{
+efectividad = ((citasCompletadas * 100) / citasEfectuadas);
+}
+
+}
+
+<br />
+<br />
+
+<h3 style="color:white" class="text-center">Call Center</h3>
+
+@{
+    if (nombreUsuario == "Administrador" || nombreUsuario == "Supervisor Anexa")
+    {
+        <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/CallCenter/Vigencias")">
+            <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px">
+                <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+                <input type="date" class="form-control" min="2021-08-02" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+                <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
+                <input type="submit" class="btn btn-primary" value="Enviar" />
+                <a href="~/CallCenter/Vigencias"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+            </div>
+
+            <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
+                <div class="input-group">
+                    <input type="text" class="form-control input-g" id="buscador" name="dato" placeholder="Paciente o Expediente">
+                    <span class="input-group-btn">
+                        <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                    </span>
+                </div>
+            </div>
+        </form>
+        <br />
+    }
+}
+
+<a href=@Url.Action("Index", "CallCenter")><button type="button" class="btn btn-info"><span class="glyphicon glyphicon-earphone"></span> Referencias y Citas</button></a>
+
+@section scripts{
+    @*<script>
+        $(function () {
+            $(".buscar").click(function () {
+                var url = "@Url.Action("Buscar", "Recepcion")";
+                var dato = $("#buscador").val();
+                var data = { dato: dato };
+
+                $.post(url, data).done(function (data1) {
+                    console.log(data);
+                    let miResultado = "";
+                    if ($.isEmptyObject(data)) {
+                        miResultado = "<h3>No se encontraron registros!!</h3>"
+                    }
+                    else {
+                        miResultado += "<h4 class=\"text-danger\">Se encontraron <b>" + data.length + "</b> registros:</h4><hr/>"
+                        for (let i = 0; i < data.length; i++) {
+
+                            if (data[i].NoExpediente == null) {
+                                miResultado +=
+                                "<h5><b><mark style=\"background-color: #41F51A; padding:5px; border-radius: 10px\">ID: " + data[i].idPaciente + "</mark></b></h5>" +
+                                "<p>Nombre: <b>" + data[i].Nombre + "</b></p>" +
+                                "<p>Teléfono: <b>" + data[i].Telefono + "</b></p>" +
+                                "<p>Email: <b>" + data[i].Email + "</b></p>" +
+                                "<p>Folio: <b>" + data[i].Folio + "</b></p>" +
+                                "<p>CURP: <b>" + data[i].CURP + "</b></p>" +
+                                "<hr/>"
+                            }
+                            else
+                            {
+                                miResultado +=
+                                "<h5><b><mark style=\"background-color: #41F51A; padding:5px; border-radius: 10px\">ID: " + data[i].idPaciente + "</mark></b></h5>" +
+                                "<p>Nombre: <b>" + data[i].Nombre + "</b></p>" +
+                                "<p>Teléfono: <b>" + data[i].Telefono + "</b></p>" +
+                                "<p>Email: <b>" + data[i].Email + "</b></p>" +
+                                "<p>Folio: <b>" + data[i].Folio + "</b></p>" +
+                                "<p>CURP: <b>" + data[i].CURP + "</b></p>" +
+                                "<p>Tipo de Pago: <b>" + data[i].TipoPago + "</b></p>" +
+                                "<p>Fecha Cita: <b>" + data[i].FechaCita + "</b></p>" +
+                                "<p>No. Orden: <b>" + data[i].NoOrden + "</b></p>" +
+                                "<p>Estatus Pago: <b>" + data[i].EstatusPago + "</b></p>" +
+                                "<p>Tipo Licencia : <b>" + data[i].TipoLicencia + "</b></p>" +
+                                "<p>No. Expediente: <b>" + data[i].NoExpediente + "</b></p>" +
+                                "<p>Referencia: <b>" + data[i].Referencia + "</b></p>" +
+                                "<p>Fecha Referencia: <b>" + data[i].FechaReferencia + "</b></p>" +
+                                "<p>Sucursal: <b>" + data[i].Sucursal + "</b></p>" +
+                                "<p>Doctor: <b>" + data[i].Doctor + "</b></p>" +
+                                "<p>Tipo Trámite: <b>" + data[i].TipoTramite + "</b></p>" +
+                                "<hr/>"
+                            }
+                        }
+                    }
+
+                    $('#exampleModal5').modal('show');
+                    document.getElementById("cuerpo").innerHTML = miResultado;
+
+                }).fail().always(function () {
+
+                });
+            });
+        });
+        </script>*@
+
+    <script>
+        var input = document.getElementById("buscador");
+        input.addEventListener("keydown", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("buscar").click();
+            }
+        });
+
+    </script>
+
+    <script>
+        $(function () {
+            $("#fechaFestivo").change(function () {
+                var festivo = document.getElementById("fechaFestivo").value;
+                if (festivo == "2021-12-24" || festivo == "2021-12-25" || festivo == "2021-12-31" || festivo == "2022-01-01") {
+                    alert("Esta fecha no está disponible");
+                    document.getElementById("fechaFestivo").value = null;
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(function () {
+            $("#fechaFestivo2").change(function () {
+                var festivo = document.getElementById("fechaFestivo2").value;
+                if (festivo == "2021-12-24" || festivo == "2021-12-25" || festivo == "2021-12-31" || festivo == "2022-01-01") {
+                    alert("Esta fecha no está disponible");
+                    document.getElementById("fechaFestivo2").value = null;
+                }
+            });
+        });
+    </script>
+
+    <script>
+    $(function () {
+        $(".buscar").click(function () {
+            var url = "@Url.Action("Buscar", "CallCenter")";
+            var dato = $("#buscador").val();
+            var data = { dato: dato };
+
+            $.post(url, data).done(function (data) {
+                console.log(data);
+                let miResultado = "";
+                if ($.isEmptyObject(data)) {
+                    miResultado = "<h3>No se encontraron registros.</h3>"
+                }
+                else {
+                    miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>No Expediente</th><th>Email</th><th>Teléfono</th><th>Referencia</th><th>Fecha Cita</th><th>Sucursal</th><th></th></tr>"
+                    for (let i = 0; i < data.length; i++) {
+                        var url = '<div class="btn-group">'+
+                            '<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
+                                'Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>'+
+                            '</button>'+
+
+                            '<div class="dropdown-menu" style="padding:10px">'+
+                                '<a href="#" data-toggle="modal"  onclick=\"$(\'#ModalEdit2_'+data[i].idPaciente+'\').modal(\'show\');\"><b>Editar Datos</b></a>'+
+                                '<div class="dropdown-divider"></div>'+
+                            '</div>'+
+                            '</div>'+
+
+
+                            '<form method="post" enctype="multipart/form-data" action="@Url.Content("~/CallCenter/EditarCompleto")">'+
+                            '<div class="modal fade" id="ModalEdit2_'+data[i].idPaciente+'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">'+
+                                '<div class="modal-dialog" role="document">'+
+                                    '<div class="modal-content">'+
+                                        '<div class="modal-header">'+
+                                        '</div>'+
+                                        '<div class="modal-body">'+
+                                            '<div class="form-group">'+
+                                                '<label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>'+
+                                                '<input type="text" class="form-control" id="nombre" name="nombre" placeholder="'+data[i].Nombre+'">'+
+                                                '<input type="hidden" class="form-control" id="id" name="id" value="'+data[i].idPaciente+'">'+
+                                            '</div>'+
+                                            '<div class="form-group">'+
+                                                '<label for="recipient-name" class="col-form-label">Teléfono:</label>'+
+                                                '<input type="text" class="form-control" id="telefono" name="telefono" placeholder="'+data[i].Telefono+'" />'+
+                                            '</div>'+
+                                            '<div class="form-group">'+
+                                                '<label for="recipient-name" class="col-form-label">Email:</label>'+
+                                                '<input type="email" class="form-control" id="email" name="email" placeholder="'+data[i].Email+'" />'+
+                                            '</div>'+
+                                            '<div class="form-group">'+
+                                                '<label for="recipient-name" class="col-form-label">Fecha de Cita:</label>'+
+                                                '<input type="date" class="form-control" id="fecha" name="fecha"/>'+
+                                            '</div>'+
+                                        '</div>'+
+                                        '<div class="modal-footer">'+
+                                            '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>'+
+                                            '<input type="submit" value="Guardar" class="btn btn-primary" />'+
+                                        '</div>'+
+                                    '</div>'+
+                                '</div>'+
+                            '</div>'+
+                        '</form>';
+
+                        url = url.replace("XXXXX", data[i].idPaciente);
+
+                        $(document).on('hidden.bs.modal', function (event) {
+                            if ($('.modal:visible').length) {
+                                $('body').addClass('modal-open');
+                            }
+                        });
+
+                        miResultado += "<tr style=\"border:1px solid gray\">" +
+                            "<td><b>" + data[i].Nombre + "</b></td>" +
+                            "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                            "<td><b>" + data[i].Email + "</b></td>" +
+                            "<td><b>" + data[i].Telefono + "</b></td>" +
+                            "<td><b>" + data[i].Referencia + "</b></td>" +
+                            "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                            "<td><b>" + data[i].Sucursal + "</b></td>" +
+                            "<td><b>" + url + "</b></td>" +
+                            "</tr>"
+                    }
+                }
+
+                $('#exampleModal10').modal('show');
+                document.getElementById("tablaEjemploSS").innerHTML = miResultado;
+
+            }).fail().always(function () {
+
+            });
+        });
+    });
+
+    </script>
+
+    @if (TempData["Link"] != null)
+    {
+        <script>
+            window.open('@TempData["Link"]');
+        </script>
+    }
+
+
+}
+
+@*<div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+                </div>
+                <div class="modal-body" id="cuerpo">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>*@
+
+<div class="modal fade" id="exampleModal10" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width:70%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body">
+                <div class="tablaScroll">
+                    <table class="table tablas table-responsive" id="tablaEjemploSS" style="color: #2F2D6B">
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+@if (modeloCount == 0)
+{
+    <h1 style="color:white">No tienes referencias creadas para el día de hoy!</h1>
+}
+else
+{
+    <h3 style="color:white">LICENCIAS EXPIRADAS: @modeloCount</h3>
+    <div class="tablaScroll2">
+        <table class="table tablas" style="color: #2F2D6B">
+            <thead>
+                <tr style="background-color:#62E3C9">
+                    <th>
+                    </th>
+
+                    <th>
+                        Nombre
+                    </th>
+
+                    <th>
+                        Teléfono
+                    </th>
+
+                    <th>
+                        Vigencia
+                    </th>
+
+                    <th>
+                        # Llamadas
+                    </th>
+
+                    <th></th>
+                </tr>
+            </thead>
+
+
+            @foreach (var item in modelo)
+            {
+        <tr>
+            <td>
+                @flag
+            </td>
+
+            <td>
+                <b>@item.Nombre</b>
+            </td>
+
+            <td>
+                @item.Telefono
+            </td>
+
+            <td>
+                @*@Html.DisplayFor(modelItem => item.M.FechaCita)*@
+                @Convert.ToDateTime(item.FechaVigencia).ToString("dd-MMMM-yyyy")
+            </td>
+
+            <td>
+                @item.Llamadas
+            </td>
+            <td>
+                <div class="btn-group">
+
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                    </button>
+
+                    <div class="dropdown-menu" style="padding:10px">
+                        <a href="#" data-toggle="modal" data-target="#Tipificacion_@item.idCallCenter"><b>Tipificar</b></a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" data-toggle="modal" data-target="#Referencia_@item.idCallCenter"><b>Referencia de Pago</b></a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" data-toggle="modal" data-target="#Tarjeta_@item.idCallCenter"><b>Pago con Tarjeta</b></a>
+                        <div class="dropdown-divider"></div>
+                    </div>
+                </div>
+
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/CallCenter/Tipificacion")">
+                    <div class="modal fade" id="Tipificacion_@item.idCallCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Selecciona la tipificación</b></h3>
+                                </div>
+                                <div class="modal-body">
+                                    @{
+                                        var anteriores = (from i in db.Tipificaciones where i.idCallCenter == item.idCallCenter orderby i.FechaLlamada descending select i).ToList();
+
+                                        if (anteriores.Count() > 0)
+                                        {
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Llamadas anteriores:</label>
+                                                @{
+                                                    foreach (var llamada in anteriores)
+                                                    {
+                                                        <h5><b>@Convert.ToDateTime(llamada.FechaLlamada).ToString("dd-MMMM-yyyy")</b> - @Convert.ToDateTime(llamada.FechaLlamada).ToString("HH:mm") -> <i>@llamada.Tipificacion</i> (@llamada.Operador)</h5>
+                                                    }
+                                                }
+                                            </div>
+                                            <hr />
+                                        }
+
+
+                                    }
+                                    <input type="hidden" value="@nombreUsuario" name="operador" />
+                                    <input type="hidden" value="@item.idCallCenter" name="id" />
+                                    <div class="form-group" style="width:60%; min-width:320px">
+                                        <select name="tipificacion" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select" required>
+                                            <option selected>TIPIFICACIÓN</option>
+                                            <option disabled>-------------------</option>
+                                            <option value="NO CONTESTÓ">NO CONTESTÓ</option>
+                                            <option value="MANDA A BUZÓN">MANDA A BUZÓN</option>
+                                            <option value="NO ESTÁ INTERESADO">NO ESTÁ INTERESADO</option>
+                                            <option value="NÚMERO EQUIVOCADO">NÚMERO EQUIVOCADO</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                    <input type="submit" value="Enviar" class="btn btn-primary" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/CallCenter/OrdenCC")">
+                    <div class="modal fade" id="Referencia_@item.idCallCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Generar referencia de pago</b></h3>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" class="form-control" id="usuario" name="usuario" value="@oUser.Nombre">
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="col-form-label">Nombre:</label>
+                                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.Nombre">
+                                        <input type="hidden" class="form-control" id="nombre" name="nombre2" value="@item.Nombre">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="col-form-label">Teléfono:</label>
+                                        <input type="tel" class="form-control" pattern="[0-9]{10}" title="El formato de teléfono debe contener 10 números" id="telefono" name="telefono" placeholder="@item.Telefono">
+                                        <input type="hidden"  id="telefono" name="telefono2" value="@item.Telefono">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="col-form-label">Email:</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                    </div>
+                                    <div class="form-group" style="width:60%; min-width:320px">
+                                        <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
+                                        <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                            <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                                            <option value="AEREO">AEREO</option>
+                                            <option value="MARITIMO">MARITIMO</option>
+                                            <option value="FERROVIARIO">FERROVIARIO</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
+                                        <input type="date" class="form-control" id="fechaFestivo" name="fecha" required>
+                                    </div>
+                                    <div class="form-group" style="width:60%; min-width:320px">
+                                        <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                                        <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                            @{
+                                                var sucursalesOption = from s in db.Sucursales select s.Nombre;
+                                                foreach (var opcion in sucursalesOption)
+                                                {
+                                                    <option value="@opcion">@opcion</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                    <input type="submit" value="Enviar" class="btn btn-primary" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/CallCenter/PagoTarjetaCC")">
+                    <div class="modal fade" id="Tarjeta_@item.idCallCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header" style="background-color: orangered">
+                                    <h3 class="modal-title text-primary" id="exampleModalLabel" style="color:white"><b>Pago con Tarjeta</b></h3>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
+                                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="@item.Nombre">
+                                        <input type="hidden" class="form-control" id="nombre" name="nombre2" value="@item.Nombre">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="col-form-label">Teléfono:</label>
+                                        <input type="tel" class="form-control" pattern="[0-9]{10}" title="El formato de teléfono debe contener 10 números" id="telefono" name="telefono" required>
+                                        <input type="hidden" id="telefono" name="telefono2" value="@item.Telefono">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="col-form-label">Email:</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="col-form-label"><b>Terminación de Tarjeta (últimos 4 números):</b></label>
+                                        <input type="number" maxlength="4" min="4" class="form-control" id="card" name="card" required>
+                                    </div>
+                                    <div class="form-group" style="width:60%; min-width:320px">
+                                        <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
+                                        <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                            <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                                            <option value="AEREO">AEREO</option>
+                                            <option value="MARITIMO">MARITIMO</option>
+                                            <option value="FERROVIARIO">FERROVIARIO</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="width:60%; min-width:320px">
+                                        <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                                        <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                            @{
+                                                var sucursalesOption1 = from s in db.Sucursales select s.Nombre;
+                                                foreach (var opcion in sucursalesOption1)
+                                                {
+                                                    <option value="@opcion">@opcion</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
+                                        <input type="date" class="form-control" id="fechaFestivo2" name="fecha" required>
+                                    </div>
+                                    <input type="hidden" name="usuario" asp-for="file" class="" required value="Call Center" />
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                    <input type="submit" value="Enviar" class="btn btn-primary" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+
+            </td>
+        </tr>
+
+                flag += 1;
+
+            }
+
+        </table>
+    </div>
+}
+
+
+
+
+
+
+
+
+
+

@@ -34,36 +34,36 @@
     dateToday = Convert.ToDateTime(ViewBag.Inicio);
     dateTomorrow = Convert.ToDateTime(ViewBag.Final);
 
-    var citasHoy = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow);
-    int citasHoyConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow).Count();
+    var citasHoy = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.TipoTramite != "REVALORACIÓN");
+    int citasHoyConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.TipoTramite != "REVALORACIÓN").Count();
 
-    var episHoy = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.NoExpediente != null);
-    int episHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente< dateTomorrow && w.NoExpediente != null).Count();
+    var episHoy = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.NoExpediente != null && w.TipoTramite != "REVALORACIÓN");
+    int episHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente< dateTomorrow && w.NoExpediente != null && w.TipoTramite != "REVALORACIÓN").Count();
 
     var episSinIVA = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null &&
-    (w.ReferidoPor == "PABLO" || w.ReferidoPor == "ELIZABETH" || w.ReferidoPor == "LUIS VALENCIA" || w.ReferidoPor == "ROBERTO HERRERA" || w.ReferidoPor == "NATALY FRANCO"));
+    (w.ReferidoPor == "PABLO" || w.ReferidoPor == "ELIZABETH" || w.ReferidoPor == "LUIS VALENCIA" || w.ReferidoPor == "ROBERTO HERRERA" || w.ReferidoPor == "NATALY FRANCO") && w.TipoTramite != "REVALORACIÓN");
     int episSinIVAConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null &&
-    (w.ReferidoPor == "PABLO" || w.ReferidoPor == "ELIZABETH" || w.ReferidoPor == "LUIS VALENCIA" || w.ReferidoPor == "ROBERTO HERRERA" || w.ReferidoPor == "NATALY FRANCO")).Count();
+    (w.ReferidoPor == "PABLO" || w.ReferidoPor == "ELIZABETH" || w.ReferidoPor == "LUIS VALENCIA" || w.ReferidoPor == "ROBERTO HERRERA" || w.ReferidoPor == "NATALY FRANCO") && w.TipoTramite != "REVALORACIÓN").Count();
 
     int money = 0;
     int moneyTAXES = 0;
     int moneyWTAXES = 0;
     int moneyNORMAL = 0;
 
-    var dineroG = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && (w.CC == "GESTOR"));
-    int dineroAGCount = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && w.TipoLicencia == "AEREO" && (w.CC == "GESTOR")).Count();
-    int dineroNGCount = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && w.TipoLicencia != "AEREO" && (w.CC == "GESTOR")).Count();
+    var dineroG = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && (w.CC == "GESTOR") && w.TipoTramite != "REVALORACIÓN");
+    int dineroAGCount = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && w.TipoLicencia == "AEREO" && (w.CC == "GESTOR") && w.TipoTramite != "REVALORACIÓN").Count();
+    int dineroNGCount = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && w.TipoLicencia != "AEREO" && (w.CC == "GESTOR") && w.TipoTramite != "REVALORACIÓN").Count();
 
-    var dinero = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null);
-    int dineroACount = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && w.TipoLicencia == "AEREO").Count();
-    int dineroNCount = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && w.TipoLicencia != "AEREO").Count();
+    var dinero = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && w.TipoTramite != "REVALORACIÓN");
+    int dineroACount = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && w.TipoLicencia == "AEREO" && w.TipoTramite != "REVALORACIÓN").Count();
+    int dineroNCount = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && w.TipoLicencia != "AEREO" && w.TipoTramite != "REVALORACIÓN").Count();
 
     var dineroSinIVA = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null &&
-(w.ReferidoPor == "PABLO" || w.ReferidoPor == "ELIZABETH" || w.ReferidoPor == "LUIS VALENCIA" || w.ReferidoPor == "ROBERTO HERRERA" || w.ReferidoPor == "NATALY FRANCO"));
+(w.ReferidoPor == "PABLO" || w.ReferidoPor == "ELIZABETH" || w.ReferidoPor == "LUIS VALENCIA" || w.ReferidoPor == "ROBERTO HERRERA" || w.ReferidoPor == "NATALY FRANCO") && w.TipoTramite != "REVALORACIÓN");
     int dineroSinIVA_ACount = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null &&
-(w.ReferidoPor == "PABLO" || w.ReferidoPor == "ELIZABETH" || w.ReferidoPor == "LUIS VALENCIA" || w.ReferidoPor == "ROBERTO HERRERA" || w.ReferidoPor == "NATALY FRANCO") && w.TipoLicencia == "AEREO").Count();
+(w.ReferidoPor == "PABLO" || w.ReferidoPor == "ELIZABETH" || w.ReferidoPor == "LUIS VALENCIA" || w.ReferidoPor == "ROBERTO HERRERA" || w.ReferidoPor == "NATALY FRANCO") && w.TipoLicencia == "AEREO" && w.TipoTramite != "REVALORACIÓN").Count();
     int dineroSinIVA_NCount = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null &&
-(w.ReferidoPor == "PABLO" || w.ReferidoPor == "ELIZABETH" || w.ReferidoPor == "LUIS VALENCIA" || w.ReferidoPor == "ROBERTO HERRERA" || w.ReferidoPor == "NATALY FRANCO") && w.TipoLicencia != "AEREO").Count();
+(w.ReferidoPor == "PABLO" || w.ReferidoPor == "ELIZABETH" || w.ReferidoPor == "LUIS VALENCIA" || w.ReferidoPor == "ROBERTO HERRERA" || w.ReferidoPor == "NATALY FRANCO") && w.TipoLicencia != "AEREO" && w.TipoTramite != "REVALORACIÓN").Count();
 
     moneyWTAXES = (dineroSinIVA_ACount * 3000) + (dineroSinIVA_NCount * 2450);
     int moneyWFiction = (dineroSinIVA_ACount * 3480) + (dineroSinIVA_NCount * 2842);
@@ -96,7 +96,7 @@
         <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
         <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
         <input type="submit" class="btn btn-primary" value="Enviar" />
-        <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+        <a href="~/Admin/Dashboard"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
     </div>
 
     <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
@@ -219,7 +219,10 @@
                     {
                         var elemento = (from e in db.Cita where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow select e).Count();
 
-                        <h4><b>@item.Nombre:</b> @elemento</h4>
+                        if (elemento > 0)
+                        {
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
                     }
                 }
             </div>
@@ -243,10 +246,28 @@
                 @{
                     foreach (var item in sucursalesLista)
                     {
-                        var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow select e).Count();
+                        var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.TipoTramite != "REVALORACIÓN" select e).Count();
 
-                        <h4><b>@item.Nombre:</b> @elemento</h4>
+                        if (elemento > 0)
+                        {
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
                     }
+                    if ((from e in db.Captura where e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.TipoTramite == "REVALORACIÓN" select e).Count() > 0)
+                    {
+                        <hr />
+                        <h3 class="text-primary">Revaloraciones:</h3>
+                        foreach (var item in sucursalesLista)
+                        {
+                            var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.TipoTramite == "REVALORACIÓN" select e).Count();
+
+                            if (elemento > 0)
+                            {
+                                <h4><b>@item.Nombre:</b> @elemento</h4>
+                            }
+                        }
+                    }
+
                 }
             </div>
         </div>
@@ -273,8 +294,11 @@
                         var elemento = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && w.Sucursal == item.Nombre &&
             (w.ReferidoPor == "PABLO" || w.ReferidoPor == "ELIZABETH" || w.ReferidoPor == "LUIS VALENCIA" || w.ReferidoPor == "ROBERTO HERRERA" || w.ReferidoPor == "NATALY FRANCO")).Count();
 
-            <h4><b>@item.Nombre:</b> @elemento</h4>
-        }
+                        if (elemento > 0)
+                        {
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
+                    }
                 }
             </div>
         </div>
@@ -320,7 +344,10 @@
                     {
                         var elemento = (from e in db.Cita where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.NoExpediente != null && e.CC == "GESTOR" select e).Count();
 
-                        <h4><b>@item.Nombre:</b> @elemento</h4>
+                        if (elemento > 0)
+                        {
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
                     }
                 }
             </div>

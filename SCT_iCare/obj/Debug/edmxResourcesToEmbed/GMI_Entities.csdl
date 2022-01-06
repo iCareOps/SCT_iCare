@@ -117,6 +117,7 @@
     <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
     <Property Name="idSucursal" Type="Int32" />
     <NavigationProperty Name="Sucursales" Relationship="Self.FK_Doctores_Sucursales" FromRole="Doctores" ToRole="Sucursales" />
+    <Property Name="ALT" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="Expedientes">
     <Key>
@@ -649,12 +650,21 @@
       <End Role="PacienteESP" EntitySet="PacienteESP" />
       <End Role="DictamenESP" EntitySet="DictamenESP" />
     </AssociationSet>
+    <EntitySet Name="UrgentesCount" EntityType="DevModel.UrgentesCount" />
     <EntitySet Name="EPI_ESP" EntityType="DevModel.EPI_ESP" />
+    <EntitySet Name="MovimientosAudio" EntityType="DevModel.MovimientosAudio" />
     <AssociationSet Name="FK_EPI_ESP_PacienteESP" Association="DevModel.FK_EPI_ESP_PacienteESP">
       <End Role="PacienteESP" EntitySet="PacienteESP" />
       <End Role="EPI_ESP" EntitySet="EPI_ESP" />
     </AssociationSet>
-    <EntitySet Name="UrgentesCount" EntityType="DevModel.UrgentesCount" />
+    <AssociationSet Name="FK_MovimientosAudio_PacienteESP" Association="DevModel.FK_MovimientosAudio_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="MovimientosAudio" EntitySet="MovimientosAudio" />
+    </AssociationSet>
+    <EntitySet Name="CallCenter" EntityType="DevModel.CallCenter" />
+    <EntitySet Name="Tipificaciones" EntityType="DevModel.Tipificaciones" />
+    <EntitySet Name="FirmaESP" EntityType="DevModel.FirmaESP" />
+    <EntitySet Name="HuellasESP" EntityType="DevModel.HuellasESP" />
   </EntityContainer>
   <EntityType Name="CapturaIncidencia">
     <Key>
@@ -1354,7 +1364,10 @@
     <Property Name="Genero" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
     <Property Name="Problema" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
     <Property Name="Solicita" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FechaSolicitud" Type="DateTime" Precision="3" />
+    <Property Name="FechaCaptura" Type="DateTime" Precision="3" />
     <NavigationProperty Name="EPI_ESP" Relationship="DevModel.FK_EPI_ESP_PacienteESP" FromRole="PacienteESP" ToRole="EPI_ESP" />
+    <NavigationProperty Name="MovimientosAudio" Relationship="DevModel.FK_MovimientosAudio_PacienteESP" FromRole="PacienteESP" ToRole="MovimientosAudio" />
   </EntityType>
   <EntityType Name="FotoPacienteESP">
     <Key>
@@ -1482,6 +1495,14 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <EntityType Name="UrgentesCount">
+    <Key>
+      <PropertyRef Name="idUrgentes" />
+    </Key>
+    <Property Name="idUrgentes" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Contador" Type="Int32" />
+    <Property Name="Mes" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+  </EntityType>
   <EntityType Name="EPI_ESP">
     <Key>
       <PropertyRef Name="idEpiESP" />
@@ -1552,7 +1573,47 @@
     <Property Name="Patologias" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
     <Property Name="Interpretacion" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
     <Property Name="NotaMedica" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="D125" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D250" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D500" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D1000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D2000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D4000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D8000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D12000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I125" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I250" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I500" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I1000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I2000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I4000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I8000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I12000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
     <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_EPI_ESP_PacienteESP" FromRole="EPI_ESP" ToRole="PacienteESP" />
+  </EntityType>
+  <EntityType Name="MovimientosAudio">
+    <Key>
+      <PropertyRef Name="idMovimientoAudio" />
+    </Key>
+    <Property Name="idMovimientoAudio" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idPacienteESP" Type="Int32" />
+    <Property Name="D125" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D250" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D500" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D1000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D2000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D4000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D8000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="D12000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I125" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I250" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I500" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I1000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I2000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I4000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I8000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="I12000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_MovimientosAudio_PacienteESP" FromRole="MovimientosAudio" ToRole="PacienteESP" />
   </EntityType>
   <Association Name="FK_EPI_ESP_PacienteESP">
     <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
@@ -1566,12 +1627,57 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <EntityType Name="UrgentesCount">
+  <Association Name="FK_MovimientosAudio_PacienteESP">
+    <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
+    <End Type="DevModel.MovimientosAudio" Role="MovimientosAudio" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="MovimientosAudio">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="CallCenter">
     <Key>
-      <PropertyRef Name="idUrgentes" />
+      <PropertyRef Name="idCallCenter" />
     </Key>
-    <Property Name="idUrgentes" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="Contador" Type="Int32" />
-    <Property Name="Mes" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="idCallCenter" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Telefono" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="FechaVigencia" Type="DateTime" Precision="3" />
+    <Property Name="Rechazado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Llamadas" Type="Int32" />
+  </EntityType>
+  <EntityType Name="Tipificaciones">
+    <Key>
+      <PropertyRef Name="idTipificacion" />
+    </Key>
+    <Property Name="idTipificacion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Operador" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FechaLlamada" Type="DateTime" Precision="3" />
+    <Property Name="Tipificacion" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="idCallCenter" Type="Int32" />
+  </EntityType>
+  <EntityType Name="FirmaESP">
+    <Key>
+      <PropertyRef Name="idFirmaESP" />
+    </Key>
+    <Property Name="idFirmaESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Firma" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="idPadienteESP" Type="Int32" />
+  </EntityType>
+  <EntityType Name="HuellasESP">
+    <Key>
+      <PropertyRef Name="idHuellasESP" />
+    </Key>
+    <Property Name="idHuellasESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Huella2" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="Huella3" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="Huella7" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="Huella8" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="idPacienteESP" Type="Int32" />
   </EntityType>
 </Schema>

@@ -4,6 +4,11 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Data.Entity;
+using System.Net.Mail;
+using System.Threading.Tasks;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System.Configuration;
 
 namespace SCT_iCare.Controllers.Login
 {
@@ -14,7 +19,92 @@ namespace SCT_iCare.Controllers.Login
         // GET: Login
         public ActionResult Inicio()
         {
+            Execute().Wait();
+
+
+            //Random random = new Random();
+
+            //int[] tablaAudiologia = { -5, 0, 5, 10, 15, 20, 25, 30, 35 };
+            //int posicionActual = 0;
+            //int posicionDeseada = 0;
+            //int operacion = 0;
+            //string valor = "";
+
+            //string arribaAbajo = "";
+            //int numeroRandom = 0;
+
+            //for (int i = 0; i <= 7; i++)
+            //{
+            //    numeroRandom = random.Next(9); //seteado, no viene de base de datos
+
+            //    valor = tablaAudiologia[numeroRandom].ToString();
+            //    if( i == 7)
+            //    {
+            //        valor = "35";
+            //    }
+
+            //    for (int n = 0; n < 8; n++)
+            //    {
+            //        if (Convert.ToString(tablaAudiologia[n]) == valor)
+            //        {
+            //            posicionDeseada = n + 1;
+            //            break;
+            //        }
+            //    }
+
+            //    operacion = posicionActual - posicionDeseada;
+            //    posicionActual = posicionDeseada;
+
+            //    if (operacion == 0)
+            //    {
+            //        arribaAbajo = "No se mueve";
+            //    }
+            //    else if (operacion < 0)
+            //    {
+            //        arribaAbajo = "Se mueve para abajo";
+            //    }
+            //    else
+            //    {
+            //        arribaAbajo = "Se mueve para arriba";
+            //    }
+
+            //}
+
             return View();
+        }
+
+        static async Task Execute()
+        {
+            var apiKey = "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";
+            var client = new SendGridClient(apiKey);
+
+            GMIEntities db = new GMIEntities();
+            var documento = (from d in db.Dictamen  orderby d.idDictamen descending select d.Dictamen1).FirstOrDefault();
+
+            byte [] bytesBinary = documento;
+            var base64 = Convert.ToBase64String(documento);
+
+            var from = new EmailAddress("no-reply@grupogamx.mx", "Grupo GA");
+            var subject = "Sending with SendGrid is Fun";
+            var to = new EmailAddress("no-reply@grupogamx.mx", "Example User");
+            var plainTextContent = "and easy to do anywhere, even with C#";
+            var htmlContent = "<h1><strong>and easy to do anywhere, even with C#</strong></h1>";
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+
+            msg.Attachments = new List<SendGrid.Helpers.Mail.Attachment>
+                {
+                    new SendGrid.Helpers.Mail.Attachment
+                    {
+                        Content = Convert.ToBase64String(bytesBinary),
+                        Filename = "Transcript.pdf",
+                        Type = "applicaition/pdf",
+                        Disposition = "attachment"
+                    }
+                };
+
+            var response = client.SendEmailAsync(msg);
+            //Console.(response.StatusCode);
+            //Console.ReadLine();
         }
 
 
@@ -134,8 +224,19 @@ namespace SCT_iCare.Controllers.Login
                             ViewBag.Nombre = oUser.Nombre.ToString();
                             return Redirect("~/Dictamenes/Captura");
                         case 24:
+                            if (oUser.Nombre.ToString() == "Eduardo Neria")
+                            {
+                                ViewBag.Nombre = oUser.Nombre.ToString();
+                                return Redirect("~/Dictamenes/VentasAlternativas");
+                            }
+                            else
+                            {
+                                ViewBag.Nombre = oUser.Nombre.ToString();
+                                return Redirect("~/EPIs/DescargasReporte");
+                            }
+                        case 25:
                             ViewBag.Nombre = oUser.Nombre.ToString();
-                            return Redirect("~/EPIs/DescargasReporte");
+                            return Redirect("~/Dictamenes/Citas");
 
                         default:
                             //return Redirect("~/Login/Login");

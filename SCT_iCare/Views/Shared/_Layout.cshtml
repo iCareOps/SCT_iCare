@@ -69,7 +69,7 @@
                                 </button>
                                 <div class="dropdown-menu" style="padding: 7px">
                                     @{
-                                        if (rol == 2 && (Usuario != "Andrés Anduaga" || Usuario != "Teresa Lozano" || Usuario != "Jorge Rodriguez" || Usuario != "Héctor Peña" || Usuario != "Jessica Bustos"))
+                                        if (rol == 2 && (Usuario != "Andrés Anduaga" && Usuario != "Teresa Lozano" && Usuario != "Jorge Rodriguez" && Usuario != "Evelyn Millán" && Usuario != "Jessica Bustos"))
                                         {
                                             <h5>@Html.ActionLink("Inicio", "Index", "Admin")</h5>
                                             <h5>@Html.ActionLink("Reportes", "DescargasReporte", "EPIs")</h5>
@@ -77,10 +77,15 @@
                                             <h5>@Html.ActionLink("Gestoría", "Index", "GestorVenta")</h5>
                                             <h5>@Html.ActionLink("Recepción", "Index", "Recepcion")</h5>
                                             <h5>@Html.ActionLink("Captura", "Captura", "EPIs")</h5>
-                                            <h5>@Html.ActionLink("Conciliación", "Index", "Conciliacion")</h5>
-                                            <h5>@Html.ActionLink("Facturación", "Index", "Facturacion")</h5>
+                                            <h5>@Html.ActionLink("Tablas", "TablaDinamica", "Admin")</h5>
+                                            @*<h5>@Html.ActionLink("Conciliación", "Index", "Conciliacion")</h5>
+                                            <h5>@Html.ActionLink("Facturación", "Index", "Facturacion")</h5>*@
                                             <h5>@Html.ActionLink("Gestores", "Index", "Gestoria")</h5>
                                             <h5>@Html.ActionLink("Log Gestores", "Index", "LogGestores")</h5>
+                                            if (Usuario == "Mauricio Mosqueda" || Usuario == "Administrador")
+                                            {
+                                                <h5>@Html.ActionLink("Certificados", "Index", "CERTIFICADOes")</h5>
+                                            }
                                             <h5>@Html.ActionLink("Usuarios", "Index", "Usuarios")</h5>
                                             if (Usuario == "Administrador" || Usuario == "Mauricio Mosqueda" || Usuario == "Jesús Zenteno" || Usuario == "Ángel Muñoz")
                                             {
@@ -89,6 +94,11 @@
                                                 <h5>@Html.ActionLink("Dashboard II", "Dashboard", "Dictamenes")</h5>
                                                 <h5>@Html.ActionLink("Ventas Alt", "VentasAlternativas", "Dictamenes")</h5>
                                             }
+                                        }
+                                        else if (Usuario == "Pedro Azuara")
+                                        {
+                                            <h5>@Html.ActionLink("Certificados", "Index", "CERTIFICADOes")</h5>
+                                            <h5>@Html.ActionLink("Dashboard", "Index", "Admin")</h5>
                                         }
                                         else if (Usuario == "Jorge Rodriguez" || Usuario == "Héctor Peña")
                                         {
@@ -99,6 +109,7 @@
                                         else if (Usuario == "Teresa Lozano")
                                         {
                                             <h5>@Html.ActionLink("Inicio", "Dashboard", "Admin")</h5>
+                                            <h5>@Html.ActionLink("Control", "Index", "Admin")</h5>
                                             <h5>@Html.ActionLink("Reportes", "DescargasReporte", "EPIs")</h5>
                                         }
                                         else if (rol == 1)
@@ -115,10 +126,36 @@
                                             <h5>@Html.ActionLink("Recepción", "Citas", "Dictamenes")</h5>
                                             <h5>@Html.ActionLink("Ventas", "VentasAlternativas", "Dictamenes")</h5>
                                         }
-                                        @*else if (rol == 12 || rol == 13)
-            {
-                <h5>@Html.ActionLink("Inicio", "Recepcion", "ArchivoClinico")</h5>
-            }*@
+                                        else if (Usuario == "Karina Morelos")
+                                        {
+                                            <h5>@Html.ActionLink("Reportes", "DescargasReporte", "EPIs")</h5>
+                                            <h5>@Html.ActionLink("Recepción Alt", "Citas", "Dictamenes")</h5>
+                                        }
+                                        else if (Usuario == "Dafne Tablón")
+                                        {
+                                            <h5>@Html.ActionLink("Reportes", "DescargasReporte", "EPIs")</h5>
+                                            <h5>@Html.ActionLink("Dashboard", "Index", "Admin")</h5>
+                                        }
+                                        else if (Usuario == "Evelyn Millán")
+                                        {
+                                            <h5>@Html.ActionLink("Inicio", "Index", "Admin")</h5>
+                                            <h5>@Html.ActionLink("Reportes", "DescargasReporte", "EPIs")</h5>
+                                            <h5>@Html.ActionLink("Call Center", "Index", "CallCenter")</h5>
+                                            <h5>@Html.ActionLink("Recepción", "Index", "Recepcion")</h5>
+                                            <h5>@Html.ActionLink("Captura", "Captura", "EPIs")</h5>
+                                            <h5>@Html.ActionLink("Dictámenes Alt", "Captura", "Dictamenes")</h5>
+                                        }
+                                        else if (Usuario == "Jessica Bustos")
+                                        {
+                                            <h5>@Html.ActionLink("Reportes", "DescargasReporte", "EPIs")</h5>
+                                            <h5>@Html.ActionLink("Control", "Index", "Admin")</h5>
+                                        }
+                                        else if (rol == 25)
+                                        {
+                                            <h5>@Html.ActionLink("Citas", "Citas", "Dictamenes")</h5>
+                                            <h5>@Html.ActionLink("Captura", "Captura", "Dictamenes")</h5>
+                                            <h5>@Html.ActionLink("Dashboard", "Dashboard", "Dictamenes")</h5>
+                                        }
                                     }
                                     <h5>
                                         <b>@Html.ActionLink("Cerrar Sesión", "Logoff", "Logoff")</b>

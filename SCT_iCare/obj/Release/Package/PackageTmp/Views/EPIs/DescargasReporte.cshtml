@@ -61,7 +61,7 @@
 
     var tablaFinal = db.Paciente.
         Join(db.Cita, a => a.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
-        Where(w => w.B.FechaReferencia >= thisDate && w.B.FechaReferencia < tomorrowDate).
+        Where(w => w.B.FechaCita >= thisDate && w.B.FechaCita < tomorrowDate).
         Join(db.Captura, c => c.A.idPaciente, d => d.idPaciente, (c, d) => new { C = c, D = d }).
         Select(s => new
         {
@@ -144,7 +144,7 @@
         <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
         <input type="date" class="form-control" name="final" max="@fechaMAX" /> &nbsp; &nbsp;
         <input type="submit" class="btn btn-primary" value="Enviar" />
-        <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+        <a href="~/EPIs/DescargasReporte"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
     </div>
 
     <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
@@ -254,6 +254,7 @@
         <tr>
             <th></th>
             <th>Fecha Creación</th>
+            <th>Hora Creación</th>
             <th>Fecha Cita</th>
             <th>Nombre</th>
             <th>No. Expediente</th>
@@ -295,8 +296,9 @@
                 <tr style="background-color:@fila_1">
 
                     <td>@flag</td>
-                    <td>@Convert.ToDateTime(n.FechaReferencia).AddDays(1).ToString("dd-MMMM-yyyy")</td>
-                    <td>@Convert.ToDateTime(n.FechaCita).AddDays(1).ToString("dd-MMMM-yyyy")</td>
+                    <td>@Convert.ToDateTime(n.FechaReferencia).ToString("dd/MM/yyyy")</td>
+                    <td>@Convert.ToDateTime(n.FechaReferencia).ToString("HH:mm")</td>
+                    <td>@Convert.ToDateTime(n.FechaCita)</td>
                     <td>@n.Nombre</td>
                     <td>@n.NoExpediente</td>
                     <td>@n.Telefono</td>
@@ -312,13 +314,13 @@
                     <td>@n.Referencia</td>
                     <td>@n.Canal</td>
                     <td>@n.Asistencia</td>
-                    <td>@Convert.ToDateTime(n.FechaExpdiente).AddDays(1).ToString("dd-MMMM-yyyy")</td>
+                    <td>@Convert.ToDateTime(n.FechaExpdiente)</td>
                     <td>@n.Capturista</td>
                     <td>@n.EstatusCaptura</td>
-                    <td>@Convert.ToDateTime(n.InicioCaptura).ToString("dd-MMMM-yyyy HH:mm:ss")</td>
-                    <td>@Convert.ToDateTime(n.FinalCaptura).ToString("dd-MMMM-yyyy HH:mm:ss")</td>
+                    <td>@Convert.ToDateTime(n.InicioCaptura)@*.ToString("dd-MMMM-yyyy HH:mm:ss")*@</td>
+                    <td>@Convert.ToDateTime(n.FinalCaptura)@*.ToString("dd-MMMM-yyyy HH:mm:ss")*@</td>
                     <td>@n.Aptitud</td>
-                    <td>@Convert.ToDateTime(n.FechaVigencia).AddDays(1).ToString("dd-MMMM-yyyy")</td>
+                    <td>@Convert.ToDateTime(n.FechaVigencia)@*.AddDays(1).ToString("dd-MMMM-yyyy")*@</td>
                     <td>@n.ReferidoPor</td>
                 </tr>
                 flag++;
