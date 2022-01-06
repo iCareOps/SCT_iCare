@@ -553,6 +553,14 @@
           <Property Name="Recpecionista" Type="varchar" MaxLength="100" />
           <Property Name="idPaciente" Type="int" />
         </EntityType>
+        <EntityType Name="FirmaESP">
+          <Key>
+            <PropertyRef Name="idFirmaESP" />
+          </Key>
+          <Property Name="idFirmaESP" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Firma" Type="varbinary(max)" />
+          <Property Name="idPadienteESP" Type="int" />
+        </EntityType>
         <EntityType Name="FotoPacienteESP">
           <Key>
             <PropertyRef Name="idFoto" />
@@ -567,6 +575,17 @@
           </Key>
           <Property Name="idDocumentacionESP" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="HemoglobinaGlucosilada" Type="varbinary(max)" />
+          <Property Name="idPacienteESP" Type="int" />
+        </EntityType>
+        <EntityType Name="HuellasESP">
+          <Key>
+            <PropertyRef Name="idHuellasESP" />
+          </Key>
+          <Property Name="idHuellasESP" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Huella2" Type="varbinary(max)" />
+          <Property Name="Huella3" Type="varbinary(max)" />
+          <Property Name="Huella7" Type="varbinary(max)" />
+          <Property Name="Huella8" Type="varbinary(max)" />
           <Property Name="idPacienteESP" Type="int" />
         </EntityType>
         <EntityType Name="HuellasRandom">
@@ -814,8 +833,10 @@
           <EntitySet Name="EPI_SignosVitales" EntityType="Self.EPI_SignosVitales" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ExpedienteRevaloracion" EntityType="Self.ExpedienteRevaloracion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Expedientes" EntityType="Self.Expedientes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FirmaESP" EntityType="Self.FirmaESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FotoPacienteESP" EntityType="Self.FotoPacienteESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HemoglobinaGlucosiladaESP" EntityType="Self.HemoglobinaGlucosiladaESP" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HuellasESP" EntityType="Self.HuellasESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HuellasRandom" EntityType="Self.HuellasRandom" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="IncidenciaDictamen" EntityType="Self.IncidenciaDictamen" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="IncidenciaPaciente" EntityType="Self.IncidenciaPaciente" Schema="dbo" store:Type="Tables" />
@@ -1503,6 +1524,8 @@
           </AssociationSet>
           <EntitySet Name="CallCenter" EntityType="DevModel.CallCenter" />
           <EntitySet Name="Tipificaciones" EntityType="DevModel.Tipificaciones" />
+          <EntitySet Name="FirmaESP" EntityType="DevModel.FirmaESP" />
+          <EntitySet Name="HuellasESP" EntityType="DevModel.HuellasESP" />
           </EntityContainer>
         <EntityType Name="CapturaIncidencia">
           <Key>
@@ -2499,6 +2522,25 @@
           <Property Name="Tipificacion" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="idCallCenter" Type="Int32" />
         </EntityType>
+        <EntityType Name="FirmaESP">
+          <Key>
+            <PropertyRef Name="idFirmaESP" />
+          </Key>
+          <Property Name="idFirmaESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Firma" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="idPadienteESP" Type="Int32" />
+        </EntityType>
+        <EntityType Name="HuellasESP">
+          <Key>
+            <PropertyRef Name="idHuellasESP" />
+          </Key>
+          <Property Name="idHuellasESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Huella2" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="Huella3" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="Huella7" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="Huella8" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="idPacienteESP" Type="Int32" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3331,6 +3373,27 @@
                 <ScalarProperty Name="Operador" ColumnName="Operador" />
                 <ScalarProperty Name="Nombre" ColumnName="Nombre" />
                 <ScalarProperty Name="idTipificacion" ColumnName="idTipificacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FirmaESP">
+            <EntityTypeMapping TypeName="DevModel.FirmaESP">
+              <MappingFragment StoreEntitySet="FirmaESP">
+                <ScalarProperty Name="idPadienteESP" ColumnName="idPadienteESP" />
+                <ScalarProperty Name="Firma" ColumnName="Firma" />
+                <ScalarProperty Name="idFirmaESP" ColumnName="idFirmaESP" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HuellasESP">
+            <EntityTypeMapping TypeName="DevModel.HuellasESP">
+              <MappingFragment StoreEntitySet="HuellasESP">
+                <ScalarProperty Name="idPacienteESP" ColumnName="idPacienteESP" />
+                <ScalarProperty Name="Huella8" ColumnName="Huella8" />
+                <ScalarProperty Name="Huella7" ColumnName="Huella7" />
+                <ScalarProperty Name="Huella3" ColumnName="Huella3" />
+                <ScalarProperty Name="Huella2" ColumnName="Huella2" />
+                <ScalarProperty Name="idHuellasESP" ColumnName="idHuellasESP" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

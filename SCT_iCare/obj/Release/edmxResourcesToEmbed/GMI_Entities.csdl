@@ -662,6 +662,9 @@
       <End Role="MovimientosAudio" EntitySet="MovimientosAudio" />
     </AssociationSet>
     <EntitySet Name="CallCenter" EntityType="DevModel.CallCenter" />
+    <EntitySet Name="Tipificaciones" EntityType="DevModel.Tipificaciones" />
+    <EntitySet Name="FirmaESP" EntityType="DevModel.FirmaESP" />
+    <EntitySet Name="HuellasESP" EntityType="DevModel.HuellasESP" />
   </EntityContainer>
   <EntityType Name="CapturaIncidencia">
     <Key>
@@ -1644,5 +1647,37 @@
     <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
     <Property Name="Telefono" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="FechaVigencia" Type="DateTime" Precision="3" />
+    <Property Name="Rechazado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Llamadas" Type="Int32" />
+  </EntityType>
+  <EntityType Name="Tipificaciones">
+    <Key>
+      <PropertyRef Name="idTipificacion" />
+    </Key>
+    <Property Name="idTipificacion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Operador" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FechaLlamada" Type="DateTime" Precision="3" />
+    <Property Name="Tipificacion" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="idCallCenter" Type="Int32" />
+  </EntityType>
+  <EntityType Name="FirmaESP">
+    <Key>
+      <PropertyRef Name="idFirmaESP" />
+    </Key>
+    <Property Name="idFirmaESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Firma" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="idPadienteESP" Type="Int32" />
+  </EntityType>
+  <EntityType Name="HuellasESP">
+    <Key>
+      <PropertyRef Name="idHuellasESP" />
+    </Key>
+    <Property Name="idHuellasESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Huella2" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="Huella3" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="Huella7" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="Huella8" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="idPacienteESP" Type="Int32" />
   </EntityType>
 </Schema>

@@ -871,47 +871,47 @@ else
                                                             }
 
                                                             @*foreach (var item1 in consultorios1)
-            {
-                <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
-            }*@
+                    {
+                        <option style="font-weight:bold" value="@item1.Nombre">@item1.Nombre</option>
+                    }*@
 
                                                         }
                                                     </select>
                                                 </div>
                                                 @*@{
-                                                        var consultaAereo1 = (from c in db.PacienteESP where c.idPacienteESP == item.idPacienteESP select c.TipoLicencia).FirstOrDefault();
-                                                        if (consultaAereo1 == "AEREO")
-                                                        {
-                                                            <input type="hidden" name="tipoL" id="tipoL" value="AEREO" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <div class="form-group" style="width:80%; min-width:320px">
-                                                                <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
-                                                                <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+            var consultaAereo1 = (from c in db.PacienteESP where c.idPacienteESP == item.idPacienteESP select c.TipoLicencia).FirstOrDefault();
+            if (consultaAereo1 == "AEREO")
+            {
+                <input type="hidden" name="tipoL" id="tipoL" value="AEREO" />
+            }
+            else
+            {
+                <div class="form-group" style="width:80%; min-width:320px">
+                    <label for="recipient-name" class="col-form-label">Tipo de Licencia:</label>
+                    <select name="tipoL" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
 
-                                                                    @{
-                                                                        var revisionTL2 = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
+                        @{
+                            var revisionTL2 = (from i in db.PacienteESP where i.idPacienteESP == item.idPacienteESP select i).FirstOrDefault();
 
-                                                                        if (revisionTL2.TipoLicencia != null)
-                                                                        {
-                                                                            <option value="@revisionTL2.TipoLicencia" selected>@revisionTL2.TipoLicencia</option>
-                                                                            <option disabled>----------------------------------------</option>
-                                                                            <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
-                                                                            <option value="MARITIMO">MARITIMO</option>
-                                                                            <option value="FERROVIARIO">FERROVIARIO</option>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
-                                                                            <option value="MARITIMO">MARITIMO</option>
-                                                                            <option value="FERROVIARIO">FERROVIARIO</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        }
-                                                    }*@
+                            if (revisionTL2.TipoLicencia != null)
+                            {
+                                <option value="@revisionTL2.TipoLicencia" selected>@revisionTL2.TipoLicencia</option>
+                                <option disabled>----------------------------------------</option>
+                                <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                                <option value="MARITIMO">MARITIMO</option>
+                                <option value="FERROVIARIO">FERROVIARIO</option>
+                            }
+                            else
+                            {
+                                <option value="AUTOTRANSPORTE">AUTOTRANSPORTE</option>
+                                <option value="MARITIMO">MARITIMO</option>
+                                <option value="FERROVIARIO">FERROVIARIO</option>
+                            }
+                        }
+                    </select>
+                </div>
+            }
+        }*@
 
                                                 <div class="form-group" style="width:80%; min-width:320px">
                                                     <label for="recipient-name" class="col-form-label">Tipo de Trámite:</label>
@@ -980,16 +980,16 @@ else
                                                     <input type="hidden" class="form-control" id="id" name="id" value="@item.idPacienteESP">
                                                 </div>
                                                 @*<div class="form-group">
-                                                        @if (item.Metra == null)
-                                                        {
-                                                            <input type="checkbox" name="metra" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="checkbox" checked name="metra" />
-                                                        }
-                                                        <label for="file" class="col-form-label">¿Cita registrada en METRA?:</label>
-                                                    </div>*@
+            @if (item.Metra == null)
+            {
+                <input type="checkbox" name="metra" />
+            }
+            else
+            {
+                <input type="checkbox" checked name="metra" />
+            }
+            <label for="file" class="col-form-label">¿Cita registrada en METRA?:</label>
+        </div>*@
                                                 <hr />
                                                 <div class="form-group">
                                                     <label for="file" class="col-form-label">Capturar Foto:</label>
@@ -1018,10 +1018,14 @@ else
                                                 <hr />
                                                 <div class="form-group" style="background-color:ghostwhite; padding:5px; border:solid 1px darkblue; border-radius:4px">
                                                     <label for="file" class="col-form-label">Cargar Huellas:</label><br />
-                                                    <b>Dedo #2</b><input type="file" name="" />
-                                                    <b>Dedo #3</b><input type="file" name="" />
-                                                    <b>Dedo #7</b><input type="file" name="" />
-                                                    <b>Dedo #8</b><input type="file" name="" /><br />
+                                                    <b>Dedo #2</b><input type="file" name="huella2" />
+                                                    <b>Dedo #3</b><input type="file" name="huella3" />
+                                                    <b>Dedo #7</b><input type="file" name="huella7" />
+                                                    <b>Dedo #8</b><input type="file" name="huella8" /><br />
+                                                </div>
+                                                <div class="form-group" style="background-color:ghostwhite; padding:5px; border:solid 1px darkblue; border-radius:4px">
+                                                    <label for="file" class="col-form-label">Cargar Firma:</label><br />
+                                                    <input type="file" name="firma" />
                                                 </div>
                                             </div>
                                             <div class="modal-footer">

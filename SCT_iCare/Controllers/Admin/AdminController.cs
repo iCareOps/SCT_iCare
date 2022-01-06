@@ -107,6 +107,12 @@ namespace SCT_iCare.Controllers.Admin
             return View();
         }
 
+
+        public ActionResult TablaDinamica()
+        {
+            return View();
+        }
+
         [HttpPost]
         public JsonResult ChartSucursal()
         {
