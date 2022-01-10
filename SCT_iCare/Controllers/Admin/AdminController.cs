@@ -113,6 +113,21 @@ namespace SCT_iCare.Controllers.Admin
             return View();
         }
 
+        public ActionResult TablaAlternativos()
+        {
+            return View();
+        }
+
+        public ActionResult TablaCallCenter()
+        {
+            return View();
+        }
+
+        public ActionResult TablaGestores()
+        {
+            return View();
+        }
+
         [HttpPost]
         public JsonResult ChartSucursal()
         {

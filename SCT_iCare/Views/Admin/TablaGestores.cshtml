@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "TablaDinamica";
+    ViewBag.Title = "TablaGestores";
 
     GMIEntities db = new GMIEntities();
 
@@ -27,7 +27,7 @@
         <select name="gestor" style="font-size:2vh" class="form-control">
             <option>Seleccionar</option>
             <option value="CallCenter">CALL CENTER</option>
-            <option value="Gestores">GESTORES</option>
+            <option value="Gestores">SUCURSALES</option>
             <option value="Capturistas">CAPTURISTAS</option>
             <option value="Alternativos">ALTERNATIVOS</option>
         </select>
@@ -37,7 +37,7 @@
 </form>
 
 <hr />
-<h3 style="color:white">Sucursales</h3>
+<h3 style="color:white">Gestores</h3>
 
 <div class="tablaScroll">
     <br />
@@ -121,9 +121,14 @@
                         DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
 
 
-                        int epis = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 select i).Count();
-                        int pausa = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
-                        int dictamen = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
+                        int epis = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+                        .Where(w => w.N.Sucursal == item.Nombre && w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1 && w.N.Canal == "Gestoría").Count();
+
+                        int pausa = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+                        .Where(w => w.N.Sucursal == item.Nombre && w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1 && w.N.Canal == "Gestoría" && w.M.EstatusCaptura == "Pausado").Count();
+
+                        int dictamen = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+                        .Where(w => w.N.Sucursal == item.Nombre && w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1 && w.N.Canal == "Gestoría" && w.M.EstatusCaptura == "Terminado").Count();
 
                         episTotal += epis;
                         pausaTotal += pausa;
@@ -168,6 +173,8 @@
 
     </table>
 </div>
+
+
 
 
 
