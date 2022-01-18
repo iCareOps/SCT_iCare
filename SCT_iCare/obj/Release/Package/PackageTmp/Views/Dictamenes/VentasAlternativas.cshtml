@@ -128,22 +128,12 @@
                 }
             }
 
-            <option style="font-weight:bold" value="AARON DIAZ">AARON DIAZ</option>
-            <option style="font-weight:bold" value="ALEJANDRO VELAZQUEZ">ALEJANDRO VELAZQUEZ</option>
-            <option style="font-weight:bold" value="ANTONIO">ANTONIO</option>
-            <option style="font-weight:bold" value="ELIZABETH">ELIZABETH</option>
-            <option style="font-weight:bold" value="LEOPOLDO MAZA">LEOPOLDO MAZA</option>
-            <option style="font-weight:bold" value="LICENCIAS FEDERALES STINGRAY">LICENCIAS FEDERALES STINGRAY</option>
-            <option style="font-weight:bold" value="LUIS CORTES">LUIS CORTES</option>
-            <option style="font-weight:bold" value="LUIS ENRIQUE">LUIS ENRIQUE</option>
-            <option style="font-weight:bold" value="LUIS GDL">LUIS GDL</option>
-            <option style="font-weight:bold" value="MIRIAM SOL">MIRIAM SOL</option>
-            <option style="font-weight:bold" value="PABLO">PABLO</option>
-            <option style="font-weight:bold" value="ROBERTO BONIFACIO">ROBERTO BONIFACIO</option>
-            <option style="font-weight:bold" value="ROYAL TRANSPORTS">ROYAL TRANSPORTS</option>
-            <option style="font-weight:bold" value="SAYRA">SAYRA</option>
-            <option style="font-weight:bold" value="SERGIO VILLEGAS">SERGIO VILLEGAS</option>
-            <option style="font-weight:bold" value="VICTOR GERICO">VICTOR GERICO</option>
+            @{
+                foreach (var referido in (from i in db.Referido where i.Tipo == "GESTOR ALT" orderby i.Nombre select i))
+                {
+                    <option style="font-weight:bold" value="@referido.Nombre">@referido.Nombre</option>
+                }
+            }
         </select>
         <select name="estatus" style="font-size:2vh" class="form-select">
             @{

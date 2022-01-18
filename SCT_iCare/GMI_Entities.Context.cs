@@ -83,5 +83,6 @@ namespace SCT_iCare
         public virtual DbSet<Tipificaciones> Tipificaciones { get; set; }
         public virtual DbSet<FirmaESP> FirmaESP { get; set; }
         public virtual DbSet<HuellasESP> HuellasESP { get; set; }
+        public virtual DbSet<Canales> Canales { get; set; }
     }
 }
