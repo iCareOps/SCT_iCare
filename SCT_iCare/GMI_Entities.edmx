@@ -50,6 +50,14 @@
           <Property Name="idCanal" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Canal" Type="varchar" MaxLength="100" />
         </EntityType>
+        <EntityType Name="Canales">
+          <Key>
+            <PropertyRef Name="idCanales" />
+          </Key>
+          <Property Name="idCanales" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NombreCanal" Type="varchar" MaxLength="50" />
+          <Property Name="Meta" Type="int" />
+        </EntityType>
         <EntityType Name="Captura">
           <Key>
             <PropertyRef Name="idCaptura" />
@@ -803,6 +811,7 @@
           <EntitySet Name="Biometricos" EntityType="Self.Biometricos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CallCenter" EntityType="Self.CallCenter" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Canal" EntityType="Self.Canal" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Canales" EntityType="Self.Canales" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Captura" EntityType="Self.Captura" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CapturaIncidencia" EntityType="Self.CapturaIncidencia" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CarruselMedico" EntityType="Self.CarruselMedico" Schema="dbo" store:Type="Tables" />
@@ -1526,6 +1535,7 @@
           <EntitySet Name="Tipificaciones" EntityType="DevModel.Tipificaciones" />
           <EntitySet Name="FirmaESP" EntityType="DevModel.FirmaESP" />
           <EntitySet Name="HuellasESP" EntityType="DevModel.HuellasESP" />
+          <EntitySet Name="Canales" EntityType="DevModel.Canales" />
           </EntityContainer>
         <EntityType Name="CapturaIncidencia">
           <Key>
@@ -2541,6 +2551,14 @@
           <Property Name="Huella8" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="idPacienteESP" Type="Int32" />
         </EntityType>
+        <EntityType Name="Canales">
+          <Key>
+            <PropertyRef Name="idCanales" />
+          </Key>
+          <Property Name="idCanales" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NombreCanal" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Meta" Type="Int32" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3394,6 +3412,15 @@
                 <ScalarProperty Name="Huella3" ColumnName="Huella3" />
                 <ScalarProperty Name="Huella2" ColumnName="Huella2" />
                 <ScalarProperty Name="idHuellasESP" ColumnName="idHuellasESP" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Canales">
+            <EntityTypeMapping TypeName="DevModel.Canales">
+              <MappingFragment StoreEntitySet="Canales">
+                <ScalarProperty Name="Meta" ColumnName="Meta" />
+                <ScalarProperty Name="NombreCanal" ColumnName="NombreCanal" />
+                <ScalarProperty Name="idCanales" ColumnName="idCanales" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

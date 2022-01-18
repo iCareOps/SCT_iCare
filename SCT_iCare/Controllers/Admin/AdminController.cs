@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -107,10 +108,184 @@ namespace SCT_iCare.Controllers.Admin
             return View();
         }
 
+        public ActionResult TablaDinamica(string gestor)
+        {
+            if(gestor == "Diarias")
+            {
+                return Redirect("TablaMetasDiarias");
+            }
+            else if(gestor == "Semanales")
+            {
+                return Redirect("TablaMetas");
+            }
+            else if (gestor == "Sucursales")
+            {
+                return Redirect("TablaDinamica");
+            }
+            else if (gestor == "CallCenter")
+            {
+                return Redirect("TablaCallCenter");
+            }
+            else if (gestor == "Gestores")
+            {
+                return Redirect("TablaGestores");
+            }
+            else if (gestor == "Alternativos")
+            {
+                return Redirect("TablaAlternativos");
+            }
+            else
+            {
+                return View();
+            }
+        }
 
-        public ActionResult TablaDinamica()
+        public ActionResult TablaAlternativos(string gestor)
+        {
+            if (gestor == "Diarias")
+            {
+                return Redirect("TablaMetasDiarias");
+            }
+            else if (gestor == "Semanales")
+            {
+                return Redirect("TablaMetas");
+            }
+            else if (gestor == "Sucursales")
+            {
+                return Redirect("TablaDinamica");
+            }
+            else if (gestor == "CallCenter")
+            {
+                return Redirect("TablaCallCenter");
+            }
+            else if (gestor == "Gestores")
+            {
+                return Redirect("TablaGestores");
+            }
+            else if (gestor == "Alternativos")
+            {
+                return Redirect("TablaAlternativos");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        public ActionResult TablaCallCenter(string gestor)
+        {
+            if (gestor == "Diarias")
+            {
+                return Redirect("TablaMetasDiarias");
+            }
+            else if (gestor == "Semanales")
+            {
+                return Redirect("TablaMetas");
+            }
+            else if (gestor == "Sucursales")
+            {
+                return Redirect("TablaDinamica");
+            }
+            else if (gestor == "CallCenter")
+            {
+                return Redirect("TablaCallCenter");
+            }
+            else if (gestor == "Gestores")
+            {
+                return Redirect("TablaGestores");
+            }
+            else if (gestor == "Alternativos")
+            {
+                return Redirect("TablaAlternativos");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        public ActionResult TablaGestores(string gestor)
         {
             return View();
+        }
+
+        public ActionResult TablaMetas(string gestor)
+        {
+            if (gestor == "Diarias")
+            {
+                return Redirect("TablaMetasDiarias");
+            }
+            else if (gestor == "Semanales")
+            {
+                return Redirect("TablaMetas");
+            }
+            else if (gestor == "Sucursales")
+            {
+                return Redirect("TablaDinamica");
+            }
+            else if (gestor == "CallCenter")
+            {
+                return Redirect("TablaCallCenter");
+            }
+            else if (gestor == "Gestores")
+            {
+                return Redirect("TablaGestores");
+            }
+            else if (gestor == "Alternativos")
+            {
+                return Redirect("TablaAlternativos");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        public ActionResult TablaMetasDiarias(string gestor)
+        {
+            if (gestor == "Diarias")
+            {
+                return Redirect("TablaMetasDiarias");
+            }
+            else if (gestor == "Semanales")
+            {
+                return Redirect("TablaMetas");
+            }
+            else if (gestor == "Sucursales")
+            {
+                return Redirect("TablaDinamica");
+            }
+            else if (gestor == "CallCenter")
+            {
+                return Redirect("TablaCallCenter");
+            }
+            else if (gestor == "Gestores")
+            {
+                return Redirect("TablaGestores");
+            }
+            else if (gestor == "Alternativos")
+            {
+                return Redirect("TablaAlternativos");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        public ActionResult EditarMeta(int? id, int? meta)
+        {
+            Canales canales = db.Canales.Find(id);
+
+            canales.Meta = meta == null ? canales.Meta : meta;
+
+            if(ModelState.IsValid)
+            {
+                db.Entry(canales).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            return Redirect("TablaMetas");
         }
 
         [HttpPost]
