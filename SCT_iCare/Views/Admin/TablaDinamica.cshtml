@@ -1,5 +1,4 @@
-﻿<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
+﻿
 @{
     ViewBag.Title = "TablaDinamica";
 
@@ -19,16 +18,7 @@
     int dictamenTotal = 0;
 }
 <br />
-<<<<<<< HEAD
-<h2 style="color:white">Tabla Dinamica EPIs</h2>
-
-@*Boton para ocultar datos*@
-@*<button id="Ocultar/Mostrar" style="background-color:limegreen" class="btn btn-info dropdown-toggle" onchange="javascript: OcultarDatos()">Mostrar dias</button>*@
-<input type="checkbox" id="Ocultar/Mostrar" onchange="javascript: OcultarDatos()" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
-
-=======
 <h2 style="color:white">Tablas Dinámicas</h2>
->>>>>>> 558e00cd7985166ebb8e22cffc197e1e4596a3a1
 <br />
 
 <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/TablaDinamica")">
@@ -51,29 +41,22 @@
 <hr />
 <h3 style="color:white">Sucursales</h3>
 
+
 <div class="tablaScroll">
-    <br />
-    <table class="table  table-bordered table-hover tablas" style="color: #2F2D6B; visibility: visible" id="hidden">
-        <thead>
-            <tr class="bg-primary" style="border-top-color: black; font-size:smaller">
-                <th>
-                    <b>SUCURSAL</b>
-                </th>
+    
+    <table class="table  table-bordered table-hover tablas" style="color: #2F2D6B">
+        
+            <tr @*class="bg-primary" style="border-top-color: black; font-size:smaller"*@>
+                <th class="bg-primary" style="border-top-color: black; font-size: smaller; position: sticky; left: 0">SUCURSAL</th>
 
 
                 @{
-
 
                     while (diaCorrienteHeader <= diaMes)
                     {
                         DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteHeader);
                         string fechaString = fecha.ToString("dd-MM-yy");
-<<<<<<< HEAD
-                        <th colspan="3" style="text-align: center; display: normal">
-                            @*este*@
-=======
-                        <th colspan="3" style="text-align:center" id="hidden">
->>>>>>> 558e00cd7985166ebb8e22cffc197e1e4596a3a1
+                        <th  class="bg-primary" colspan="3" style="text-align: center; border-top-color: black; font-size: smaller" id="hidden">
                             @fechaString
                         </th>
                         diaCorrienteHeader++;
@@ -82,328 +65,108 @@
 
                     diaCorrienteHeader = 1;
                 }
-                <th colspan="3" style="text-align:center">
-<<<<<<< HEAD
-                    @*Esta se queda*@
-=======
->>>>>>> 558e00cd7985166ebb8e22cffc197e1e4596a3a1
+                <th class="bg-primary" colspan="3" style="text-align: center; border-top-color: black; font-size: smaller">
                     TOTAL
                 </th>
             </tr>
-        </thead>
+       
 
-        <tr class="bg-info">
-            <td></td>
+        <tr @*class="bg-info"*@>
+            <th class="bg-info" style="border-top-color: black; font-size: smaller; position: sticky; left: 0">                
+            </th>
             @{
 
 
                 while (diaCorrienteHeader <= diaMes)
                 {
-                    <td style="border-left-color: dimgray; border-left-width: 1.1px; text-align: center; display: normal">
-                        @*este*@
+                    <td class="bg-info" style="border-left-color: dimgray; border-left-width:1.1px; text-align:center" id="hidden">
                         <span class="glyphicon glyphicon-file"></span>
                     </td>
-                    <td style="text-align: center; display: normal">
-                        @*este*@
+                    <td class="bg-info" style="text-align:center" id="hidden">
                         <span class="glyphicon glyphicon-ok"></span>
                     </td>
-                    <td style="border-right-color: dimgray; border-right-width: 1.1px; text-align: center; display: normal">
-                        @*este*@
+                    <td class="bg-info" style="border-right-color: dimgray; border-right-width:1.1px;  text-align:center" id="hidden">
                         <span class="glyphicon glyphicon-pause"></span>
                     </td>
                     diaCorrienteHeader++;
                 }
             }
 
-            <td style="text-align:center">
+            <td class="bg-info" style="text-align:center">
                 <span class="glyphicon glyphicon-file"></span>
             </td>
-            <td style="text-align:center">
+            <td class="bg-info" style="text-align:center">
                 <span class="glyphicon glyphicon-ok"></span>
             </td>
-            <td style="text-align:center">
+            <td class="bg-info" style="text-align:center">
                 <span class="glyphicon glyphicon-pause"></span>
             </td>
-        </tr>
+        </tr>     
 
 
-        @foreach (var item in sucursales)
-        {
+            @foreach (var item in sucursales)
+            {
 
-            <tr @*style="border-top-color: black; border-top-width:2px"*@>
-<<<<<<< HEAD
-=======
+                <tr @*style="border-top-color: black; border-top-width:2px"*@>
 
-                <td style="background-color: whitesmoke; border-top-color:  dimgray; border-top-width:1.1px">
-                    <b>@item.Nombre</b>
-                </td>
+                    <th style="background-color: whitesmoke; border-top-color:  dimgray; border-top-width:1.1px; position: sticky; left: 0">@item.Nombre</th>
 
-                @{
+                    @{
 
 
-                    while (diaCorrienteRow <= diaMes)
-                    {
-                        DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
-                        DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
->>>>>>> 558e00cd7985166ebb8e22cffc197e1e4596a3a1
-
-                <td style="background-color: whitesmoke; border-top-color:  dimgray; border-top-width:1.1px">
-                    <b>@item.Nombre</b>
-                </td>
-
-<<<<<<< HEAD
-                @{
-=======
-                        int epis = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 select i).Count();
-                        int pausa = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
-                        int dictamen = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
->>>>>>> 558e00cd7985166ebb8e22cffc197e1e4596a3a1
-
-                        episTotal += epis;
-                        pausaTotal += pausa;
-                        dictamenTotal += dictamen;
-
-<<<<<<< HEAD
-                    while (diaCorrienteRow <= diaMes)
-                    {
-                        DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
-                        DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
+                        while (diaCorrienteRow <= diaMes)
+                        {
+                            DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
+                            DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
 
 
-                        int epis = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 select i).Count();
-                        int pausa = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
-                        int dictamen = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
+                            int epis = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 select i).Count();
+                            int pausa = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
+                            int dictamen = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
 
-                        episTotal += epis;
-                        pausaTotal += pausa;
-                        dictamenTotal += dictamen;
+                            episTotal += epis;
+                            pausaTotal += pausa;
+                            dictamenTotal += dictamen;
 
-                        <td style="border-left-color: dimgray; border-left-width: 1.2px; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; display: normal">
-                            @*este*@
-                            @epis
-                        </td>
-                        <td style="border-top-color: dimgray; border-top-width: 1.1px; text-align: center; display: normal">
-                            @*este*@
-                            @dictamen
-                        </td>
-                        <td style="border-right-color: dimgray; border-right-width: 1.2px; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; display: normal">
-                            @*este*@
-=======
-                        <td style="border-left-color:  dimgray; border-left-width:1.2px;border-top-color:  dimgray; border-top-width:1.1px; text-align: center" id="hidden">
-                            @epis
-                        </td>
-                        <td style="border-top-color:  dimgray; border-top-width:1.1px; text-align: center" id="hidden">
-                            @dictamen
-                        </td>
-                        <td style="border-right-color:  dimgray; border-right-width:1.2px;border-top-color:  dimgray; border-top-width:1.1px; text-align: center" id="hidden">
->>>>>>> 558e00cd7985166ebb8e22cffc197e1e4596a3a1
-                            @pausa
-                        </td>
-                        diaCorrienteRow++;
+                            <td style="border-left-color: dimgray; border-left-width: 1.2px; border-top-color: dimgray; border-top-width: 1.1px; text-align: center">
+                                @epis
+                            </td>
+                            <td style="border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
+                                @dictamen
+                            </td>
+                            <td style="border-right-color:  dimgray; border-right-width:1.2px;border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
+                                @pausa
+                            </td>
+                            diaCorrienteRow++;
 
+                        }
+
+                        diaCorrienteRow = 1;
+                    }
+                    <td style="background-color: whitesmoke;border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
+                        <b>@episTotal</b>
+                    </td>
+                    <td style="background-color: whitesmoke; border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
+                        <b>@dictamenTotal</b>
+                    </td>
+                    <td style="background-color: whitesmoke; border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
+                        <b>@pausaTotal</b>
+                    </td>
+
+                    @{
+                        episTotal = 0;
+                        pausaTotal = 0;
+                        dictamenTotal = 0;
                     }
 
-                    diaCorrienteRow = 1;
-                }
-                <td style="background-color: whitesmoke;border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
-                    <b>@episTotal</b>
-                </td>
-                <td style="background-color: whitesmoke; border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
-                    <b>@dictamenTotal</b>
-                </td>
-                <td style="background-color: whitesmoke; border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
-                    <b>@pausaTotal</b>
-                </td>
-<<<<<<< HEAD
+                </tr>
 
-                @{
-                    episTotal = 0;
-                    pausaTotal = 0;
-                    dictamenTotal = 0;
-                }
+                flag += 1;
 
-            </tr>
-
-            flag += 1;
-
-        }
+            }    
 
     </table>
 </div>
-
-<div class="tablaScroll">
-    <br />
-    <table class="table  table-bordered table-hover tablas" style="color: #2F2D6B; visibility: hidden" id="hidden_total">
-        <thead>
-            <tr class="bg-primary" style="border-top-color: black; font-size:smaller">
-                <th>
-                    <b>Sucursal</b>
-                </th>
-
-
-                @{
-
-
-                    while (diaCorrienteHeader <= diaMes)
-                    {
-                        DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteHeader);
-                        string fechaString = fecha.ToString("dd-MM-yy");
-                        <th colspan="3" style="text-align: center; display: none">
-                            @*este*@
-                            @fechaString
-                        </th>
-                        diaCorrienteHeader++;
-
-                    }
-
-                    diaCorrienteHeader = 1;
-                }
-                <th colspan="3" style="text-align:center">
-                    @*Esta se queda*@
-                    TOTAL
-                </th>
-            </tr>
-        </thead>
-
-        <tr class="bg-info">
-            <td></td>
-            @{
-
-
-                while (diaCorrienteHeader <= diaMes)
-                {
-                    <td style="border-left-color: dimgray; border-left-width: 1.1px; text-align: center; display: none">
-                        @*este*@
-                        <span class="glyphicon glyphicon-file"></span>
-                    </td>
-                    <td style="text-align: center; display: none">
-                        @*este*@
-                        <span class="glyphicon glyphicon-ok"></span>
-                    </td>
-                    <td style="border-right-color: dimgray; border-right-width: 1.1px; text-align: center; display: none">
-                        @*este*@
-                        <span class="glyphicon glyphicon-pause"></span>
-                    </td>
-                    diaCorrienteHeader++;
-                }
-            }
-
-            <td style="text-align:center">
-                <span class="glyphicon glyphicon-file"></span>
-            </td>
-            <td style="text-align:center">
-                <span class="glyphicon glyphicon-ok"></span>
-            </td>
-            <td style="text-align:center">
-                <span class="glyphicon glyphicon-pause"></span>
-            </td>
-        </tr>
-
-
-        @foreach (var item in sucursales)
-        {
-
-            <tr @*style="border-top-color: black; border-top-width:2px"*@>
-
-                <td style="background-color: whitesmoke; border-top-color:  dimgray; border-top-width:1.1px">
-                    <b>@item.Nombre</b>
-                </td>
-
-                @{
-
-
-                    while (diaCorrienteRow <= diaMes)
-                    {
-                        DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
-                        DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
-
-
-                        int epis = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 select i).Count();
-                        int pausa = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
-                        int dictamen = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
-
-                        episTotal += epis;
-                        pausaTotal += pausa;
-                        dictamenTotal += dictamen;
-
-                        <td style="border-left-color: dimgray; border-left-width: 1.2px; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; display: none">
-                            @*este*@
-                            @epis
-                        </td>
-                        <td style="border-top-color: dimgray; border-top-width: 1.1px; text-align: center; display: none">
-                            @*este*@
-                            @dictamen
-                        </td>
-                        <td style="border-right-color: dimgray; border-right-width: 1.2px; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; display: none">
-                            @*este*@
-                            @pausa
-                        </td>
-                        diaCorrienteRow++;
-
-                    }
-
-                    diaCorrienteRow = 1;
-                }
-                <td style="background-color: whitesmoke;border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
-                    <b>@episTotal</b>
-                </td>
-                <td style="background-color: whitesmoke; border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
-                    <b>@dictamenTotal</b>
-                </td>
-                <td style="background-color: whitesmoke; border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
-                    <b>@pausaTotal</b>
-                </td>
-
-                @{
-                    episTotal = 0;
-                    pausaTotal = 0;
-                    dictamenTotal = 0;
-                }
-
-=======
-
-                @{
-                    episTotal = 0;
-                    pausaTotal = 0;
-                    dictamenTotal = 0;
-                }
-
->>>>>>> 558e00cd7985166ebb8e22cffc197e1e4596a3a1
-            </tr>
-
-            flag += 1;
-
-        }
-
-    </table>
-</div>
-
-
-@*Seccion Scripts*@
-
-<script type="text/javascript">
-
-    function OcultarDatos() {
-
-        TriggerButton = document.getElementById("Ocultar/Mostrar");
-        HiddenData = document.getElementById("hidden");
-        ShowData = document.getElementById("hidden_total");
-
-        if (TriggerButton.checked) {
-
-            HiddenData.style.visibility = 'hidden';
-            ShowData.style.visibility = 'visible';
-        }
-
-        else {
-
-            HiddenData.style.visibility = 'visible';
-            ShowData.style.visibility = 'hidden';
-
-        }
-    }
-</script>
-
 
 
 
