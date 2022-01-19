@@ -43,7 +43,7 @@
                 .Where(w => w.O.M.FinalCaptura != null && w.P.Tipo == "Empresa");
 }
 <br />
-<h2 style="color:white">Tablas Dinámicas</h2>
+<h2 style="color:white">Metas Diarias</h2>
 <br />
 
 <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/TablaMetasDiarias")">
@@ -63,8 +63,6 @@
     </div>
 </form>
 
-<hr />
-<h3 style="color:white">Metas Diarias</h3>
 
 <div class="tablaScroll">
     <br />
@@ -161,7 +159,7 @@
                     dictamenTotal += diferenciaHoy;
 
                 }
-                else if (item.NombreCanal == "Alternativos")
+                else if (item.NombreCanal == "ALT")
                 {
                     realizadoHoy = realizadosALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
                     diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
@@ -234,7 +232,7 @@
                     episTotal += realizadoHoy;
                     dictamenTotal += diferenciaHoy;
                 }
-                else if (item.NombreCanal == "Alternativos")
+                else if (item.NombreCanal == "ALT")
                 {
                     realizadoHoy = realizadosALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
                     diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
@@ -288,10 +286,10 @@
         }
 
     <tr>
-        <td class="bg-info">
+        <td class="bg-info" style="border-top-color:  dimgray; border-top-width:1.1px">
             <b>TOTALES</b>
         </td>
-        <td style="background-color: whitesmoke;border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
+        <td style="background-color: whitesmoke;border-top-color:  dimgray; border-top-width:1.1px; text-align: center; border-left-color:  dimgray; border-left-width:1.2px;">
             <b>@episTotalTOTAL</b>
         </td>
         <td style="background-color: whitesmoke;border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
@@ -331,7 +329,7 @@
                         {
                             metaEmpresas = meta.Meta;
                         }
-                        else if (meta.NombreCanal == "Alternativos")
+                        else if (meta.NombreCanal == "ALT")
                         {
                             metaAlternativos = meta.Meta;
                         }
@@ -362,11 +360,11 @@
                     dictamenTotalFooter += (realizadoHoy - (metaEmpresas) / 30);
 
 
-                    <td style="border-left-color:  dimgray; border-left-width:1.2px;border-top-color:  dimgray; border-top-width:1.1px; text-align: center" id="hidden">
-                        @episTotalFooter 
+                    <td style="border-left-color:  dimgray; border-left-width:1.2px;border-top-color:  dimgray; border-top-width:1.1px; text-align: center; background-color: whitesmoke;" id="hidden">
+                                <b>@episTotalFooter</b>
                     </td>
-                    <td style="border-top-color:  dimgray; border-top-width:1.1px; text-align: center" id="hidden">
-                        @dictamenTotalFooter
+                    <td style="border-top-color:  dimgray; border-top-width:1.1px; text-align: center; background-color: whitesmoke;" id="hidden">
+                        <b>@dictamenTotalFooter</b>
                     </td>
 
                     
