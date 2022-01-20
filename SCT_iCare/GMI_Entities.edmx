@@ -172,6 +172,15 @@
           <Property Name="Ciudad" Type="varchar" MaxLength="100" />
           <Property Name="Estado" Type="varchar" MaxLength="100" />
         </EntityType>
+        <EntityType Name="ConteoDoctores2">
+          <Key>
+            <PropertyRef Name="idConteoDoctor" />
+          </Key>
+          <Property Name="idConteoDoctor" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Doctor" Type="varchar" MaxLength="100" />
+          <Property Name="Fecha" Type="datetime" />
+          <Property Name="Citas" Type="varchar" MaxLength="10" />
+        </EntityType>
         <EntityType Name="DeclaracionSaludESP">
           <Key>
             <PropertyRef Name="idDocumentacionESP" />
@@ -214,6 +223,13 @@
           <Property Name="Nombre" Type="varchar" MaxLength="200" />
           <Property Name="idSucursal" Type="int" />
           <Property Name="ALT" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="Doctores2">
+          <Key>
+            <PropertyRef Name="idDoctor2" />
+          </Key>
+          <Property Name="idDoctor2" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NombreDoctor" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="DoctorModulo">
           <Key>
@@ -819,11 +835,13 @@
           <EntitySet Name="CERTIFICADO" EntityType="Self.CERTIFICADO" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Cita" EntityType="Self.Cita" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Ciudades" EntityType="Self.Ciudades" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ConteoDoctores2" EntityType="Self.ConteoDoctores2" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DeclaracionSaludESP" EntityType="Self.DeclaracionSaludESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Dictamen" EntityType="Self.Dictamen" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DictamenESP" EntityType="Self.DictamenESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DictamenProblema" EntityType="Self.DictamenProblema" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Doctores" EntityType="Self.Doctores" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Doctores2" EntityType="Self.Doctores2" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DoctorModulo" EntityType="Self.DoctorModulo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DocumentosESP" EntityType="Self.DocumentosESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EKGRandom" EntityType="Self.EKGRandom" Schema="dbo" store:Type="Tables" />
@@ -1536,6 +1554,8 @@
           <EntitySet Name="FirmaESP" EntityType="DevModel.FirmaESP" />
           <EntitySet Name="HuellasESP" EntityType="DevModel.HuellasESP" />
           <EntitySet Name="Canales" EntityType="DevModel.Canales" />
+          <EntitySet Name="ConteoDoctores2" EntityType="DevModel.ConteoDoctores2" />
+          <EntitySet Name="Doctores2" EntityType="DevModel.Doctores2" />
           </EntityContainer>
         <EntityType Name="CapturaIncidencia">
           <Key>
@@ -2559,6 +2579,22 @@
           <Property Name="NombreCanal" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Meta" Type="Int32" />
         </EntityType>
+        <EntityType Name="ConteoDoctores2">
+          <Key>
+            <PropertyRef Name="idConteoDoctor" />
+          </Key>
+          <Property Name="idConteoDoctor" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Doctor" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="Citas" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Doctores2">
+          <Key>
+            <PropertyRef Name="idDoctor2" />
+          </Key>
+          <Property Name="idDoctor2" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NombreDoctor" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3421,6 +3457,24 @@
                 <ScalarProperty Name="Meta" ColumnName="Meta" />
                 <ScalarProperty Name="NombreCanal" ColumnName="NombreCanal" />
                 <ScalarProperty Name="idCanales" ColumnName="idCanales" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ConteoDoctores2">
+            <EntityTypeMapping TypeName="DevModel.ConteoDoctores2">
+              <MappingFragment StoreEntitySet="ConteoDoctores2">
+                <ScalarProperty Name="Citas" ColumnName="Citas" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="Doctor" ColumnName="Doctor" />
+                <ScalarProperty Name="idConteoDoctor" ColumnName="idConteoDoctor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Doctores2">
+            <EntityTypeMapping TypeName="DevModel.Doctores2">
+              <MappingFragment StoreEntitySet="Doctores2">
+                <ScalarProperty Name="NombreDoctor" ColumnName="NombreDoctor" />
+                <ScalarProperty Name="idDoctor2" ColumnName="idDoctor2" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

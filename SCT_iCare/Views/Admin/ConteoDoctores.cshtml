@@ -1,0 +1,147 @@
+﻿
+@{
+    ViewBag.Title = "ConteoDoctores";
+
+    GMIEntities db = new GMIEntities();
+
+    var doctores = db.Doctores2.OrderBy(o => o.NombreDoctor);
+
+    int flag = 1;
+
+    int diaCorrienteHeader = 1;
+    int diaCorrienteRow = 1;
+    int diaCorrienteFooter = 1;
+
+    int diaMes = DateTime.Today.Day;
+
+    int episTotal = 0;
+    int pausaTotal = 0;
+    int dictamenTotal = 0;
+
+
+    int episTotalTOTAL = 0;
+    int pausaTotalTOTAL = 0;
+    int dictamenTotalTOTAL = 0;
+
+    int episTotalFooter = 0;
+    int pausaTotalFooter = 0;
+    int dictamenTotalFooter = 0;
+}
+<br />
+<h2 style="color:white">Conteo por Doctor</h2>
+<br />
+
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/ConteoDoctores")">
+    <div>
+        <input type="month" class="form-control" />
+        <input type="submit" class="btn btn-info" value="Enviar" />
+    </div>
+</form>
+
+<br />
+
+<div class="tablaScroll">
+    <br />
+    <table class="table  table-bordered table-hover tablas" style="color: #2F2D6B">
+        <thead>
+            <tr class="bg-primary" style="border-top-color: black; font-size:smaller">
+                <th>
+                    <b>DOCTOR</b>
+                </th>
+                <th style="text-align:center">
+                    TOTAL
+                </th>
+
+                @{
+
+
+                    while (diaCorrienteHeader <= diaMes)
+                    {
+                        DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteHeader);
+                        string fechaString = fecha.ToString("dd-MM-yy");
+                        <th style="text-align:center" id="hidden">
+                            @fechaString
+                        </th>
+                        diaCorrienteHeader++;
+
+                    }
+
+                    diaCorrienteHeader = 1;
+                }
+            </tr>
+        </thead>
+
+
+        @foreach (var item in doctores)
+        {
+
+            <tr @*style="border-top-color: black; border-top-width:2px"*@>
+
+                <td class="bg-info" style="border-top-color:  dimgray; border-top-width:1.1px">
+                    <b>@item.NombreDoctor</b>
+                </td>
+
+                @{
+
+
+                    while (diaCorrienteRow <= diaMes)
+                    {
+                        DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
+                        DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
+
+
+                        var epis = (from i in db.ConteoDoctores2 where i.Doctor == item.NombreDoctor && i.Fecha >= fecha && i.Fecha < fecha1 select i.Citas).FirstOrDefault();
+
+                        episTotal += Convert.ToInt32(epis);
+
+                        diaCorrienteRow++;
+
+                    }
+
+                    episTotalTOTAL += episTotal;
+
+                    diaCorrienteRow = 1;
+                }
+
+                <td style="background-color: whitesmoke;border-top-color:  dimgray; border-top-width:1.1px; text-align: center; border-left-color:  dimgray; border-left-width:1.1px;">
+                    <b>@episTotal</b>
+                </td>
+
+                @{
+
+
+                    while (diaCorrienteRow <= diaMes)
+                    {
+                        DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
+                        DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
+
+
+                        var epis = (from i in db.ConteoDoctores2 where i.Doctor == item.NombreDoctor && i.Fecha >= fecha && i.Fecha < fecha1 select i.Citas).FirstOrDefault();
+
+                        episTotal += Convert.ToInt32(epis);
+
+                        <td style="border-left-color:  dimgray; border-left-width:1.2px;border-top-color:  dimgray; border-top-width:1.1px; text-align: center" id="hidden">
+                            @epis
+                        </td>
+                        diaCorrienteRow++;
+
+                    }
+
+                    diaCorrienteRow = 1;
+                }
+
+                @{
+                    episTotal = 0;
+                }
+
+            </tr>
+
+            flag += 1;
+
+        }
+
+    </table>
+</div>
+
+
+
