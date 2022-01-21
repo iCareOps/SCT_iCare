@@ -68,11 +68,11 @@
     <br />
     <table class="table  table-bordered table-hover tablas" style="color: #2F2D6B">
         <thead>
-            <tr class="bg-primary" style="border-top-color: black; font-size:smaller">
-                <th>
+            <tr @*class="bg-primary" style="border-top-color: black; font-size:smaller"*@>
+                <th class="bg-primary" style="border-top-color: black; font-size: smaller; position: sticky; left: 0">
                     <b>CANAL</b>
                 </th>
-                <th colspan="2" style="text-align:center">
+                <th class="bg-primary" style="border-top-color: black; font-size: smaller; text-align: center; position: sticky; left: 77px" colspan="2">
                     TOTAL
                 </th>
 
@@ -84,9 +84,9 @@
                     {
                         DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteHeader);
                         string fechaString = fecha.ToString("dd-MM-yy");
-                        <th colspan="2" style="text-align:center" id="hidden">
+                        <td class="bg-primary" style="border-top-color: black; font-size: smaller; text-align: center" colspan="2" id="hidden">
                             @fechaString
-                        </th>
+                        </td>
                         diaCorrienteHeader++;
 
                     }
@@ -96,288 +96,288 @@
             </tr>
         </thead>
 
-        <tr class="bg-info">
-            <td></td>
-            @{
+        <tr @*class="bg-info"*@>
 
+            <th class="bg-info" style="position: sticky; left: 0"></th>
+
+            <th class="bg-info" style="text-align: center; position: sticky; left: 77px">
+                Realizados
+            </th>
+            <th class="bg-info" style="text-align: center; position: sticky; left: 159px">
+                Diferencia
+            </th>
+
+            @{
 
                 while (diaCorrienteHeader <= diaMes)
                 {
-                    <td style="border-left-color: dimgray; border-left-width:1.1px; text-align:center" id="hidden">
+                    <td class="bg-info" style="border-left-color: dimgray; border-left-width:1.1px; text-align:center" id="hidden">
                         Realizados
                     </td>
-                    <td style="text-align:center" id="hidden">
+                    <td class="bg-info" style="text-align:center" id="hidden">
                         Diferencia
                     </td>
                     diaCorrienteHeader++;
                 }
             }
 
-            <td style="text-align:center">
-                Realizados
-            </td>
-            <td style="text-align:center">
-                Diferencia
-            </td>
+
         </tr>
 
 
         @foreach (var item in canales)
         {
 
-    <tr @*style="border-top-color: black; border-top-width:2px"*@>
+            <tr @*style="border-top-color: black; border-top-width:2px"*@>
 
-        <td class="bg-info" style="border-top-color:  dimgray; border-top-width:1.1px">
-            <b>@item.NombreCanal</b>
-        </td>
+                <th class="bg-info" style="border-top-color: dimgray; border-top-width: 1.1px; position: sticky; left: 0">
+                    <b>@item.NombreCanal</b>
+                </th>
 
-        @{
+                @{
 
-            while (diaCorrienteRow <= diaMes)
-            {
-                DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
-                DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
+                    while (diaCorrienteRow <= diaMes)
+                    {
+                        DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
+                        DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
 
-                int realizadoHoy = 0;
-                int diferenciaHoy = 0;
+                        int realizadoHoy = 0;
+                        int diferenciaHoy = 0;
 
-                if (item.NombreCanal == "Call Center")
-                {
-                    realizadoHoy = realizadosCallCenter.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
-                    diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
+                        if (item.NombreCanal == "Call Center")
+                        {
+                            realizadoHoy = realizadosCallCenter.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
+                            diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
 
-                    episTotal += realizadoHoy;
-                    dictamenTotal += diferenciaHoy;
+                            episTotal += realizadoHoy;
+                            dictamenTotal += diferenciaHoy;
 
+                        }
+                        else if (item.NombreCanal == "CATEM")
+                        {
+                            realizadoHoy = realizadosCATEM.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                            diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
+
+                            episTotal += realizadoHoy;
+                            dictamenTotal += diferenciaHoy;
+
+                        }
+                        else if (item.NombreCanal == "ALT")
+                        {
+                            realizadoHoy = realizadosALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
+                            diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
+
+                            episTotal += realizadoHoy;
+                            dictamenTotal += diferenciaHoy;
+
+                        }
+                        else if (item.NombreCanal == "Gestores")
+                        {
+                            realizadoHoy = realizadosGestores.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                            diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
+
+                            episTotal += realizadoHoy;
+                            dictamenTotal += diferenciaHoy;
+
+                        }
+                        else if (item.NombreCanal == "Empresas")
+                        {
+                            realizadoHoy = realizadosEmpresas.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                            diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
+
+                            episTotal += realizadoHoy;
+                            dictamenTotal += diferenciaHoy;
+
+                        }
+
+                        //episTotal += epis;
+                        //pausaTotal += pausa;
+                        //dictamenTotal += dictamen;
+                        diaCorrienteRow++;
+
+                    }
+
+                    episTotalTOTAL += episTotal;
+                    dictamenTotalTOTAL += dictamenTotal;
+
+                    <th style="background-color: whitesmoke; border-top-color: dimgray; border-left-width: 1.2px; border-left-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 77px">
+                        <b>@episTotal</b>
+                    </th>
+                    <th style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 159px">
+                        <b>@dictamenTotal</b>
+                    </th>
+
+                    diaCorrienteRow = 1;
+
+
+                    while (diaCorrienteRow <= diaMes)
+                    {
+                        DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
+                        DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
+
+                        int realizadoHoy = 0;
+                        int diferenciaHoy = 0;
+
+                        if (item.NombreCanal == "Call Center")
+                        {
+                            realizadoHoy = realizadosCallCenter.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
+                            diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
+
+                            episTotal += realizadoHoy;
+                            dictamenTotal += diferenciaHoy;
+
+                        }
+                        else if (item.NombreCanal == "CATEM")
+                        {
+                            realizadoHoy = realizadosCATEM.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                            diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
+
+                            episTotal += realizadoHoy;
+                            dictamenTotal += diferenciaHoy;
+                        }
+                        else if (item.NombreCanal == "ALT")
+                        {
+                            realizadoHoy = realizadosALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
+                            diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
+
+                            episTotal += realizadoHoy;
+                            dictamenTotal += diferenciaHoy;
+                        }
+                        else if (item.NombreCanal == "Gestores")
+                        {
+                            realizadoHoy = realizadosGestores.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                            diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
+
+                            episTotal += realizadoHoy;
+                            dictamenTotal += diferenciaHoy;
+                        }
+                        else if (item.NombreCanal == "Empresas")
+                        {
+                            realizadoHoy = realizadosEmpresas.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                            diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
+
+                            episTotal += realizadoHoy;
+                            dictamenTotal += diferenciaHoy;
+                        }
+
+                        //episTotal += epis;
+                        //pausaTotal += pausa;
+                        //dictamenTotal += dictamen;
+
+                        <td style="border-left-color:  dimgray; border-left-width:1.2px;border-top-color:  dimgray; border-top-width:1.1px; text-align: center" id="hidden">
+                            @realizadoHoy
+                        </td>
+                        <td style="border-top-color:  dimgray; border-top-width:1.1px; text-align: center" id="hidden">
+                            @diferenciaHoy
+                        </td>
+                        diaCorrienteRow++;
+
+                    }
+
+                    diaCorrienteRow = 1;
                 }
-                else if (item.NombreCanal == "CATEM")
-                {
-                    realizadoHoy = realizadosCATEM.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                    diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
 
-                    episTotal += realizadoHoy;
-                    dictamenTotal += diferenciaHoy;
-
-                }
-                else if (item.NombreCanal == "ALT")
-                {
-                    realizadoHoy = realizadosALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
-                    diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
-
-                    episTotal += realizadoHoy;
-                    dictamenTotal += diferenciaHoy;
-
-                }
-                else if (item.NombreCanal == "Gestores")
-                {
-                    realizadoHoy = realizadosGestores.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                    diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
-
-                    episTotal += realizadoHoy;
-                    dictamenTotal += diferenciaHoy;
-
-                }
-                else if (item.NombreCanal == "Empresas")
-                {
-                    realizadoHoy = realizadosEmpresas.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                    diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
-
-                    episTotal += realizadoHoy;
-                    dictamenTotal += diferenciaHoy;
-
+                @{
+                    episTotal = 0;
+                    dictamenTotal = 0;
                 }
 
-                //episTotal += epis;
-                //pausaTotal += pausa;
-                //dictamenTotal += dictamen;
-                diaCorrienteRow++;
-
-            }
-
-            episTotalTOTAL += episTotal;
-            dictamenTotalTOTAL += dictamenTotal;
-
-            <td style="background-color: whitesmoke;border-top-color:  dimgray; border-left-width:1.2px; border-left-color: dimgray; border-top-width:1.1px; text-align: center">
-                <b>@episTotal</b>
-            </td>
-            <td style="background-color: whitesmoke; border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
-                <b>@dictamenTotal</b>
-            </td>
-
-            diaCorrienteRow = 1;
-
-
-            while (diaCorrienteRow <= diaMes)
-            {
-                DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
-                DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
-
-                int realizadoHoy = 0;
-                int diferenciaHoy = 0;
-
-                if (item.NombreCanal == "Call Center")
-                {
-                    realizadoHoy = realizadosCallCenter.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
-                    diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
-
-                    episTotal += realizadoHoy;
-                    dictamenTotal += diferenciaHoy;
-
-                }
-                else if (item.NombreCanal == "CATEM")
-                {
-                    realizadoHoy = realizadosCATEM.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                    diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
-
-                    episTotal += realizadoHoy;
-                    dictamenTotal += diferenciaHoy;
-                }
-                else if (item.NombreCanal == "ALT")
-                {
-                    realizadoHoy = realizadosALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
-                    diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
-
-                    episTotal += realizadoHoy;
-                    dictamenTotal += diferenciaHoy;
-                }
-                else if (item.NombreCanal == "Gestores")
-                {
-                    realizadoHoy = realizadosGestores.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                    diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
-
-                    episTotal += realizadoHoy;
-                    dictamenTotal += diferenciaHoy;
-                }
-                else if (item.NombreCanal == "Empresas")
-                {
-                    realizadoHoy = realizadosEmpresas.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                    diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
-
-                    episTotal += realizadoHoy;
-                    dictamenTotal += diferenciaHoy;
-                }
-
-                //episTotal += epis;
-                //pausaTotal += pausa;
-                //dictamenTotal += dictamen;
-
-                <td style="border-left-color:  dimgray; border-left-width:1.2px;border-top-color:  dimgray; border-top-width:1.1px; text-align: center" id="hidden">
-                    @realizadoHoy
-                </td>
-                <td style="border-top-color:  dimgray; border-top-width:1.1px; text-align: center" id="hidden">
-                    @diferenciaHoy
-                </td>
-                diaCorrienteRow++;
-
-            }
-
-            diaCorrienteRow = 1;
-        }
-
-        @{
-            episTotal = 0;
-            dictamenTotal = 0;
-        }
-
-    </tr>
+            </tr>
 
             flag += 1;
 
         }
 
-    <tr>
-        <td class="bg-info" style="border-top-color:  dimgray; border-top-width:1.1px">
-            <b>TOTALES</b>
-        </td>
-        <td style="background-color: whitesmoke;border-top-color:  dimgray; border-top-width:1.1px; text-align: center; border-left-color:  dimgray; border-left-width:1.2px;">
-            <b>@episTotalTOTAL</b>
-        </td>
-        <td style="background-color: whitesmoke;border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
-            <b>@dictamenTotalTOTAL</b>
-        </td>
+        <tr>
+            <th class="bg-info" style="border-top-color: dimgray; border-top-width: 1.1px; position: sticky; left: 0">
+                <b>TOTALES</b>
+            </th>
+            <th style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; border-left-color: dimgray; border-left-width: 1.2px; position: sticky; left: 77px">
+                <b>@episTotalTOTAL</b>
+            </th>
+            <th style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 159px">
+                <b>@dictamenTotalTOTAL</b>
+            </th>
 
-        @{
-            foreach (var item in canales)
-            {
-                while (diaCorrienteFooter <= diaMes)
+            @{
+                foreach (var item in canales)
                 {
-                    DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteFooter);
-                    DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteFooter).AddDays(1);
-
-                    int? realizadoHoy = 0;
-                    int? diferenciaHoy = 0;
-                    episTotalFooter = 0;
-                    dictamenTotalFooter = 0;
-
-                    int? metaCallCenter = 0;
-                    int? metaCATEM = 0;
-                    int? metaEmpresas = 0;
-                    int? metaAlternativos = 0;
-                    int? metaGestores = 0;
-
-                    foreach (var meta in canales)
+                    while (diaCorrienteFooter <= diaMes)
                     {
-                        if(meta.NombreCanal == "Call Center")
+                        DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteFooter);
+                        DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteFooter).AddDays(1);
+
+                        int? realizadoHoy = 0;
+                        int? diferenciaHoy = 0;
+                        episTotalFooter = 0;
+                        dictamenTotalFooter = 0;
+
+                        int? metaCallCenter = 0;
+                        int? metaCATEM = 0;
+                        int? metaEmpresas = 0;
+                        int? metaAlternativos = 0;
+                        int? metaGestores = 0;
+
+                        foreach (var meta in canales)
                         {
-                            metaCallCenter = meta.Meta;
+                            if (meta.NombreCanal == "Call Center")
+                            {
+                                metaCallCenter = meta.Meta;
+                            }
+                            else if (meta.NombreCanal == "CATEM")
+                            {
+                                metaCATEM = meta.Meta;
+                            }
+                            else if (meta.NombreCanal == "Empresas")
+                            {
+                                metaEmpresas = meta.Meta;
+                            }
+                            else if (meta.NombreCanal == "ALT")
+                            {
+                                metaAlternativos = meta.Meta;
+                            }
+                            else if (meta.NombreCanal == "Gestores")
+                            {
+                                metaGestores = meta.Meta;
+                            }
                         }
-                        else if (meta.NombreCanal == "CATEM")
-                        {
-                            metaCATEM = meta.Meta;
-                        }
-                        else if (meta.NombreCanal == "Empresas")
-                        {
-                            metaEmpresas = meta.Meta;
-                        }
-                        else if (meta.NombreCanal == "ALT")
-                        {
-                            metaAlternativos = meta.Meta;
-                        }
-                        else if (meta.NombreCanal == "Gestores")
-                        {
-                            metaGestores = meta.Meta;
-                        }
+
+                        episTotalFooter += realizadosCallCenter.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
+                        realizadoHoy = realizadosCallCenter.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
+                        dictamenTotalFooter += (realizadoHoy - (metaCallCenter) / 30);
+
+                        episTotalFooter += realizadosCATEM.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                        realizadoHoy = realizadosCATEM.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                        dictamenTotalFooter += (realizadoHoy - (metaCATEM) / 30);
+
+                        episTotalFooter += realizadosALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
+                        realizadoHoy = realizadosALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
+                        dictamenTotalFooter += (realizadoHoy - (metaAlternativos) / 30);
+
+                        episTotalFooter += realizadosGestores.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                        realizadoHoy = realizadosGestores.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                        dictamenTotalFooter += (realizadoHoy - (metaGestores) / 30);
+
+                        episTotalFooter += realizadosEmpresas.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                        realizadoHoy = realizadosEmpresas.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                        dictamenTotalFooter += (realizadoHoy - (metaEmpresas) / 30);
+
+
+                        <td style="border-left-color:  dimgray; border-left-width:1.2px;border-top-color:  dimgray; border-top-width:1.1px; text-align: center; background-color: whitesmoke;" id="hidden">
+                            <b>@episTotalFooter</b>
+                        </td>
+                        <td style="border-top-color:  dimgray; border-top-width:1.1px; text-align: center; background-color: whitesmoke;" id="hidden">
+                            <b>@dictamenTotalFooter</b>
+                        </td>
+
+
+                        diaCorrienteFooter++;
+
                     }
-
-                    episTotalFooter += realizadosCallCenter.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
-                    realizadoHoy= realizadosCallCenter.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
-                    dictamenTotalFooter += (realizadoHoy - (metaCallCenter) / 30);
-
-                    episTotalFooter += realizadosCATEM.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                    realizadoHoy= realizadosCATEM.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                    dictamenTotalFooter += (realizadoHoy - (metaCATEM) / 30);
-
-                    episTotalFooter += realizadosALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
-                    realizadoHoy= realizadosALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
-                    dictamenTotalFooter += (realizadoHoy - (metaAlternativos) / 30);
-
-                    episTotalFooter += realizadosGestores.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                    realizadoHoy= realizadosGestores.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                    dictamenTotalFooter += (realizadoHoy - (metaGestores) / 30);
-
-                    episTotalFooter += realizadosEmpresas.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                    realizadoHoy= realizadosEmpresas.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                    dictamenTotalFooter += (realizadoHoy - (metaEmpresas) / 30);
-
-
-                    <td style="border-left-color:  dimgray; border-left-width:1.2px;border-top-color:  dimgray; border-top-width:1.1px; text-align: center; background-color: whitesmoke;" id="hidden">
-                                <b>@episTotalFooter</b>
-                    </td>
-                    <td style="border-top-color:  dimgray; border-top-width:1.1px; text-align: center; background-color: whitesmoke;" id="hidden">
-                        <b>@dictamenTotalFooter</b>
-                    </td>
-
-                    
-                    diaCorrienteFooter++;
-
                 }
             }
-        }
 
-    </tr>
+        </tr>
 
     </table>
 </div>
-
-
-
