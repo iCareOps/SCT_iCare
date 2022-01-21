@@ -54,23 +54,22 @@
     <table class="table  table-bordered table-hover tablas" style="color: #2F2D6B">
         <thead>
             <tr @*class="bg-primary" style="border-top-color: black; font-size:smaller"*@>
-                <th class="bg-primary" style="border-top-color: black; font-size: smaller; position: sticky; left: 0">
-                    SUCURSAL
+                <th class="bg-primary" style="border-top-color: dimgray; border-top-width:1.1px; position: sticky; left: 0">
+                    <b>SUCURSAL</b>
                 </th>
-                <th class="bg-primary" colspan="3" style="text-align: center; position: sticky; left: 105px">
-                    TOTAL
+                <th class="bg-primary" colspan="3" style="border-top-color:  dimgray; border-top-width:1.1px; position: sticky; left: 106px">
+                    <b>TOTAL</b>
                 </th>
 
                 @{
-
 
                     while (diaCorrienteHeader <= diaMes)
                     {
                         DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteHeader);
                         string fechaString = fecha.ToString("dd-MM-yy");
-                        <th class="bg-primary" colspan="3" style="text-align:center" id="hidden">
+                        <td class="bg-primary" colspan="3" style="text-align:center">
                             @fechaString
-                        </th>
+                        </td>
                         diaCorrienteHeader++;
 
                     }
@@ -81,34 +80,36 @@
         </thead>
 
         <tr @*class="bg-info"*@>
-            <th class="bg-info" style="border-top-color: black; font-size: smaller; position: sticky; left: 0"></th>
+            <th class="bg-info" style="border-top-color: black; font-size: smaller; position: sticky; left: 0; border-right-width: 1.1px; border-right-color: dimgray"></th>
+
+            <th class="bg-info" style="text-align: center; font-size: xx-small; position: sticky; left: 106px; border-left-width: 1.1px; border-left-color: dimgray">
+                <b>EPIS</b>
+            </th>
+            <th class="bg-info" style="text-align: center; font-size: xx-small; position: sticky; left: 148px">
+                <b>REALIZADOS</b>
+            </th>
+            <th class="bg-info" style="text-align: center; font-size: xx-small; position: sticky; left: 217px; border-right-width: 1.1px; border-right-color: dimgray">
+                <b>PAUSADO</b>
+            </th>
+
             @{
 
 
                 while (diaCorrienteHeader <= diaMes)
                 {
-                    <td class="bg-info" style="border-left-color: dimgray; border-left-width: 1.1px; text-align: center; position: sticky; left: 105px" id="hidden">
-                        <span class="glyphicon glyphicon-file"></span>
+                    <td class="bg-info" style="border-left-color: dimgray; border-left-width: 1.1px; text-align: center; font-size: xx-small" id="hidden">
+                        <b>EPIS</b>
                     </td>
-                    <td class="bg-info" style="text-align: center; position: sticky; left: 125px" id="hidden">
-                        <span class="glyphicon glyphicon-ok"></span>
+                    <td class="bg-info" style="text-align: center; font-size: xx-small" id="hidden">
+                        <b>REALIZADOS</b>
                     </td>
-                    <td class="bg-info" style="border-right-color: dimgray; border-right-width: 1.1px; text-align: center; position: sticky; left: 145px" id="hidden">
-                        <span class="glyphicon glyphicon-pause"></span>
+                    <td class="bg-info" style="border-right-color: dimgray; border-right-width: 1.1px; text-align: center; font-size: xx-small" id="hidden">
+                        <b>PAUSADO</b>
                     </td>
                     diaCorrienteHeader++;
                 }
             }
 
-            <td class="bg-info" style="text-align:center">
-                <span class="glyphicon glyphicon-file"></span>
-            </td>
-            <td class="bg-info" style="text-align:center">
-                <span class="glyphicon glyphicon-ok"></span>
-            </td>
-            <td class="bg-info" style="text-align:center">
-                <span class="glyphicon glyphicon-pause"></span>
-            </td>
         </tr>
 
 
@@ -149,13 +150,13 @@
                     diaCorrienteRow = 1;
                 }
 
-                <td style="background-color: whitesmoke;border-top-color:  dimgray; border-top-width:1.1px; text-align: center; border-left-color:  dimgray; border-left-width:1.1px;">
+                <td style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; border-left-color: dimgray; border-left-width: 1.1px; position: sticky; left: 106px">
                     <b>@episTotal</b>
                 </td>
-                <td style="background-color: whitesmoke; border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
+                <td style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 148px">
                     <b>@dictamenTotal</b>
                 </td>
-                <td style="background-color: whitesmoke; border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
+                <td style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 217px">
                     <b>@pausaTotal</b>
                 </td>
 
@@ -208,13 +209,13 @@
             <th class="bg-info" style="border-top-color: dimgray; border-top-width: 1.1px; position: sticky; left: 0">
                 <b>TOTALES</b>
             </th>
-            <td style="background-color: whitesmoke;border-top-color:  dimgray; border-top-width:1.1px; text-align: center; border-left-color:  dimgray; border-left-width:1.2px;">
+            <td style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; border-left-color: dimgray; border-left-width: 1.2px; position: sticky; left: 106px">
                 <b>@episTotalTOTAL</b>
             </td>
-            <td style="background-color: whitesmoke;border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
+            <td style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 148px">
                 <b>@dictamenTotalTOTAL</b>
             </td>
-            <td style="background-color: whitesmoke;border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
+            <td style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 217px">
                 <b>@pausaTotalTOTAL</b>
             </td>
 
