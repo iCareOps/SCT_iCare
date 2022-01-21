@@ -68,11 +68,11 @@
     <br />
     <table class="table  table-bordered table-hover tablas" style="color: #2F2D6B">
         <thead>
-            <tr @*class="bg-primary" style="border-top-color: black; font-size:smaller"*@>
-                <th class="bg-primary" style="border-top-color: black; font-size: smaller; position: sticky; left: 0">
+            <tr class="bg-primary" style="border-top-color: black; font-size:smaller">
+                <th>
                     <b>CANAL</b>
                 </th>
-                <th class="bg-primary" style="border-top-color: black; font-size: smaller; text-align: center; position: sticky; left: 77px" colspan="2">
+                <th colspan="2" style="text-align:center">
                     TOTAL
                 </th>
 
@@ -84,9 +84,9 @@
                     {
                         DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteHeader);
                         string fechaString = fecha.ToString("dd-MM-yy");
-                        <td class="bg-primary" style="border-top-color: black; font-size: smaller; text-align: center" colspan="2" id="hidden">
+                        <th colspan="2" style="text-align:center" id="hidden">
                             @fechaString
-                        </td>
+                        </th>
                         diaCorrienteHeader++;
 
                     }
@@ -96,32 +96,29 @@
             </tr>
         </thead>
 
-        <tr @*class="bg-info"*@>
-
-            <th class="bg-info" style="position: sticky; left: 0"></th>
-
-            <th class="bg-info" style="text-align: center; position: sticky; left: 77px">
-                Realizados
-            </th>
-            <th class="bg-info" style="text-align: center; position: sticky; left: 159px">
-                Diferencia
-            </th>
-
+        <tr class="bg-info">
+            <td></td>
             @{
+
 
                 while (diaCorrienteHeader <= diaMes)
                 {
-                    <td class="bg-info" style="border-left-color: dimgray; border-left-width:1.1px; text-align:center" id="hidden">
+                    <td style="border-left-color: dimgray; border-left-width:1.1px; text-align:center" id="hidden">
                         Realizados
                     </td>
-                    <td class="bg-info" style="text-align:center" id="hidden">
+                    <td style="text-align:center" id="hidden">
                         Diferencia
                     </td>
                     diaCorrienteHeader++;
                 }
             }
 
-
+            <td style="text-align:center">
+                Realizados
+            </td>
+            <td style="text-align:center">
+                Diferencia
+            </td>
         </tr>
 
 
@@ -130,9 +127,9 @@
 
     <tr @*style="border-top-color: black; border-top-width:2px"*@>
 
-        <th class="bg-info" style="border-top-color: dimgray; border-top-width: 1.1px; position: sticky; left: 0">
+        <td class="bg-info" style="border-top-color:  dimgray; border-top-width:1.1px">
             <b>@item.NombreCanal</b>
-        </th>
+        </td>
 
         @{
 
@@ -200,12 +197,12 @@
             episTotalTOTAL += episTotal;
             dictamenTotalTOTAL += dictamenTotal;
 
-            <th style="background-color: whitesmoke; border-top-color: dimgray; border-left-width: 1.2px; border-left-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 77px">
+            <td style="background-color: whitesmoke;border-top-color:  dimgray; border-left-width:1.2px; border-left-color: dimgray; border-top-width:1.1px; text-align: center">
                 <b>@episTotal</b>
-            </th>
-            <th style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 159px">
+            </td>
+            <td style="background-color: whitesmoke; border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
                 <b>@dictamenTotal</b>
-            </th>
+            </td>
 
             diaCorrienteRow = 1;
 
@@ -289,15 +286,15 @@
         }
 
     <tr>
-        <th class="bg-info" style="border-top-color: dimgray; border-top-width: 1.1px; position: sticky; left: 0">
+        <td class="bg-info" style="border-top-color:  dimgray; border-top-width:1.1px">
             <b>TOTALES</b>
-        </th>
-        <th style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; border-left-color: dimgray; border-left-width: 1.2px; position: sticky; left: 77px">
+        </td>
+        <td style="background-color: whitesmoke;border-top-color:  dimgray; border-top-width:1.1px; text-align: center; border-left-color:  dimgray; border-left-width:1.2px;">
             <b>@episTotalTOTAL</b>
-        </th>
-        <th style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 159px">
+        </td>
+        <td style="background-color: whitesmoke;border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
             <b>@dictamenTotalTOTAL</b>
-        </th>
+        </td>
 
         @{
             foreach (var item in canales)
