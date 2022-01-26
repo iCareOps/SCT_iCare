@@ -1349,7 +1349,16 @@ else
 
                     <td>
                         <span class="field-tip">
-                            <b>@Html.DisplayFor(modelItem => item.N.Nombre) </b>
+                            @{
+                                if (item.M.NoOrden != null && item.M.NoOrden.StartsWith("ord"))
+                                {
+                                    <a href=@Url.Action("OrdenSAM", "Recepcion", new { id = item.M.idPaciente }) style="color:navy; text-decoration:none"><b>@Html.DisplayFor(modelItem => item.N.Nombre)</b> &nbsp;</a>
+                                }
+                                else
+                                {
+                                    <span><b>@Html.DisplayFor(modelItem => item.N.Nombre)</b> &nbsp;</span>
+                                }
+                            }
                             <span class="tip-content">
                                 <h6>
                                     <b>Teléfono:</b><br />

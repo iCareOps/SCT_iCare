@@ -656,6 +656,13 @@ namespace SCT_iCare.Controllers.Recepcion
             return Redirect("Index"); ;
         }
 
+        public ActionResult OrdenSAM(int? id)
+        {
+            ViewBag.idPaciente = id;
+            return View();
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Orden(string nombre, string telefono, string email, string usuario, string sucursal,  string cantidad, string cantidadAereo, string referido, DateTime? fecha)
@@ -2423,7 +2430,7 @@ namespace SCT_iCare.Controllers.Recepcion
             var idFlag = (from i in db.Cita where i.Referencia == referenciaRepetida orderby i.idPaciente descending select i).FirstOrDefault();
             var tipoPago = (from t in db.ReferenciasSB where t.idPaciente == idFlag.idPaciente select t).FirstOrDefault();
 
-            if(pago != "Pago con Tarjeta" && pago != "Transferencia vía Scotiabank" && pago != "Transferencia vía Banbajío")
+            if(pago != "Pago con Tarjeta" && pago != "Transferencia vía Scotiabank" && pago != "Transferencia vía Banbajío" && tipoPago != null)
             {
                 if ((from r in db.Cita where r.Referencia == referenciaRepetida select r).Count() == 1)
                 {

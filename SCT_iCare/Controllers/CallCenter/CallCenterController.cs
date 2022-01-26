@@ -180,6 +180,14 @@ namespace SCT_iCare.Controllers.CallCenter
             return View();
         }
 
+
+        public ActionResult OrdenSAM(int? id)
+        {
+            ViewBag.idPaciente = id;
+            return View();
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Orden(string nombre, string telefono, string email, string sucursal, string usuario, DateTime fecha, string cantidad, string cantidadAereo, string referido)

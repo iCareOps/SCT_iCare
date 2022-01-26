@@ -12,6 +12,8 @@
     int diaCorrienteRow = 1;
     int diaCorrienteFooter = 1;
 
+    int metaDiaria = 0;
+
     int diaMes = DateTime.Today.Day;
 
     int episTotal = 0;
@@ -23,6 +25,14 @@
     int episTotalFooter = 0;
     int? dictamenTotalFooter = 0;
 
+    int metaMensual = 0;
+
+    foreach(var e in db.Canales)
+    {
+        metaMensual += Convert.ToInt32(e.Meta);
+    }
+
+    int metaDiariaFooter = metaMensual / 30;
 
     var realizadosCallCenter = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
 .Where(w => w.M.FinalCaptura != null && w.N.Canal == "Call Center");
@@ -75,6 +85,9 @@
                 <th class="bg-primary" style="border-top-color: black; font-size: smaller; text-align: center; position: sticky; left: 77px" colspan="2">
                     TOTAL
                 </th>
+                <th class="bg-primary" style="border-top-color: black; font-size: smaller; text-align: center; position: sticky; left: 77px" colspan="2">
+                    Meta
+                </th>
 
 
                 @{
@@ -105,6 +118,13 @@
             </th>
             <th class="bg-info" style="text-align: center; position: sticky; left: 159px">
                 Diferencia
+            </th>
+
+            <th class="bg-info" style="text-align: center">
+                Mensual
+            </th>
+            <th class="bg-info" style="text-align: center">
+                Diaria
             </th>
 
             @{
@@ -209,6 +229,13 @@
 
                     diaCorrienteRow = 1;
 
+                    metaDiaria = Convert.ToInt32(item.Meta) / 30;
+                    <th  style="border-top-color: dimgray; border-left-width: 1.2px; border-left-color: dimgray; border-top-width: 1.1px; text-align: center">
+                        @item.Meta
+                    </th>
+                    <th   style="border-top-color: dimgray; border-top-width: 1.1px; text-align: center">
+                        @metaDiaria
+                    </th>
 
                     while (diaCorrienteRow <= diaMes)
                     {
@@ -292,12 +319,20 @@
             <th class="bg-info" style="border-top-color: dimgray; border-top-width: 1.1px; position: sticky; left: 0">
                 <b>TOTALES</b>
             </th>
+            
             <th style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; border-left-color: dimgray; border-left-width: 1.2px; position: sticky; left: 77px">
                 <b>@episTotalTOTAL</b>
             </th>
             <th style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 159px">
                 <b>@dictamenTotalTOTAL</b>
             </th>
+
+            <th  style="background-color: whitesmoke; border-top-color: dimgray; border-left-width: 1.2px; border-left-color: dimgray; border-top-width: 1.1px; text-align: center">
+                        @metaMensual
+                    </th>
+                    <th   style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center">
+                        @metaDiariaFooter
+                    </th>
 
             @{
                 foreach (var item in canales)
