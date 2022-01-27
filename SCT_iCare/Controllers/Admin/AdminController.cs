@@ -110,11 +110,11 @@ namespace SCT_iCare.Controllers.Admin
 
         public ActionResult TablaDinamica(string gestor)
         {
-            if(gestor == "Diarias")
+            if (gestor == "Diarias")
             {
                 return Redirect("TablaMetasDiarias");
             }
-            else if(gestor == "Semanales")
+            else if (gestor == "Semanales")
             {
                 return Redirect("TablaMetas");
             }
@@ -133,6 +133,14 @@ namespace SCT_iCare.Controllers.Admin
             else if (gestor == "Alternativos")
             {
                 return Redirect("TablaAlternativos");
+            }
+            else if (gestor == "Doctores")
+            {
+                return Redirect("ConteoDoctores");
+            }
+            else if (gestor == "Comparacion")
+            {
+                return Redirect("TablaComparacion");
             }
             else
             {
@@ -166,6 +174,14 @@ namespace SCT_iCare.Controllers.Admin
             {
                 return Redirect("TablaAlternativos");
             }
+            else if (gestor == "Doctores")
+            {
+                return Redirect("ConteoDoctores");
+            }
+            else if (gestor == "Comparacion")
+            {
+                return Redirect("TablaComparacion");
+            }
             else
             {
                 return View();
@@ -197,6 +213,14 @@ namespace SCT_iCare.Controllers.Admin
             else if (gestor == "Alternativos")
             {
                 return Redirect("TablaAlternativos");
+            }
+            else if (gestor == "Doctores")
+            {
+                return Redirect("ConteoDoctores");
+            }
+            else if (gestor == "Comparacion")
+            {
+                return Redirect("TablaComparacion");
             }
             else
             {
@@ -230,6 +254,14 @@ namespace SCT_iCare.Controllers.Admin
             {
                 return Redirect("TablaAlternativos");
             }
+            else if (gestor == "Doctores")
+            {
+                return Redirect("ConteoDoctores");
+            }
+            else if (gestor == "Comparacion")
+            {
+                return Redirect("TablaComparacion");
+            }
             else
             {
                 return View();
@@ -261,6 +293,14 @@ namespace SCT_iCare.Controllers.Admin
             else if (gestor == "Alternativos")
             {
                 return Redirect("TablaAlternativos");
+            }
+            else if (gestor == "Doctores")
+            {
+                return Redirect("ConteoDoctores");
+            }
+            else if (gestor == "Comparacion")
+            {
+                return Redirect("TablaComparacion");
             }
             else
             {
@@ -294,15 +334,98 @@ namespace SCT_iCare.Controllers.Admin
             {
                 return Redirect("TablaAlternativos");
             }
+            else if (gestor == "Doctores")
+            {
+                return Redirect("ConteoDoctores");
+            }
+            else if (gestor == "Comparacion")
+            {
+                return Redirect("TablaComparacion");
+            }
             else
             {
                 return View();
             }
         }
 
-        public ActionResult ConteoDoctores()
+        public ActionResult ConteoDoctores(string gestor)
         {
-            return View();
+            if (gestor == "Diarias")
+            {
+                return Redirect("TablaMetasDiarias");
+            }
+            else if (gestor == "Semanales")
+            {
+                return Redirect("TablaMetas");
+            }
+            else if (gestor == "Sucursales")
+            {
+                return Redirect("TablaDinamica");
+            }
+            else if (gestor == "CallCenter")
+            {
+                return Redirect("TablaCallCenter");
+            }
+            else if (gestor == "Gestores")
+            {
+                return Redirect("TablaGestores");
+            }
+            else if (gestor == "Alternativos")
+            {
+                return Redirect("TablaAlternativos");
+            }
+            else if (gestor == "Doctores")
+            {
+                return Redirect("ConteoDoctores");
+            }
+            else if (gestor == "Comparacion")
+            {
+                return Redirect("TablaComparacion");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        public ActionResult TablaComparacion(string gestor)
+        {
+            if (gestor == "Diarias")
+            {
+                return Redirect("TablaMetasDiarias");
+            }
+            else if (gestor == "Semanales")
+            {
+                return Redirect("TablaMetas");
+            }
+            else if (gestor == "Sucursales")
+            {
+                return Redirect("TablaDinamica");
+            }
+            else if (gestor == "CallCenter")
+            {
+                return Redirect("TablaCallCenter");
+            }
+            else if (gestor == "Gestores")
+            {
+                return Redirect("TablaGestores");
+            }
+            else if (gestor == "Alternativos")
+            {
+                return Redirect("TablaAlternativos");
+            }
+            else if (gestor == "Doctores")
+            {
+                return Redirect("ConteoDoctores");
+            }
+            else if (gestor == "Comparacion")
+            {
+                return Redirect("TablaComparacion");
+            }
+            else
+            {
+                return View();
+            }
         }
 
         public ActionResult EditarMeta(int? id, int? meta)
