@@ -27,7 +27,7 @@
     int dictamenTotalFooter = 0;
 }
 <br />
-<h2 style="color:white">Tablas Dinámicas</h2>
+<h2 style="color:white">Tablas Alternativos</h2>
 <br />
 
 <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/TablaAlternativos")">
@@ -38,30 +38,30 @@
             <option value="Diarias">METAS DIARIAS</option>
             <option value="Semanales">METAS SEMANALES</option>
             <option value="Sucursales">SUCURSALES</option>
-            <option value="CallCenter">CALL CENTER</option>
-            <option value="Gestores">GESTORES</option>
-            <option value="Alternativos">ALTERNATIVOS</option>
+            @*<option value="CallCenter">CALL CENTER</option>
+            <option value="Gestores">GESTORES</option>*@
+            <option value="Alternativos">ACUMULADO ALT</option>
+            <option value="Comparacion">COMPARACIÓN</option>
+            <option value="Doctores">DOCTORES</option>
         </select>
-        <input type="month" class="form-control" />
+        @*<input type="month" class="form-control" />*@
         <input type="submit" class="btn btn-info" value="Enviar" />
     </div>
 </form>
 
-<hr />
-<h3 style="color:white">Alternativos</h3>
 
 <div class="tablaScroll">
     <br />
     <table class="table  table-bordered table-hover tablas" style="color: #2F2D6B">
         <thead>
-            <tr class="bg-primary" style="border-top-color: black; font-size:smaller">
-                <th>
+            <tr @*class="bg-primary" style="border-top-color: black; font-size:smaller"*@>
+                <th class="bg-primary" style="border-top-color: black; font-size: smaller; position: sticky; left: 0">
                     <b>DOCTORES</b>
                 </th>
-                <th colspan="3" style="text-align:center">
-                    TOTAL
+                <th class="bg-primary" style="border-top-color: black; font-size: smaller; text-align: center; position: sticky; left: 82px" colspan="3">
+                    <b>TOTAL</b>
                 </th>
-
+                
                 @{
 
 
@@ -69,9 +69,9 @@
                     {
                         DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteHeader);
                         string fechaString = fecha.ToString("dd-MM-yy");
-                        <th colspan="3" style="text-align:center" id="hidden">
-                            @fechaString
-                        </th>
+                                <td class="bg-primary" style="border-top-color: black; font-size: smaller; text-align:center" colspan="3" id="hidden">
+                                    @fechaString
+                                </td>
                         diaCorrienteHeader++;
 
                     }
@@ -81,29 +81,29 @@
             </tr>
         </thead>
 
-        <tr class="bg-info">
-            <td></td>
-            <td style="text-align:center; ; font-size: xx-small">
+        <tr @*class="bg-info"*@>
+            <th class="bg-info" style="position: sticky; left: 0"></th>
+            <th class="bg-info" style="text-align: center; font-size: xx-small; position: sticky; left: 82px">
                 <b>EPIS</b>
-            </td>
-            <td style="text-align:center; ; font-size: xx-small">
+            </th>
+            <th class="bg-info" style="text-align: center; font-size: xx-small; position: sticky; left: 123px">
                 <b>REALIZADOS</b>
-            </td>
-            <td style="text-align:center; ; font-size: xx-small">
+            </th>
+            <th class="bg-info" style="text-align: center; font-size: xx-small; position: sticky; left: 193px">
                 <b>PAUSADOS</b>
-            </td>
+            </th>
             @{
 
 
                 while (diaCorrienteHeader <= diaMes)
                 {
-                    <td style="border-left-color: dimgray; border-left-width:1.1px; text-align:center; font-size: xx-small" id="hidden">
+                    <td class="bg-info" style="border-left-color: dimgray; border-left-width:1.1px; text-align:center; font-size: xx-small" id="hidden">
                         <b>EPIS</b>
                     </td>
-                    <td style="text-align:center; ; font-size: xx-small" id="hidden">
+                    <td class="bg-info" style="text-align:center; font-size: xx-small" id="hidden">
                         <b>REALIZADOS</b>
                     </td>
-                    <td style="border-right-color: dimgray; border-right-width:1.1px;  text-align:center; ; font-size: xx-small" id="hidden">
+                    <td class="bg-info" style="border-right-color: dimgray; border-right-width:1.1px;  text-align:center; font-size: xx-small" id="hidden">
                         <b>PAUSADOS</b>
                     </td>
                     diaCorrienteHeader++;
@@ -122,9 +122,9 @@
             {
                 <tr @*style="border-top-color: black; border-top-width:2px"*@>
 
-                    <td class="bg-info" style="border-top-color:  dimgray; border-top-width:1.1px">
+                    <th class="bg-info" style="border-top-color: dimgray; border-top-width: 1.1px; position: sticky; left: 0">
                         <b>@item.Nombre</b>
-                    </td>
+                    </th>
 
                     @{
 
@@ -150,15 +150,15 @@
                         diaCorrienteRow = 1;
                     }
 
-                    <td style="background-color: whitesmoke;border-top-color:  dimgray; border-top-width:1.1px; border-left-color:  dimgray; border-left-width:1.1px; text-align: center">
+                    <th style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; border-left-color: dimgray; border-left-width: 1.1px; text-align: center; position: sticky; left: 82px">
                         <b>@episTotal</b>
-                    </td>
-                    <td style="background-color: whitesmoke; border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
+                    </th>
+                    <th style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 123px">
                         <b>@dictamenTotal</b>
-                    </td>
-                    <td style="background-color: whitesmoke; border-top-color:  dimgray; border-top-width:1.1px; text-align: center">
+                    </th>
+                    <th style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 193px">
                         <b>@pausaTotal</b>
-                    </td>
+                    </th>
 
                     @{ 
                         episTotal = 0;
@@ -223,18 +223,18 @@
         }
 
     <tr>
-        <th class="bg-info" style="border-top-color: dimgray; border-top-width: 1.1px;">
+        <th class="bg-info" style="border-top-color: dimgray; border-top-width: 1.1px; position: sticky; left: 0">
             <b>TOTALES</b>
         </th>
-        <td style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; border-left-color: dimgray; border-left-width: 1.2px;">
+        <th style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; border-left-color: dimgray; border-left-width: 1.2px; position: sticky; left: 82px">
             <b>@episTotalTOTAL</b>
-        </td>
-        <td style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center;">
+        </th>
+        <th style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 123px">
             <b>@dictamenTotalTOTAL</b>
-        </td>
-        <td style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center;">
+        </th>
+        <th style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 193px">
             <b>@pausaTotalTOTAL</b>
-        </td>
+        </th>
 
         @{
 
