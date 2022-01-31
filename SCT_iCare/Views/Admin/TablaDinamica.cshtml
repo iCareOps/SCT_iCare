@@ -27,260 +27,741 @@
     int pausaTotalFooter = 0;
     int dictamenTotalFooter = 0;
 }
-<br />
-<h2 style="color:white">Sucursales</h2>
-<br />
 
-<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/TablaDinamica")">
-    <div>
+<html>
+    <head>
 
-        <select name="gestor" style="font-size:2vh" class="form-control">
-            <option>Seleccionar</option>
-            <option value="Diarias">METAS DIARIAS</option>
-            <option value="Semanales">METAS SEMANALES</option>
-            <option value="Sucursales">SUCURSALES</option>
-            <option value="CallCenter">CALL CENTER</option>
-            <option value="Gestores">GESTORES</option>
-            <option value="Alternativos">ALTERNATIVOS</option>
-        </select>
-        <input type="month" class="form-control" />
-        <input type="submit" class="btn btn-info" value="Enviar" />
-    </div>
-</form>
+        <meta charset="utf-8">
+        
+        <br />
+        <h2 style="color:white">Sucursales</h2>
+        <br />
 
+        <style>
 
-<div class="tablaScroll">
-    <br />
-    <table class="table  table-bordered table-hover tablas" style="color: #2F2D6B">
-        <thead>
-            <tr @*class="bg-primary" style="border-top-color: black; font-size:smaller"*@>
-                <th class="bg-primary" style="border-top-color: dimgray; border-top-width:1.1px; position: sticky; left: 0">
-                    <b>SUCURSAL</b>
-                </th>
-                <th class="bg-primary" colspan="3" style="border-top-color:  dimgray; border-top-width:1.1px; position: sticky; left: 106px">
-                    <b>TOTAL</b>
-                </th>
-
-                @{
-
-                    while (diaCorrienteHeader <= diaMes)
-                    {
-                        DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteHeader);
-                        string fechaString = fecha.ToString("dd-MM-yy");
-                        <td class="bg-primary" colspan="3" style="text-align:center">
-                            @fechaString
-                        </td>
-                        diaCorrienteHeader++;
-
-                    }
-
-                    diaCorrienteHeader = 1;
-                }
-            </tr>
-        </thead>
-
-        <tr @*class="bg-info"*@>
-            <th class="bg-info" style="border-top-color: black; font-size: smaller; position: sticky; left: 0; border-right-width: 1.1px; border-right-color: dimgray"></th>
-
-            <th class="bg-info" style="text-align: center; font-size: xx-small; position: sticky; left: 106px; border-left-width: 1.1px; border-left-color: dimgray">
-                <b>EPIS</b>
-            </th>
-            <th class="bg-info" style="text-align: center; font-size: xx-small; position: sticky; left: 148px">
-                <b>REALIZADOS</b>
-            </th>
-            <th class="bg-info" style="text-align: center; font-size: xx-small; position: sticky; left: 217px; border-right-width: 1.1px; border-right-color: dimgray">
-                <b>PAUSADO</b>
-            </th>
-
-            @{
-
-
-                while (diaCorrienteHeader <= diaMes)
-                {
-                    <td class="bg-info" style="border-left-color: dimgray; border-left-width: 1.1px; text-align: center; font-size: xx-small" id="hidden">
-                        <b>EPIS</b>
-                    </td>
-                    <td class="bg-info" style="text-align: center; font-size: xx-small" id="hidden">
-                        <b>REALIZADOS</b>
-                    </td>
-                    <td class="bg-info" style="border-right-color: dimgray; border-right-width: 1.1px; text-align: center; font-size: xx-small" id="hidden">
-                        <b>PAUSADO</b>
-                    </td>
-                    diaCorrienteHeader++;
-                }
+            body {
+                margin: 0;
+                font-family: 'Manrope', 'Century Gothic';
+                font-size: 1rem;
+                line-height: 1.6em;
+                color: black;
             }
 
-        </tr>
-
-
-        @foreach (var item in sucursales)
-        {
-
-            <tr @*style="border-top-color: black; border-top-width:2px"*@>
-
-                <th class="bg-info" style="border-top-color:  dimgray; border-top-width:1.1px; position: sticky; left: 0">
-                    <b>@item.Nombre</b>
-                </th>
-
-                @{
-
-
-                    while (diaCorrienteRow <= diaMes)
-                    {
-                        DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
-                        DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
-
-
-                        int epis = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 select i).Count();
-                        int pausa = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
-                        int dictamen = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
-
-                        episTotal += epis;
-                        pausaTotal += pausa;
-                        dictamenTotal += dictamen;
-
-                        diaCorrienteRow++;
-
-                    }
-
-                    episTotalTOTAL += episTotal;
-                    pausaTotalTOTAL += pausaTotal;
-                    dictamenTotalTOTAL += dictamenTotal;
-
-                    diaCorrienteRow = 1;
-                }
-
-                <td style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; border-left-color: dimgray; border-left-width: 1.1px; position: sticky; left: 106px">
-                    <b>@episTotal</b>
-                </td>
-                <td style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 148px">
-                    <b>@dictamenTotal</b>
-                </td>
-                <td style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 217px">
-                    <b>@pausaTotal</b>
-                </td>
-
-                @{
-
-
-                    while (diaCorrienteRow <= diaMes)
-                    {
-                        DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
-                        DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
-
-
-                        int epis = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 select i).Count();
-                        int pausa = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
-                        int dictamen = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
-
-                        episTotal += epis;
-                        pausaTotal += pausa;
-                        dictamenTotal += dictamen;
-
-                        <td style="border-left-color:  dimgray; border-left-width:1.2px;border-top-color:  dimgray; border-top-width:1.1px; text-align: center" id="hidden">
-                            @epis
-                        </td>
-                        <td style="border-top-color:  dimgray; border-top-width:1.1px; text-align: center" id="hidden">
-                            @dictamen
-                        </td>
-                        <td style="border-right-color:  dimgray; border-right-width:1.2px;border-top-color:  dimgray; border-top-width:1.1px; text-align: center" id="hidden">
-                            @pausa
-                        </td>
-                        diaCorrienteRow++;
-
-                    }
-
-                    diaCorrienteRow = 1;
-                }
-
-                @{
-                    episTotal = 0;
-                    pausaTotal = 0;
-                    dictamenTotal = 0;
-                }
-
-            </tr>
-
-            flag += 1;
-
-        }
-
-        <tr>
-            <th class="bg-info" style="border-top-color: dimgray; border-top-width: 1.1px; position: sticky; left: 0">
-                <b>TOTALES</b>
-            </th>
-            <td style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; border-left-color: dimgray; border-left-width: 1.2px; position: sticky; left: 106px">
-                <b>@episTotalTOTAL</b>
-            </td>
-            <td style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 148px">
-                <b>@dictamenTotalTOTAL</b>
-            </td>
-            <td style="background-color: whitesmoke; border-top-color: dimgray; border-top-width: 1.1px; text-align: center; position: sticky; left: 217px">
-                <b>@pausaTotalTOTAL</b>
-            </td>
-
-
-            @{
-
-                while (diaCorrienteFooter <= diaMes)
-                {
-                    DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteFooter);
-                    DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteFooter).AddDays(1);
-
-                    foreach (var sucursal in sucursales)
-                    {
-
-
-                        int epis = (from i in db.Captura where i.Sucursal == sucursal.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 select i).Count();
-                        int pausa = (from i in db.Captura where i.Sucursal == sucursal.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
-                        int dictamen = (from i in db.Captura where i.Sucursal == sucursal.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
-
-                        episTotal += epis;
-                        pausaTotal += pausa;
-                        dictamenTotal += dictamen;
-
-                        episTotalFooter += episTotal;
-                        pausaTotalFooter += pausaTotal;
-                        dictamenTotalFooter += dictamenTotal;
-
-                        episTotal = 0;
-                        pausaTotal = 0;
-                        dictamenTotal = 0;
-                    }
-
-
-
-                    <td style="border-left-color:  dimgray; border-left-width:1.2px;border-top-color:  dimgray; border-top-width:1.1px; text-align: center; background-color: whitesmoke;" id="hidden">
-                        @episTotalFooter
-                    </td>
-                    <td style="border-top-color:  dimgray; border-top-width:1.1px; text-align: center; background-color: whitesmoke;" id="hidden">
-                        @dictamenTotalFooter
-                    </td>
-                    <td style="border-right-color:  dimgray; border-right-width:1.2px;border-top-color:  dimgray; border-top-width:1.1px; text-align: center; background-color: whitesmoke;" id="hidden">
-                        @pausaTotalFooter
-                    </td>
-
-                    episTotalFooter = 0;
-                    pausaTotalFooter = 0;
-                    dictamenTotalFooter = 0;
-
-                    diaCorrienteFooter++;
-
-                }
-
-                episTotal = 0;
-                pausaTotal = 0;
-                dictamenTotal = 0;
-
-                flag += 1;
-
+            * {
+                box-sizing: border-box
             }
 
-        </tr>
+            .page-container {
+                max-width: 1200px;
+                margin: 2rem auto;
+            }
 
-    </table>
-</div>
+            .table-cebra {
+                border-top: 1px solid #ddd;
+                border-spacing: 0;
+                font-size: 13px;
+                width: 100%;
+                height: 100%;
+                max-width: 100%;
+                max-height: 100%;
+            }
+
+                .table-cebra > thead > tr > th,
+                .table-cebra > tbody > tr > th,
+                .table-cebra > tfoot > tr > th,
+                .table-cebra > thead > tr > td,
+                .table-cebra > tbody > tr > td,
+                .table-cebra > tfoot > tr > td {
+                    padding: 8px;
+                    line-height: 1.42857143;
+                    vertical-align: central;
+                }
+
+                .table-cebra thead tr {
+                    background: #337ab7;
+                    color: white;
+                    text-align: center;
+                }
+
+                    .table-cebra thead tr th td {
+                        text-align: center;
+                        background: #0275d8;
+                    }
+
+                .table-cebra th,
+                .table-cebra td {
+                    border-right: 1px solid #ddd !important;
+                    text-align: center;
+                    font-size: smaller;
+                    min-width: 60px;
+                }
+
+                    .table-cebra th:last-child,
+                    .table-cebra td:last-child {
+                        border-right: 0;
+                    }
+
+                .table-cebra th,
+                .table-cebra td {
+                    border-bottom: 1px solid #ddd !important;
+                }
+
+                .table-cebra tbody tr {
+                    background: white;
+                }
+
+                    .table-cebra tbody tr:first-child {
+                        background: #d9edf7;
+                        font-size: smaller;
+                    }
+
+            .table-cebra tbody td {
+                text-align: center;
+            }
+
+            /*Sticky*/
+
+            .table-cebra thead tr .sticky {
+                background: #337ab7;
+                color: white;
+                text-align: center;
+            }
+
+            .table-cebra thead tr th td .sticky {
+                text-align: center;
+                font-size: smaller;
+                background: #337ab7;
+            }
+
+            .table-cebra th,
+            .table-cebra td .sticky {
+                border-right: 1px solid #ddd !important;
+                min-width: 60px;
+                min-width: 60px;
+                text-align: center;
+            }
+
+            .table-cebra th,
+            .table-cebra td .sticky {
+                border-bottom: 1px solid #ddd !important;
+            }
+
+            .table-cebra tbody tr .sticky {
+                background: white;
+            }
+
+            .table-cebra tbody tr:first-child .sticky {
+                background: #d9edf7;
+            }
+
+            .table-cebra tbody td .sticky {
+                text-align: center;
+            }
+
+            /*Stickys 2*/
+
+            .table-cebra thead tr .sticky2 {
+                background: #337ab7;
+                color: white;
+                text-align: center;
+            }
+
+            .table-cebra thead tr th td .sticky2 {
+                text-align: center;
+                font-size: smaller;
+                background: #337ab7;
+            }
+
+            .table-cebra tbody tr .sticky2 {
+                background: #337ab7;
+                min-width: 60px;
+                text-align: center;
+            }
+
+            .table-cebra tbody tr th td .sticky2 {
+                text-align: center;
+                font-size: smaller;
+                min-width: 60px;
+                background: #337ab7;
+            }
+
+            .table-cebra th,
+            .table-cebra td .sticky2 {
+                border-right: 1px solid #ddd !important;
+                text-align: center;
+                min-width: 60px;
+                border-bottom: 1px solid #ddd !important;
+            }
+
+            .table-cebra tbody tr .sticky2 {
+                background: white;
+            }
+
+            .table-cebra tbody tr:first-child .sticky2 {
+                background: #d9edf7;
+            }
+
+            .table-cebra tbody td .sticky2 {
+                text-align: center;
+            }
+
+            /*Stickys 3*/
+
+            .table-cebra thead tr .sticky3 {
+                background: #337ab7;
+                color: white;
+                text-align: center;
+            }
+
+            .table-cebra thead tr th td .sticky3 {
+                text-align: center;
+                font-size: smaller;
+                background: #337ab7;
+            }
+
+            .table-cebra tbody tr .sticky3 {
+                background: #337ab7;
+                min-width: 60px;
+                text-align: center;
+            }
+
+            .table-cebra tbody tr th td .sticky3 {
+                text-align: center;
+                font-size: smaller;
+                min-width: 60px;
+                background: #337ab7;
+            }
+
+            .table-cebra th,
+            .table-cebra td .sticky3 {
+                border-right: 1px solid #ddd !important;
+                min-width: 60px;
+                text-align: center;
+                border-bottom: 1px solid #ddd !important;
+            }
+
+            .table-cebra tbody tr .sticky3 {
+                background: white;
+            }
+
+            .table-cebra tbody tr:first-child .sticky3 {
+                background: #d9edf7;
+            }
+
+            .table-cebra tbody td .sticky3 {
+                text-align: center;
+            }
+
+            /*Stickys 4*/
+
+            .table-cebra thead tr .sticky4 {
+                background: #337ab7;
+                color: white;
+                text-align: center;
+            }
+
+            .table-cebra thead tr th td .sticky4 {
+                text-align: center;
+                font-size: smaller;
+                background: #337ab7;
+            }
+
+            .table-cebra tbody tr .sticky4 {
+                background: #337ab7;
+                min-width: 65px;
+                text-align: center;
+            }
+
+            .table-cebra tbody tr th td .sticky4 {
+                text-align: center;
+                font-size: smaller;
+                min-width: 65px;
+                background: #337ab7;
+            }
+
+            .table-cebra th,
+            .table-cebra td .sticky4 {
+                border-right: 1px solid #ddd !important;
+                min-width: 65px;
+                text-align: center;
+                border-bottom: 1px solid #ddd !important;
+            }
+
+            .table-cebra tbody tr .sticky4 {
+                background: white;
+            }
+
+            .table-cebra tbody tr:first-child .sticky4 {
+                background: #d9edf7;
+            }
+
+            .table-cebra tbody td .sticky4 {
+                text-align: center;
+            }
+
+            /*Stickys 5*/
+
+            .table-cebra thead tr .sticky5 {
+                background: #337ab7;
+                color: white;
+                text-align: center;
+            }
+
+            .table-cebra thead tr th td .sticky5 {
+                text-align: center;
+                font-size: smaller;
+                background: #337ab7;
+            }
+
+            .table-cebra tbody tr .sticky5 {
+                background: #337ab7;
+                text-align: center;
+            }
+
+            .table-cebra tbo tr th td .sticky5 {
+                text-align: center;
+                font-size: smaller;
+                background: #337ab7;
+            }
+
+            .table-cebra th,
+            .table-cebra td .sticky5 {
+                border-right: 1px solid #ddd !important;
+                min-width: 60px;
+                text-align: center;
+                border-bottom: 1px solid #ddd !important;
+            }
+
+            .table-cebra tbody tr .sticky5 {
+                background: white;
+            }
+
+            .table-cebra tbody tr:first-child .sticky5 {
+                background: #d9edf7;
+            }
+
+            .table-cebra tbody td .sticky5 {
+                text-align: center;
+            }
+
+            /*Stickys 6*/
+
+            .table-cebra thead tr .sticky6 {
+                background: #337ab7;
+                color: white;
+                text-align: center;
+            }
+
+            .table-cebra thead tr th td .sticky6 {
+                text-align: center;
+                font-size: smaller;
+                background: #337ab7;
+            }
+
+            .table-cebra tbody tr .sticky6 {
+                background: #337ab7;
+                text-align: center;
+            }
+
+            .table-cebra tbody tr th td .sticky6 {
+                text-align: center;
+                font-size: smaller;
+                background: #337ab7;
+            }
+
+            .table-cebra th,
+            .table-cebra td .sticky6 {
+                border-right: 1px solid #ddd !important;
+                min-width: 60px;
+                text-align: center;
+                border-bottom: 1px solid #ddd !important;
+            }
+
+            .table-cebra tbody tr .sticky6 {
+                background: white;
+            }
+
+            .table-cebra tbody tr:first-child .sticky6 {
+                background: #d9edf7;
+            }
+
+            .table-cebra tbody td .sticky6 {
+                text-align: center;
+            }
+
+
+            /*Seccion de ID en celdas para las tablas*/
+
+            #CeldaSmall {
+                background: #337ab7;
+                min-width: 120px;
+            }
+
+            #Especial {
+                background: #d9edf7;
+                min-width: 120px;
+            }
+
+            #Grisaseo {
+                background: whitesmoke;
+            }
+
+            /*Seccion de hover para la tabla nueva clase, clase a (Que cambie de color cuando pasas el mouse por encima)*/
+
+            .a > tbody > tr:hover {
+                background-color: #f5f5f5;
+            }
+
+            .a tbody tr:first-child:hover {
+                background: #d9edf7;
+            }
+
+            .a > tbody > tr > td.active:hover,
+            .a > tbody > tr > th.active:hover,
+            .a > tbody > tr.active:hover > td,
+            .a > tbody > tr:hover > .active,
+            .a > tbody > tr.active:hover > th {
+                background-color: #e8e8e8;
+            }
+
+            .a > tbody > tr > td.success:hover,
+            .a > tbody > tr > th.success:hover,
+            .a > tbody > tr.success:hover > td,
+            .a > tbody > tr:hover > .success,
+            .a > tbody > tr.success:hover > th {
+                background-color: #d0e9c6;
+            }
+
+            .a > tbody > tr > td.info:hover,
+            .a > tbody > tr > th.info:hover,
+            .a > tbody > tr.info:hover > td,
+            .a > tbody > tr:hover > .info,
+            .a > tbody > tr.info:hover > th {
+                background-color: #c4e3f3;
+            }
+
+            .a > tbody > tr > td.warning:hover,
+            .a > tbody > tr > th.warning:hover,
+            .a > tbody > tr.warning:hover > td,
+            .a > tbody > tr:hover > .warning,
+            .a > tbody > tr.warning:hover > th {
+                background-color: #faf2cc;
+            }
+
+            .a > tbody > tr > td.danger:hover,
+            .a > tbody > tr > th.danger:hover,
+            .a > tbody > tr.danger:hover > td,
+            .a > tbody > tr:hover > .danger,
+            .a > tbody > tr.danger:hover > th {
+                background-color: #ebcccc;
+            }
+
+            /*Contenedor center ellipse Div*/
+
+            .table-container {
+                max-width: 100%;
+                max-height: 100%;
+                overflow-x: scroll;
+                border-left: 1px solid #ddd;
+                border-right: 1px solid #ddd;
+            }
+
+            /*Stickys*/
+
+            .table-cebra .sticky {
+                position: sticky;
+                left: 0;
+            }
+
+            .table-cebra .sticky2 {
+                position: sticky;
+                left: 120px;
+            }
+
+            .table-cebra .sticky3 {
+                position: sticky;
+                left: 120px;
+            }
+
+            .table-cebra .sticky4 {
+                position: sticky;
+                left: 180px;
+            }
+
+            .table-cebra .sticky5 {
+                position: sticky;
+                left: 250px;
+            }
+
+            .table-cebra .sticky6 {
+                position: sticky;
+                left: 120px;
+            }
+        </style>
+
+    </head>
+
+    <body>
+
+        <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/TablaDinamica")">
+            <div>
+                <select name="gestor" style="font-size:2vh" class="form-control">
+                    <option>Seleccionar</option>
+                    <option value="Diarias">METAS DIARIAS</option>
+                    <option value="Semanales">METAS SEMANALES</option>
+                    <option value="Sucursales">SUCURSALES</option>
+                    <option value="CallCenter">CALL CENTER</option>
+                    <option value="Gestores">GESTORES</option>
+                    <option value="Alternativos">ALTERNATIVOS</option>
+                </select>
+                <input type="month" class="form-control" />
+                <input type="submit" class="btn btn-info" value="Enviar" />
+            </div>
+        </form>
+
+
+        <div class="page-container">
+            <div class="table-container">
+                <table class="table-cebra a">
+                    <thead>
+                        <tr>
+                            <th class="sticky" id="CeldaSmall">
+                                <b>SUCURSAL</b>
+                            </th>
+                            <th class="sticky2" colspan="3">
+                                <b>TOTAL</b>
+                            </th>
+
+                            @{
+
+                                while (diaCorrienteHeader <= diaMes)
+                                {
+                                    DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteHeader);
+                                    string fechaString = fecha.ToString("dd-MM-yy");
+                                    <td class="sticky6" colspan="3">
+                                        @fechaString
+                                    </td>
+                                    diaCorrienteHeader++;
+
+                                }
+
+                                diaCorrienteHeader = 1;
+                            }
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="sticky" id="Especial"></td>
+
+                            <td class="sticky3">
+                                <b>EPIS</b>
+                            </td>
+                            <td class="sticky4">
+                                <b>REALIZADOS</b>
+                            </td>
+                            <td class="sticky5">
+                                <b>PAUSADO</b>
+                            </td>
+
+                            @{
+
+
+                                while (diaCorrienteHeader <= diaMes)
+                                {
+                                    <td>
+                                        <b>EPIS</b>
+                                    </td>
+                                    <td>
+                                        <b>REALIZADOS</b>
+                                    </td>
+                                    <td>
+                                        <b>PAUSADO</b>
+                                    </td>
+                                    diaCorrienteHeader++;
+                                }
+                            }
+
+                        </tr>
+
+
+                        @foreach (var item in sucursales)
+                        {
+
+                            <tr>
+
+                                <td class="sticky" id="Especial">
+                                    <b>@item.Nombre</b>
+                                </td>
+
+                                @{
+
+
+                                    while (diaCorrienteRow <= diaMes)
+                                    {
+                                        DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
+                                        DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
+
+
+                                        int epis = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 select i).Count();
+                                        int pausa = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
+                                        int dictamen = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
+
+                                        episTotal += epis;
+                                        pausaTotal += pausa;
+                                        dictamenTotal += dictamen;
+
+                                        diaCorrienteRow++;
+
+                                    }
+
+                                    episTotalTOTAL += episTotal;
+                                    pausaTotalTOTAL += pausaTotal;
+                                    dictamenTotalTOTAL += dictamenTotal;
+
+                                    diaCorrienteRow = 1;
+                                }
+
+                                <td class="sticky3" id="Grisaseo">
+                                    <b>@episTotal</b>
+                                </td>
+                                <td class="sticky4" id="Grisaseo">
+                                    <b>@dictamenTotal</b>
+                                </td>
+                                <td class="sticky5" id="Grisaseo">
+                                    <b>@pausaTotal</b>
+                                </td>
+
+                                @{
+
+
+                                    while (diaCorrienteRow <= diaMes)
+                                    {
+                                        DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
+                                        DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
+
+
+                                        int epis = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 select i).Count();
+                                        int pausa = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
+                                        int dictamen = (from i in db.Captura where i.Sucursal == item.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
+
+                                        episTotal += epis;
+                                        pausaTotal += pausa;
+                                        dictamenTotal += dictamen;
+
+                                        <td>
+                                            @epis
+                                        </td>
+                                        <td>
+                                            @dictamen
+                                        </td>
+                                        <td>
+                                            @pausa
+                                        </td>
+                                        diaCorrienteRow++;
+
+                                    }
+
+                                    diaCorrienteRow = 1;
+                                }
+
+                                @{
+                                    episTotal = 0;
+                                    pausaTotal = 0;
+                                    dictamenTotal = 0;
+                                }
+
+                            </tr>
+
+                            flag += 1;
+
+                        }
+
+                        <tr>
+                            <td class="sticky" id="Especial" style="border-bottom: 0px">
+                                <b>TOTALES</b>
+                            </td>
+                            <td class="sticky3" id="Grisaseo" style="border-bottom: 0px">
+                                <b>@episTotalTOTAL</b>
+                            </td>
+                            <td class="sticky4" id="Grisaseo" style="border-bottom: 0px">
+                                <b>@dictamenTotalTOTAL</b>
+                            </td>
+                            <td class="sticky5" id="Grisaseo" style="border-bottom: 0px">
+                                <b>@pausaTotalTOTAL</b>
+                            </td>
+
+
+                            @{
+
+                                while (diaCorrienteFooter <= diaMes)
+                                {
+                                    DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteFooter);
+                                    DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteFooter).AddDays(1);
+
+                                    foreach (var sucursal in sucursales)
+                                    {
+
+
+                                        int epis = (from i in db.Captura where i.Sucursal == sucursal.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 select i).Count();
+                                        int pausa = (from i in db.Captura where i.Sucursal == sucursal.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
+                                        int dictamen = (from i in db.Captura where i.Sucursal == sucursal.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
+
+                                        episTotal += epis;
+                                        pausaTotal += pausa;
+                                        dictamenTotal += dictamen;
+
+                                        episTotalFooter += episTotal;
+                                        pausaTotalFooter += pausaTotal;
+                                        dictamenTotalFooter += dictamenTotal;
+
+                                        episTotal = 0;
+                                        pausaTotal = 0;
+                                        dictamenTotal = 0;
+                                    }
 
 
 
+                                    <td style="border-bottom: 0px">
+                                        @episTotalFooter
+                                    </td>
+                                    <td style="border-bottom: 0px">
+                                        @dictamenTotalFooter
+                                    </td>
+                                    <td style="border-bottom: 0px">
+                                        @pausaTotalFooter
+                                    </td>
 
+                                    episTotalFooter = 0;
+                                    pausaTotalFooter = 0;
+                                    dictamenTotalFooter = 0;
+
+                                    diaCorrienteFooter++;
+
+                                }
+
+                                episTotal = 0;
+                                pausaTotal = 0;
+                                dictamenTotal = 0;
+
+                                flag += 1;
+
+                            }
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </body>
+
+</html>
