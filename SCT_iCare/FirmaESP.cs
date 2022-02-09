@@ -17,5 +17,7 @@ namespace SCT_iCare
         public int idFirmaESP { get; set; }
         public byte[] Firma { get; set; }
         public Nullable<int> idPadienteESP { get; set; }
+    
+        public virtual PacienteESP PacienteESP { get; set; }
     }
 }

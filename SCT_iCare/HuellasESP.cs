@@ -20,5 +20,7 @@ namespace SCT_iCare
         public byte[] Huella7 { get; set; }
         public byte[] Huella8 { get; set; }
         public Nullable<int> idPacienteESP { get; set; }
+    
+        public virtual PacienteESP PacienteESP { get; set; }
     }
 }

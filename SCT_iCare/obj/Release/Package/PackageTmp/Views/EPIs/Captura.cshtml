@@ -96,8 +96,6 @@
 
     var capturistas = from c in db.Usuarios where c.idRol == 7 && c.idUsuario != 13 && c.idUsuario != 25 select c.Nombre;
 
-    var capturistasAnexa = from c in db.Usuarios where c.idRol == 9 select c.Nombre;
-
     string fecha = DateTime.Now.ToString("dd-MMMM-yyyy");
 
     string fila = "";
@@ -367,12 +365,6 @@
                                         sumaMinutos = 0;
                                     }
                                     <h4><b>@item:</b> @elemento <b class="text-primary h6">(@sumaMinutos mins/Dictamen)</b></h4>
-                                }
-                                <h4>----------------------</h4>
-                                foreach (var item in capturistasAnexa)
-                                {
-                                    var elemento = (from v in db.Captura where v.EstatusCaptura == "Terminado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate && v.Capturista == item select v).Count();
-                                    <h4><b>@item (Anexa):</b> @elemento</h4>
                                 }
                             }
                         </div>

@@ -20,5 +20,7 @@ namespace SCT_iCare
         public Nullable<System.DateTime> FechaLlamada { get; set; }
         public string Tipificacion { get; set; }
         public Nullable<int> idCallCenter { get; set; }
+    
+        public virtual CallCenter CallCenter { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PagedList;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -142,6 +143,10 @@ namespace SCT_iCare.Controllers.Admin
             {
                 return Redirect("TablaComparacion");
             }
+            else if (gestor == "Metas")
+            {
+                return Redirect("ActualizarMeta");
+            }
             else
             {
                 return View();
@@ -181,6 +186,10 @@ namespace SCT_iCare.Controllers.Admin
             else if (gestor == "Comparacion")
             {
                 return Redirect("TablaComparacion");
+            }
+            else if (gestor == "Metas")
+            {
+                return Redirect("ActualizarMeta");
             }
             else
             {
@@ -222,6 +231,10 @@ namespace SCT_iCare.Controllers.Admin
             {
                 return Redirect("TablaComparacion");
             }
+            else if (gestor == "Metas")
+            {
+                return Redirect("ActualizarMeta");
+            }
             else
             {
                 return View();
@@ -261,6 +274,10 @@ namespace SCT_iCare.Controllers.Admin
             else if (gestor == "Comparacion")
             {
                 return Redirect("TablaComparacion");
+            }
+            else if (gestor == "Metas")
+            {
+                return Redirect("ActualizarMeta");
             }
             else
             {
@@ -302,6 +319,10 @@ namespace SCT_iCare.Controllers.Admin
             {
                 return Redirect("TablaComparacion");
             }
+            else if (gestor == "Metas")
+            {
+                return Redirect("ActualizarMeta");
+            }
             else
             {
                 return View();
@@ -342,14 +363,34 @@ namespace SCT_iCare.Controllers.Admin
             {
                 return Redirect("TablaComparacion");
             }
+            else if (gestor == "Metas")
+            {
+                return Redirect("ActualizarMeta");
+            }
             else
             {
                 return View();
             }
         }
 
-        public ActionResult ConteoDoctores(string gestor)
+        public ActionResult ConteoDoctores(string gestor, int? pageSize, int? page, DateTime? mes)
         {
+
+            TempData["MES"] = mes != null ? Convert.ToDateTime(mes).Month : 0;
+            TempData["AÑO"] = mes != null ? Convert.ToDateTime(mes).Year : 0;
+            TempData["FECHA"] = mes;
+
+            if(Convert.ToDateTime(mes).Month == DateTime.Today.Month && Convert.ToDateTime(mes).Year == DateTime.Today.Year)
+            {
+                TempData["MES"] = 0;
+                TempData["AÑO"] = 0;
+                TempData["FECHA"] = DateTime.Today;
+            }
+
+            pageSize = (pageSize ?? 10);
+            page = (page ?? 1);
+            ViewBag.PageSize = pageSize;
+
             if (gestor == "Diarias")
             {
                 return Redirect("TablaMetasDiarias");
@@ -374,17 +415,21 @@ namespace SCT_iCare.Controllers.Admin
             {
                 return Redirect("TablaAlternativos");
             }
-            else if (gestor == "Doctores")
-            {
-                return Redirect("ConteoDoctores");
-            }
+            //else if (gestor == "Doctores")
+            //{
+            //    return Redirect("ConteoDoctores");
+            //}
             else if (gestor == "Comparacion")
             {
                 return Redirect("TablaComparacion");
             }
+            else if (gestor == "Metas")
+            {
+                return Redirect("ActualizarMeta");
+            }
             else
             {
-                return View();
+                return View(db.Doctores2.OrderBy(o => o.idDoctor2).ToPagedList(page.Value, pageSize.Value));
             }
         }
 
@@ -422,6 +467,54 @@ namespace SCT_iCare.Controllers.Admin
             {
                 return Redirect("TablaComparacion");
             }
+            else if (gestor == "Metas")
+            {
+                return Redirect("ActualizarMeta");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        public ActionResult ActualizarMeta(string gestor)
+        {
+            if (gestor == "Diarias")
+            {
+                return Redirect("TablaMetasDiarias");
+            }
+            else if (gestor == "Semanales")
+            {
+                return Redirect("TablaMetas");
+            }
+            else if (gestor == "Sucursales")
+            {
+                return Redirect("TablaDinamica");
+            }
+            else if (gestor == "CallCenter")
+            {
+                return Redirect("TablaCallCenter");
+            }
+            else if (gestor == "Gestores")
+            {
+                return Redirect("TablaGestores");
+            }
+            else if (gestor == "Alternativos")
+            {
+                return Redirect("TablaAlternativos");
+            }
+            else if (gestor == "Doctores")
+            {
+                return Redirect("ConteoDoctores");
+            }
+            else if (gestor == "Comparacion")
+            {
+                return Redirect("TablaComparacion");
+            }
+            else if (gestor == "Metas")
+            {
+                return Redirect("ActualizarMeta");
+            }
             else
             {
                 return View();
@@ -440,7 +533,7 @@ namespace SCT_iCare.Controllers.Admin
                 db.SaveChanges();
             }
 
-            return Redirect("TablaMetas");
+            return Redirect("ActualizarMeta");
         }
 
         [HttpPost]

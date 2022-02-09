@@ -7,11 +7,31 @@
     string texto = "";
     string texto2 = "";
 
+    string parentesisDerecho = "";
+    string parentesisIZquierdo = "";
+
+    string parentesisDerecho1 = "";
+    string parentesisIZquierdo1 = "";
+
     DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
     DateTime fecha1 = DateTime.Today.AddDays(1);
 
     DateTime fecha3 = fecha.AddMonths(-1);
     DateTime fecha4 = fecha3.AddMonths(1);
+
+    int ultimoDiaMesAnterior = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddDays(-1).Day;
+    int diaCorriente = DateTime.Today.Day;
+
+    if(diaCorriente > ultimoDiaMesAnterior)
+    {
+        fecha4 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, ultimoDiaMesAnterior).AddMonths(-1);
+    }
+    else
+    {
+        fecha4 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorriente).AddMonths(-1);
+    }
+
+
 
     var canales = db.Canales;
 
@@ -27,6 +47,7 @@
     int realizadoHoyMesAnteriorDiferencia = 0;
 
     int realizadoTotalMesAnteriorFooter = 0;
+    int planTotalMesAnteriorFooter = 0;
 
     double metaPorcentaje = 0.00;
     double metaPorcentajeMesAnterior = 0.00;
@@ -35,7 +56,7 @@
 
     foreach (var e in canales)
     {
-        metaTotal += Convert.ToInt32(e.Meta);
+        metaTotal += (Convert.ToInt32(e.Meta) / 30) * diaCorriente;
     }
 
     var realizadosCallCenter = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
@@ -126,7 +147,7 @@
 }
 
 <br />
-<h2 style="color:white">Tabla Resultados</h2>
+<h2 style="color:white">Tabla Comparativa <span style="color:goldenrod">@DateTime.Now.ToString("MMMM-yy").ToUpper()</span></h2>
 <br />
 
 <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/TablaComparacion")">
@@ -138,10 +159,12 @@
             <option value="Semanales">METAS SEMANALES</option>
             <option value="Sucursales">SUCURSALES</option>
             @*<option value="CallCenter">CALL CENTER</option>
-            <option value="Gestores">GESTORES</option>*@
+        <option value="Gestores">GESTORES</option>*@
             <option value="Alternativos">ACUMULADO ALT</option>
             <option value="Comparacion">COMPARACIÓN</option>
             <option value="Doctores">DOCTORES</option>
+            <option disabled>-------------------------</option>
+            <option value="Metas">ACTUALIZAR METAS</option>
         </select>
         @*<input type="month" class="form-control" />*@
         <input type="submit" class="btn btn-info" value="Enviar" />
@@ -161,13 +184,13 @@
                     Mes Anterior
                 </th>
                 <th rowspan="2" style="text-align:center">
-                    Meta
+                    Plan
                 </th>
                 <th rowspan="2" style="text-align:center">
-                    Realizado
+                    Real
                 </th>
                 <th rowspan="2" style="text-align:center">
-                    @DateTime.Now.ToString("MMMM-yy").ToUpper()
+                    @DateTime.Now.ToString("dd-MMMM-yy").ToUpper()
                 </th>
                 <th colspan="3" style="font-size:x-small; text-align:center">
                     COMPARATIVO
@@ -175,7 +198,7 @@
             </tr>
             <tr style="color:white">
                 <th style="text-align:center">
-                    Presupuesto
+                    Plan vs Real
                 </th>
                 <th style="text-align:center">
                     Mes Anterior
@@ -224,15 +247,21 @@
                             }
                             realizadoTotalMesAnterior += realizadoHoyMesAnterior;
                             metaPorcentaje = (Convert.ToDouble(realizadoHoyMesAnterior) * 100) / realizadoTotalCalculoMesAnterior;
+
+                            if(realizadoHoyMesAnterior == 0)
+                            {
+                                metaPorcentaje = 0;
+                            }
+
                             metaPorcentajeMesAnterior = metaPorcentaje;
                         }
                         <b>@realizadoHoyMesAnterior</b><span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>
                     </td>
                     <td style="text-align:center">
                         @{
-                            metaPorcentaje = (Convert.ToDouble(item.Meta) * 100) / metaTotal;
+                            metaPorcentaje = (Convert.ToDouble((Convert.ToDouble(item.Meta) / 30) * DateTime.Today.Day) * 100) / metaTotal;
                         }
-                        <b>@item.Meta</b><span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>
+                        <b>@Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * DateTime.Today.Day)</b><span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>
                     </td>
                     <td style="text-align:center">
                         @{
@@ -268,6 +297,11 @@
                             metaPorcentaje = (Convert.ToDouble(realizadoHoy) * 100) / realizadoTotalCalculo;
                             metaPorcentajeMesAnteriorDiferencia = metaPorcentaje - metaPorcentajeMesAnterior;
                             metaPorcentajeMesAnteriorDiferenciaFooter += metaPorcentajeMesAnteriorDiferencia;
+
+                            int planDiferencia = realizadoHoy - Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * DateTime.Today.Day);
+
+                            planTotalMesAnteriorFooter += planDiferencia;
+
                         }
                         <b>@realizadoHoy</b><span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>
                     </td>
@@ -275,6 +309,47 @@
                         <b>@item.NombreCanal</b>
                     </td>
                     <td style="text-align:center">
+                        @if (planDiferencia > 0)
+                        {
+                            texto = "text-success";
+                        }
+                        else if (planDiferencia < 0)
+                        {
+                            texto = "text-danger";
+                            parentesisDerecho = ")";
+                            parentesisIZquierdo = "(";
+                        }
+
+                        @{ 
+                            //double porcentajePlanDiferencia = Convert.ToDouble((100 * Convert.ToDouble(item.Meta)) / db.Canales.Sum(s => s.Meta));
+                            //double porcentajePlanDiferencia = metaPorcentaje - ((Convert.ToDouble(item.Meta)) * 100 / Convert.ToDouble(metaTotal));
+                            double porcentajePlanDiferencia = (planDiferencia * 100) / Convert.ToDouble((Convert.ToDouble(item.Meta) / 30) * DateTime.Today.Day);
+                            porcentajePlanDiferencia = realizadoHoy == 0 ? 0 : porcentajePlanDiferencia;
+
+                            if (porcentajePlanDiferencia > 0)
+                            {
+                                texto2 = "text-success";
+                            }
+                            else if (porcentajePlanDiferencia < 0)
+                            {
+                                texto2 = "text-danger";
+                                parentesisDerecho1 = ")";
+                                parentesisIZquierdo1 = "(";
+                            }
+
+                            planDiferencia *= planDiferencia < 0 ? -1 : 1;
+                            porcentajePlanDiferencia *= porcentajePlanDiferencia < 0 ? -1 : 1;
+                        }
+                        <b class="@texto">@parentesisIZquierdo@planDiferencia@parentesisDerecho</b>
+                        <span class="pull-right @texto2" style="font-size:small">@parentesisIZquierdo1@porcentajePlanDiferencia.ToString("##.##")@parentesisDerecho1%</span>
+                        @{
+                            parentesisDerecho = "";
+                            parentesisIZquierdo = "";
+
+                            parentesisDerecho1 = "";
+                            parentesisIZquierdo1 = "";
+                        }
+
                     </td>
                     <td style="text-align:center">
                         @{
@@ -287,6 +362,17 @@
                             else if (realizadoHoyMesAnteriorDiferencia < 0)
                             {
                                 texto = "text-danger";
+                                parentesisDerecho = ")";
+                                parentesisIZquierdo = "(";
+                            }
+
+                            if(realizadoHoyMesAnterior == 0)
+                            {
+                                metaPorcentajeMesAnteriorDiferencia = 0;
+                            }
+                            else
+                            {
+                                metaPorcentajeMesAnteriorDiferencia = (realizadoHoyMesAnteriorDiferencia * 100) / realizadoHoyMesAnterior;
                             }
 
                             if (metaPorcentajeMesAnteriorDiferencia > 0)
@@ -296,11 +382,26 @@
                             else if (metaPorcentajeMesAnteriorDiferencia < 0)
                             {
                                 texto2 = "text-danger";
+                                parentesisDerecho1 = ")";
+                                parentesisIZquierdo1 = "(";
                             }
 
-                            <b class="@texto">@realizadoHoyMesAnteriorDiferencia</b><span class="pull-right @texto2" style="font-size:small">@metaPorcentajeMesAnteriorDiferencia.ToString("##.##")%</span>
+                            realizadoHoyMesAnteriorDiferencia *= realizadoHoyMesAnteriorDiferencia < 0 ? -1 : 1;
+                            metaPorcentajeMesAnteriorDiferencia *= metaPorcentajeMesAnteriorDiferencia < 0 ? -1 : 1;
+
+                            <b class="@texto">@parentesisIZquierdo@realizadoHoyMesAnteriorDiferencia@parentesisDerecho</b>
+                            <span class="pull-right @texto2" style="font-size:small">@parentesisIZquierdo1@metaPorcentajeMesAnteriorDiferencia.ToString("##.##")@parentesisDerecho1%</span>
                             texto = "";
                             texto2 = "";
+
+                            parentesisDerecho = "";
+                            parentesisIZquierdo = "";
+
+                            parentesisDerecho1 = "";
+                            parentesisIZquierdo1 = "";
+
+                            realizadoHoyMesAnteriorDiferencia *= realizadoHoyMesAnteriorDiferencia > 0 ? -1 : 1;
+
                             realizadoTotalMesAnteriorFooter += realizadoHoyMesAnteriorDiferencia;
                         }
                     </td>
@@ -326,6 +427,48 @@
                 <b>TOTAL</b>
             </td>
             <td class="bg-info" style="text-align:center">
+                @{
+                    int planDiferenciaFooter = planTotalMesAnteriorFooter - metaTotal;
+
+                    if (planTotalMesAnteriorFooter > 0)
+                    {
+                        texto = "text-success";
+                    }
+                    else if (planTotalMesAnteriorFooter < 0)
+                    {
+                        texto = "text-danger";
+                        parentesisDerecho = ")";
+                        parentesisIZquierdo = "(";
+                    }
+
+                    double planPorcentajeTotalFooter = (planTotalMesAnteriorFooter * 100) / metaTotal;
+
+                    if (planPorcentajeTotalFooter > 0)
+                    {
+                        texto2 = "text-success";
+                    }
+                    else if (planPorcentajeTotalFooter < 0)
+                    {
+                        texto2 = "text-danger";
+                        parentesisDerecho1 = ")";
+                        parentesisIZquierdo1 = "(";
+                    }
+
+                    planTotalMesAnteriorFooter *= planTotalMesAnteriorFooter < 0 ? -1 : 1;
+                    planPorcentajeTotalFooter *= planPorcentajeTotalFooter < 0 ? -1 : 1;
+
+                    <b class="@texto">@parentesisIZquierdo@planTotalMesAnteriorFooter@parentesisDerecho</b>
+                    <span class="pull-right @texto2" style="font-size:small">@parentesisIZquierdo1@planPorcentajeTotalFooter.ToString("##.###")@parentesisDerecho1%</span>
+
+                    texto = "";
+                    texto2 = "";
+
+                    parentesisDerecho = "";
+                    parentesisIZquierdo = "";
+
+                    parentesisDerecho1 = "";
+                    parentesisIZquierdo1 = "";
+                }
             </td>
             <td class="bg-info" style="text-align:center">
                 @{
@@ -336,7 +479,10 @@
                     else if (realizadoTotalMesAnteriorFooter < 0)
                     {
                         texto = "text-danger";
+                        parentesisDerecho = ")";
+                        parentesisIZquierdo = "(";
                     }
+
 
                     if (metaPorcentajeMesAnteriorDiferenciaFooter > 0)
                     {
@@ -345,10 +491,32 @@
                     else if (metaPorcentajeMesAnteriorDiferenciaFooter < 0)
                     {
                         texto2 = "text-danger";
+                        parentesisDerecho1 = ")";
+                        parentesisIZquierdo1 = "(";
                     }
-                    <b class="@texto">@realizadoTotalMesAnteriorFooter</b><span class="pull-right @texto" style="font-size:small">@metaPorcentajeMesAnteriorDiferenciaFooter.ToString("##.###")%</span>
+
+                    if(realizadoTotalMesAnterior == 0)
+                    {
+                        metaPorcentajeMesAnteriorDiferenciaFooter = 0;
+                    }
+                    else
+                    {
+                        metaPorcentajeMesAnteriorDiferenciaFooter = (realizadoTotalMesAnteriorFooter * 100) / realizadoTotalMesAnterior;
+                    }
+
+                    realizadoTotalMesAnteriorFooter *= realizadoTotalMesAnteriorFooter < 0 ? -1 : 1;
+                    metaPorcentajeMesAnteriorDiferenciaFooter *= metaPorcentajeMesAnteriorDiferenciaFooter < 0 ? -1 : 1;
+
+                    <b class="@texto">@parentesisIZquierdo@realizadoTotalMesAnteriorFooter@parentesisDerecho</b>
+                    <span class="pull-right @texto" style="font-size:small">@parentesisIZquierdo1@metaPorcentajeMesAnteriorDiferenciaFooter.ToString("##.##")@parentesisDerecho1%</span>
                     texto = "";
                     texto2 = "";
+
+                    parentesisDerecho = "";
+                    parentesisIZquierdo = "";
+
+                    parentesisDerecho1 = "";
+                    parentesisIZquierdo1 = "";
                 }
             </td>
             <td class="bg-info" style="text-align:center">
@@ -465,7 +633,7 @@
 }
 
 
-<h3 style="color:white">Acumulado Anual</h3>
+@*<h3 style="color:white">Acumulado Anual</h3>
 <div class="tablaScroll">
     <table class="table  table-bordered table-hover tablas" style="color: #2F2D6B">
         <thead>
@@ -592,4 +760,4 @@
         </tr>
 
     </table>
-</div>
+</div>*@

@@ -14,11 +14,20 @@ namespace SCT_iCare
     
     public partial class CallCenter
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public CallCenter()
+        {
+            this.Tipificaciones = new HashSet<Tipificaciones>();
+        }
+    
         public int idCallCenter { get; set; }
         public string Nombre { get; set; }
         public string Telefono { get; set; }
         public Nullable<System.DateTime> FechaVigencia { get; set; }
         public string Rechazado { get; set; }
         public Nullable<int> Llamadas { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Tipificaciones> Tipificaciones { get; set; }
     }
 }

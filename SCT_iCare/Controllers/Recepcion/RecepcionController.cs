@@ -1661,6 +1661,30 @@ namespace SCT_iCare.Controllers.Recepcion
         [ValidateAntiForgeryToken]
         public ActionResult CURP_Expediente(string id, string nombre, string numero, string curp, string tel, string email, string doctor, string tipoL, string tipoT)
         {
+
+            //var noExpedienteRepetido = (from i in db.Cita where i.NoExpediente == numero orderby i.idCita descending select i).FirstOrDefault();
+
+
+            //if (noExpedienteRepetido != null && noExpedienteRepetido.CancelaComentario != "Sobreescrito")
+            //{
+            //    var capturaRepetida = (from i in db.Captura where i.idPaciente == noExpedienteRepetido.idPaciente orderby i.idCaptura descending select i).FirstOrDefault();
+
+            //    if(capturaRepetida != null && capturaRepetida.EstatusCaptura != "Terminado")
+            //    {
+            //        TempData["idCaptura"] = capturaRepetida.idCaptura;
+            //        return Redirect("Index");
+            //    }
+            //    else
+            //    {
+            //        TempData["idPaciente"] = id;
+            //        TempData["Doctor"] = doctor;
+            //        TempData["TipoLicencia"] = tipoL;
+            //        TempData["TipoTramite"] = tipoT;
+
+            //        return Redirect("Index");
+            //    }
+            //}
+
             int ide = Convert.ToInt32(id);
 
             string NOMBRE = null;
@@ -1770,6 +1794,30 @@ namespace SCT_iCare.Controllers.Recepcion
         [ValidateAntiForgeryToken]
         public ActionResult Digitalizar(HttpPostedFileBase file, string id, string usuario, string nombre, string doctor, string numero, string tipoL, string tipoT, string curp, DateTime? fecha)
         {
+
+            //var noExpedienteRepetido = (from i in db.Cita where i.NoExpediente == numero orderby i.idCita descending select i).FirstOrDefault();
+
+            //if (noExpedienteRepetido != null && noExpedienteRepetido.CancelaComentario != "Sobreescrito")
+            //{
+            //    var capturaRepetida = (from i in db.Captura where i.idPaciente == noExpedienteRepetido.idPaciente orderby i.idCaptura descending select i).FirstOrDefault();
+
+            //    if (capturaRepetida != null && capturaRepetida.EstatusCaptura != "Terminado")
+            //    {
+            //        TempData["idCaptura"] = capturaRepetida.idCaptura;
+            //        return Redirect("Index");
+            //    }
+            //    else
+            //    {
+            //        TempData["idPaciente"] = id;
+            //        TempData["Doctor"] = doctor;
+            //        TempData["TipoLicencia"] = tipoL;
+            //        TempData["TipoTramite"] = tipoT;
+
+            //        return Redirect("Index");
+            //    }
+            //}
+
+
             int ide = Convert.ToInt32(id);
 
             SCT_iCare.Expedientes exp = new SCT_iCare.Expedientes();

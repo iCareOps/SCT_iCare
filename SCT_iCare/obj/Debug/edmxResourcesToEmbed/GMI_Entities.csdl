@@ -88,6 +88,7 @@
     <Property Name="ReferidoPor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="CarruselMedico" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
     <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
+    <Property Name="Cuenta" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="Ciudades">
     <Key>
@@ -668,6 +669,18 @@
     <EntitySet Name="Canales" EntityType="DevModel.Canales" />
     <EntitySet Name="ConteoDoctores2" EntityType="DevModel.ConteoDoctores2" />
     <EntitySet Name="Doctores2" EntityType="DevModel.Doctores2" />
+    <AssociationSet Name="FK_Tipificaciones_CallCenter" Association="DevModel.FK_Tipificaciones_CallCenter">
+      <End Role="CallCenter" EntitySet="CallCenter" />
+      <End Role="Tipificaciones" EntitySet="Tipificaciones" />
+    </AssociationSet>
+    <AssociationSet Name="FK_FirmaESP_PacienteESP" Association="DevModel.FK_FirmaESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="FirmaESP" EntitySet="FirmaESP" />
+    </AssociationSet>
+    <AssociationSet Name="FK_HuellasESP_PacienteESP" Association="DevModel.FK_HuellasESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="HuellasESP" EntitySet="HuellasESP" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="CapturaIncidencia">
     <Key>
@@ -1371,6 +1384,8 @@
     <Property Name="FechaCaptura" Type="DateTime" Precision="3" />
     <NavigationProperty Name="EPI_ESP" Relationship="DevModel.FK_EPI_ESP_PacienteESP" FromRole="PacienteESP" ToRole="EPI_ESP" />
     <NavigationProperty Name="MovimientosAudio" Relationship="DevModel.FK_MovimientosAudio_PacienteESP" FromRole="PacienteESP" ToRole="MovimientosAudio" />
+    <NavigationProperty Name="FirmaESP" Relationship="DevModel.FK_FirmaESP_PacienteESP" FromRole="PacienteESP" ToRole="FirmaESP" />
+    <NavigationProperty Name="HuellasESP" Relationship="DevModel.FK_HuellasESP_PacienteESP" FromRole="PacienteESP" ToRole="HuellasESP" />
   </EntityType>
   <EntityType Name="FotoPacienteESP">
     <Key>
@@ -1652,6 +1667,7 @@
     <Property Name="FechaVigencia" Type="DateTime" Precision="3" />
     <Property Name="Rechazado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
     <Property Name="Llamadas" Type="Int32" />
+    <NavigationProperty Name="Tipificaciones" Relationship="DevModel.FK_Tipificaciones_CallCenter" FromRole="CallCenter" ToRole="Tipificaciones" />
   </EntityType>
   <EntityType Name="Tipificaciones">
     <Key>
@@ -1663,6 +1679,7 @@
     <Property Name="FechaLlamada" Type="DateTime" Precision="3" />
     <Property Name="Tipificacion" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
     <Property Name="idCallCenter" Type="Int32" />
+    <NavigationProperty Name="CallCenter" Relationship="DevModel.FK_Tipificaciones_CallCenter" FromRole="Tipificaciones" ToRole="CallCenter" />
   </EntityType>
   <EntityType Name="FirmaESP">
     <Key>
@@ -1671,6 +1688,7 @@
     <Property Name="idFirmaESP" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Firma" Type="Binary" MaxLength="Max" FixedLength="false" />
     <Property Name="idPadienteESP" Type="Int32" />
+    <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_FirmaESP_PacienteESP" FromRole="FirmaESP" ToRole="PacienteESP" />
   </EntityType>
   <EntityType Name="HuellasESP">
     <Key>
@@ -1682,6 +1700,7 @@
     <Property Name="Huella7" Type="Binary" MaxLength="Max" FixedLength="false" />
     <Property Name="Huella8" Type="Binary" MaxLength="Max" FixedLength="false" />
     <Property Name="idPacienteESP" Type="Int32" />
+    <NavigationProperty Name="PacienteESP" Relationship="DevModel.FK_HuellasESP_PacienteESP" FromRole="HuellasESP" ToRole="PacienteESP" />
   </EntityType>
   <EntityType Name="Canales">
     <Key>
@@ -1706,5 +1725,42 @@
     </Key>
     <Property Name="idDoctor2" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="NombreDoctor" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Grupo" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
   </EntityType>
+  <Association Name="FK_Tipificaciones_CallCenter">
+    <End Type="DevModel.CallCenter" Role="CallCenter" Multiplicity="0..1" />
+    <End Type="DevModel.Tipificaciones" Role="Tipificaciones" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CallCenter">
+        <PropertyRef Name="idCallCenter" />
+      </Principal>
+      <Dependent Role="Tipificaciones">
+        <PropertyRef Name="idCallCenter" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_FirmaESP_PacienteESP">
+    <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
+    <End Type="DevModel.FirmaESP" Role="FirmaESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="FirmaESP">
+        <PropertyRef Name="idPadienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_HuellasESP_PacienteESP">
+    <End Type="DevModel.PacienteESP" Role="PacienteESP" Multiplicity="0..1" />
+    <End Type="DevModel.HuellasESP" Role="HuellasESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="HuellasESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema>

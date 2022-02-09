@@ -16,5 +16,6 @@ namespace SCT_iCare
     {
         public int idDoctor2 { get; set; }
         public string NombreDoctor { get; set; }
+        public string Grupo { get; set; }
     }
 }

@@ -278,9 +278,57 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
             window.open('@TempData["Link"]');
         </script>
     }
+
+
+    @if (TempData["idCaptura"] != null)
+    {
+        <script>
+            $('#capturaRepetida').modal('show');
+        </script>
+    }
 }
 
 <br />
+
+<div class="modal fade" id="capturaRepetida" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:crimson">
+                <h3 class="modal-title" style="color:white" id="exampleModalLabel"><b>¡ERROR! Expediente registrado con anterioridad</b></h3>
+            </div>
+            <div class="modal-body" id="">
+                <div class="tablaScroll">
+                    @{
+                        int capturaID = Convert.ToInt32(TempData["idCaptura"]);
+                        var capturaRepetida = (from i in db.Captura where i.idCaptura == capturaID select i).FirstOrDefault();
+
+                        if (capturaRepetida != null)
+                        {
+                            <h4 class="text-danger">El paciente asignado al No de Expediente @capturaRepetida.NoExpediente ya tiene un EPI sin capturar. </h4>
+                            <hr />
+
+                            <h4 class="text-info">Nombre: <b class="text-primary">@capturaRepetida.NombrePaciente</b></h4>
+                            <h4 class="text-info">No Expediente: <b class="text-primary">@capturaRepetida.NoExpediente</b></h4>
+                            <h4 class="text-info">Sucursal: <b class="text-primary">@capturaRepetida.Sucursal</b></h4>
+                            <h4 class="text-info">Doctor: <b class="text-primary">@capturaRepetida.Doctor</b></h4>
+                            <h4 class="text-info">Tipo de Licencia: <b class="text-primary">@capturaRepetida.TipoTramite</b></h4>
+                            if (capturaRepetida.Capturista != null)
+                            {
+                                <h4 class="text-info">Capturista: <b class="text-primary">@capturaRepetida.Capturista</b></h4>
+                            }
+                            <h4 class="text-info">Fecha: <b class="text-primary">@Convert.ToDateTime(capturaRepetida.FechaExpdiente).ToString("dd-MMMM-yyyy")</b></h4>
+                            <h4 class="text-info">Estatus de Captura: <b class="text-primary">@capturaRepetida.EstatusCaptura</b></h4>
+                        }
+                    }
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 <div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document" style="width:70%">
@@ -480,7 +528,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
-</div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -732,7 +780,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
-</div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -987,7 +1035,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             <option value="OTRO">OTRO</option>
                         </select>
                     </div>
-</div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -1441,11 +1489,11 @@ else
                                 var referenciaNormal = (from i in db.Cita where i.Referencia == item.M.Referencia orderby i.idCita descending select i.idPaciente).FirstOrDefault();
                                 var referenciaSB = (from i in db.ReferenciasSB where i.idPaciente == referenciaNormal select i).FirstOrDefault();
                                 @*if (referenciaSB != null)
-                                {
-                                    <br />
+                                    {
+                                        <br />
 
-                                    <b style="font-size:x-small" class="text-primary">SB: @referenciaSB.ReferenciaSB</b>
-                                }*@
+                                        <b style="font-size:x-small" class="text-primary">SB: @referenciaSB.ReferenciaSB</b>
+                                    }*@
                             }
                         }
                     </td>

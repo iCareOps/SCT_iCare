@@ -38,6 +38,7 @@ namespace SCT_iCare
         public string ReferidoPor { get; set; }
         public string CarruselMedico { get; set; }
         public Nullable<System.DateTime> FechaCreacion { get; set; }
+        public string Cuenta { get; set; }
     
         public virtual Canal Canal1 { get; set; }
         public virtual Paciente Paciente { get; set; }
