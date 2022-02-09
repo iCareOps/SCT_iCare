@@ -12,11 +12,12 @@
 
 .page-container {
     max-width: 1200px;
+    max-height: 800px;
     margin: 2rem auto;
 }
 
 .table-cebra {
-    border-top: 1px solid #ddd;
+    border-top: 0;
     border-spacing: 0;
     font-size: 13px;
     width: 100%;
@@ -37,15 +38,24 @@
     }
 
     .table-cebra thead tr {
+        border-top: 0;
         background: #337ab7;
         color: white;
         text-align: center;
+        position: sticky;
+        top: 0;
+        border-top: none;
     }
 
         .table-cebra thead tr th td {
             text-align: center;
             font-size: smaller;
             background: #0275d8;
+            border-top: none;
+            border-bottom: none;
+            position: sticky;
+            top: 0;
+            max-width: 35px;
         }
 
     .table-cebra th,
@@ -69,12 +79,47 @@
         background: white;
     }
 
-        .table-cebra tbody tr:first-child {
-            background: #d9edf7;
-        }
 
-table-cebra tbody td {
-    text-align: center;
+    .table-cebra tbody td {
+        text-align: center;
+    }
+
+    .table-cebra tbody tr {
+        position: sticky;
+        top: 35px;
+    }
+
+
+/*Stickys*/
+
+.table-cebra .sticky {
+    position: sticky;
+    left: 0;
+    top: 0;
+}
+
+.table-cebra .sticky2 {
+    position: sticky;
+    left: 85px;
+    top: 0;
+}
+
+.table-cebra .sticky3 {
+    position: sticky;
+    left: 185px;
+    top: 0;
+}
+
+.table-cebra .sticky4 {
+    position: sticky;
+    left: 285px;
+    top: 0;
+}
+
+.table-cebra .sticky5 {
+    position: sticky;
+    left: 385px;
+    top: 0;
 }
 
 /*Sticky*/
@@ -83,6 +128,12 @@ table-cebra tbody td {
     background: #337ab7;
     color: white;
     text-align: center;
+    border-top: 0;
+    position: sticky;
+    left: 0;
+    top: 0;
+}
+
 }
 
 .table-cebra thead tr th td .sticky {
@@ -96,19 +147,11 @@ table-cebra tbody td {
     border-right: 1px solid #ddd !important;
     min-width: 100px;
     text-align: center;
-}
-
-.table-cebra th,
-.table-cebra td .sticky {
     border-bottom: 1px solid #ddd !important;
 }
 
 .table-cebra tbody tr .sticky {
     background: white;
-}
-
-.table-cebra tbody tr:first-child .sticky {
-    background: #d9edf7;
 }
 
 .table-cebra tbody td .sticky {
@@ -145,10 +188,6 @@ table-cebra tbody td {
     background: white;
 }
 
-.table-cebra tbody tr:first-child .sticky2 {
-    background: #d9edf7;
-}
-
 .table-cebra tbody td .sticky2 {
     text-align: center;
 }
@@ -181,10 +220,6 @@ table-cebra tbody td {
 
 .table-cebra tbody tr .sticky3 {
     background: white;
-}
-
-.table-cebra tbody tr:first-child .sticky3 {
-    background: #d9edf7;
 }
 
 .table-cebra tbody td .sticky3 {
@@ -221,10 +256,6 @@ table-cebra tbody td {
     background: white;
 }
 
-.table-cebra tbody tr:first-child .sticky4 {
-    background: #d9edf7;
-}
-
 .table-cebra tbody td .sticky4 {
     text-align: center;
 }
@@ -259,10 +290,6 @@ table-cebra tbody td {
     background: white;
 }
 
-.table-cebra tbody tr:first-child .sticky5 {
-    background: #d9edf7;
-}
-
 .table-cebra tbody td .sticky5 {
     text-align: center;
 }
@@ -290,81 +317,55 @@ table-cebra tbody td {
     background-color: #f5f5f5;
 }
 
-.a tbody tr:first-child:hover {
-    background: #d9edf7;
-}
+    .a > tbody > tr > td.active:hover,
+    .a > tbody > tr > th.active:hover,
+    .a > tbody > tr.active:hover > td,
+    .a > tbody > tr:hover > .active,
+    .a > tbody > tr.active:hover > th {
+        background-color: #e8e8e8;
+    }
 
-.a > tbody > tr > td.active:hover,
-.a > tbody > tr > th.active:hover,
-.a > tbody > tr.active:hover > td,
-.a > tbody > tr:hover > .active,
-.a > tbody > tr.active:hover > th {
-    background-color: #e8e8e8;
-}
+    .a > tbody > tr > td.success:hover,
+    .a > tbody > tr > th.success:hover,
+    .a > tbody > tr.success:hover > td,
+    .a > tbody > tr:hover > .success,
+    .a > tbody > tr.success:hover > th {
+        background-color: #d0e9c6;
+    }
 
-.a > tbody > tr > td.success:hover,
-.a > tbody > tr > th.success:hover,
-.a > tbody > tr.success:hover > td,
-.a > tbody > tr:hover > .success,
-.a > tbody > tr.success:hover > th {
-    background-color: #d0e9c6;
-}
+    .a > tbody > tr > td.info:hover,
+    .a > tbody > tr > th.info:hover,
+    .a > tbody > tr.info:hover > td,
+    .a > tbody > tr:hover > .info,
+    .a > tbody > tr.info:hover > th {
+        background-color: #c4e3f3;
+    }
 
-.a > tbody > tr > td.info:hover,
-.a > tbody > tr > th.info:hover,
-.a > tbody > tr.info:hover > td,
-.a > tbody > tr:hover > .info,
-.a > tbody > tr.info:hover > th {
-    background-color: #c4e3f3;
-}
+    .a > tbody > tr > td.warning:hover,
+    .a > tbody > tr > th.warning:hover,
+    .a > tbody > tr.warning:hover > td,
+    .a > tbody > tr:hover > .warning,
+    .a > tbody > tr.warning:hover > th {
+        background-color: #faf2cc;
+    }
 
-.a > tbody > tr > td.warning:hover,
-.a > tbody > tr > th.warning:hover,
-.a > tbody > tr.warning:hover > td,
-.a > tbody > tr:hover > .warning,
-.a > tbody > tr.warning:hover > th {
-    background-color: #faf2cc;
-}
-
-.a > tbody > tr > td.danger:hover,
-.a > tbody > tr > th.danger:hover,
-.a > tbody > tr.danger:hover > td,
-.a > tbody > tr:hover > .danger,
-.a > tbody > tr.danger:hover > th {
-    background-color: #ebcccc;
-}
+    .a > tbody > tr > td.danger:hover,
+    .a > tbody > tr > th.danger:hover,
+    .a > tbody > tr.danger:hover > td,
+    .a > tbody > tr:hover > .danger,
+    .a > tbody > tr.danger:hover > th {
+        background-color: #ebcccc;
+    }
 
 /*Contenedor center ellipse Div*/
 
 .table-container {
     max-width: 100%;
-    max-height: 100%;
+    max-height: 450px;
     overflow-x: scroll;
+    overflow-y: auto;
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
+    border-top: 1px solid #ddd;
 }
 
-.table-cebra .sticky {
-    position: sticky;
-    left: 0;
-}
-
-.table-cebra .sticky2 {
-    position: sticky;
-    left: 85px;
-}
-
-.table-cebra .sticky3 {
-    position: sticky;
-    left: 185px;
-}
-
-.table-cebra .sticky4 {
-    position: sticky;
-    left: 285px;
-}
-
-.table-cebra .sticky5 {
-    position: sticky;
-    left: 385px;
-}
