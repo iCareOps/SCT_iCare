@@ -308,6 +308,9 @@ namespace SCT_iCare.Controllers.Dictamenes
                 }
                 paciente.TipoLicencia = TIPOLIC;
 
+                var referidoTipo = (from r in db.Referido where r.Nombre == referido && r.Tipo == "GESTOR ALT" select r.Tipo).FirstOrDefault();
+                paciente.CanalTipo = referidoTipo;
+
 
                 if (ModelState.IsValid)
                 {
