@@ -133,6 +133,15 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                 </th>
                 <th>
                     Referencia
+                </th><!--Referido Por(vía y canal), Tipo de pago (Conekta, BanBajio, Banco Alternativo) / Fecha de pago-->
+                <th>
+                    ReferidoPor
+                </th>
+                <th>
+                    TipoPago
+                </th>
+                <th>
+                    FechaPago
                 </th>
                 <th>
                     Estatus Pago
@@ -178,13 +187,40 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                         }
                     </td>
                     <td>
-                        @Convert.ToDateTime(item.M.FechaReferencia).ToString("dd-MMMM-yyyy")
+                        @Convert.ToDateTime(item.M.FechaCita).ToString("dd-MMMM-yyyy")
                     </td>
                     <td>
                         @item.M.Sucursal
                     </td>
                     <td>
                         @item.M.Referencia
+                    </td>
+                    <td>
+                        <span class="field-tip">
+                            <b>@item.M.ReferidoPor</b>
+                            <span class="tip-content">
+                                Canal: @item.M.CanalTipo
+                            </span>
+                        </span>
+                    </td>
+                    <td>
+                        @{ 
+                            if(item.M.TipoPago == "Referencia OXXO" || item.M.TipoPago == "Pago con Tarjeta")
+                {
+                    <span>Conekta</span>
+                            }
+                            else if(item.M.TipoPago == "Referencia BanBajío" || item.M.TipoPago == "Transferencia vía BanBajío")
+                {
+                    <span>BanBajío</span>
+                }
+                else
+                {
+                    <span>Banco Alternativo</span>
+                }
+                        }
+                    </td>
+                    <td>
+                        @Convert.ToDateTime(item.M.FechaReferencia).ToString("dd-MMMM-yyyy")
                     </td>
                     <td>
                         @{
@@ -461,6 +497,20 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     </td>
                     <td>
                         N/A
+                    </td>
+                    <td>
+                        <span class="field-tip">
+                            <b>@item.ReferidoPor</b>
+                            <span class="tip-content">
+                                Canal: @item.CanalTipo
+                            </span>
+                        </span>
+                    </td>
+                    <td>
+                        N/A
+                    </td>
+                    <td>
+                        @Convert.ToDateTime(item.FechaSolicitud).ToString("dd-MMMM-yyyy")
                     </td>
                     <td>
                         N/A
