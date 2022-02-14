@@ -315,18 +315,15 @@ namespace SCT_iCare.Controllers.Gestoria
                 }
                 cita.TipoLicencia = TIPOLIC;
 
-                //if (referido == "NINGUNO" || referido == "OTRO")
-                //{
-                //    cita.CC = "N/A";
-                //}
-                //else
-                //{
-                //    var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
-                //    cita.CC = referidoTipo;
-                //}
-                var referidoTipo = (from r in db.Referido where r.Nombre == referido && (r.Tipo != "IN SITU" || r.Tipo != "GESTOR ALT") select r.Tipo).FirstOrDefault();
-                cita.CC = referidoTipo;
-                cita.CanalTipo = referidoTipo;
+                if (referido == "NINGUNO" || referido == "OTRO")
+                {
+                    cita.CC = "N/A";
+                }
+                else
+                {
+                    var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                    cita.CC = referidoTipo;
+                }
                 //-------------------------------------------------------------
                 if (ModelState.IsValid)
                 {
@@ -500,19 +497,17 @@ namespace SCT_iCare.Controllers.Gestoria
                     }
 
 
-                    //if (referido == "NINGUNO" || referido == "OTRO")
-                    //{
-                    //    cita.CC = "N/A";
-                    //}
-                    //else
-                    //{
-                    //    var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
-                    //    cita.CC = referidoTipo;
-                    //}
+                    if (referido == "NINGUNO" || referido == "OTRO")
+                    {
+                        cita.CC = "N/A";
+                    }
+                    else
+                    {
+                        var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                        cita.CC = referidoTipo;
+                    }
 
-                    var referidoTipo = (from r in db.Referido where r.Nombre == referido && (r.Tipo != "IN SITU" || r.Tipo != "GESTOR ALT") select r.Tipo).FirstOrDefault();
-                    cita.CC = referidoTipo;
-                    cita.CanalTipo = referidoTipo;
+
 
 
                     if (ModelState.IsValid)
@@ -795,19 +790,16 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.TipoLicencia = TIPOLIC;
 
 
-                //if (referido == "NINGUNO" || referido == "OTRO")
-                //{
-                //    cita.CC = "N/A";
-                //}
-                //else
-                //{
-                //    var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
-                //    cita.CC = referidoTipo;
-                //}
+                if (referido == "NINGUNO" || referido == "OTRO")
+                {
+                    cita.CC = "N/A";
+                }
+                else
+                {
+                    var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                    cita.CC = referidoTipo;
+                }
 
-                var referidoTipo = (from r in db.Referido where r.Nombre == referido && (r.Tipo != "IN SITU" || r.Tipo != "GESTOR ALT") select r.Tipo).FirstOrDefault();
-                cita.CC = referidoTipo;
-                cita.CanalTipo = referidoTipo;
 
                 if (ModelState.IsValid)
                 {
@@ -987,19 +979,16 @@ namespace SCT_iCare.Controllers.Gestoria
                     refe.EstatusReferencia = "PENDIENTE";
                     refe.idPaciente = idPaciente;
 
-                    //if (referido == "NINGUNO" || referido == "OTRO")
-                    //{
-                    //    cita.CC = "N/A";
-                    //}
-                    //else
-                    //{
-                    //    var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
-                    //    cita.CC = referidoTipo;
-                    //}
+                    if (referido == "NINGUNO" || referido == "OTRO")
+                    {
+                        cita.CC = "N/A";
+                    }
+                    else
+                    {
+                        var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                        cita.CC = referidoTipo;
+                    }
 
-                    var referidoTipo = (from r in db.Referido where r.Nombre == referido && (r.Tipo != "IN SITU" || r.Tipo != "GESTOR ALT") select r.Tipo).FirstOrDefault();
-                    cita.CC = referidoTipo;
-                    cita.CanalTipo = referidoTipo;
 
                     if (ModelState.IsValid)
                     {
@@ -1236,19 +1225,16 @@ namespace SCT_iCare.Controllers.Gestoria
                 }
                 cita.TipoLicencia = TIPOLIC;
 
-                //if (referido == "NINGUNO" || referido == "OTRO")
-                //{
-                //    cita.CC = "N/A";
-                //}
-                //else
-                //{
-                //    var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
-                //    cita.CC = referidoTipo;
-                //}
+                if (referido == "NINGUNO" || referido == "OTRO")
+                {
+                    cita.CC = "N/A";
+                }
+                else
+                {
+                    var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                    cita.CC = referidoTipo;
+                }
 
-                var referidoTipo = (from r in db.Referido where r.Nombre == referido && (r.Tipo != "IN SITU" || r.Tipo != "GESTOR ALT") select r.Tipo).FirstOrDefault();
-                cita.CC = referidoTipo;
-                cita.CanalTipo = referidoTipo;
 
                 if (ModelState.IsValid)
                 {
@@ -1395,19 +1381,16 @@ namespace SCT_iCare.Controllers.Gestoria
                     cita.FechaCreacion = DateTime.Now;
 
 
-                    //if (referido == "NINGUNO" || referido == "OTRO")
-                    //{
-                    //    cita.CC = "N/A";
-                    //}
-                    //else
-                    //{
-                    //    var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
-                    //    cita.CC = referidoTipo;
-                    //}
+                    if (referido == "NINGUNO" || referido == "OTRO")
+                    {
+                        cita.CC = "N/A";
+                    }
+                    else
+                    {
+                        var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
+                        cita.CC = referidoTipo;
+                    }
 
-                    var referidoTipo = (from r in db.Referido where r.Nombre == referido && (r.Tipo != "IN SITU" || r.Tipo != "GESTOR ALT") select r.Tipo).FirstOrDefault();
-                    cita.CC = referidoTipo;
-                    cita.CanalTipo = referidoTipo;
 
                     if (ModelState.IsValid)
                     {
