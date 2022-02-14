@@ -4,7 +4,6 @@ using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -14,76 +13,31 @@ namespace SCT_iCare.Controllers.Contabilidad
 {
     public class ContabilidadController : Controller
     {
-        GMIEntities db = new GMIEntities();
-        // GET: Maqueta
-        public ActionResult Index(string canal, string cuenta, string sucursal, DateTime? fecha)
+        // GET: Contabilidad
+        //[AuthorizeUser(idOperacion:4)]
+        public ActionResult Index()
         {
-            if (sucursal == "" || sucursal == null)
-            {
-                ViewBag.Sucursal = "";
-            }
-            else
-            {
-                ViewBag.Sucursal = sucursal;
-            }
-
-            if (canal == "" || canal == null)
-            {
-                ViewBag.Canal = "";
-            }
-            else
-            {
-                ViewBag.Canal = canal;
-            }
-
-            if (cuenta == "" || cuenta == null)
-            {
-                ViewBag.Cuenta = "";
-            }
-            else
-            {
-                ViewBag.Cuenta = cuenta;
-            }
-
-            ViewBag.Fecha = fecha != null ? fecha : null;
-
+            
+            Execute().Wait();
             return View();
         }
 
-        public ActionResult CambiarCuenta(int? id, string cuenta, string comentario,string usuario)
+        static async Task Execute()
         {
-            var cita = db.Cita.Find(id);
+            var apiKey = "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";
+            var client = new SendGridClient(apiKey); 
 
-            string historico = cita.CuentaComentario == null ? "" : cita.CuentaComentario +"+";
-            string cuentaAnterior = cita.Cuenta == null ? "" : " PROVIENE DE " + cita.Cuenta;
-            cita.CuentaComentario = historico + comentario + cuentaAnterior + " " + DateTime.Today.ToString("dd-MMMM-yyyy") + " POR " + usuario;
-            cita.Cuenta = cuenta;
+            
 
-            if (ModelState.IsValid)
-            {
-                db.Entry(cita).State = EntityState.Modified;
-                db.SaveChanges();
-            }
-
-            return Redirect("Index");
-        }
-
-        public ActionResult CambiarCuentaALT(int? id, string cuenta, string comentario, string usuario)
-        {
-            var cita = db.PacienteESP.Find(id);
-
-            string historico = cita.CuentaComentario == null ? "" : cita.CuentaComentario + "+"; ;
-            string cuentaAnterior = cita.Cuenta == null ? "" : " PROVIENE DE " +cita.Cuenta;
-            cita.CuentaComentario = historico + comentario +cuentaAnterior + " " +DateTime.Today.ToString("dd-MMMM-yyyy") + " POR " +usuario;
-            cita.Cuenta = cuenta;
-
-            if (ModelState.IsValid)
-            {
-                db.Entry(cita).State = EntityState.Modified;
-                db.SaveChanges();
-            }
-
-            return Redirect("Index");
+            var from = new EmailAddress("no-reply@grupogamx.mx", "Grupo GA");
+            var subject = "Sending with SendGrid is Fun";
+            var to = new EmailAddress("amunoz@devware.mx", "Example User");
+            var plainTextContent = "and easy to do anywhere, even with C#";
+            var htmlContent = "<h1><strong>and easy to do anywhere, even with C#</strong></h1>";
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+            var response = client.SendEmailAsync(msg);
+            //Console.(response.StatusCode);
+            //Console.ReadLine();
         }
     }
 }
