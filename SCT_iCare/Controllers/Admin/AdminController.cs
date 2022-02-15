@@ -429,7 +429,7 @@ namespace SCT_iCare.Controllers.Admin
             }
             else
             {
-                return View(db.Doctores2.OrderBy(o => o.idDoctor2).ToPagedList(page.Value, pageSize.Value));
+                return View(db.Doctores2.OrderByDescending(o => o.idDoctor2).ToPagedList(page.Value, pageSize.Value));
             }
         }
 
