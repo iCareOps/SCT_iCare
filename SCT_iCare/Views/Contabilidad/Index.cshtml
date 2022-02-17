@@ -107,10 +107,81 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
             }
         </select>
 
-        <input type="date" name="fecha" class="form-control" />
+        @{
+
+            DateTime ViewBagFecha = Convert.ToDateTime(ViewBag.fecha);
+            int IDia = 0;
+            int IMes = 0;
+            string Dia = null;
+            string Mes = null;
+            string Anio = null;
+            string DiaMenor = null;
+            string MesMenor = null;
+            string SetFecha = null;
+
+            if (ViewBag.fecha != null)
+            {
+                Dia = Convert.ToString(ViewBagFecha.Day);
+                Mes = Convert.ToString(ViewBagFecha.Month);
+                Anio = Convert.ToString(ViewBagFecha.Year);
+                IDia = Convert.ToInt32(ViewBagFecha.Day);
+                IMes = Convert.ToInt32(ViewBagFecha.Month);
+
+                if (IDia < 10 && IMes < 10)
+                {
+
+                    MesMenor = "-0";
+                    DiaMenor = "-0";
+                    SetFecha = Anio + MesMenor + Mes + DiaMenor + Dia;
+
+                }
+
+                else if (IDia < 10 && IMes >= 10)
+
+                {
+
+                    MesMenor = "-";
+                    DiaMenor = "-0";
+                    SetFecha = Anio + MesMenor + Mes + DiaMenor + Dia;
+
+                }
+
+                else if (IMes < 10 && IDia >= 10)
+
+                {
+
+                    MesMenor = "-0";
+                    DiaMenor = "-";
+                    SetFecha = Anio + MesMenor + Mes + DiaMenor + Dia;
+
+                }
+
+                else
+
+                {
+
+                    MesMenor = "-";
+                    DiaMenor = "-";
+                    SetFecha = Anio + MesMenor + Mes + DiaMenor + Dia;
+
+                }
+
+                <input type="date" name="fecha" class="form-control" value="@SetFecha" />
+
+            }
+
+            else
+
+            {
+
+                <input type="date" name="fecha" class="form-control" value="" />
+
+            }
+
+        }
 
         <input type="submit" class="btn btn-info" value="Enviar" />
-        <a href="~/Maqueta/Index"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+        <a href="~/Contabilidad/Index"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
 
     </div>
 
