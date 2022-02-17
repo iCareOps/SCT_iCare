@@ -259,7 +259,7 @@ namespace SCT_iCare.Controllers.Dictamenes
         }
 
         [HttpPost]
-        public ActionResult Create1(string nombre, string usuario, /*string sucursal, */string cantidad, string cantidadAereo, string referido)
+        public ActionResult Create1(string nombre, string usuario, /*string sucursal, */string cantidad, string cantidadAereo, string referido, string pagoGestor)
         {
             PacienteESP paciente1 = new PacienteESP();
 
@@ -326,6 +326,8 @@ namespace SCT_iCare.Controllers.Dictamenes
                 }
                 paciente.TipoLicencia = TIPOLIC;
 
+                paciente.Cuenta = pagoGestor == "on" ? "CUENTAS X COBRAR" : null;
+
 
                 if (ModelState.IsValid)
                 {
@@ -365,16 +367,16 @@ namespace SCT_iCare.Controllers.Dictamenes
                         string referidoUno = referidoCadena[0];
                         var canalTipo = (from i in db.Referido where i.Nombre == referidoUno && i.Tipo == "IN SITU" select i.Tipo).FirstOrDefault();
                         paciente.CanalTipo = canalTipo;
-                        paciente.ReferidoPor = referidoCadena[0].ToString();
+                        paciente.ReferidoPor = referidoUno;
                     }
                     else
                     {
-                        string referidoUno = referidoCadena[0];
-                        var canalTipo = (from i in db.Referido where i.Nombre == referidoUno && i.Tipo == "GESTOR ALT" select i.Tipo).FirstOrDefault();
+                        var canalTipo = (from i in db.Referido where i.Nombre == referido && i.Tipo == "GESTOR ALT" select i.Tipo).FirstOrDefault();
                         paciente.CanalTipo = canalTipo;
-                        paciente.ReferidoPor = referidoCadena[0].ToString();
+                        paciente.ReferidoPor = referido;
                     }
 
+                    paciente.Cuenta = pagoGestor == "on" ? "CUENTAS X COBRAR" : null;
 
                     if (ModelState.IsValid)
                     {
@@ -389,7 +391,7 @@ namespace SCT_iCare.Controllers.Dictamenes
 
 
         [HttpPost]
-        public ActionResult CreateVentas(string nombre, string usuario, /*string sucursal, */string cantidad, string cantidadAereo, string referido, string urgente)
+        public ActionResult CreateVentas(string nombre, string usuario, /*string sucursal, */string cantidad, string cantidadAereo, string referido, string urgente, string pagoGestor)
         {
             PacienteESP paciente1 = new PacienteESP();
 
@@ -455,6 +457,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                 }
                 paciente.TipoLicencia = TIPOLIC;
 
+                paciente.Cuenta = pagoGestor == "on" ? "CUENTAS X COBRAR" : null;
 
                 if (ModelState.IsValid)
                 {
@@ -502,6 +505,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                         paciente.TipoLicencia = "AUTOTRANSPORTE";
                     }
 
+                    paciente.Cuenta = pagoGestor == "on" ? "CUENTAS X COBRAR" : null;
 
                     if (ModelState.IsValid)
                     {

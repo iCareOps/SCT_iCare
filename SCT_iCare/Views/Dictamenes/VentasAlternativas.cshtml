@@ -222,34 +222,36 @@
                                 }
                             }
                             @*<option style="font-weight:bold" value="AARON DIAZ">AARON DIAZ</option>
-        <option style="font-weight:bold" value="ALEJANDRO VELAZQUEZ">ALEJANDRO VELAZQUEZ</option>
-        <option style="font-weight:bold" value="ANTONIO">ANTONIO</option>
-        <option style="font-weight:bold" value="DANIEL SAUCEDO">DANIEL SAUCEDO</option>
-        <option style="font-weight:bold" value="ELIZABETH">ELIZABETH</option>
-        <option style="font-weight:bold" value="LEOPOLDO MAZA">LEOPOLDO MAZA</option>
-        <option style="font-weight:bold" value="LICENCIAS FEDERALES STINGRAY">LICENCIAS FEDERALES STINGRAY</option>
-        <option style="font-weight:bold" value="LUIS CORTES">LUIS CORTES</option>
-        <option style="font-weight:bold" value="LUIS ENRIQUE">LUIS ENRIQUE</option>
-        <option style="font-weight:bold" value="LUIS GDL">LUIS GDL</option>
-        <option style="font-weight:bold" value="MIRIAM SOL">MIRIAM SOL</option>
-        <option style="font-weight:bold" value="NATALY">NATALY</option>
-        <option style="font-weight:bold" value="PABLO">PABLO</option>
-        <option style="font-weight:bold" value="ROBERTO BONIFACIO">ROBERTO BONIFACIO</option>
-        <option style="font-weight:bold" value="ROYAL TRANSPORTS">ROYAL TRANSPORTS</option>
-        <option style="font-weight:bold" value="SAYRA">SAYRA</option>
-        <option style="font-weight:bold" value="VICTOR GERICO">VICTOR GERICO</option>*@
+                <option style="font-weight:bold" value="ALEJANDRO VELAZQUEZ">ALEJANDRO VELAZQUEZ</option>
+                <option style="font-weight:bold" value="ANTONIO">ANTONIO</option>
+                <option style="font-weight:bold" value="DANIEL SAUCEDO">DANIEL SAUCEDO</option>
+                <option style="font-weight:bold" value="ELIZABETH">ELIZABETH</option>
+                <option style="font-weight:bold" value="LEOPOLDO MAZA">LEOPOLDO MAZA</option>
+                <option style="font-weight:bold" value="LICENCIAS FEDERALES STINGRAY">LICENCIAS FEDERALES STINGRAY</option>
+                <option style="font-weight:bold" value="LUIS CORTES">LUIS CORTES</option>
+                <option style="font-weight:bold" value="LUIS ENRIQUE">LUIS ENRIQUE</option>
+                <option style="font-weight:bold" value="LUIS GDL">LUIS GDL</option>
+                <option style="font-weight:bold" value="MIRIAM SOL">MIRIAM SOL</option>
+                <option style="font-weight:bold" value="NATALY">NATALY</option>
+                <option style="font-weight:bold" value="PABLO">PABLO</option>
+                <option style="font-weight:bold" value="ROBERTO BONIFACIO">ROBERTO BONIFACIO</option>
+                <option style="font-weight:bold" value="ROYAL TRANSPORTS">ROYAL TRANSPORTS</option>
+                <option style="font-weight:bold" value="SAYRA">SAYRA</option>
+                <option style="font-weight:bold" value="VICTOR GERICO">VICTOR GERICO</option>*@
                         </select>
                     </div>
+                    <input type="checkbox" name="pagoGestor" />
+                    <label for="recipient-name" class="col-form-label"><b style="color:black">Pendiente de pago por gestor</b></label>
                     <div class="form-group" style="background-color:ghostwhite; padding:5px; border:solid 1px darkblue; border-radius:4px">
-                        <input type="checkbox"  id="nombre" name="urgente" />
-                        <label for="recipient-name" class="col-form-label" > MARCAR COMO URGENTE</label>
-                        @{ 
+                        <input type="checkbox" id="nombre" name="urgente" />
+                        <label for="recipient-name" class="col-form-label"> MARCAR COMO URGENTE</label>
+                        @{
                             int? urgentes = (from i in db.UrgentesCount select i.Contador).FirstOrDefault();
                             <br />
                             <span class="text-danger" style="font-size:smaller">**Quedan <b>@urgentes</b> requisiciones de Dictámenes Urgentes para este mes. Si el número de creación de citas supera los @urgentes la requisición no será posible.</span>
                         }
                     </div>
-            </div>
+</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
