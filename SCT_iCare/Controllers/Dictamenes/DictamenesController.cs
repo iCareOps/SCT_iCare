@@ -295,6 +295,24 @@ namespace SCT_iCare.Controllers.Dictamenes
                 paciente.FechaSolicitud = DateTime.Now;
                 //paciente.Sucursal = sucursal;
                 paciente.Solicita = usuario;
+
+                string [] referidoCadena = referido.Split('*');
+
+                if(referidoCadena.Length == 2)
+                {
+                    string referidoUno = referidoCadena[0];
+                    var canalTipo = (from i in db.Referido where i.Nombre == referidoUno && i.Tipo == "IN SITU" select i.Tipo).FirstOrDefault();
+                    paciente.CanalTipo = canalTipo;
+                    paciente.ReferidoPor = referidoCadena[0].ToString();
+                }
+                else
+                {
+                    string referidoUno = referidoCadena[0];
+                    var canalTipo = (from i in db.Referido where i.Nombre == referidoUno && i.Tipo == "GESTOR ALT" select i.Tipo).FirstOrDefault();
+                    paciente.CanalTipo = canalTipo;
+                    paciente.ReferidoPor = referidoCadena[0].ToString();
+                }
+                
                 paciente.ReferidoPor = referido.ToUpper();
 
                 string TIPOLIC = null;
@@ -338,6 +356,23 @@ namespace SCT_iCare.Controllers.Dictamenes
                     else
                     {
                         paciente.TipoLicencia = "AUTOTRANSPORTE";
+                    }
+
+                    string[] referidoCadena = referido.Split('*');
+
+                    if (referidoCadena.Length == 2)
+                    {
+                        string referidoUno = referidoCadena[0];
+                        var canalTipo = (from i in db.Referido where i.Nombre == referidoUno && i.Tipo == "IN SITU" select i.Tipo).FirstOrDefault();
+                        paciente.CanalTipo = canalTipo;
+                        paciente.ReferidoPor = referidoCadena[0].ToString();
+                    }
+                    else
+                    {
+                        string referidoUno = referidoCadena[0];
+                        var canalTipo = (from i in db.Referido where i.Nombre == referidoUno && i.Tipo == "GESTOR ALT" select i.Tipo).FirstOrDefault();
+                        paciente.CanalTipo = canalTipo;
+                        paciente.ReferidoPor = referidoCadena[0].ToString();
                     }
 
 
@@ -1159,6 +1194,8 @@ namespace SCT_iCare.Controllers.Dictamenes
                 revisionPacienteESP.Genero = genero != "" ? genero : revisionPacienteESP.Genero;
             }
 
+            revisionPacienteESP.Cuenta = "PENDIENTE DE PAGO";
+
             byte[] bytes2 = null;
             if (file != null)
             {
@@ -1913,6 +1950,8 @@ namespace SCT_iCare.Controllers.Dictamenes
             {
                 revisionPacienteESP.Genero = genero != "" ? genero : revisionPacienteESP.Genero;
             }
+
+            revisionPacienteESP.Cuenta = "PENDIENTE DE PAGO";
 
             byte[] bytes2 = null;
             if (file != null)

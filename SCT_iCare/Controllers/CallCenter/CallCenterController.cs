@@ -441,6 +441,8 @@ namespace SCT_iCare.Controllers.CallCenter
                     cita.CC = referidoTipo;
                 }
 
+                cita.Cuenta = "PENDIENTE DE PAGO";
+
                 if (ModelState.IsValid)
                 {
                     db.Cita.Add(cita);
@@ -626,6 +628,8 @@ namespace SCT_iCare.Controllers.CallCenter
                         var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
                         cita.CC = referidoTipo;
                     }
+
+                    cita.Cuenta = "PENDIENTE DE PAGO";
 
                     if (ModelState.IsValid)
                     {
@@ -1079,6 +1083,8 @@ namespace SCT_iCare.Controllers.CallCenter
                     cita.CC = referidoTipo;
                 }
 
+                cita.Cuenta = "PENDIENTE DE PAGO";
+
                 if (ModelState.IsValid)
                 {
                     db.Cita.Add(cita);
@@ -1232,6 +1238,8 @@ namespace SCT_iCare.Controllers.CallCenter
                         var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
                         cita.CC = referidoTipo;
                     }
+
+                    cita.Cuenta = "PENDIENTE DE PAGO";
 
                     if (ModelState.IsValid)
                     {

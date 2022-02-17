@@ -1,4 +1,6 @@
-﻿﻿
+﻿@*XLSX*@
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+﻿
 @{
     ViewBag.Title = "Administrador";
 
@@ -423,6 +425,13 @@
 <br />
 <br />
 
+<button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
+
+<div>
+    <br />
+</div>
+
+
 @if (episHoy.FirstOrDefault() == null)
 {
     <br />
@@ -431,7 +440,6 @@
 else
 {
     <div class="tablaScroll">
-        <br />
         <table class="table tablas" style="color: #2F2D6B">
             <thead>
                 <tr class="bg-primary" style="border-top-color: black; font-size:smaller">
@@ -540,4 +548,165 @@ else
 
     </div>
 </div>
+
+@*Tabla invisible*@
+
+@if (episHoy.FirstOrDefault() == null)
+{
+    <h1 style="color:white; display: none">No existen citas registradas el día de hoy</h1>
+}
+else
+{
+    <div class="tablaScroll" style="display: none">
+        <table id="tbl_exporttable_to_xls" class="table tablas" style="color: #2F2D6B">
+            <thead>
+                <tr class="bg-primary" style="border-top-color: black; font-size:smaller">
+
+                    <th>
+                        Nombre-EPI
+                    </th>
+
+                    <th>
+                        CURP
+                    </th>
+
+                    <th>
+                        No. Expediente
+                    </th>
+
+                    <th>
+                        Tipo Tramite
+                    </th>
+
+                    <th>
+                        Tipo Licencia
+                    </th>
+
+                    <th>
+                        Doctor
+                    </th>
+
+                    <th>
+                        Usuario
+                    </th>
+
+                    <th>
+                        Referido por
+                    </th>
+
+                    <th>
+                        Estatus Captura
+                    </th>
+
+                    <th>
+                        Capturista
+                    </th>
+
+                    <th>
+                        Canal Tipo
+                    </th>
+
+                    <th>
+                        Fecha Cap
+                    </th>
+
+                </tr>
+            </thead>
+
+
+            @foreach (var item in episHoy)
+            {
+                <tr>
+                    <td>
+                        <b>@item.Nombre</b>
+                    </td>
+
+                    <td>
+                        <b>@item.CURP</b>
+                    </td>
+
+                    <td>
+                        <b>@item.NoExpediente</b>
+                    </td>
+
+                    <td>
+                        <b>@item.TipoTramite</b>
+                    </td>
+
+                    <td>
+                        <b>@item.TipoLicencia</b>
+                    </td>
+
+                    <td>
+                        <b>@item.Doctor</b>
+                    </td>
+
+                    <td>
+                        <b>@item.Usuario</b>
+                    </td>
+
+                    <td>
+                        <b>@item.ReferidoPor</b>
+                    </td>
+
+                    <td>
+                        @{
+                            if (item.EstatusCaptura == null)
+                            {
+                                <mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Pendiente</mark>
+
+                            }
+                            else
+                            {
+                                if (item.EstatusCaptura == "En Proceso")
+                                {
+                                    <b><mark style="background-color: dodgerblue; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>
+                                }
+                                else if (item.EstatusCaptura == "Pausado")
+                                {
+                                    <b><mark style="background-color: darkorange; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>
+                                    @*<b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>*@
+                                }
+                                else if (item.EstatusCaptura == "Terminado")
+                                {
+                                    <a href=@Url.Action("DescargarPDF", "Dictamenes", new { id = item.idPacienteESP })><b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b></a>
+                                    @*<b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>*@
+                                }
+                            }
+                        }
+
+                    </td>
+                    <td style="font-size:smaller">
+                        @item.Capturista
+                    </td>
+
+                    <td style="font-size:smaller">
+                        @item.CanalTipo
+                    </td>
+
+                    <td>
+                        <b>@item.FechaCaptura</b>
+                    </td>
+
+                </tr>
+
+                flag += 1;
+
+            }
+
+        </table>
+    </div>
+}
+
+<script>
+
+        function ExportToExcel(type, fn, dl) {
+            var elt = document.getElementById('tbl_exporttable_to_xls');
+            var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+            return dl ?
+                XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+                XLSX.writeFile(wb, fn || ('Reporte del @ViewBag.Inicio.ToString("dd-MMMM-yyyy") al @Convert.ToDateTime(ViewBag.Final).AddDays(-1).ToString("dd-MMMM-yyyy").' + (type || 'xlsx')));
+        }
+
+</script>
 
