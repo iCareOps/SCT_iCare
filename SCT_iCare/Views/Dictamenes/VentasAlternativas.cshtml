@@ -215,29 +215,38 @@
                     <div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Referido Por:</label>
                         <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option value="NINGUNO">NINGUNO</option>
+                            <option disabled>----------GESTORES ALT----------</option>
                             @{
                                 foreach (var referido in (from i in db.Referido where i.Tipo == "GESTOR ALT" orderby i.Nombre select i))
                                 {
                                     <option style="font-weight:bold" value="@referido.Nombre">@referido.Nombre</option>
                                 }
                             }
+                            <option disabled>---------IN SITU--------</option>
+                            @{
+                                foreach (var referido in (from i in db.Referido where i.Tipo == "IN SITU" orderby i.Nombre select i))
+                                {
+                                    <option style="font-weight:bold" value="@referido.Nombre*IS">@referido.Nombre</option>
+                                }
+                            }
                             @*<option style="font-weight:bold" value="AARON DIAZ">AARON DIAZ</option>
-                <option style="font-weight:bold" value="ALEJANDRO VELAZQUEZ">ALEJANDRO VELAZQUEZ</option>
-                <option style="font-weight:bold" value="ANTONIO">ANTONIO</option>
-                <option style="font-weight:bold" value="DANIEL SAUCEDO">DANIEL SAUCEDO</option>
-                <option style="font-weight:bold" value="ELIZABETH">ELIZABETH</option>
-                <option style="font-weight:bold" value="LEOPOLDO MAZA">LEOPOLDO MAZA</option>
-                <option style="font-weight:bold" value="LICENCIAS FEDERALES STINGRAY">LICENCIAS FEDERALES STINGRAY</option>
-                <option style="font-weight:bold" value="LUIS CORTES">LUIS CORTES</option>
-                <option style="font-weight:bold" value="LUIS ENRIQUE">LUIS ENRIQUE</option>
-                <option style="font-weight:bold" value="LUIS GDL">LUIS GDL</option>
-                <option style="font-weight:bold" value="MIRIAM SOL">MIRIAM SOL</option>
-                <option style="font-weight:bold" value="NATALY">NATALY</option>
-                <option style="font-weight:bold" value="PABLO">PABLO</option>
-                <option style="font-weight:bold" value="ROBERTO BONIFACIO">ROBERTO BONIFACIO</option>
-                <option style="font-weight:bold" value="ROYAL TRANSPORTS">ROYAL TRANSPORTS</option>
-                <option style="font-weight:bold" value="SAYRA">SAYRA</option>
-                <option style="font-weight:bold" value="VICTOR GERICO">VICTOR GERICO</option>*@
+        <option style="font-weight:bold" value="ALEJANDRO VELAZQUEZ">ALEJANDRO VELAZQUEZ</option>
+        <option style="font-weight:bold" value="ANTONIO">ANTONIO</option>
+        <option style="font-weight:bold" value="DANIEL SAUCEDO">DANIEL SAUCEDO</option>
+        <option style="font-weight:bold" value="ELIZABETH">ELIZABETH</option>
+        <option style="font-weight:bold" value="LEOPOLDO MAZA">LEOPOLDO MAZA</option>
+        <option style="font-weight:bold" value="LICENCIAS FEDERALES STINGRAY">LICENCIAS FEDERALES STINGRAY</option>
+        <option style="font-weight:bold" value="LUIS CORTES">LUIS CORTES</option>
+        <option style="font-weight:bold" value="LUIS ENRIQUE">LUIS ENRIQUE</option>
+        <option style="font-weight:bold" value="LUIS GDL">LUIS GDL</option>
+        <option style="font-weight:bold" value="MIRIAM SOL">MIRIAM SOL</option>
+        <option style="font-weight:bold" value="NATALY">NATALY</option>
+        <option style="font-weight:bold" value="PABLO">PABLO</option>
+        <option style="font-weight:bold" value="ROBERTO BONIFACIO">ROBERTO BONIFACIO</option>
+        <option style="font-weight:bold" value="ROYAL TRANSPORTS">ROYAL TRANSPORTS</option>
+        <option style="font-weight:bold" value="SAYRA">SAYRA</option>
+        <option style="font-weight:bold" value="VICTOR GERICO">VICTOR GERICO</option>*@
                         </select>
                     </div>
                     <input type="checkbox" name="pagoGestor" />

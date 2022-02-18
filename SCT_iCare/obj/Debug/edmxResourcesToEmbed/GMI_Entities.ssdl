@@ -159,6 +159,9 @@
     <Property Name="CarruselMedico" Type="varchar" MaxLength="20" />
     <Property Name="FechaCreacion" Type="datetime" />
     <Property Name="Cuenta" Type="varchar" MaxLength="30" />
+    <Property Name="CanalTipo" Type="varchar" MaxLength="30" />
+    <Property Name="CuentaComentario" Type="varchar(max)" />
+    <Property Name="Conciliado" Type="varchar" MaxLength="10" />
   </EntityType>
   <EntityType Name="Ciudades">
     <Key>
@@ -726,14 +729,18 @@
     <Property Name="ReferidoPor" Type="varchar" MaxLength="50" />
     <Property Name="FechaCita" Type="datetime" />
     <Property Name="Estatura" Type="varchar" MaxLength="20" />
-    <Property Name="Metra" Type="varchar" MaxLength="10" />
     <Property Name="EstatusCaptura" Type="varchar" MaxLength="20" />
     <Property Name="Capturista" Type="varchar" MaxLength="50" />
+    <Property Name="Metra" Type="varchar" MaxLength="10" />
     <Property Name="Genero" Type="varchar" MaxLength="10" />
     <Property Name="Problema" Type="varchar" MaxLength="200" />
     <Property Name="Solicita" Type="varchar" MaxLength="100" />
     <Property Name="FechaSolicitud" Type="datetime" />
     <Property Name="FechaCaptura" Type="datetime" />
+    <Property Name="Cuenta" Type="varchar" MaxLength="50" />
+    <Property Name="CanalTipo" Type="varchar" MaxLength="50" />
+    <Property Name="CuentaComentario" Type="varchar(max)" />
+    <Property Name="Conciliado" Type="varchar" MaxLength="20" />
   </EntityType>
   <EntityType Name="Recepcionista">
     <Key>
@@ -760,6 +767,10 @@
     <Property Name="Nombre" Type="varchar" MaxLength="50" />
     <Property Name="Tipo" Type="varchar" MaxLength="50" />
     <Property Name="Saldo" Type="int" />
+    <Property Name="PrecioNormal" Type="varchar" MaxLength="20" />
+    <Property Name="PrecioAereo" Type="varchar" MaxLength="20" />
+    <Property Name="PrecioALT" Type="varchar" MaxLength="20" />
+    <Property Name="PrecioALTIS" Type="varchar" MaxLength="20" />
   </EntityType>
   <EntityType Name="Roles">
     <Key>
@@ -818,6 +829,594 @@
     <Property Name="Password" Type="varchar" MaxLength="100" />
     <Property Name="idRol" Type="int" />
   </EntityType>
+  <Association Name="FK_Archivos_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="Archivos" Type="Self.Archivos" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Archivos">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Biometricos_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="Biometricos" Type="Self.Biometricos" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Biometricos">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Captura_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="Captura" Type="Self.Captura" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Captura">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CapturaIncidencia_Captura">
+    <End Role="Captura" Type="Self.Captura" Multiplicity="0..1" />
+    <End Role="CapturaIncidencia" Type="Self.CapturaIncidencia" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Captura">
+        <PropertyRef Name="idCaptura" />
+      </Principal>
+      <Dependent Role="CapturaIncidencia">
+        <PropertyRef Name="idCaptura" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CarruselMedico_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="CarruselMedico" Type="Self.CarruselMedico" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="CarruselMedico">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CartaNoAccidentesESP_PacienteESP">
+    <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+    <End Role="CartaNoAccidentesESP" Type="Self.CartaNoAccidentesESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="CartaNoAccidentesESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Cita_Canal">
+    <End Role="Canal" Type="Self.Canal" Multiplicity="0..1" />
+    <End Role="Cita" Type="Self.Cita" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Canal">
+        <PropertyRef Name="idCanal" />
+      </Principal>
+      <Dependent Role="Cita">
+        <PropertyRef Name="idCanal" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Cita_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="Cita" Type="Self.Cita" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Cita">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DeclaracionSaludESP_PacienteESP">
+    <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+    <End Role="DeclaracionSaludESP" Type="Self.DeclaracionSaludESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="DeclaracionSaludESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Dictamen_Aptitud">
+    <End Role="Aptitud" Type="Self.Aptitud" Multiplicity="0..1" />
+    <End Role="Dictamen" Type="Self.Dictamen" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Aptitud">
+        <PropertyRef Name="idAptitud" />
+      </Principal>
+      <Dependent Role="Dictamen">
+        <PropertyRef Name="idAptitud" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Dictamen_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="Dictamen" Type="Self.Dictamen" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Dictamen">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DictamenESP_PacienteESP">
+    <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+    <End Role="DictamenESP" Type="Self.DictamenESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="DictamenESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DictamenProblema_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="DictamenProblema" Type="Self.DictamenProblema" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="DictamenProblema">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Doctores_Sucursales">
+    <End Role="Sucursales" Type="Self.Sucursales" Multiplicity="0..1" />
+    <End Role="Doctores" Type="Self.Doctores" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Sucursales">
+        <PropertyRef Name="idSucursal" />
+      </Principal>
+      <Dependent Role="Doctores">
+        <PropertyRef Name="idSucursal" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DoctorModulo_Modulos">
+    <End Role="Modulos" Type="Self.Modulos" Multiplicity="0..1" />
+    <End Role="DoctorModulo" Type="Self.DoctorModulo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Modulos">
+        <PropertyRef Name="idModulo" />
+      </Principal>
+      <Dependent Role="DoctorModulo">
+        <PropertyRef Name="idModulo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DoctorModulo_Sucursales">
+    <End Role="Sucursales" Type="Self.Sucursales" Multiplicity="0..1" />
+    <End Role="DoctorModulo" Type="Self.DoctorModulo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Sucursales">
+        <PropertyRef Name="idSucursal" />
+      </Principal>
+      <Dependent Role="DoctorModulo">
+        <PropertyRef Name="idSucursal" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DoctorModulo_Usuarios">
+    <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+    <End Role="DoctorModulo" Type="Self.DoctorModulo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Usuarios">
+        <PropertyRef Name="idUsuario" />
+      </Principal>
+      <Dependent Role="DoctorModulo">
+        <PropertyRef Name="idUsuario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_DocumentosESP_PacienteESP">
+    <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+    <End Role="DocumentosESP" Type="Self.DocumentosESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="DocumentosESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EPI_A_Heredofamiliares_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_A_Heredofamiliares" Type="Self.EPI_A_Heredofamiliares" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_A_Heredofamiliares">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EPI_A_NoPatologicos_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_A_NoPatologicos" Type="Self.EPI_A_NoPatologicos" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_A_NoPatologicos">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EPI_A_Patologicos_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_A_Patologicos" Type="Self.EPI_A_Patologicos" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_A_Patologicos">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EPI_AparatosSistemas_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_AparatosSistemas" Type="Self.EPI_AparatosSistemas" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_AparatosSistemas">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EPI_Audiologia_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_Audiologia" Type="Self.EPI_Audiologia" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_Audiologia">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EPI_Cardiologia_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_Cardiologia" Type="Self.EPI_Cardiologia" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_Cardiologia">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EPI_DictamenAptitud_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_DictamenAptitud" Type="Self.EPI_DictamenAptitud" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_DictamenAptitud">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EPI_ESP_PacienteESP">
+    <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+    <End Role="EPI_ESP" Type="Self.EPI_ESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="EPI_ESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EPI_ExploracionFisica_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_ExploracionFisica" Type="Self.EPI_ExploracionFisica" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_ExploracionFisica">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EPI_Laboratorio_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_Laboratorio" Type="Self.EPI_Laboratorio" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_Laboratorio">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EPI_Odontologia_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_Odontologia" Type="Self.EPI_Odontologia" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_Odontologia">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Epi_Oftalmologia_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="Epi_Oftalmologia" Type="Self.Epi_Oftalmologia" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Epi_Oftalmologia">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EPI_SignosVitales_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="EPI_SignosVitales" Type="Self.EPI_SignosVitales" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="EPI_SignosVitales">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ExpedienteRevaloracion_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="ExpedienteRevaloracion" Type="Self.ExpedienteRevaloracion" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="ExpedienteRevaloracion">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Expedientes_Paciente">
+    <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
+    <End Role="Expedientes" Type="Self.Expedientes" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Expedientes">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_FirmaESP_PacienteESP">
+    <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+    <End Role="FirmaESP" Type="Self.FirmaESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="FirmaESP">
+        <PropertyRef Name="idPadienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_FotoPacienteESP_PacienteESP">
+    <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+    <End Role="FotoPacienteESP" Type="Self.FotoPacienteESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="FotoPacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_HemoglobinaGlucosiladaESP_PacienteESP">
+    <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+    <End Role="HemoglobinaGlucosiladaESP" Type="Self.HemoglobinaGlucosiladaESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="HemoglobinaGlucosiladaESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_HuellasESP_PacienteESP">
+    <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+    <End Role="HuellasESP" Type="Self.HuellasESP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="HuellasESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_IncidenciaDictamen_Captura">
+    <End Role="Captura" Type="Self.Captura" Multiplicity="0..1" />
+    <End Role="IncidenciaDictamen" Type="Self.IncidenciaDictamen" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Captura">
+        <PropertyRef Name="idCaptura" />
+      </Principal>
+      <Dependent Role="IncidenciaDictamen">
+        <PropertyRef Name="idCaptura" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_IncidenciaPaciente_Captura">
+    <End Role="Captura" Type="Self.Captura" Multiplicity="0..1" />
+    <End Role="IncidenciaPaciente" Type="Self.IncidenciaPaciente" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Captura">
+        <PropertyRef Name="idCaptura" />
+      </Principal>
+      <Dependent Role="IncidenciaPaciente">
+        <PropertyRef Name="idCaptura" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_log_InicioGestor_Usuarios">
+    <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+    <End Role="log_InicioGestor" Type="Self.log_InicioGestor" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Usuarios">
+        <PropertyRef Name="idUsuario" />
+      </Principal>
+      <Dependent Role="log_InicioGestor">
+        <PropertyRef Name="idUsuario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_log_Movimientos_log_InicioGestor">
+    <End Role="log_InicioGestor" Type="Self.log_InicioGestor" Multiplicity="0..1" />
+    <End Role="log_Movimientos" Type="Self.log_Movimientos" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="log_InicioGestor">
+        <PropertyRef Name="idLogInicioGestor" />
+      </Principal>
+      <Dependent Role="log_Movimientos">
+        <PropertyRef Name="idLogInicioGestor" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_MovimientosAudio_PacienteESP">
+    <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
+    <End Role="MovimientosAudio" Type="Self.MovimientosAudio" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PacienteESP">
+        <PropertyRef Name="idPacienteESP" />
+      </Principal>
+      <Dependent Role="MovimientosAudio">
+        <PropertyRef Name="idPacienteESP" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Recepcionista_Sucursales">
+    <End Role="Sucursales" Type="Self.Sucursales" Multiplicity="0..1" />
+    <End Role="Recepcionista" Type="Self.Recepcionista" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Sucursales">
+        <PropertyRef Name="idSucursal" />
+      </Principal>
+      <Dependent Role="Recepcionista">
+        <PropertyRef Name="idSucursal" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Recepcionista_Usuarios">
+    <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+    <End Role="Recepcionista" Type="Self.Recepcionista" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Usuarios">
+        <PropertyRef Name="idUsuario" />
+      </Principal>
+      <Dependent Role="Recepcionista">
+        <PropertyRef Name="idUsuario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_RolMenu_Menu">
+    <End Role="Menu" Type="Self.Menu" Multiplicity="0..1" />
+    <End Role="RolMenu" Type="Self.RolMenu" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Menu">
+        <PropertyRef Name="idMenu" />
+      </Principal>
+      <Dependent Role="RolMenu">
+        <PropertyRef Name="idMenu" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_RolMenu_Roles">
+    <End Role="Roles" Type="Self.Roles" Multiplicity="0..1" />
+    <End Role="RolMenu" Type="Self.RolMenu" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Roles">
+        <PropertyRef Name="idRol" />
+      </Principal>
+      <Dependent Role="RolMenu">
+        <PropertyRef Name="idRol" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Sucursales_Ciudades">
+    <End Role="Ciudades" Type="Self.Ciudades" Multiplicity="0..1" />
+    <End Role="Sucursales" Type="Self.Sucursales" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Ciudades">
+        <PropertyRef Name="idCiudad" />
+      </Principal>
+      <Dependent Role="Sucursales">
+        <PropertyRef Name="idCiudad" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Tipificaciones_CallCenter">
+    <End Role="CallCenter" Type="Self.CallCenter" Multiplicity="0..1" />
+    <End Role="Tipificaciones" Type="Self.Tipificaciones" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CallCenter">
+        <PropertyRef Name="idCallCenter" />
+      </Principal>
+      <Dependent Role="Tipificaciones">
+        <PropertyRef Name="idCallCenter" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Usuarios_Roles">
+    <End Role="Roles" Type="Self.Roles" Multiplicity="0..1" />
+    <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Roles">
+        <PropertyRef Name="idRol" />
+      </Principal>
+      <Dependent Role="Usuarios">
+        <PropertyRef Name="idRol" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <EntityContainer Name="DevModelStoreContainer">
     <EntitySet Name="Aptitud" EntityType="Self.Aptitud" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Archivos" EntityType="Self.Archivos" Schema="dbo" store:Type="Tables" />
@@ -880,5 +1479,201 @@
     <EntitySet Name="Tipificaciones" EntityType="Self.Tipificaciones" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="UrgentesCount" EntityType="Self.UrgentesCount" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_Archivos_Paciente" Association="Self.FK_Archivos_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Archivos" EntitySet="Archivos" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Biometricos_Paciente" Association="Self.FK_Biometricos_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Biometricos" EntitySet="Biometricos" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Captura_Paciente" Association="Self.FK_Captura_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Captura" EntitySet="Captura" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CapturaIncidencia_Captura" Association="Self.FK_CapturaIncidencia_Captura">
+      <End Role="Captura" EntitySet="Captura" />
+      <End Role="CapturaIncidencia" EntitySet="CapturaIncidencia" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CarruselMedico_Paciente" Association="Self.FK_CarruselMedico_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="CarruselMedico" EntitySet="CarruselMedico" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CartaNoAccidentesESP_PacienteESP" Association="Self.FK_CartaNoAccidentesESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="CartaNoAccidentesESP" EntitySet="CartaNoAccidentesESP" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Cita_Canal" Association="Self.FK_Cita_Canal">
+      <End Role="Canal" EntitySet="Canal" />
+      <End Role="Cita" EntitySet="Cita" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Cita_Paciente" Association="Self.FK_Cita_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Cita" EntitySet="Cita" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DeclaracionSaludESP_PacienteESP" Association="Self.FK_DeclaracionSaludESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="DeclaracionSaludESP" EntitySet="DeclaracionSaludESP" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Dictamen_Aptitud" Association="Self.FK_Dictamen_Aptitud">
+      <End Role="Aptitud" EntitySet="Aptitud" />
+      <End Role="Dictamen" EntitySet="Dictamen" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Dictamen_Paciente" Association="Self.FK_Dictamen_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Dictamen" EntitySet="Dictamen" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DictamenESP_PacienteESP" Association="Self.FK_DictamenESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="DictamenESP" EntitySet="DictamenESP" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DictamenProblema_Paciente" Association="Self.FK_DictamenProblema_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="DictamenProblema" EntitySet="DictamenProblema" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Doctores_Sucursales" Association="Self.FK_Doctores_Sucursales">
+      <End Role="Sucursales" EntitySet="Sucursales" />
+      <End Role="Doctores" EntitySet="Doctores" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DoctorModulo_Modulos" Association="Self.FK_DoctorModulo_Modulos">
+      <End Role="Modulos" EntitySet="Modulos" />
+      <End Role="DoctorModulo" EntitySet="DoctorModulo" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DoctorModulo_Sucursales" Association="Self.FK_DoctorModulo_Sucursales">
+      <End Role="Sucursales" EntitySet="Sucursales" />
+      <End Role="DoctorModulo" EntitySet="DoctorModulo" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DoctorModulo_Usuarios" Association="Self.FK_DoctorModulo_Usuarios">
+      <End Role="Usuarios" EntitySet="Usuarios" />
+      <End Role="DoctorModulo" EntitySet="DoctorModulo" />
+    </AssociationSet>
+    <AssociationSet Name="FK_DocumentosESP_PacienteESP" Association="Self.FK_DocumentosESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="DocumentosESP" EntitySet="DocumentosESP" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_A_Heredofamiliares_Paciente" Association="Self.FK_EPI_A_Heredofamiliares_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_A_Heredofamiliares" EntitySet="EPI_A_Heredofamiliares" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_A_NoPatologicos_Paciente" Association="Self.FK_EPI_A_NoPatologicos_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_A_NoPatologicos" EntitySet="EPI_A_NoPatologicos" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_A_Patologicos_Paciente" Association="Self.FK_EPI_A_Patologicos_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_A_Patologicos" EntitySet="EPI_A_Patologicos" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_AparatosSistemas_Paciente" Association="Self.FK_EPI_AparatosSistemas_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_AparatosSistemas" EntitySet="EPI_AparatosSistemas" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_Audiologia_Paciente" Association="Self.FK_EPI_Audiologia_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_Audiologia" EntitySet="EPI_Audiologia" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_Cardiologia_Paciente" Association="Self.FK_EPI_Cardiologia_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_Cardiologia" EntitySet="EPI_Cardiologia" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_DictamenAptitud_Paciente" Association="Self.FK_EPI_DictamenAptitud_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_DictamenAptitud" EntitySet="EPI_DictamenAptitud" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_ESP_PacienteESP" Association="Self.FK_EPI_ESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="EPI_ESP" EntitySet="EPI_ESP" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_ExploracionFisica_Paciente" Association="Self.FK_EPI_ExploracionFisica_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_ExploracionFisica" EntitySet="EPI_ExploracionFisica" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_Laboratorio_Paciente" Association="Self.FK_EPI_Laboratorio_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_Laboratorio" EntitySet="EPI_Laboratorio" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_Odontologia_Paciente" Association="Self.FK_EPI_Odontologia_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_Odontologia" EntitySet="EPI_Odontologia" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Epi_Oftalmologia_Paciente" Association="Self.FK_Epi_Oftalmologia_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Epi_Oftalmologia" EntitySet="Epi_Oftalmologia" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EPI_SignosVitales_Paciente" Association="Self.FK_EPI_SignosVitales_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="EPI_SignosVitales" EntitySet="EPI_SignosVitales" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ExpedienteRevaloracion_Paciente" Association="Self.FK_ExpedienteRevaloracion_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="ExpedienteRevaloracion" EntitySet="ExpedienteRevaloracion" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Expedientes_Paciente" Association="Self.FK_Expedientes_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Expedientes" EntitySet="Expedientes" />
+    </AssociationSet>
+    <AssociationSet Name="FK_FirmaESP_PacienteESP" Association="Self.FK_FirmaESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="FirmaESP" EntitySet="FirmaESP" />
+    </AssociationSet>
+    <AssociationSet Name="FK_FotoPacienteESP_PacienteESP" Association="Self.FK_FotoPacienteESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="FotoPacienteESP" EntitySet="FotoPacienteESP" />
+    </AssociationSet>
+    <AssociationSet Name="FK_HemoglobinaGlucosiladaESP_PacienteESP" Association="Self.FK_HemoglobinaGlucosiladaESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="HemoglobinaGlucosiladaESP" EntitySet="HemoglobinaGlucosiladaESP" />
+    </AssociationSet>
+    <AssociationSet Name="FK_HuellasESP_PacienteESP" Association="Self.FK_HuellasESP_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="HuellasESP" EntitySet="HuellasESP" />
+    </AssociationSet>
+    <AssociationSet Name="FK_IncidenciaDictamen_Captura" Association="Self.FK_IncidenciaDictamen_Captura">
+      <End Role="Captura" EntitySet="Captura" />
+      <End Role="IncidenciaDictamen" EntitySet="IncidenciaDictamen" />
+    </AssociationSet>
+    <AssociationSet Name="FK_IncidenciaPaciente_Captura" Association="Self.FK_IncidenciaPaciente_Captura">
+      <End Role="Captura" EntitySet="Captura" />
+      <End Role="IncidenciaPaciente" EntitySet="IncidenciaPaciente" />
+    </AssociationSet>
+    <AssociationSet Name="FK_log_InicioGestor_Usuarios" Association="Self.FK_log_InicioGestor_Usuarios">
+      <End Role="Usuarios" EntitySet="Usuarios" />
+      <End Role="log_InicioGestor" EntitySet="log_InicioGestor" />
+    </AssociationSet>
+    <AssociationSet Name="FK_log_Movimientos_log_InicioGestor" Association="Self.FK_log_Movimientos_log_InicioGestor">
+      <End Role="log_InicioGestor" EntitySet="log_InicioGestor" />
+      <End Role="log_Movimientos" EntitySet="log_Movimientos" />
+    </AssociationSet>
+    <AssociationSet Name="FK_MovimientosAudio_PacienteESP" Association="Self.FK_MovimientosAudio_PacienteESP">
+      <End Role="PacienteESP" EntitySet="PacienteESP" />
+      <End Role="MovimientosAudio" EntitySet="MovimientosAudio" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Recepcionista_Sucursales" Association="Self.FK_Recepcionista_Sucursales">
+      <End Role="Sucursales" EntitySet="Sucursales" />
+      <End Role="Recepcionista" EntitySet="Recepcionista" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Recepcionista_Usuarios" Association="Self.FK_Recepcionista_Usuarios">
+      <End Role="Usuarios" EntitySet="Usuarios" />
+      <End Role="Recepcionista" EntitySet="Recepcionista" />
+    </AssociationSet>
+    <AssociationSet Name="FK_RolMenu_Menu" Association="Self.FK_RolMenu_Menu">
+      <End Role="Menu" EntitySet="Menu" />
+      <End Role="RolMenu" EntitySet="RolMenu" />
+    </AssociationSet>
+    <AssociationSet Name="FK_RolMenu_Roles" Association="Self.FK_RolMenu_Roles">
+      <End Role="Roles" EntitySet="Roles" />
+      <End Role="RolMenu" EntitySet="RolMenu" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Sucursales_Ciudades" Association="Self.FK_Sucursales_Ciudades">
+      <End Role="Ciudades" EntitySet="Ciudades" />
+      <End Role="Sucursales" EntitySet="Sucursales" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Tipificaciones_CallCenter" Association="Self.FK_Tipificaciones_CallCenter">
+      <End Role="CallCenter" EntitySet="CallCenter" />
+      <End Role="Tipificaciones" EntitySet="Tipificaciones" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Usuarios_Roles" Association="Self.FK_Usuarios_Roles">
+      <End Role="Roles" EntitySet="Roles" />
+      <End Role="Usuarios" EntitySet="Usuarios" />
+    </AssociationSet>
   </EntityContainer>
 </Schema>
