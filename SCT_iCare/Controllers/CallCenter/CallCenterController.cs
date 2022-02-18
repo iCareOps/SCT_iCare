@@ -440,11 +440,6 @@ namespace SCT_iCare.Controllers.CallCenter
                     var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
                     cita.CC = referidoTipo;
                 }
-<<<<<<< HEAD
-
-                cita.Cuenta = "PENDIENTE DE PAGO";
-=======
->>>>>>> parent of e2d861c (Se optimiza La tabla 8 columnas)
 
                 if (ModelState.IsValid)
                 {
@@ -631,11 +626,6 @@ namespace SCT_iCare.Controllers.CallCenter
                         var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
                         cita.CC = referidoTipo;
                     }
-<<<<<<< HEAD
-
-                    cita.Cuenta = "PENDIENTE DE PAGO";
-=======
->>>>>>> parent of e2d861c (Se optimiza La tabla 8 columnas)
 
                     if (ModelState.IsValid)
                     {
@@ -1088,11 +1078,6 @@ namespace SCT_iCare.Controllers.CallCenter
                     var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
                     cita.CC = referidoTipo;
                 }
-<<<<<<< HEAD
-
-                cita.Cuenta = "PENDIENTE DE PAGO";
-=======
->>>>>>> parent of e2d861c (Se optimiza La tabla 8 columnas)
 
                 if (ModelState.IsValid)
                 {
@@ -1247,11 +1232,6 @@ namespace SCT_iCare.Controllers.CallCenter
                         var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
                         cita.CC = referidoTipo;
                     }
-<<<<<<< HEAD
-
-                    cita.Cuenta = "PENDIENTE DE PAGO";
-=======
->>>>>>> parent of e2d861c (Se optimiza La tabla 8 columnas)
 
                     if (ModelState.IsValid)
                     {

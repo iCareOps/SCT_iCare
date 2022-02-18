@@ -326,11 +326,8 @@ namespace SCT_iCare.Controllers.Dictamenes
                 }
                 paciente.TipoLicencia = TIPOLIC;
 
-<<<<<<< HEAD
                 paciente.Cuenta = pagoGestor == "on" ? "CUENTAS X COBRAR" : null;
 
-=======
->>>>>>> parent of e2d861c (Se optimiza La tabla 8 columnas)
 
                 if (ModelState.IsValid)
                 {
@@ -518,7 +515,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                 }
             }
 
-            return Redirect("VentasAlternativas"); ;
+            return Redirect("VentasAlternativas"); 
         }
 
         [HttpPost]
