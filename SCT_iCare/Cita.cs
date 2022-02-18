@@ -39,9 +39,6 @@ namespace SCT_iCare
         public string CarruselMedico { get; set; }
         public Nullable<System.DateTime> FechaCreacion { get; set; }
         public string Cuenta { get; set; }
-        public string CanalTipo { get; set; }
-        public string CuentaComentario { get; set; }
-        public string Conciliado { get; set; }
     
         public virtual Canal Canal1 { get; set; }
         public virtual Paciente Paciente { get; set; }

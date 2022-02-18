@@ -18,9 +18,5 @@ namespace SCT_iCare
         public string Nombre { get; set; }
         public string Tipo { get; set; }
         public Nullable<int> Saldo { get; set; }
-        public string PrecioNormal { get; set; }
-        public string PrecioAereo { get; set; }
-        public string PrecioALT { get; set; }
-        public string PrecioALTIS { get; set; }
     }
 }

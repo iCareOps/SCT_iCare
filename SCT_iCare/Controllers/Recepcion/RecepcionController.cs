@@ -452,9 +452,12 @@ namespace SCT_iCare.Controllers.Recepcion
                     var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
                     cita.CC = referidoTipo;
                 }
+<<<<<<< HEAD
 
                 cita.Cuenta = pagoGestor == "on" ? "CUENTAS X COBRAR" : null;
 
+=======
+>>>>>>> parent of e2d861c (Se optimiza La tabla 8 columnas)
                 //-------------------------------------------------------------
                 if (ModelState.IsValid)
                 {
@@ -645,6 +648,8 @@ namespace SCT_iCare.Controllers.Recepcion
 
                     cita.Cuenta = pagoGestor == "on" ? "CUENTAS X COBRAR" : null;
 
+
+                    
 
                     if (ModelState.IsValid)
                     {
@@ -922,8 +927,11 @@ namespace SCT_iCare.Controllers.Recepcion
                     var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
                     cita.CC = referidoTipo;
                 }
+<<<<<<< HEAD
 
                 cita.Cuenta = "PENDIENTE DE PAGO";
+=======
+>>>>>>> parent of e2d861c (Se optimiza La tabla 8 columnas)
 
                 if (ModelState.IsValid)
                 {
@@ -1111,8 +1119,11 @@ namespace SCT_iCare.Controllers.Recepcion
                         var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
                         cita.CC = referidoTipo;
                     }
+<<<<<<< HEAD
 
                     cita.Cuenta = "PENDIENTE DE PAGO";
+=======
+>>>>>>> parent of e2d861c (Se optimiza La tabla 8 columnas)
 
                     if (ModelState.IsValid)
                     {
@@ -1356,8 +1367,11 @@ namespace SCT_iCare.Controllers.Recepcion
                     var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
                     cita.CC = referidoTipo;
                 }
+<<<<<<< HEAD
 
                 cita.Cuenta = "PENDIENTE DE PAGO";
+=======
+>>>>>>> parent of e2d861c (Se optimiza La tabla 8 columnas)
 
                 if (ModelState.IsValid)
                 {
@@ -1512,8 +1526,11 @@ namespace SCT_iCare.Controllers.Recepcion
                         var referidoTipo = (from r in db.Referido where r.Nombre == referido select r.Tipo).FirstOrDefault();
                         cita.CC = referidoTipo;
                     }
+<<<<<<< HEAD
 
                     cita.Cuenta = "PENDIENTE DE PAGO";
+=======
+>>>>>>> parent of e2d861c (Se optimiza La tabla 8 columnas)
 
                     if (ModelState.IsValid)
                     {

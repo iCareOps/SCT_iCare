@@ -52,10 +52,6 @@ namespace SCT_iCare
         public string Solicita { get; set; }
         public Nullable<System.DateTime> FechaSolicitud { get; set; }
         public Nullable<System.DateTime> FechaCaptura { get; set; }
-        public string Cuenta { get; set; }
-        public string CanalTipo { get; set; }
-        public string CuentaComentario { get; set; }
-        public string Conciliado { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FotoPacienteESP> FotoPacienteESP { get; set; }
