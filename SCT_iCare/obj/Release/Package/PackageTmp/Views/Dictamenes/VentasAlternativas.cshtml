@@ -215,10 +215,19 @@
                     <div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Referido Por:</label>
                         <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option value="NINGUNO">NINGUNO</option>
+                            <option disabled>----------GESTORES ALT----------</option>
                             @{
                                 foreach (var referido in (from i in db.Referido where i.Tipo == "GESTOR ALT" orderby i.Nombre select i))
                                 {
                                     <option style="font-weight:bold" value="@referido.Nombre">@referido.Nombre</option>
+                                }
+                            }
+                            <option disabled>---------IN SITU--------</option>
+                            @{
+                                foreach (var referido in (from i in db.Referido where i.Tipo == "IN SITU" orderby i.Nombre select i))
+                                {
+                                    <option style="font-weight:bold" value="@referido.Nombre*IS">@referido.Nombre</option>
                                 }
                             }
                             @*<option style="font-weight:bold" value="AARON DIAZ">AARON DIAZ</option>
@@ -240,16 +249,18 @@
         <option style="font-weight:bold" value="VICTOR GERICO">VICTOR GERICO</option>*@
                         </select>
                     </div>
+                    <input type="checkbox" name="pagoGestor" />
+                    <label for="recipient-name" class="col-form-label"><b style="color:black">Pendiente de pago por gestor</b></label>
                     <div class="form-group" style="background-color:ghostwhite; padding:5px; border:solid 1px darkblue; border-radius:4px">
-                        <input type="checkbox"  id="nombre" name="urgente" />
-                        <label for="recipient-name" class="col-form-label" > MARCAR COMO URGENTE</label>
-                        @{ 
+                        <input type="checkbox" id="nombre" name="urgente" />
+                        <label for="recipient-name" class="col-form-label"> MARCAR COMO URGENTE</label>
+                        @{
                             int? urgentes = (from i in db.UrgentesCount select i.Contador).FirstOrDefault();
                             <br />
                             <span class="text-danger" style="font-size:smaller">**Quedan <b>@urgentes</b> requisiciones de Dictámenes Urgentes para este mes. Si el número de creación de citas supera los @urgentes la requisición no será posible.</span>
                         }
                     </div>
-            </div>
+</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />

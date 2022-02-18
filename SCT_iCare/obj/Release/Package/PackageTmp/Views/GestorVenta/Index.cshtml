@@ -1,5 +1,4 @@
-﻿
-@model IEnumerable<SCT_iCare.Paciente>
+﻿@model IEnumerable<SCT_iCare.Paciente>
 
 @{
     ViewBag.Title = "Index";
@@ -305,34 +304,45 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             <option selected disabled>SELECCIONAR</option>
                             @{
                                 //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
-                                var referidosGestor2 = (from r in db.Referido where r.Tipo == "Gestor" select r).OrderBy(o => o.Nombre);
-                                var referidosGMI2 = (from r in db.Referido where r.Tipo == "GMI" select r).OrderBy(o => o.Nombre);
-                                var referidosEmpresa2 = (from r in db.Referido where r.Tipo == "Empresa" select r).OrderBy(o => o.Nombre);
-                                var referidosCanacar2 = (from r in db.Referido where r.Tipo == "Canacar" select r).OrderBy(o => o.Nombre);
-                                var referidosParticular2 = (from r in db.Referido where r.Tipo == "Particular" select r).OrderBy(o => o.Nombre);
-                                var referidosSindicato2 = (from r in db.Referido where r.Tipo == "Sindicato" select r).OrderBy(o => o.Nombre);
-                                var referidosAnexa2 = (from r in db.Referido where r.Tipo == "Anexa" select r).OrderBy(o => o.Nombre);
+                                var referidosGestor = (from r in db.Referido where r.Tipo == "GESTOR" select r).OrderBy(o => o.Nombre);
+                                var referidosMD = (from r in db.Referido where r.Tipo == "MEDIOS DIGITALES" select r).OrderBy(o => o.Nombre);
+                                var referidosEmpresa = (from r in db.Referido where r.Tipo == "EMPRESA" select r).OrderBy(o => o.Nombre);
+                                var referidosOtro = (from r in db.Referido where r.Tipo == "OTRO" select r).OrderBy(o => o.Nombre);
+                                var referidosSindicato = (from r in db.Referido where r.Tipo == "SINDICATO" select r).OrderBy(o => o.Nombre);
+                                var referidosCallCenter = (from r in db.Referido where r.Tipo == "CALL CENTER" select r).OrderBy(o => o.Nombre);
 
                                 <option disabled>--------GESTORES--------</option>
-                                foreach (var item in referidosGestor2)
+                                foreach (var item in referidosGestor)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled>--------CALL CENTER--------</option>
+                                foreach (var item in referidosCallCenter)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
 
                                 <option disabled><b>--------EMPRESAS--------</b></option>
-                                foreach (var item in referidosEmpresa2)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------CANACAR--------</b></option>
-                                foreach (var item in referidosCanacar2)
+                                foreach (var item in referidosEmpresa)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
 
                                 <option disabled><b>--------SINDICATOS--------</b></option>
-                                foreach (var item in referidosSindicato2)
+                                foreach (var item in referidosSindicato)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>----MEDIOS DIGITALES----</b></option>
+                                foreach (var item in referidosMD)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------OTROS--------</b></option>
+                                foreach (var item in referidosOtro)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
@@ -417,16 +427,9 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                     <div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Referido Por:</label>
                         <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                            <option selected value="NINGUNO">NINGUNO</option>
+                            <option selected disabled>SELECCIONAR</option>
                             @{
                                 //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
-                                var referidosGestor = (from r in db.Referido where r.Tipo == "Gestor" select r).OrderBy(o => o.Nombre);
-                                var referidosGMI = (from r in db.Referido where r.Tipo == "GMI" select r).OrderBy(o => o.Nombre);
-                                var referidosEmpresa = (from r in db.Referido where r.Tipo == "Empresa" select r).OrderBy(o => o.Nombre);
-                                var referidosCanacar = (from r in db.Referido where r.Tipo == "Canacar" select r).OrderBy(o => o.Nombre);
-                                var referidosParticular = (from r in db.Referido where r.Tipo == "Particular" select r).OrderBy(o => o.Nombre);
-                                var referidosSindicato = (from r in db.Referido where r.Tipo == "Sindicato" select r).OrderBy(o => o.Nombre);
-                                var referidosAnexa = (from r in db.Referido where r.Tipo == "Anexa" select r).OrderBy(o => o.Nombre);
 
                                 <option disabled>--------GESTORES--------</option>
                                 foreach (var item in referidosGestor)
@@ -434,8 +437,8 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
 
-                                <option disabled><b>--------GMI--------</b></option>
-                                foreach (var item in referidosGMI)
+                                <option disabled>--------CALL CENTER--------</option>
+                                foreach (var item in referidosCallCenter)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
@@ -446,32 +449,24 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
 
-                                <option disabled><b>--------CANACAR--------</b></option>
-                                foreach (var item in referidosCanacar)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------PARTICULAR--------</b></option>
-                                foreach (var item in referidosParticular)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
                                 <option disabled><b>--------SINDICATOS--------</b></option>
                                 foreach (var item in referidosSindicato)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
 
-                                <option disabled><b>--------ANEXA--------</b></option>
-                                foreach (var item in referidosAnexa)
+                                <option disabled><b>----MEDIOS DIGITALES----</b></option>
+                                foreach (var item in referidosMD)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------OTROS--------</b></option>
+                                foreach (var item in referidosOtro)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
                             }
-                            <option disabled><b>--------OTROS--------</b></option>
-                            <option value="OTRO">OTRO</option>
                         </select>
                     </div>
 
@@ -642,61 +637,46 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                     <div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Referido Por:</label>
                         <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                            <option selected value="NINGUNO">NINGUNO</option>
+                            <option selected disabled>SELECCIONAR</option>
                             @{
                                 //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
-                                var referidosGestor1 = (from r in db.Referido where r.Tipo == "Gestor" select r).OrderBy(o => o.Nombre);
-                                var referidosGMI1 = (from r in db.Referido where r.Tipo == "GMI" select r).OrderBy(o => o.Nombre);
-                                var referidosEmpresa1 = (from r in db.Referido where r.Tipo == "Empresa" select r).OrderBy(o => o.Nombre);
-                                var referidosCanacar1 = (from r in db.Referido where r.Tipo == "Canacar" select r).OrderBy(o => o.Nombre);
-                                var referidosParticular1 = (from r in db.Referido where r.Tipo == "Particular" select r).OrderBy(o => o.Nombre);
-                                var referidosSindicato1 = (from r in db.Referido where r.Tipo == "Sindicato" select r).OrderBy(o => o.Nombre);
-                                var referidosAnexa1 = (from r in db.Referido where r.Tipo == "Anexa" select r).OrderBy(o => o.Nombre);
 
                                 <option disabled>--------GESTORES--------</option>
-                                foreach (var item in referidosGestor1)
+                                foreach (var item in referidosGestor)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
 
-                                <option disabled><b>--------GMI--------</b></option>
-                                foreach (var item in referidosGMI1)
+                                <option disabled>--------CALL CENTER--------</option>
+                                foreach (var item in referidosCallCenter)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
 
                                 <option disabled><b>--------EMPRESAS--------</b></option>
-                                foreach (var item in referidosEmpresa1)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------CANACAR--------</b></option>
-                                foreach (var item in referidosCanacar1)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------PARTICULAR--------</b></option>
-                                foreach (var item in referidosParticular1)
+                                foreach (var item in referidosEmpresa)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
 
                                 <option disabled><b>--------SINDICATOS--------</b></option>
-                                foreach (var item in referidosSindicato1)
+                                foreach (var item in referidosSindicato)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
 
-                                <option disabled><b>--------ANEXA--------</b></option>
-                                foreach (var item in referidosAnexa1)
+                                <option disabled><b>----MEDIOS DIGITALES----</b></option>
+                                foreach (var item in referidosMD)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------OTROS--------</b></option>
+                                foreach (var item in referidosOtro)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
                             }
-                            <option disabled><b>--------OTROS--------</b></option>
-                            <option value="OTRO">OTRO</option>
                         </select>
                     </div>
             </div>
@@ -1496,6 +1476,16 @@ else
     }
 
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
