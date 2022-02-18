@@ -188,9 +188,17 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
     else
     {
         <div class="form-inline">
-            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>
-            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>
-            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal3"><span class="glyphicon glyphicon-credit-card"></span> Pago con Tarjeta</button>
+
+            @if (Sucursal != "IN SITU")
+            {
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>
+                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal3"><span class="glyphicon glyphicon-credit-card"></span> Pago con Tarjeta</button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Registrar Cita</button>
+            }
             <div class="input-group pull-right">
                 <input type="text" class="form-control" id="buscador" name="dato" placeholder="Paciente o Expediente">
                 <span class="input-group-btn">
@@ -444,101 +452,105 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                         <input type="hidden" name="usuario" asp-for="file" class="" required value="@nombreUsuario" />
                     }
 
-                    <div class="form-group" style="width:60%; min-width:320px">
-                        <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
-                        <select name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                            @{
-                                if (Sucursal != "ASPA" && Sucursal != "TAPO")
-                                {
-                                    <option value="Referencia OXXO">Referencia OXXO</option>
-                                    <option value="Referencia Scotiabank">Referencia Scotiabank</option>
-                                    <option value="Referencia BanBajío">Referencia BanBajío</option>
-                                    <option value="Transferencia vía Scotiabank">Transferencia vía Scotiabank</option>
-                                    <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
-                                }
-                                else
-                                {
-                                    <option value="Referencia Scotiabank">Referencia Scotiabank</option>
-                                    <option value="Referencia BanBajío">Referencia BanBajío</option>
-                                }
-                            }
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Número de Referencia:</label>
-                        <input type="text" class="form-control" id="referencia" name="referencia" required>
-                    </div>
-                    <div class="form-group" style="width:60%; min-width:320px">
-                        <label for="recipient-name" class="col-form-label">Referido Por:</label>
-                        <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-<<<<<<< HEAD
-                            <option selected disabled>Seleccionar</option>
-=======
-                            <option selected value="NINGUNO">NINGUNO</option>
->>>>>>> parent of e2d861c (Se optimiza La tabla 8 columnas)
-                            @{
-                                //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
-                                var referidosGestor = (from r in db.Referido where r.Tipo == "Gestor" select r).OrderBy(o => o.Nombre);
-                                var referidosGMI = (from r in db.Referido where r.Tipo == "GMI" select r).OrderBy(o => o.Nombre);
-                                var referidosEmpresa = (from r in db.Referido where r.Tipo == "Empresa" select r).OrderBy(o => o.Nombre);
-                                var referidosCanacar = (from r in db.Referido where r.Tipo == "Canacar" select r).OrderBy(o => o.Nombre);
-                                var referidosParticular = (from r in db.Referido where r.Tipo == "Particular" select r).OrderBy(o => o.Nombre);
-                                var referidosSindicato = (from r in db.Referido where r.Tipo == "Sindicato" select r).OrderBy(o => o.Nombre);
-                                var referidosAnexa = (from r in db.Referido where r.Tipo == "Anexa" select r).OrderBy(o => o.Nombre);
+                    @{
+                        if (Sucursal != "IN SITU")
+                        {
+                            <div class="form-group" style="width:60%; min-width:320px">
+                                <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                <select name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                    @{
+                                        if (Sucursal != "ASPA" && Sucursal != "TAPO")
+                                        {
+                                            <option value="Referencia OXXO">Referencia OXXO</option>
+                                            <option value="Referencia Scotiabank">Referencia Scotiabank</option>
+                                            <option value="Referencia BanBajío">Referencia BanBajío</option>
+                                            <option value="Transferencia vía Scotiabank">Transferencia vía Scotiabank</option>
+                                            <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="Referencia Scotiabank">Referencia Scotiabank</option>
+                                            <option value="Referencia BanBajío">Referencia BanBajío</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Número de Referencia:</label>
+                                <input type="text" class="form-control" id="referencia" name="referencia" required>
+                            </div>
+                            <div class="form-group" style="width:60%; min-width:320px">
+                                <label for="recipient-name" class="col-form-label">Referido Por:</label>
+                                <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                    <option selected disabled>SELECCIONAR</option>
+                                    @{
+                                        //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
+                                        var referidosGestor = (from r in db.Referido where r.Tipo == "GESTOR" select r).OrderBy(o => o.Nombre);
+                                        var referidosMD = (from r in db.Referido where r.Tipo == "MEDIOS DIGITALES" select r).OrderBy(o => o.Nombre);
+                                        var referidosEmpresa = (from r in db.Referido where r.Tipo == "EMPRESA" select r).OrderBy(o => o.Nombre);
+                                        var referidosOtro = (from r in db.Referido where r.Tipo == "OTRO" select r).OrderBy(o => o.Nombre);
+                                        var referidosSindicato = (from r in db.Referido where r.Tipo == "SINDICATO" select r).OrderBy(o => o.Nombre);
 
-                                <option disabled>--------GESTORES--------</option>
-                                foreach (var item in referidosGestor)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
+                                        <option disabled>--------GESTORES--------</option>
+                                        foreach (var item in referidosGestor)
+                                        {
+                                            <option value="@item.Nombre">@item.Nombre</option>
+                                        }
 
-                                <option disabled><b>--------GMI--------</b></option>
-                                foreach (var item in referidosGMI)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
+                                        <option disabled><b>--------EMPRESAS--------</b></option>
+                                        foreach (var item in referidosEmpresa)
+                                        {
+                                            <option value="@item.Nombre">@item.Nombre</option>
+                                        }
 
-                                <option disabled><b>--------EMPRESAS--------</b></option>
-                                foreach (var item in referidosEmpresa)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
+                                        <option disabled><b>--------SINDICATOS--------</b></option>
+                                        foreach (var item in referidosSindicato)
+                                        {
+                                            <option value="@item.Nombre">@item.Nombre</option>
+                                        }
 
-                                <option disabled><b>--------CANACAR--------</b></option>
-                                foreach (var item in referidosCanacar)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
+                                        <option disabled><b>----MEDIOS DIGITALES----</b></option>
+                                        foreach (var item in referidosMD)
+                                        {
+                                            <option value="@item.Nombre">@item.Nombre</option>
+                                        }
 
-                                <option disabled><b>--------PARTICULAR--------</b></option>
-                                foreach (var item in referidosParticular)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
+                                        <option disabled><b>--------OTROS--------</b></option>
+                                        foreach (var item in referidosOtro)
+                                        {
+                                            <option value="@item.Nombre">@item.Nombre</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        }
+                        else
+                        {
+                            <input type="hidden" name="pago" value="IN SITU" />
+                            <input type="hidden" name="referencia" value="-----" />
+                            <div class="form-group" style="width:60%; min-width:320px">
+                                <label for="recipient-name" class="col-form-label">Referido Por:</label>
+                                <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                    <option selected disabled>SELECCIONAR</option>
+                                    @{
+                                        //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
+                                        var referidosIS = (from r in db.Referido where r.Tipo == "IN SITU" select r).OrderBy(o => o.Nombre);
 
-                                <option disabled><b>--------SINDICATOS--------</b></option>
-                                foreach (var item in referidosSindicato)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------ANEXA--------</b></option>
-                                foreach (var item in referidosAnexa)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-                            }
-                            <option disabled><b>--------OTROS--------</b></option>
-                            <option value="OTRO">OTRO</option>
-                        </select>
-                    </div>
-<<<<<<< HEAD
+                                        foreach (var item in referidosIS)
+                                        {
+                                            <option value="@item.Nombre">@item.Nombre</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        }
+                    }
                     <input type="checkbox" name="pagoGestor" />
                     <label for="recipient-name" class="col-form-label"><b style="color:black">Pendiente de pago por gestor</b></label>
+
+
+
 </div>
-=======
-            </div>
->>>>>>> parent of e2d861c (Se optimiza La tabla 8 columnas)
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <input type="submit" value="Enviar" class="btn btn-primary" />
@@ -733,29 +745,18 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                     <div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Referido Por:</label>
                         <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-<<<<<<< HEAD
-                            <option selected disabled>Seleccionar</option>
-=======
-                            <option selected value="NINGUNO">NINGUNO</option>
->>>>>>> parent of e2d861c (Se optimiza La tabla 8 columnas)
+                            <option selected disabled>SELECCIONAR</option>
                             @{
                                 //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
-                                var referidosGestor1 = (from r in db.Referido where r.Tipo == "Gestor" select r).OrderBy(o => o.Nombre);
-                                var referidosGMI1 = (from r in db.Referido where r.Tipo == "GMI" select r).OrderBy(o => o.Nombre);
-                                var referidosEmpresa1 = (from r in db.Referido where r.Tipo == "Empresa" select r).OrderBy(o => o.Nombre);
-                                var referidosCanacar1 = (from r in db.Referido where r.Tipo == "Canacar" select r).OrderBy(o => o.Nombre);
-                                var referidosParticular1 = (from r in db.Referido where r.Tipo == "Particular" select r).OrderBy(o => o.Nombre);
-                                var referidosSindicato1 = (from r in db.Referido where r.Tipo == "Sindicato" select r).OrderBy(o => o.Nombre);
-                                var referidosAnexa1 = (from r in db.Referido where r.Tipo == "Anexa" select r).OrderBy(o => o.Nombre);
+                                var referidosGestor1 = (from r in db.Referido where r.Tipo == "GESTOR" select r).OrderBy(o => o.Nombre);
+                                var referidosMD1 = (from r in db.Referido where r.Tipo == "MEDIOS DIGITALES" select r).OrderBy(o => o.Nombre);
+                                var referidosEmpresa1 = (from r in db.Referido where r.Tipo == "EMPRESA" select r).OrderBy(o => o.Nombre);
+                                var referidosOtro1 = (from r in db.Referido where r.Tipo == "OTRO" select r).OrderBy(o => o.Nombre);
+                                var referidosSindicato1 = (from r in db.Referido where r.Tipo == "SINDICATO" select r).OrderBy(o => o.Nombre);
+
 
                                 <option disabled>--------GESTORES--------</option>
                                 foreach (var item in referidosGestor1)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------GMI--------</b></option>
-                                foreach (var item in referidosGMI1)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
@@ -766,32 +767,24 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
 
-                                <option disabled><b>--------CANACAR--------</b></option>
-                                foreach (var item in referidosCanacar1)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------PARTICULAR--------</b></option>
-                                foreach (var item in referidosParticular1)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
                                 <option disabled><b>--------SINDICATOS--------</b></option>
                                 foreach (var item in referidosSindicato1)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
 
-                                <option disabled><b>--------ANEXA--------</b></option>
-                                foreach (var item in referidosAnexa1)
+                                <option disabled><b>----MEDIOS DIGITALES----</b></option>
+                                foreach (var item in referidosMD1)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------OTROS--------</b></option>
+                                foreach (var item in referidosOtro1)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
                             }
-                            <option disabled><b>--------OTROS--------</b></option>
-                            <option value="OTRO">OTRO</option>
                         </select>
                     </div>
             </div>
@@ -992,65 +985,40 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                     <div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Referido Por:</label>
                         <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-<<<<<<< HEAD
-                            <option selected disabled>Seleccionar</option>
-=======
-                            <option selected value="NINGUNO">NINGUNO</option>
->>>>>>> parent of e2d861c (Se optimiza La tabla 8 columnas)
+                            <option selected disabled>SELECCIONAR</option>
                             @{
                                 //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
-                                var referidosGestor2 = (from r in db.Referido where r.Tipo == "Gestor" select r).OrderBy(o => o.Nombre);
-                                var referidosGMI2 = (from r in db.Referido where r.Tipo == "GMI" select r).OrderBy(o => o.Nombre);
-                                var referidosEmpresa2 = (from r in db.Referido where r.Tipo == "Empresa" select r).OrderBy(o => o.Nombre);
-                                var referidosCanacar2 = (from r in db.Referido where r.Tipo == "Canacar" select r).OrderBy(o => o.Nombre);
-                                var referidosParticular2 = (from r in db.Referido where r.Tipo == "Particular" select r).OrderBy(o => o.Nombre);
-                                var referidosSindicato2 = (from r in db.Referido where r.Tipo == "Sindicato" select r).OrderBy(o => o.Nombre);
-                                var referidosAnexa2 = (from r in db.Referido where r.Tipo == "Anexa" select r).OrderBy(o => o.Nombre);
 
                                 <option disabled>--------GESTORES--------</option>
-                                foreach (var item in referidosGestor2)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------GMI--------</b></option>
-                                foreach (var item in referidosGMI2)
+                                foreach (var item in referidosGestor1)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
 
                                 <option disabled><b>--------EMPRESAS--------</b></option>
-                                foreach (var item in referidosEmpresa2)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------CANACAR--------</b></option>
-                                foreach (var item in referidosCanacar2)
-                                {
-                                    <option value="@item.Nombre">@item.Nombre</option>
-                                }
-
-                                <option disabled><b>--------PARTICULAR--------</b></option>
-                                foreach (var item in referidosParticular2)
+                                foreach (var item in referidosEmpresa1)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
 
                                 <option disabled><b>--------SINDICATOS--------</b></option>
-                                foreach (var item in referidosSindicato2)
+                                foreach (var item in referidosSindicato1)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
 
-                                <option disabled><b>--------ANEXA--------</b></option>
-                                foreach (var item in referidosAnexa2)
+                                <option disabled><b>----MEDIOS DIGITALES----</b></option>
+                                foreach (var item in referidosMD1)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------OTROS--------</b></option>
+                                foreach (var item in referidosOtro1)
                                 {
                                     <option value="@item.Nombre">@item.Nombre</option>
                                 }
                             }
-                            <option disabled><b>--------OTROS--------</b></option>
-                            <option value="OTRO">OTRO</option>
                         </select>
                     </div>
             </div>
@@ -1930,10 +1898,8 @@ else
                                                             }
 
                                                         </select>
-                                                        <br /><br />
-                                                        <input type="checkbox" name="pagoGestor" />
-                                                        <label for="recipient-name" class="col-form-label"><b style="color:black">Pendiente de pago por gestor</b></label>
                                                     </div>
+
                                                 </div>
                                             }
                                             else
@@ -1951,12 +1917,11 @@ else
                                                     <label for="recipient-name" class="col-form-label"><b style="color:black">Sucursal:</b> @item.M.Sucursal</label><br />
                                                     <label for="recipient-name" class="col-form-label"><b style="color:black">Fecha:</b> @item.M.FechaCita</label><br />
                                                     <label for="recipient-name" class="col-form-label"><b style="color:black">Terminación de Tarjeta:</b> @item.M.Referencia</label>
-                                                    <br /><br />
-                                                    <input type="checkbox" name="pagoGestor" />
-                                                    <label for="recipient-name" class="col-form-label"><b style="color:black">Pendiente de pago por gestor</b></label>
                                                 </div>
                                             }
                                         }
+                                        <input type="checkbox" name="pagoGestor" />
+                                        <label for="recipient-name" class="col-form-label"><b style="color:black">Pendiente de pago por gestor</b></label>
 
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -2493,5 +2458,3 @@ else
         </table>
     </div>
 }
-
-
