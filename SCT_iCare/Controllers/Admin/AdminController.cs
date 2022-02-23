@@ -526,6 +526,41 @@ namespace SCT_iCare.Controllers.Admin
             return View();
         }
 
+        public ActionResult MediosDigitales8Columnas()
+        {
+            return View();
+        }
+
+        public ActionResult InSitu8Columnas()
+        {
+            return View();
+        }
+
+        public ActionResult ALT8Columnas()
+        {
+            return View();
+        }
+
+        public ActionResult Sindicatos8Columnas()
+        {
+            return View();
+        }
+
+        public ActionResult CallCenter8Columnas()
+        {
+            return View();
+        }
+
+        public ActionResult Empresas8Columnas()
+        {
+            return View();
+        }
+
+        public ActionResult Otros8Columnas()
+        {
+            return View();
+        }
+
         public ActionResult EditarMeta(int? id, int? meta)
         {
             Canales canales = db.Canales.Find(id);
