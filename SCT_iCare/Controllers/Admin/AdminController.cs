@@ -521,6 +521,11 @@ namespace SCT_iCare.Controllers.Admin
             }
         }
 
+        public ActionResult Gestores8Columnas()
+        {
+            return View();
+        }
+
         public ActionResult EditarMeta(int? id, int? meta)
         {
             Canales canales = db.Canales.Find(id);

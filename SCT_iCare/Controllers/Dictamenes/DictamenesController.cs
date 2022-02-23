@@ -1223,8 +1223,6 @@ namespace SCT_iCare.Controllers.Dictamenes
                 revisionPacienteESP.Genero = genero != "" ? genero : revisionPacienteESP.Genero;
             }
 
-            revisionPacienteESP.Cuenta = "PENDIENTE DE PAGO";
-
             byte[] bytes2 = null;
             if (file != null)
             {
@@ -1979,8 +1977,6 @@ namespace SCT_iCare.Controllers.Dictamenes
             {
                 revisionPacienteESP.Genero = genero != "" ? genero : revisionPacienteESP.Genero;
             }
-
-            revisionPacienteESP.Cuenta = "PENDIENTE DE PAGO";
 
             byte[] bytes2 = null;
             if (file != null)
