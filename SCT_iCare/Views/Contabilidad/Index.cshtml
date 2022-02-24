@@ -215,7 +215,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     FechaPago
                 </th>
                 <th>
-                    Estatus Pago
+                    Precio
                 </th>
                 <th>
                     Usuario
@@ -294,7 +294,16 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                         @Convert.ToDateTime(item.M.FechaReferencia).ToString("dd-MMMM-yyyy")
                     </td>
                     <td>
-                        @{
+                        @{ 
+                            if(item.M.TipoLicencia != "AEREO")
+                            {
+                                var costo = (from i in db.Referido where i.Nombre == item.M.ReferidoPor && i.Tipo == item.M.CanalTipo select i.PrecioNormal).FirstOrDefault();
+
+                                <span><b>$@Convert.ToDouble(costo).ToString("####.##")</b></span>
+                            }
+
+                        }
+                        @*@{
                             if (item.M.EstatusPago == "pending_payment")
                             {
                                 <span>Pendiente</span>
@@ -303,7 +312,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                             {
                                 <span>@item.M.EstatusPago</span>
                             }
-                        }
+                        }*@
                     </td>
                     <td>
                         @item.M.Recepcionista
@@ -593,7 +602,15 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                         @Convert.ToDateTime(item.FechaSolicitud).ToString("dd-MMMM-yyyy")
                     </td>
                     <td>
-                        N/A
+                        @{
+                            if (item.TipoLicencia != "AEREO")
+                            {
+                                var costo = (from i in db.Referido where i.Nombre == item.ReferidoPor && i.Tipo == item.CanalTipo select i.PrecioNormal).FirstOrDefault();
+
+                                <span><b>$@Convert.ToDouble(costo).ToString("####.##")</b></span>
+                            }
+
+                        }
                     </td>
                     <td>
                         @item.Solicita

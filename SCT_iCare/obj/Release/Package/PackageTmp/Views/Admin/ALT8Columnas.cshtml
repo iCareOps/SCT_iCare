@@ -35,7 +35,7 @@
 
 
 
-    var gestores = db.Referido.Where(w => w.Tipo == "GESTOR");
+    var gestoresALT = db.Referido.Where(w => w.Tipo == "GESTOR ALT");
 
     int? metaTotal = 0;
     int? realizadoTotal = 0;
@@ -57,7 +57,7 @@
     double? metaPorcentajeMesAnteriorDiferenciaFooter = 0.00;
 
     //COMENTADO PARA USAR DESPUES
-    int? consulta = (from i in db.Canales where i.NombreCanal == "GESTOR" select i.Meta).FirstOrDefault();
+    int? consulta = (from i in db.Canales where i.NombreCanal == "GESTOR ALT" select i.Meta).FirstOrDefault();
     metaTotal = consulta;
 
     var realizadosTOTAL = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
@@ -67,14 +67,14 @@
             .Where(w => w.M.FinalCaptura != null);
 
 
-    foreach (var item in gestores)
+    foreach (var item in gestoresALT)
     {
         realizadoHoy = realizadosTOTAL.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1 && w.N.ReferidoPor == item.Nombre && w.N.CanalTipo == item.Tipo).Count();
 
         realizadoTotalCalculo += realizadoHoy;
     }
 
-    foreach (var item in gestores)
+    foreach (var item in gestoresALT)
     {
 
         realizadoHoyMesAnterior = realizadosTOTAL.Where(w => w.M.FechaExpdiente >= fecha3 && w.M.FechaExpdiente < fecha4 && w.N.ReferidoPor == item.Nombre && w.N.CanalTipo == item.Tipo).Count();
@@ -82,14 +82,14 @@
         realizadoTotalCalculoMesAnterior += realizadoHoyMesAnterior;
     }
 
-    foreach (var item in gestores)
+    foreach (var item in gestoresALT)
     {
         realizadoHoy = realizadosTOTAL1.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1 && w.ReferidoPor == item.Nombre && w.CanalTipo == item.Tipo).Count();
 
         realizadoTotalCalculo += realizadoHoy;
     }
 
-    foreach (var item in gestores)
+    foreach (var item in gestoresALT)
     {
 
         realizadoHoyMesAnterior = realizadosTOTAL1.Where(w => w.FechaCaptura >= fecha3 && w.FechaCaptura < fecha4 && w.ReferidoPor == item.Nombre && w.CanalTipo == item.Tipo).Count();
@@ -97,12 +97,12 @@
         realizadoTotalCalculoMesAnterior += realizadoHoyMesAnterior;
     }
 
-    int? Meta = metaTotal / db.Referido.Where(w => w.Tipo == "GESTOR").Count();
+    int? Meta = metaTotal / db.Referido.Where(w => w.Tipo == "GESTOR ALT").Count();
 
 }
 
 <br />
-<h2 style="color:white">Tabla Comparativa (Gestores)<span style="color:goldenrod">@DateTime.Now.ToString("MMMM-yy").ToUpper()</span></h2>
+<h2 style="color:white">Tabla Comparativa (Gestores Alt)<span style="color:goldenrod">@DateTime.Now.ToString("MMMM-yy").ToUpper()</span></h2>
 <br />
 
 <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/TablaComparacion")">
@@ -181,7 +181,7 @@
         </thead>
 
         @{
-            foreach (var item in gestores)
+            foreach (var item in gestoresALT)
             {
                 <tr>
                     <td style="text-align:center">
