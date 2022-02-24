@@ -147,6 +147,10 @@ namespace SCT_iCare.Controllers.Admin
             {
                 return Redirect("ActualizarMeta");
             }
+            else if (gestor == "Precios")
+            {
+                return Redirect("ActualizarPrecios");
+            }
             else
             {
                 return View();
@@ -190,6 +194,10 @@ namespace SCT_iCare.Controllers.Admin
             else if (gestor == "Metas")
             {
                 return Redirect("ActualizarMeta");
+            }
+            else if (gestor == "Precios")
+            {
+                return Redirect("ActualizarPrecios");
             }
             else
             {
@@ -235,6 +243,10 @@ namespace SCT_iCare.Controllers.Admin
             {
                 return Redirect("ActualizarMeta");
             }
+            else if (gestor == "Precios")
+            {
+                return Redirect("ActualizarPrecios");
+            }
             else
             {
                 return View();
@@ -278,6 +290,10 @@ namespace SCT_iCare.Controllers.Admin
             else if (gestor == "Metas")
             {
                 return Redirect("ActualizarMeta");
+            }
+            else if (gestor == "Precios")
+            {
+                return Redirect("ActualizarPrecios");
             }
             else
             {
@@ -323,6 +339,10 @@ namespace SCT_iCare.Controllers.Admin
             {
                 return Redirect("ActualizarMeta");
             }
+            else if (gestor == "Precios")
+            {
+                return Redirect("ActualizarPrecios");
+            }
             else
             {
                 return View();
@@ -366,6 +386,10 @@ namespace SCT_iCare.Controllers.Admin
             else if (gestor == "Metas")
             {
                 return Redirect("ActualizarMeta");
+            }
+            else if (gestor == "Precios")
+            {
+                return Redirect("ActualizarPrecios");
             }
             else
             {
@@ -427,6 +451,10 @@ namespace SCT_iCare.Controllers.Admin
             {
                 return Redirect("ActualizarMeta");
             }
+            else if (gestor == "Precios")
+            {
+                return Redirect("ActualizarPrecios");
+            }
             else
             {
                 return View(db.Doctores2.OrderByDescending(o => o.idDoctor2).ToPagedList(page.Value, pageSize.Value));
@@ -471,6 +499,10 @@ namespace SCT_iCare.Controllers.Admin
             {
                 return Redirect("ActualizarMeta");
             }
+            else if (gestor == "Precios")
+            {
+                return Redirect("ActualizarPrecios");
+            }
             else
             {
                 return View();
@@ -514,6 +546,58 @@ namespace SCT_iCare.Controllers.Admin
             else if (gestor == "Metas")
             {
                 return Redirect("ActualizarMeta");
+            }
+            else if (gestor == "Precios")
+            {
+                return Redirect("ActualizarPrecios");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        public ActionResult ActualizarPrecios(string gestor)
+        {
+            if (gestor == "Diarias")
+            {
+                return Redirect("TablaMetasDiarias");
+            }
+            else if (gestor == "Semanales")
+            {
+                return Redirect("TablaMetas");
+            }
+            else if (gestor == "Sucursales")
+            {
+                return Redirect("TablaDinamica");
+            }
+            else if (gestor == "CallCenter")
+            {
+                return Redirect("TablaCallCenter");
+            }
+            else if (gestor == "Gestores")
+            {
+                return Redirect("TablaGestores");
+            }
+            else if (gestor == "Alternativos")
+            {
+                return Redirect("TablaAlternativos");
+            }
+            else if (gestor == "Doctores")
+            {
+                return Redirect("ConteoDoctores");
+            }
+            else if (gestor == "Comparacion")
+            {
+                return Redirect("TablaComparacion");
+            }
+            else if (gestor == "Metas")
+            {
+                return Redirect("ActualizarMeta");
+            }
+            else if (gestor == "Precios")
+            {
+                return Redirect("ActualizarPrecios");
             }
             else
             {
@@ -574,6 +658,26 @@ namespace SCT_iCare.Controllers.Admin
             }
 
             return Redirect("ActualizarMeta");
+        }
+
+        public ActionResult EditarPrecios(int? id, string precio, string usuario)
+        {
+            Referido referido = db.Referido.Find(id);
+
+            string precioAnterior = referido.PrecioNormal;
+
+            string historico = referido.HistorialPrecios == null ? "" : referido.HistorialPrecios + "+";
+            referido.HistorialPrecios = historico +  " "+usuario+" en " + DateTime.Today.ToString("dd-MM-yyyy") + " de " + precioAnterior + " a " +precio;
+
+            referido.PrecioNormal = precio == "" ? referido.PrecioNormal : precio;
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(referido).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            return Redirect("ActualizarPrecios");
         }
 
         [HttpPost]

@@ -1,4 +1,6 @@
-﻿
+﻿@*XLSX *@
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+
 @{
     GMIEntities db = new GMIEntities();
     var oUser = (Usuarios)HttpContext.Current.Session["User"];
@@ -29,10 +31,14 @@
         canal = ViewBag.Canal;
     }
 
+    string nombreExcel = "Contabilidad";
+
     if (ViewBag.Cuenta != "")
     {
         cuenta = ViewBag.Cuenta;
+        nombreExcel = ViewBag.Cuenta;
     }
+
 
     var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).
 Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFinal
@@ -187,6 +193,22 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
 
 </form>
 
+<script>
+
+    function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('tbl_exporttable_to_xls');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+            XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+            XLSX.writeFile(wb, fn || ('@nombreExcel' + ' @Convert.ToDateTime(fechaInicio).ToString("dd-MM-yy").' + (type || 'xlsx')));
+    }
+
+</script>
+
+|   <div>
+        <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
+    </div>
+
 <br />
 <div class="tablaScroll">
     <table class="table  table-hover tablas" style="color: #2F2D6B">
@@ -215,7 +237,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     FechaPago
                 </th>
                 <th>
-                    Estatus Pago
+                    Precio
                 </th>
                 <th>
                     Usuario
@@ -275,19 +297,19 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                         </span>
                     </td>
                     <td>
-                        @{ 
-                            if(item.M.TipoPago == "Referencia OXXO" || item.M.TipoPago == "Pago con Tarjeta")
-                {
-                    <span>Conekta</span>
+                        @{
+                            if (item.M.TipoPago == "Referencia OXXO" || item.M.TipoPago == "Pago con Tarjeta")
+                            {
+                                <span>Conekta</span>
                             }
-                            else if(item.M.TipoPago == "Referencia BanBajío" || item.M.TipoPago == "Transferencia vía BanBajío")
-                {
-                    <span>BanBajío</span>
-                }
-                else
-                {
-                    <span>Banco Alternativo</span>
-                }
+                            else if (item.M.TipoPago == "Referencia BanBajío" || item.M.TipoPago == "Transferencia vía BanBajío")
+                            {
+                                <span>BanBajío</span>
+                            }
+                            else
+                            {
+                                <span>Banco Alternativo</span>
+                            }
                         }
                     </td>
                     <td>
@@ -295,15 +317,24 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     </td>
                     <td>
                         @{
-                            if (item.M.EstatusPago == "pending_payment")
+                            if (item.M.TipoLicencia != "AEREO")
                             {
-                                <span>Pendiente</span>
+                                var costo = (from i in db.Referido where i.Nombre == item.M.ReferidoPor && i.Tipo == item.M.CanalTipo select i.PrecioNormal).FirstOrDefault();
+
+                                <span><b>$@Convert.ToDouble(costo).ToString("####.##")</b></span>
                             }
-                            else
-                            {
-                                <span>@item.M.EstatusPago</span>
-                            }
+
                         }
+                        @*@{
+                                if (item.M.EstatusPago == "pending_payment")
+                                {
+                                    <span>Pendiente</span>
+                                }
+                                else
+                                {
+                                    <span>@item.M.EstatusPago</span>
+                                }
+                            }*@
                     </td>
                     <td>
                         @item.M.Recepcionista
@@ -593,7 +624,15 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                         @Convert.ToDateTime(item.FechaSolicitud).ToString("dd-MMMM-yyyy")
                     </td>
                     <td>
-                        N/A
+                        @{
+                            if (item.TipoLicencia != "AEREO")
+                            {
+                                var costo = (from i in db.Referido where i.Nombre == item.ReferidoPor && i.Tipo == item.CanalTipo select i.PrecioNormal).FirstOrDefault();
+
+                                <span><b>$@Convert.ToDouble(costo).ToString("####.##")</b></span>
+                            }
+
+                        }
                     </td>
                     <td>
                         @item.Solicita
@@ -813,6 +852,211 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     </td>
                 </tr>
                 flag++;
+            }
+        }
+
+    </table>
+</div>
+
+@*Tabla Invisible*@
+
+<div class="tablaScroll" style="display: none">
+    <table id="tbl_exporttable_to_xls" class="table  table-hover tablas" style="color: #2F2D6B; display: none">
+        <thead style="color:white">
+            <tr>
+                <th>
+                    Nombre
+                </th>
+                <th>
+                    Fecha Cita
+                </th>
+                <th>
+                    Sucursal
+                </th>
+                <th>
+                    Referencia
+                </th><!--Referido Por(vía y canal), Tipo de pago (Conekta, BanBajio, Banco Alternativo) / Fecha de pago-->
+                <th>
+                    ReferidoPor
+                </th>
+                <th>
+                    TipoPago
+                </th>
+                <th>
+                    FechaPago
+                </th>
+                <th>
+                    Precio
+                </th>
+                <th>
+                    Usuario
+                </th>
+            </tr>
+        </thead>
+
+        @{
+            foreach (var item in modelo)
+            {
+                <tr>
+                    <td>
+                        @{
+                            string[] historico = item.M.CuentaComentario != null ? item.M.CuentaComentario.Split('+') : null;
+                            int flag0 = 1;
+
+                            if (item.M.CuentaComentario == null)
+                            {
+                                <b>@item.N.Nombre</b>
+                            }
+                            else
+                            {
+                                <span class="field-tip">
+                                    <b>@item.N.Nombre</b>
+                                    <span class="tip-content">
+                                        @{
+                                            foreach (var i in historico)
+                                            {
+                                                <span>@flag0 @i</span><br />
+                                                flag0++;
+                                            }
+                                        }
+                                    </span>
+                                </span>
+                            }
+                        }
+                    </td>
+                    <td>
+                        @Convert.ToDateTime(item.M.FechaCita).ToString("dd-MMMM-yyyy")
+                    </td>
+                    <td>
+                        @item.M.Sucursal
+                    </td>
+                    <td>
+                        @item.M.Referencia
+                    </td>
+                    <td>
+                        <span class="field-tip">
+                            <b>@item.M.ReferidoPor</b>
+                            <span class="tip-content">
+                                Canal: @item.M.CanalTipo
+                            </span>
+                        </span>
+                    </td>
+                    <td>
+                        @{
+                            if (item.M.TipoPago == "Referencia OXXO" || item.M.TipoPago == "Pago con Tarjeta")
+                            {
+                                <span>Conekta</span>
+                            }
+                            else if (item.M.TipoPago == "Referencia BanBajío" || item.M.TipoPago == "Transferencia vía BanBajío")
+                            {
+                                <span>BanBajío</span>
+                            }
+                            else
+                            {
+                                <span>Banco Alternativo</span>
+                            }
+                        }
+                    </td>
+                    <td>
+                        @Convert.ToDateTime(item.M.FechaReferencia).ToString("dd-MMMM-yyyy")
+                    </td>
+                    <td>
+                        @{
+                            if (item.M.TipoLicencia != "AEREO")
+                            {
+                                var costo = (from i in db.Referido where i.Nombre == item.M.ReferidoPor && i.Tipo == item.M.CanalTipo select i.PrecioNormal).FirstOrDefault();
+
+                                <span><b>$@Convert.ToDouble(costo).ToString("####.##")</b></span>
+                            }
+
+                        }
+                        @*@{
+                                if (item.M.EstatusPago == "pending_payment")
+                                {
+                                    <span>Pendiente</span>
+                                }
+                                else
+                                {
+                                    <span>@item.M.EstatusPago</span>
+                                }
+                            }*@
+                    </td>
+                    <td>
+                        @item.M.Recepcionista
+                    </td>
+                    
+                </tr>
+            }
+        }
+
+        @{
+            foreach (var item in modelo1)
+            {
+                <tr>
+                    <td>
+                        @{
+                            string[] historico = item.CuentaComentario != null ? item.CuentaComentario.Split('+') : null;
+                            int flag0 = 1;
+
+                            if (item.CuentaComentario == null)
+                            {
+                                <b>@item.Nombre</b>
+                            }
+                            else
+                            {
+                                <span class="field-tip">
+                                    <b>@item.Nombre</b>
+                                    <span class="tip-content">
+                                        @{
+                                            foreach (var i in historico)
+                                            {
+                                                <span>@flag0 @i</span><br />
+                                                flag0++;
+                                            }
+                                        }
+                                    </span>
+                                </span>
+                            }
+                        }
+                    </td>
+                    <td>
+                        @Convert.ToDateTime(item.FechaCaptura).ToString("dd-MMMM-yyyy")
+                    </td>
+                    <td>
+                        N/A
+                    </td>
+                    <td>
+                        N/A
+                    </td>
+                    <td>
+                        <span class="field-tip">
+                            <b>@item.ReferidoPor</b>
+                            <span class="tip-content">
+                                Canal: @item.CanalTipo
+                            </span>
+                        </span>
+                    </td>
+                    <td>
+                        N/A
+                    </td>
+                    <td>
+                        @Convert.ToDateTime(item.FechaSolicitud).ToString("dd-MMMM-yyyy")
+                    </td>
+                    <td>
+                        @{
+                            if (item.TipoLicencia != "AEREO")
+                            {
+                                var costo = (from i in db.Referido where i.Nombre == item.ReferidoPor && i.Tipo == item.CanalTipo select i.PrecioNormal).FirstOrDefault();
+
+                                <span><b>$@Convert.ToDouble(costo).ToString("####.##")</b></span>
+                            }
+
+                        }
+                    </td>
+                    <td>
+                        @item.Solicita
+                    </td>                    
+                </tr>
             }
         }
 
