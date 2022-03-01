@@ -886,10 +886,25 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     FechaPago
                 </th>
                 <th>
-                    Precio
+                    Comisión
                 </th>
                 <th>
-                    Usuario
+                    Precio sin IVA
+                </th>
+                <th>
+                    Precio con IVA
+                </th>
+                <th>
+                    Recepcionista
+                </th>
+                <th>
+                    Contabilidad
+                </th>
+                <th>
+                    Cuenta
+                </th>
+                <th>
+                    Movimientos de cuenta
                 </th>
             </tr>
         </thead>
@@ -961,6 +976,22 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                         @Convert.ToDateTime(item.M.FechaReferencia).ToString("dd-MMMM-yyyy")
                     </td>
                     <td>
+
+                    </td>
+                    <td>
+                        @{
+                            if (item.M.TipoLicencia != "AEREO")
+                            {
+                                var costo = (from i in db.Referido where i.Nombre == item.M.ReferidoPor && i.Tipo == item.M.CanalTipo select i.PrecioNormal).FirstOrDefault();
+
+                                double sinIVA = Convert.ToDouble(costo) - (Convert.ToDouble(costo) * 0.16);
+
+                                <span><b>$@sinIVA.ToString("####.##")</b></span>
+                            }
+
+                        }
+                    </td>
+                    <td>
                         @{
                             if (item.M.TipoLicencia != "AEREO")
                             {
@@ -983,6 +1014,24 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     </td>
                     <td>
                         @item.M.Recepcionista
+                    </td>
+                    <td>
+                        
+                    </td>
+                    <td>
+                        @{ 
+                            if(item.M.Cuenta == null)
+                {
+                    <span>CAJA</span>
+                }
+                else
+                {
+                    <span>@item.M.Cuenta</span>
+                }
+                        }
+                    </td>
+                    <td>
+                        @item.M.CuentaComentario
                     </td>
                     
                 </tr>
@@ -1043,6 +1092,21 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                         @Convert.ToDateTime(item.FechaSolicitud).ToString("dd-MMMM-yyyy")
                     </td>
                     <td>
+                    </td>
+                    <td>
+                        @{
+                            if (item.TipoLicencia != "AEREO")
+                            {
+                                var costo = (from i in db.Referido where i.Nombre == item.ReferidoPor && i.Tipo == item.CanalTipo select i.PrecioNormal).FirstOrDefault();
+
+                                double sinIVA = Convert.ToDouble(costo) - (Convert.ToDouble(costo) * 0.16);
+
+                                <span><b>$@sinIVA.ToString("####.##")</b></span>
+                            }
+
+                        }
+                    </td>
+                    <td>
                         @{
                             if (item.TipoLicencia != "AEREO")
                             {
@@ -1055,7 +1119,24 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     </td>
                     <td>
                         @item.Solicita
-                    </td>                    
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        @{
+                            if (item.Cuenta == null)
+                            {
+                                <span>CAJA</span>
+                            }
+                            else
+                            {
+                                <span>@item.Cuenta</span>
+                            }
+                        }
+                    </td>
+                    <td>
+                        @item.CuentaComentario
+                    </td>
                 </tr>
             }
         }

@@ -8,7 +8,8 @@
 
     GMIEntities db = new GMIEntities();
 
-    var doctores = db.Doctores2.OrderBy(o => o.NombreDoctor);
+    var doctores = db.Doctores2.OrderByDescending(o => o.idDoctor2);
+    int? numeroDoctores = doctores.Count();
 
     int flag = 1;
 
@@ -58,15 +59,17 @@
             <option value="Semanales">METAS SEMANALES</option>
             <option value="Sucursales">SUCURSALES</option>
             @*<option value="CallCenter">CALL CENTER</option>
-            <option value="Gestores">GESTORES</option>*@
+                <option value="Gestores">GESTORES</option>*@
             <option value="Alternativos">ACUMULADO ALT</option>
             <option value="Comparacion">COMPARACIÓN</option>
             <option value="Doctores">DOCTORES</option>
             <option disabled>-------------------------</option>
             <option value="Metas">ACTUALIZAR METAS</option>
+            <option value="Precios">ACTUALIZAR PRECIOS</option>
         </select>
         <select name="grupo" style="font-size:2vh" class="form-control">
             <option>Seleccionar grupo</option>
+            <option value="todos">TODOS</option>
             @{
                 foreach (var item in db.Doctores2.Select(s => s.Grupo).Distinct())
                 {
@@ -81,8 +84,8 @@
 
 <br />
 <div>
-        <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
-    </div>
+    <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
+</div>
 
 <br />
 
@@ -105,6 +108,9 @@
             <tr class="bg-primary" style="border-top-color: black; font-size:smaller">
                 <th>
                     <b>DOCTOR</b>
+                </th>
+                <th>
+                    Grupo
                 </th>
                 <th style="text-align:center">
                     TOTAL
@@ -137,6 +143,9 @@
 
                 <td class="bg-info" style="border-top-color:  dimgray; border-top-width:1.1px">
                     <b>@item.NombreDoctor</b>
+                </td>
+                <td class="bg-info" style="border-top-color:  dimgray; border-top-width:1.1px">
+                    <b>@item.Grupo</b>
                 </td>
 
                 @{
@@ -209,9 +218,10 @@
                 <option @if ((int)ViewBag.PageSize == 10) { @Html.Raw("selected") } value="10">10</option>
                 <option @if ((int)ViewBag.PageSize == 20) { @Html.Raw("selected") } value="20">20</option>
                 <option @if ((int)ViewBag.PageSize == 50) { @Html.Raw("selected") } value="50">50</option>
-                <option @if ((int)ViewBag.PageSize == 100) { @Html.Raw("selected") } value="100">100</option>
+                <option @if ((int)ViewBag.PageSize == numeroDoctores) { @Html.Raw("selected") } value="@numeroDoctores">TODOS</option>
             </select> registros
             <input type="hidden" value="@FECHA" name="mes" />
+            <input type="hidden" value="@ViewBag.Grupo" name="grupo" />
         </h5>
     </p>
 }
@@ -219,6 +229,4 @@
 <h5 class="labelGral">Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount. Elementos totales: @Model.TotalItemCount</h5>
 
 @Html.PagedListPager(Model, page => Url.Action("ConteoDoctores", "Admin", new { page, pageSize = ViewBag.PageSize, mes = FECHA }))
-
-
 

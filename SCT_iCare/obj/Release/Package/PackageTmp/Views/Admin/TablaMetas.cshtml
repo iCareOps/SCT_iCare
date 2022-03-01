@@ -1,4 +1,4 @@
-﻿@{
+﻿﻿@{
     ViewBag.Title = "TablaMetas";
 
     GMIEntities db = new GMIEntities();
@@ -29,7 +29,7 @@
     DateTime fechaInicio = diaPrimero;
     DateTime fechaFinal = new DateTime();
 
-    for(int i = 1; i <= 52; i++)
+    for (int i = 1; i <= 52; i++)
     {
         if (i == semana + 2)
         {
@@ -45,7 +45,7 @@
             //{
             //    fechaInicio = diaPrimero.AddDays(dia1);
             //}
-            if(n == 7)
+            if (n == 7)
             {
                 fechaFinal = diaPrimero.AddDays(dia1);
                 fechaInicio = fechaFinal.AddDays(-7);
@@ -53,23 +53,27 @@
         }
     }
 
-    int realizadosCallCenter = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
-                .Where(w => w.M.FechaExpdiente >= fechaInicio && w.M.FechaExpdiente < fechaFinal && w.M.FinalCaptura != null && w.N.Canal == "Call Center").Count();
+    int realizadosCALLCENTER = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+                .Where(w => w.M.FechaExpdiente >= fechaInicio && w.M.FechaExpdiente < fechaFinal && w.M.FinalCaptura != null && w.N.Canal == "CALL CENTER").Count();
 
-    int realizadosALT = db.PacienteESP.Where(w => w.FechaCaptura >= fechaInicio && w.FechaCaptura < fechaFinal && w.Capturista != null).Count();
+    int realizadosGESTORALT = db.PacienteESP.Where(w => w.FechaCaptura >= fechaInicio && w.FechaCaptura < fechaFinal && w.Capturista != null && w.CanalTipo == "GESTOR ALT").Count();
 
-    int realizadosALTIS = 0;
+    int realizadosINSITU = db.PacienteESP.Where(w => w.FechaCaptura >= fechaInicio && w.FechaCaptura < fechaFinal && w.Capturista != null && w.CanalTipo == "IN SITU").Count(); ;
 
-    int realizadosGestores = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Join(db.Referido, o => o.N.ReferidoPor, p => p.Nombre, (o, p) => new { O = o, P = p })
-                .Where(w => w.O.M.FechaExpdiente >= fechaInicio && w.O.M.FechaExpdiente < fechaFinal && w.O.M.FinalCaptura != null && w.P.Tipo == "Gestor").Count();
+    int realizadosGESTOR = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Join(db.Referido, o => o.N.ReferidoPor, p => p.Nombre, (o, p) => new { O = o, P = p })
+                .Where(w => w.O.M.FechaExpdiente >= fechaInicio && w.O.M.FechaExpdiente < fechaFinal && w.O.M.FinalCaptura != null && w.P.Tipo == "GESTOR").Count();
 
-    int realizadosMedia = 0;
+    int realizadosMEDIOS = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Join(db.Referido, o => o.N.ReferidoPor, p => p.Nombre, (o, p) => new { O = o, P = p })
+                .Where(w => w.O.M.FechaExpdiente >= fechaInicio && w.O.M.FechaExpdiente < fechaFinal && w.O.M.FinalCaptura != null && w.P.Tipo == "MEDIOS DIGITALES").Count(); ;
 
-    int realizadosCATEM = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Join(db.Referido, o => o.N.ReferidoPor, p => p.Nombre, (o, p) => new { O = o, P = p })
-                .Where(w => w.O.M.FechaExpdiente >= fechaInicio && w.O.M.FechaExpdiente < fechaFinal && w.O.M.FinalCaptura != null && w.P.Tipo.Contains("CATEM")).Count();
+    int realizadosSINDICATO = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Join(db.Referido, o => o.N.ReferidoPor, p => p.Nombre, (o, p) => new { O = o, P = p })
+                .Where(w => w.O.M.FechaExpdiente >= fechaInicio && w.O.M.FechaExpdiente < fechaFinal && w.O.M.FinalCaptura != null && w.P.Tipo.Contains("SINDICATO")).Count();
 
-    int realizadosEmpresas = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Join(db.Referido, o => o.N.ReferidoPor, p => p.Nombre, (o, p) => new { O = o, P = p })
-                .Where(w => w.O.M.FechaExpdiente >= fechaInicio && w.O.M.FechaExpdiente < fechaFinal && w.O.M.FinalCaptura != null && w.P.Tipo == "Empresa").Count();
+    int realizadosEMPRESA = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Join(db.Referido, o => o.N.ReferidoPor, p => p.Nombre, (o, p) => new { O = o, P = p })
+                .Where(w => w.O.M.FechaExpdiente >= fechaInicio && w.O.M.FechaExpdiente < fechaFinal && w.O.M.FinalCaptura != null && w.P.Tipo == "EMPRESA").Count();
+
+    int realizadosOTRO = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Join(db.Referido, o => o.N.ReferidoPor, p => p.Nombre, (o, p) => new { O = o, P = p })
+                .Where(w => w.O.M.FechaExpdiente >= fechaInicio && w.O.M.FechaExpdiente < fechaFinal && w.O.M.FinalCaptura != null && w.P.Tipo == "OTRO").Count();
 
 }
 <br />
@@ -85,7 +89,7 @@
             <option value="Semanales">METAS SEMANALES</option>
             <option value="Sucursales">SUCURSALES</option>
             @*<option value="CallCenter">CALL CENTER</option>
-        <option value="Gestores">GESTORES</option>*@
+                <option value="Gestores">GESTORES</option>*@
             <option value="Alternativos">ACUMULADO ALT</option>
             <option value="Comparacion">COMPARACIÓN</option>
             <option value="Doctores">DOCTORES</option>
@@ -180,115 +184,126 @@
                 </td>
                 <td>
                     @{
-                        if (item.NombreCanal == "Call Center")
+                        if (item.NombreCanal == "CALL CENTER")
                         {
-                            <span>@realizadosCallCenter</span>
+                            <span>@realizadosCALLCENTER</span>
                         }
-                        else if (item.NombreCanal == "ALT")
+                        else if (item.NombreCanal == "GESTOR ALT")
                         {
-                            <span>@realizadosALT</span>
+                            <span>@realizadosGESTORALT</span>
                         }
-                        else if (item.NombreCanal == "Gestores")
+                        else if (item.NombreCanal == "GESTOR")
                         {
-                            <span>@realizadosGestores</span>
+                            <span>@realizadosGESTOR</span>
                         }
-                        else if (item.NombreCanal == "Empresas")
+                        else if (item.NombreCanal == "EMPRESA")
                         {
-                            <span>@realizadosEmpresas</span>
+                            <span>@realizadosEMPRESA</span>
                         }
-                        else if (item.NombreCanal == "CATEM")
+                        else if (item.NombreCanal == "SINDICATO")
                         {
-                            <span>@realizadosCATEM</span>
+                            <span>@realizadosSINDICATO</span>
                         }
-                        else if (item.NombreCanal == "ALT IS")
+                        else if (item.NombreCanal == "IN SITU")
                         {
-                            <span>@realizadosALTIS</span>
+                            <span>@realizadosINSITU</span>
                         }
-                        else if (item.NombreCanal == "Medios Digitales")
+                        else if (item.NombreCanal == "MEDIOS DIGITALES")
                         {
-                            <span>@realizadosMedia</span>
+                            <span>@realizadosMEDIOS</span>
+                        }
+                        else if (item.NombreCanal == "OTRO")
+                        {
+                            <span>@realizadosOTRO</span>
                         }
                     }
                 </td>
                 <td>
                     @{
-                        int diferenciaSemanalCallCenter = realizadosCallCenter - ((Convert.ToInt32(item.Meta) / 30) * 7);
-                        int diferenciaSemanalCATEM = realizadosCATEM - ((Convert.ToInt32(item.Meta) / 30) * 7);
-                        int diferenciaSemanalEmpresas = realizadosEmpresas - ((Convert.ToInt32(item.Meta) / 30) * 7);
-                        int diferenciaSemanalGestores = realizadosGestores - ((Convert.ToInt32(item.Meta) / 30) * 7);
-                        int diferenciaSemanalALT = realizadosALT - ((Convert.ToInt32(item.Meta) / 30) * 7);
-                        int diferenciaSemanalALTIS = realizadosALTIS - ((Convert.ToInt32(item.Meta) / 30) * 7);
-                        int diferenciaSemanalMedia = realizadosMedia - ((Convert.ToInt32(item.Meta) / 30) * 7);
+                        int diferenciaSemanalCALLCENTER = realizadosCALLCENTER - ((Convert.ToInt32(item.Meta) / 30) * 7);
+                        int diferenciaSemanalSINDICATO = realizadosSINDICATO - ((Convert.ToInt32(item.Meta) / 30) * 7);
+                        int diferenciaSemanalEMPRESA = realizadosEMPRESA - ((Convert.ToInt32(item.Meta) / 30) * 7);
+                        int diferenciaSemanalGESTOR = realizadosGESTOR - ((Convert.ToInt32(item.Meta) / 30) * 7);
+                        int diferenciaSemanalGESTORALT = realizadosGESTORALT - ((Convert.ToInt32(item.Meta) / 30) * 7);
+                        int diferenciaSemanalINSITU = realizadosINSITU - ((Convert.ToInt32(item.Meta) / 30) * 7);
+                        int diferenciaSemanalMEDIOS = realizadosMEDIOS - ((Convert.ToInt32(item.Meta) / 30) * 7);
+                        int diferenciaSemanalOTRO = realizadosOTRO - ((Convert.ToInt32(item.Meta) / 30) * 7);
 
-                        if (item.NombreCanal == "Call Center")
+                        if (item.NombreCanal == "CALL CENTER")
                         {
-                            <span>@diferenciaSemanalCallCenter</span>
-                            diferenciaTotal += diferenciaSemanalCallCenter;
+                            <span>@diferenciaSemanalCALLCENTER</span>
+                            diferenciaTotal += diferenciaSemanalCALLCENTER;
                         }
-                        else if (item.NombreCanal == "ALT")
+                        else if (item.NombreCanal == "GESTOR ALT")
                         {
-                            <span>@diferenciaSemanalALT</span>
-                            diferenciaTotal += diferenciaSemanalALT;
+                            <span>@diferenciaSemanalGESTORALT</span>
+                            diferenciaTotal += diferenciaSemanalGESTORALT;
                         }
-                        else if (item.NombreCanal == "Gestores")
+                        else if (item.NombreCanal == "GESTOR")
                         {
-                            <span>@diferenciaSemanalGestores</span>
-                            diferenciaTotal += diferenciaSemanalGestores;
+                            <span>@diferenciaSemanalGESTOR</span>
+                            diferenciaTotal += diferenciaSemanalGESTOR;
                         }
-                        else if (item.NombreCanal == "Empresas")
+                        else if (item.NombreCanal == "EMPRESA")
                         {
-                            <span>@diferenciaSemanalEmpresas</span>
-                            diferenciaTotal += diferenciaSemanalEmpresas;
+                            <span>@diferenciaSemanalEMPRESA</span>
+                            diferenciaTotal += diferenciaSemanalEMPRESA;
                         }
-                        else if (item.NombreCanal == "CATEM")
+                        else if (item.NombreCanal == "SINDICATO")
                         {
-                            <span>@diferenciaSemanalCATEM</span>
-                            diferenciaTotal += diferenciaSemanalCATEM;
+                            <span>@diferenciaSemanalSINDICATO</span>
+                            diferenciaTotal += diferenciaSemanalSINDICATO;
                         }
-                        else if (item.NombreCanal == "ALT IS")
+                        else if (item.NombreCanal == "IN SITU")
                         {
-                            <span>@diferenciaSemanalALTIS</span>
-                            diferenciaTotal += diferenciaSemanalALTIS;
+                            <span>@diferenciaSemanalINSITU</span>
+                            diferenciaTotal += diferenciaSemanalINSITU;
                         }
-                        else if (item.NombreCanal == "Medios Digitales")
+                        else if (item.NombreCanal == "MEDIOS DIGITALES")
                         {
-                            <span>@diferenciaSemanalMedia</span>
-                            diferenciaTotal += diferenciaSemanalMedia;
+                            <span>@diferenciaSemanalMEDIOS</span>
+                            diferenciaTotal += diferenciaSemanalMEDIOS;
+                        }
+                        else if (item.NombreCanal == "OTRO")
+                        {
+                            <span>@diferenciaSemanalOTRO</span>
+                            diferenciaTotal += diferenciaSemanalOTRO;
                         }
                     }
                 </td>
             </tr>
 
-                            flag += 1;
+            flag += 1;
 
-                        }
+        }
 
         <tr class="bg-info">
             <td><b>TOTAL</b></td>
             <td>
-                @{ 
+                @{
                     int? metaTotal = db.Canales.Sum(s => s.Meta);
 
                     <span><b>@metaTotal</b></span>
                 }
             </td>
             <td>
-                @{ 
+                @{
                     metaTotal /= 30;
 
                     <span><b>@metaTotal</b></span>
                 }
             </td>
             <td>
-                @{ 
+                @{
                     metaTotal *= 7;
 
                     <span><b>@metaTotal</b></span>
                 }
             </td>
             <td>
-                @{ 
-                    int totalRealizados = realizadosALT + realizadosALTIS + realizadosCallCenter + realizadosCATEM + realizadosEmpresas + realizadosGestores + realizadosMedia;
+                @{
+                    int totalRealizados = realizadosGESTORALT + realizadosOTRO +
+                        realizadosINSITU + realizadosCALLCENTER + realizadosSINDICATO + realizadosEMPRESA + realizadosGESTOR + realizadosMEDIOS;
 
                     <span><b>@totalRealizados</b></span>
                 }
