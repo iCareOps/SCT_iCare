@@ -397,7 +397,7 @@ namespace SCT_iCare.Controllers.Admin
             }
         }
 
-        public ActionResult ConteoDoctores(string gestor, int? pageSize, int? page, DateTime? mes)
+        public ActionResult ConteoDoctores(string gestor, int? pageSize, int? page, DateTime? mes, string grupo)
         {
 
             TempData["MES"] = mes != null ? Convert.ToDateTime(mes).Month : 0;
@@ -457,7 +457,17 @@ namespace SCT_iCare.Controllers.Admin
             }
             else
             {
-                return View(db.Doctores2.OrderByDescending(o => o.idDoctor2).ToPagedList(page.Value, pageSize.Value));
+                if(grupo == "" || grupo == "todos" || grupo == null)
+                {
+                    ViewBag.Grupo = "";
+                    return View(db.Doctores2.OrderByDescending(o => o.idDoctor2).ToPagedList(page.Value, pageSize.Value));
+                }
+                else
+                {
+                    ViewBag.Grupo = grupo;
+                    return View(db.Doctores2.Where(w => w.Grupo == grupo).OrderByDescending(o => o.idDoctor2).ToPagedList(page.Value, pageSize.Value));
+                }
+                
             }
         }
 
