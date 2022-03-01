@@ -492,11 +492,11 @@
                     int spanPvsR = planDiferenciaFooter < 0 ? -1 : 1;
                     int? mostradoPvsR = planDiferenciaFooter * spanPvsR;
 
-                    if (planTotalMesAnteriorFooter > 0)
+                    if (planDiferenciaFooter > 0)
                     {
                         texto = "text-success";
                     }
-                    else if (planTotalMesAnteriorFooter < 0)
+                    else if (planDiferenciaFooter < 0)
                     {
                         texto = "text-danger";
                         parentesisDerecho = ")";
@@ -563,14 +563,8 @@
 
                 @{
                     double? porcentajePantvsPact = (diferenciaPantvsPact * (SpanPlanTotal)) * (100) / metaTotal;
-                    //porcentajeMantvsMact = realizadoHoy == 0 ? 0 : porcentajeMantvsMact;
-                }
-
-                @if (realizadoTotal == 0 || realizadoTotalMesAnterior == 0)
-                {
-
-                    porcentajePantvsPact = 0;
-
+                    porcentajePantvsPact = realizadoTotal == 0 ? 0 : porcentajePantvsPact;
+                    porcentajePantvsPact = metaTotal <= 0 ? porcentajePantvsPact = (diferenciaPantvsPact * (SpanPlanTotal)) * (100) : porcentajePantvsPact;
                 }
 
                 <span class="@textoAngPt">@parentesisIZquierdoAng1Pt@Convert.ToDouble(porcentajePantvsPact).ToString("##.##")@parentesisDerechoAng1Pt&zwnj;</span>
@@ -654,6 +648,7 @@
                 @{
                     double? porcentajePtantvsPtact = (diferenciaPtantvsPtact * (SpanPlanTotalMant)) * (100) / realizadoTotalMesAnterior;
                     porcentajePtantvsPtact = realizadoTotal == 0 ? 0 : porcentajePtantvsPtact;
+                    porcentajePtantvsPtact = realizadoTotalMesAnterior <= 0 ? porcentajePtantvsPtact = (diferenciaPtantvsPtact * (SpanPlanTotalMant)) * (100) : porcentajePtantvsPtact;
                 }
 
                 @if (realizadoTotal == 0 || realizadoTotalMesAnterior == 0)

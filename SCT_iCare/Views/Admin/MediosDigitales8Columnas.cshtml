@@ -539,6 +539,7 @@
                     double SpanPlanTotal = 0;
                     double? diferenciaPantvsPact = realizadoTotal - metaTotal;
                     diferenciaPantvsPact = realizadoTotal == 0 ? 0 : diferenciaPantvsPact;
+                    diferenciaPantvsPact = realizadoTotal == 0 && metaTotal != 0 ? -1 : diferenciaPantvsPact;
                     string textoAngPt = "";
                     string parentesisDerechoAng1Pt = "";
                     string parentesisIZquierdoAng1Pt = "";
@@ -563,14 +564,8 @@
 
                 @{
                     double? porcentajePantvsPact = (diferenciaPantvsPact * (SpanPlanTotal)) * (100) / metaTotal;
-                    //porcentajeMantvsMact = realizadoHoy == 0 ? 0 : porcentajeMantvsMact;
-                }
-
-                @if (realizadoTotal == 0 || metaTotal == 0)
-                {
-
-                    porcentajePantvsPact = 0;
-
+                    porcentajePantvsPact = realizadoHoy == 0 ? 100 : porcentajePantvsPact;
+                    porcentajePantvsPact = metaTotal <= 0 ? porcentajePantvsPact = (diferenciaPantvsPact * (SpanPlanTotal)) * (100) : porcentajePantvsPact;
                 }
 
                 <span class="@textoAngPt">@parentesisIZquierdoAng1Pt@Convert.ToDouble(porcentajePantvsPact).ToString("##.##")@parentesisDerechoAng1Pt&zwnj;</span>
