@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 @{
     ViewBag.Title = "TablaDinamica";
 
@@ -34,23 +34,27 @@
 
     int metaDiariaFooter = metaMensual / 30;
 
-    var realizadosCallCenter = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
-.Where(w => w.M.FinalCaptura != null && w.N.Canal == "Call Center");
+    var realizadosCALLCENTER = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+.Where(w => w.M.FinalCaptura != null && w.N.Canal == "CALL CENTER");
 
-    var realizadosALT = db.PacienteESP.Where(w => w.Capturista != null);
+    var realizadosGESTORALT = db.PacienteESP.Where(w => w.Capturista != null && w.CanalTipo == "GESTOR ALT");
 
-    var realizadosALTIS = 0;
+    var realizadosINSITU = db.PacienteESP.Where(w => w.Capturista != null && w.CanalTipo == "IN SITU");
 
-    var realizadosGestores = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Join(db.Referido, o => o.N.ReferidoPor, p => p.Nombre, (o, p) => new { O = o, P = p })
-                .Where(w => w.O.M.FinalCaptura != null && w.P.Tipo == "Gestor");
+    var realizadosGESTOR = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Join(db.Referido, o => o.N.ReferidoPor, p => p.Nombre, (o, p) => new { O = o, P = p })
+        .Where(w => w.O.M.FinalCaptura != null && w.P.Tipo == "GESTOR");
 
-    var realizadosMedia = 0;
+    var realizadosMEDIOS = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Join(db.Referido, o => o.N.ReferidoPor, p => p.Nombre, (o, p) => new { O = o, P = p })
+        .Where(w => w.O.M.FinalCaptura != null && w.P.Tipo == "MEDIOS DIGITALES");
 
-    var realizadosCATEM = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Join(db.Referido, o => o.N.ReferidoPor, p => p.Nombre, (o, p) => new { O = o, P = p })
-                .Where(w => w.O.M.FinalCaptura != null && w.P.Tipo.Contains("CATEM"));
+    var realizadosSINDICATO = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Join(db.Referido, o => o.N.ReferidoPor, p => p.Nombre, (o, p) => new { O = o, P = p })
+        .Where(w => w.O.M.FinalCaptura != null && w.P.Tipo.Contains("SINDICATO"));
 
-    var realizadosEmpresas = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Join(db.Referido, o => o.N.ReferidoPor, p => p.Nombre, (o, p) => new { O = o, P = p })
-                .Where(w => w.O.M.FinalCaptura != null && w.P.Tipo == "Empresa");
+    var realizadosEMPRESA = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Join(db.Referido, o => o.N.ReferidoPor, p => p.Nombre, (o, p) => new { O = o, P = p })
+                .Where(w => w.O.M.FinalCaptura != null && w.P.Tipo == "EMPRESA");
+
+    var realizadosOTRO = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).Join(db.Referido, o => o.N.ReferidoPor, p => p.Nombre, (o, p) => new { O = o, P = p })
+                .Where(w => w.O.M.FinalCaptura != null && w.P.Tipo == "OTRO");
 }
 
 <html>
@@ -169,45 +173,72 @@
                                     int realizadoHoy = 0;
                                     int diferenciaHoy = 0;
 
-                                    if (item.NombreCanal == "Call Center")
+                                    if (item.NombreCanal == "CALL CENTER")
                                     {
-                                        realizadoHoy = realizadosCallCenter.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
+                                        realizadoHoy = realizadosCALLCENTER.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
                                         diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
 
                                         episTotal += realizadoHoy;
                                         dictamenTotal += diferenciaHoy;
 
                                     }
-                                    else if (item.NombreCanal == "CATEM")
+                                    else if (item.NombreCanal == "SINDICATO")
                                     {
-                                        realizadoHoy = realizadosCATEM.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                        realizadoHoy = realizadosSINDICATO.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
                                         diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
 
                                         episTotal += realizadoHoy;
                                         dictamenTotal += diferenciaHoy;
 
                                     }
-                                    else if (item.NombreCanal == "ALT")
+                                    else if (item.NombreCanal == "GESTOR ALT")
                                     {
-                                        realizadoHoy = realizadosALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
+                                        realizadoHoy = realizadosGESTORALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
                                         diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
 
                                         episTotal += realizadoHoy;
                                         dictamenTotal += diferenciaHoy;
 
                                     }
-                                    else if (item.NombreCanal == "Gestores")
+                                    else if (item.NombreCanal == "GESTOR")
                                     {
-                                        realizadoHoy = realizadosGestores.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                        realizadoHoy = realizadosGESTOR.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
                                         diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
 
                                         episTotal += realizadoHoy;
                                         dictamenTotal += diferenciaHoy;
 
                                     }
-                                    else if (item.NombreCanal == "Empresas")
+                                    else if (item.NombreCanal == "EMPRESA")
                                     {
-                                        realizadoHoy = realizadosEmpresas.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                        realizadoHoy = realizadosEMPRESA.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                        diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
+
+                                        episTotal += realizadoHoy;
+                                        dictamenTotal += diferenciaHoy;
+
+                                    }
+                                    else if (item.NombreCanal == "OTRO")
+                                    {
+                                        realizadoHoy = realizadosOTRO.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                        diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
+
+                                        episTotal += realizadoHoy;
+                                        dictamenTotal += diferenciaHoy;
+
+                                    }
+                                    else if (item.NombreCanal == "MEDIOS DIGITALES")
+                                    {
+                                        realizadoHoy = realizadosMEDIOS.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                        diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
+
+                                        episTotal += realizadoHoy;
+                                        dictamenTotal += diferenciaHoy;
+
+                                    }
+                                    else if (item.NombreCanal == "IN SITU")
+                                    {
+                                        realizadoHoy = realizadosINSITU.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
                                         diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
 
                                         episTotal += realizadoHoy;
@@ -250,42 +281,66 @@
                                     int realizadoHoy = 0;
                                     int diferenciaHoy = 0;
 
-                                    if (item.NombreCanal == "Call Center")
+                                    if (item.NombreCanal == "CALL CENTER")
                                     {
-                                        realizadoHoy = realizadosCallCenter.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
+                                        realizadoHoy = realizadosCALLCENTER.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
                                         diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
 
                                         episTotal += realizadoHoy;
                                         dictamenTotal += diferenciaHoy;
 
                                     }
-                                    else if (item.NombreCanal == "CATEM")
+                                    else if (item.NombreCanal == "SINDICATO")
                                     {
-                                        realizadoHoy = realizadosCATEM.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                        realizadoHoy = realizadosSINDICATO.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
                                         diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
 
                                         episTotal += realizadoHoy;
                                         dictamenTotal += diferenciaHoy;
                                     }
-                                    else if (item.NombreCanal == "ALT")
+                                    else if (item.NombreCanal == "GESTOR ALT")
                                     {
-                                        realizadoHoy = realizadosALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
+                                        realizadoHoy = realizadosGESTORALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
                                         diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
 
                                         episTotal += realizadoHoy;
                                         dictamenTotal += diferenciaHoy;
                                     }
-                                    else if (item.NombreCanal == "Gestores")
+                                    else if (item.NombreCanal == "GESTOR")
                                     {
-                                        realizadoHoy = realizadosGestores.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                        realizadoHoy = realizadosGESTOR.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
                                         diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
 
                                         episTotal += realizadoHoy;
                                         dictamenTotal += diferenciaHoy;
                                     }
-                                    else if (item.NombreCanal == "Empresas")
+                                    else if (item.NombreCanal == "EMPRESA")
                                     {
-                                        realizadoHoy = realizadosEmpresas.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                        realizadoHoy = realizadosEMPRESA.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                        diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
+
+                                        episTotal += realizadoHoy;
+                                        dictamenTotal += diferenciaHoy;
+                                    }
+                                    else if (item.NombreCanal == "IN SITU")
+                                    {
+                                        realizadoHoy = realizadosINSITU.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
+                                        diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
+
+                                        episTotal += realizadoHoy;
+                                        dictamenTotal += diferenciaHoy;
+                                    }
+                                    else if (item.NombreCanal == "OTRO")
+                                    {
+                                        realizadoHoy = realizadosOTRO.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                        diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
+
+                                        episTotal += realizadoHoy;
+                                        dictamenTotal += diferenciaHoy;
+                                    }
+                                    else if (item.NombreCanal == "MEDIOS DIGITALES")
+                                    {
+                                        realizadoHoy = realizadosMEDIOS.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
                                         diferenciaHoy = realizadoHoy - (Convert.ToInt32(item.Meta) / 30);
 
                                         episTotal += realizadoHoy;
@@ -357,50 +412,77 @@
                                     int? metaEmpresas = 0;
                                     int? metaAlternativos = 0;
                                     int? metaGestores = 0;
+                                    int? metaOTRO = 0;
+                                    int? metaINSITU = 0;
+                                    int? metaMEDIOS = 0;
 
                                     foreach (var meta in canales)
                                     {
-                                        if (meta.NombreCanal == "Call Center")
+                                        if (meta.NombreCanal == "CALL CENTER")
                                         {
                                             metaCallCenter = meta.Meta;
                                         }
-                                        else if (meta.NombreCanal == "CATEM")
+                                        else if (meta.NombreCanal == "SINDICATO")
                                         {
                                             metaCATEM = meta.Meta;
                                         }
-                                        else if (meta.NombreCanal == "Empresas")
+                                        else if (meta.NombreCanal == "EMPRESA")
                                         {
                                             metaEmpresas = meta.Meta;
                                         }
-                                        else if (meta.NombreCanal == "ALT")
+                                        else if (meta.NombreCanal == "GESTOR ALT")
                                         {
                                             metaAlternativos = meta.Meta;
                                         }
-                                        else if (meta.NombreCanal == "Gestores")
+                                        else if (meta.NombreCanal == "GESTOR")
                                         {
                                             metaGestores = meta.Meta;
                                         }
+                                        else if (meta.NombreCanal == "INSITU")
+                                        {
+                                            metaINSITU = meta.Meta;
+                                        }
+                                        else if (meta.NombreCanal == "OTRO")
+                                        {
+                                            metaOTRO = meta.Meta;
+                                        }
+                                        else if (meta.NombreCanal == "MEDIOS DIGITALES")
+                                        {
+                                            metaMEDIOS = meta.Meta;
+                                        }
                                     }
 
-                                    episTotalFooter += realizadosCallCenter.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
-                                    realizadoHoy = realizadosCallCenter.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
+                                    episTotalFooter += realizadosCALLCENTER.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
+                                    realizadoHoy = realizadosCALLCENTER.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
                                     dictamenTotalFooter += (realizadoHoy - (metaCallCenter) / 30);
 
-                                    episTotalFooter += realizadosCATEM.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                                    realizadoHoy = realizadosCATEM.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                    episTotalFooter += realizadosSINDICATO.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                    realizadoHoy = realizadosSINDICATO.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
                                     dictamenTotalFooter += (realizadoHoy - (metaCATEM) / 30);
 
-                                    episTotalFooter += realizadosALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
-                                    realizadoHoy = realizadosALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
+                                    episTotalFooter += realizadosGESTORALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
+                                    realizadoHoy = realizadosGESTORALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
                                     dictamenTotalFooter += (realizadoHoy - (metaAlternativos) / 30);
 
-                                    episTotalFooter += realizadosGestores.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                                    realizadoHoy = realizadosGestores.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                    episTotalFooter += realizadosGESTOR.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                    realizadoHoy = realizadosGESTOR.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
                                     dictamenTotalFooter += (realizadoHoy - (metaGestores) / 30);
 
-                                    episTotalFooter += realizadosEmpresas.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                                    realizadoHoy = realizadosEmpresas.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                    episTotalFooter += realizadosEMPRESA.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                    realizadoHoy = realizadosEMPRESA.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
                                     dictamenTotalFooter += (realizadoHoy - (metaEmpresas) / 30);
+
+                                    episTotalFooter += realizadosINSITU.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
+                                    realizadoHoy = realizadosINSITU.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
+                                    dictamenTotalFooter += (realizadoHoy - (metaINSITU) / 30);
+
+                                    episTotalFooter += realizadosOTRO.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                    realizadoHoy = realizadosOTRO.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                    dictamenTotalFooter += (realizadoHoy - (metaOTRO) / 30);
+
+                                    episTotalFooter += realizadosMEDIOS.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                    realizadoHoy = realizadosMEDIOS.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
+                                    dictamenTotalFooter += (realizadoHoy - (metaMEDIOS) / 30);
 
 
                                     <td style="border-bottom: 0px">
