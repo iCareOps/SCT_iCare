@@ -585,10 +585,6 @@
                     string parentesisDerechoAng1Ptant = "";
                     string parentesisIZquierdoAng1Ptant = "";
                 }
-                @{
-                    double? porcentajePtantvsPtact = (diferenciaPtantvsPtact * (SpanPlanTotalMant)) * (100) / realizadoTotalMesAnterior;
-                    porcentajePtantvsPtact = realizadoTotal == 0 ? 0 : porcentajePtantvsPtact;
-                }
 
                 @{
                     if (diferenciaPtantvsPtact > 0)
@@ -624,13 +620,13 @@
             <td class="bg-info" style="text-align: center; border-right: none; border-left: none">
 
                 @*@{
-                        double SpanPlanTotalMant = 0;
-                        double diferenciaPtantvsPtact = realizadoTotal - realizadoTotalMesAnterior;
-                        diferenciaPtantvsPtact = realizadoTotal == 0 ? 0 : diferenciaPtantvsPtact;
-                        string textoAngPtant = "";
-                        string parentesisDerechoAng1Ptant = "";
-                        string parentesisIZquierdoAng1Ptant = "";
-                    }*@
+            double SpanPlanTotalMant = 0;
+            double diferenciaPtantvsPtact = realizadoTotal - realizadoTotalMesAnterior;
+            diferenciaPtantvsPtact = realizadoTotal == 0 ? 0 : diferenciaPtantvsPtact;
+            string textoAngPtant = "";
+            string parentesisDerechoAng1Ptant = "";
+            string parentesisIZquierdoAng1Ptant = "";
+        }*@
 
                 @if (diferenciaPtantvsPtact > 0)
                 {
@@ -649,10 +645,12 @@
                     SpanPlanTotalMant = 0;
                 }
 
-                @*@{
-                        double porcentajePtantvsPtact = (diferenciaPtantvsPtact * (SpanPlanTotalMant)) * (100) / realizadoTotalMesAnterior;
-                        //porcentajeMantvsMact = realizadoHoy == 0 ? 0 : porcentajeMantvsMact;
-                    }*@
+                @{
+                    double? porcentajePtantvsPtact = (diferenciaPtantvsPtact * (SpanPlanTotalMant)) * (100) / realizadoTotalMesAnterior;
+                    porcentajePtantvsPtact = realizadoTotal == 0 ? 0 : porcentajePtantvsPtact;
+                    porcentajePtantvsPtact = porcentajePtantvsPtact < 0 || porcentajePtantvsPtact > 100 ? porcentajePtantvsPtact = (diferenciaPtantvsPtact * (SpanPlanTotalMant)) * (100) : porcentajePtantvsPtact;
+
+                }
 
                 @if (realizadoTotal == 0 || realizadoTotalMesAnterior == 0)
                 {
