@@ -46,6 +46,11 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
 
     var modelo1 = db.PacienteESP.Where(s => s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && (s.CanalTipo.Contains(canal) && s.Cuenta == cuenta));
 
+    var modeloExcel = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).
+Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFinal);
+
+    var modeloExcel1 = db.PacienteESP.Where(s => s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal);
+
 }
 
 <br />
@@ -210,7 +215,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
     </div>
 
 <br />
-<div class="tablaScroll">
+<div class="tablaScroll" style="min-height: 1000px">
     <table class="table  table-hover tablas" style="color: #2F2D6B">
         <thead style="color:white">
             <tr>
@@ -219,7 +224,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     Nombre
                 </th>
                 <th>
-                    Fecha Cita
+                    FechaCita
                 </th>
                 <th>
                     Sucursal
@@ -228,7 +233,13 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     Referencia
                 </th><!--Referido Por(vía y canal), Tipo de pago (Conekta, BanBajio, Banco Alternativo) / Fecha de pago-->
                 <th>
+                    Canal
+                </th>
+                <th>
                     ReferidoPor
+                </th>
+                <th>
+                    Cuenta
                 </th>
                 <th>
                     TipoPago
@@ -253,7 +264,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     <td>
                         @flag
                     </td>
-                    <td>
+                    <td style="font-size:smaller">
                         @{
                             string[] historico = item.M.CuentaComentario != null ? item.M.CuentaComentario.Split('+') : null;
                             int flag0 = 1;
@@ -280,21 +291,31 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                         }
                     </td>
                     <td>
-                        @Convert.ToDateTime(item.M.FechaCita).ToString("dd-MMMM-yyyy")
+                        @Convert.ToDateTime(item.M.FechaCita).ToString("dd-MM-yy")
                     </td>
-                    <td>
+                    <td style="font-size:smaller">
                         @item.M.Sucursal
                     </td>
-                    <td>
+                    <td style="font-size:smaller">
                         @item.M.Referencia
                     </td>
+                    <td style="font-size:smaller">
+                        <b>@item.M.CanalTipo</b>
+                    </td>
+                    <td style="font-size:smaller">
+                        <b>@item.M.ReferidoPor</b>
+                    </td>
                     <td>
-                        <span class="field-tip">
-                            <b>@item.M.ReferidoPor</b>
-                            <span class="tip-content">
-                                Canal: @item.M.CanalTipo
-                            </span>
-                        </span>
+                        @{ 
+                            if(item.M.Cuenta == null)
+                {
+                    <span>Caja</span>
+                }
+                else
+                {
+                    <span>@item.M.Cuenta</span>
+                }
+                        }
                     </td>
                     <td>
                         @{
@@ -306,6 +327,10 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                             {
                                 <span>BanBajío</span>
                             }
+                            else if (item.M.TipoPago == "Pendiente de Pago")
+                            {
+                                <span>Pendiente</span>
+                            }
                             else
                             {
                                 <span>Banco Alternativo</span>
@@ -313,7 +338,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                         }
                     </td>
                     <td>
-                        @Convert.ToDateTime(item.M.FechaReferencia).ToString("dd-MMMM-yyyy")
+                        @Convert.ToDateTime(item.M.FechaReferencia).ToString("dd-MM-yy")
                     </td>
                     <td>
                         @{
@@ -348,6 +373,8 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                             <div class="dropdown-menu" style="padding:10px">
                                 <a href="#" data-toggle="modal" data-target="#Efectivo_@item.M.idCita"><b>Bancos</b></a>
                                 <div class="dropdown-divider"></div>
+                                <a href="#" data-toggle="modal" data-target="#Conekta_@item.M.idCita"><b>Conekta</b></a>
+                                <div class="dropdown-divider"></div>
                                 <a href="#" data-toggle="modal" data-target="#Anticipos_@item.M.idCita"><b>Anticipos</b></a>
                                 <div class="dropdown-divider"></div>
                                 <a href="#" data-toggle="modal" data-target="#CXC_@item.M.idCita"><b>CuentasXCobrar</b></a>
@@ -371,6 +398,46 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                             <div class="modal-body">
                                                 <input type="hidden" name="id" value="@item.M.idCita" />
                                                 <input type="hidden" name="cuenta" value="BANCOS" />
+                                                <div class="form-group" style="width:60%; min-width:320px">
+                                                    <label for="recipient-name" class="col-form-label">Nombre:</label>
+                                                    <b>@item.N.Nombre</b><br />
+                                                    <label for="recipient-name" class="col-form-label">CURP:</label>
+                                                    <b>@item.N.CURP</b><br />
+                                                    <label for="recipient-name" class="col-form-label">NoExpediente:</label>
+                                                    <b>@item.M.NoExpediente</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha:</label>
+                                                    <b>@Convert.ToDateTime(item.M.FechaReferencia).ToString("dd-MMMM-yyyy")</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                                                    <b>@item.M.Sucursal</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Doctor:</label>
+                                                    <b>@item.M.Doctor</b><br />
+                                                    <br />
+                                                    <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
+                                                    <input type="text" class="form-control" name="comentario" />
+                                                    <input type="hidden" name="usuario" value="@oUser.Nombre" />
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                <input type="submit" value="Enviar" class="btn btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!-- Conekta -->
+                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuenta")">
+                                @Html.AntiForgeryToken()
+                                <div class="modal fade" id="Conekta_@item.M.idCita" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="exampleModalLabel"><b>¿Está seguro de mandar los datos de esta venta a Conekta?</b></h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="hidden" name="id" value="@item.M.idCita" />
+                                                <input type="hidden" name="cuenta" value="CONEKTA" />
                                                 <div class="form-group" style="width:60%; min-width:320px">
                                                     <label for="recipient-name" class="col-form-label">Nombre:</label>
                                                     <b>@item.N.Nombre</b><br />
@@ -574,7 +641,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     <td>
                         @flag
                     </td>
-                    <td>
+                    <td style="font-size:smaller">
                         @{
                             string[] historico = item.CuentaComentario != null ? item.CuentaComentario.Split('+') : null;
                             int flag0 = 1;
@@ -601,27 +668,37 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                         }
                     </td>
                     <td>
-                        @Convert.ToDateTime(item.FechaCaptura).ToString("dd-MMMM-yyyy")
+                        @Convert.ToDateTime(item.FechaCaptura).ToString("dd-MM-yy")
                     </td>
                     <td>
-                        N/A
+                        -----
                     </td>
                     <td>
-                        N/A
+                        -----
+                    </td>
+                    <td style="font-size:smaller">
+                        <b>@item.CanalTipo</b>
+                    </td>
+                    <td style="font-size:smaller">
+                        <b>@item.ReferidoPor</b>
                     </td>
                     <td>
-                        <span class="field-tip">
-                            <b>@item.ReferidoPor</b>
-                            <span class="tip-content">
-                                Canal: @item.CanalTipo
-                            </span>
-                        </span>
+                        @{ 
+                            if(item.Cuenta == null)
+                {
+                    <span>Caja</span>
+                }
+                else
+                {
+                    <span>@item.Cuenta</span>
+                }
+                        }
                     </td>
                     <td>
-                        N/A
+                        -----
                     </td>
                     <td>
-                        @Convert.ToDateTime(item.FechaSolicitud).ToString("dd-MMMM-yyyy")
+                        @Convert.ToDateTime(item.FechaSolicitud).ToString("dd-MM-yy")
                     </td>
                     <td>
                         @{
@@ -646,6 +723,8 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                             <div class="dropdown-menu" style="padding:10px">
                                 <a href="#" data-toggle="modal" data-target="#Efectivo1_@item.idPacienteESP"><b>Bancos</b></a>
                                 <div class="dropdown-divider"></div>
+                                <a href="#" data-toggle="modal" data-target="#Conekta1_@item.idPacienteESP"><b>Conekta</b></a>
+                                <div class="dropdown-divider"></div>
                                 <a href="#" data-toggle="modal" data-target="#Anticipos1_@item.idPacienteESP"><b>Anticipos</b></a>
                                 <div class="dropdown-divider"></div>
                                 <a href="#" data-toggle="modal" data-target="#CXC1_@item.idPacienteESP"><b>CuentasXCobrar</b></a>
@@ -669,6 +748,44 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                             <div class="modal-body">
                                                 <input type="hidden" name="id" value="@item.idPacienteESP" />
                                                 <input type="hidden" name="cuenta" value="BANCOS" />
+                                                <div class="form-group" style="width:60%; min-width:320px">
+                                                    <label for="recipient-name" class="col-form-label">Nombre:</label>
+                                                    <b>@item.Nombre</b><br />
+                                                    <label for="recipient-name" class="col-form-label">CURP:</label>
+                                                    <b>@item.CURP</b><br />
+                                                    <label for="recipient-name" class="col-form-label">NoExpediente:</label>
+                                                    <b>@item.NoExpediente</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha:</label>
+                                                    <b>@Convert.ToDateTime(item.FechaCaptura).ToString("dd-MMMM-yyyy")</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Doctor:</label>
+                                                    <b>@item.Doctor</b><br />
+                                                    <br />
+                                                    <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
+                                                    <input type="text" class="form-control" name="comentario" />
+                                                    <input type="hidden" name="usuario" value="@oUser.Nombre" />
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                <input type="submit" value="Enviar" class="btn btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!-- Efectivo -->
+                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuentaALT")">
+                                @Html.AntiForgeryToken()
+                                <div class="modal fade" id="Conekta1_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="exampleModalLabel"><b>¿Está seguro de mandar los datos de esta venta a Conekta?</b></h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="hidden" name="id" value="@item.idPacienteESP" />
+                                                <input type="hidden" name="cuenta" value="CONEKTA" />
                                                 <div class="form-group" style="width:60%; min-width:320px">
                                                     <label for="recipient-name" class="col-form-label">Nombre:</label>
                                                     <b>@item.Nombre</b><br />
@@ -910,7 +1027,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
         </thead>
 
         @{
-            foreach (var item in modelo)
+            foreach (var item in modeloExcel)
             {
                 <tr>
                     <td>
@@ -984,9 +1101,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                             {
                                 var costo = (from i in db.Referido where i.Nombre == item.M.ReferidoPor && i.Tipo == item.M.CanalTipo select i.PrecioNormal).FirstOrDefault();
 
-                                double sinIVA = Convert.ToDouble(costo) - (Convert.ToDouble(costo) * 0.16);
-
-                                <span><b>$@sinIVA.ToString("####.##")</b></span>
+                                <span><b>$@Convert.ToDouble(costo).ToString("####.##")</b></span>
                             }
 
                         }
@@ -997,20 +1112,23 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                             {
                                 var costo = (from i in db.Referido where i.Nombre == item.M.ReferidoPor && i.Tipo == item.M.CanalTipo select i.PrecioNormal).FirstOrDefault();
 
-                                <span><b>$@Convert.ToDouble(costo).ToString("####.##")</b></span>
+                                double sinIVA = Convert.ToDouble(costo) + (Convert.ToDouble(costo) * 0.16);
+
+                                <span><b>$@sinIVA.ToString("####.##")</b></span>
                             }
 
                         }
+                        
                         @*@{
-                                if (item.M.EstatusPago == "pending_payment")
-                                {
-                                    <span>Pendiente</span>
-                                }
-                                else
-                                {
-                                    <span>@item.M.EstatusPago</span>
-                                }
-                            }*@
+            if (item.M.EstatusPago == "pending_payment")
+            {
+                <span>Pendiente</span>
+            }
+            else
+            {
+                <span>@item.M.EstatusPago</span>
+            }
+        }*@
                     </td>
                     <td>
                         @item.M.Recepcionista
@@ -1039,7 +1157,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
         }
 
         @{
-            foreach (var item in modelo1)
+            foreach (var item in modeloExcel1)
             {
                 <tr>
                     <td>
@@ -1072,10 +1190,10 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                         @Convert.ToDateTime(item.FechaCaptura).ToString("dd-MMMM-yyyy")
                     </td>
                     <td>
-                        N/A
+                        -----
                     </td>
                     <td>
-                        N/A
+                        -----
                     </td>
                     <td>
                         <span class="field-tip">
@@ -1086,7 +1204,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                         </span>
                     </td>
                     <td>
-                        N/A
+                        -----
                     </td>
                     <td>
                         @Convert.ToDateTime(item.FechaSolicitud).ToString("dd-MMMM-yyyy")
@@ -1099,9 +1217,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                             {
                                 var costo = (from i in db.Referido where i.Nombre == item.ReferidoPor && i.Tipo == item.CanalTipo select i.PrecioNormal).FirstOrDefault();
 
-                                double sinIVA = Convert.ToDouble(costo) - (Convert.ToDouble(costo) * 0.16);
-
-                                <span><b>$@sinIVA.ToString("####.##")</b></span>
+                                <span><b>$@Convert.ToDouble(costo).ToString("####.##")</b></span>
                             }
 
                         }
@@ -1112,10 +1228,23 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                             {
                                 var costo = (from i in db.Referido where i.Nombre == item.ReferidoPor && i.Tipo == item.CanalTipo select i.PrecioNormal).FirstOrDefault();
 
-                                <span><b>$@Convert.ToDouble(costo).ToString("####.##")</b></span>
+                                double sinIVA = Convert.ToDouble(costo) + (Convert.ToDouble(costo) * 0.16);
+
+                                <span><b>$@sinIVA.ToString("####.##")</b></span>
                             }
 
                         }
+
+                        @*@{
+                if (item.M.EstatusPago == "pending_payment")
+                {
+                    <span>Pendiente</span>
+                }
+                else
+                {
+                    <span>@item.M.EstatusPago</span>
+                }
+            }*@
                     </td>
                     <td>
                         @item.Solicita

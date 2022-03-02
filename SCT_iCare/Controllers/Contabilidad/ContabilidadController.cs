@@ -72,7 +72,7 @@ namespace SCT_iCare.Controllers.Contabilidad
         {
             var cita = db.PacienteESP.Find(id);
 
-            string historico = cita.CuentaComentario == null ? "" : cita.CuentaComentario + "+"; ;
+            string historico = cita.CuentaComentario == null ? "" : cita.CuentaComentario + "+"; 
             string cuentaAnterior = cita.Cuenta == null ? "" : " PROVIENE DE " + cita.Cuenta;
             cita.CuentaComentario = historico + comentario + cuentaAnterior + " " + DateTime.Today.ToString("dd-MMMM-yyyy") + " POR " + usuario;
             cita.Cuenta = cuenta;

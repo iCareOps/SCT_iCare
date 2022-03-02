@@ -191,7 +191,7 @@ namespace SCT_iCare.Controllers.Recepcion
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create1(string nombre, string pagoGestor, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, string pago,string referencia, string referido, DateTime? fecha)
+        public ActionResult Create1(string nombre,  string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, string pago,string referencia, string referido, DateTime? fecha)
         {
             Paciente paciente1 = new Paciente();
 
@@ -465,7 +465,7 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.Canal = "IN SITU";
                 }
 
-                cita.Cuenta = pagoGestor == "on" ? "CUENTAS X COBRAR" : null;
+                cita.Cuenta = pago == "Pendiente de Pago" ? "CUENTAS X COBRAR" : null;
 
 
                 //-------------------------------------------------------------
@@ -668,10 +668,7 @@ namespace SCT_iCare.Controllers.Recepcion
                         cita.Canal = "IN SITU";
                     }
 
-                    cita.Cuenta = pagoGestor == "on" ? "CUENTAS X COBRAR" : null;
-
-
-                    
+                    cita.Cuenta = pago == "Pendiente de Pago" ? "CUENTAS X COBRAR" : null;
 
                     if (ModelState.IsValid)
                     {
@@ -1646,7 +1643,7 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CambiarEstatus(int? id, string pago, string pagoGestor)
+        public ActionResult CambiarEstatus(int? id, string pago)
         {
             string referenciaNueva = "";
             if (pago != "Referencia Scotiabank")
@@ -1709,7 +1706,7 @@ namespace SCT_iCare.Controllers.Recepcion
                     cita.TipoPago = pago;
                     cita.Referencia = referenciaNueva;
 
-                    cita.Cuenta = pagoGestor == "on" ? "CUENTAS X COBRAR" : null;
+                    cita.Cuenta = pago == "Pendiente de Pago" ? "CUENTAS X COBRAR" : null;
 
                     db.Entry(cita).State = EntityState.Modified;
                     

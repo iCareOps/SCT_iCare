@@ -92,7 +92,8 @@
 
     int incidencia = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Pendiente").Count();
 
-    var sucursalesLista = from s in db.Sucursales select s.Nombre;
+    var sucursalesLista = from s in db.Sucursales 
+                          where s.Nombre != "CULIACÁN" && s.Nombre != "MIXCOAC" && s.Nombre != "ASPA" && s.Nombre != "TAPO" && s.Nombre != "IN SITU"  select s.Nombre;
 
     var capturistas = from c in db.Usuarios where c.idRol == 7 && c.idUsuario != 13 && c.idUsuario != 25 select c.Nombre;
 
@@ -486,7 +487,7 @@
 <h4 style="color:white" class="text-center">Sucursales</h4>
 <center>
     @{
-        var sucursales = from s in db.Sucursales select s;
+        var sucursales = from s in db.Sucursales where s.Nombre != "CULIACÁN" && s.Nombre != "MIXCOAC" && s.Nombre != "ASPA" && s.Nombre != "TAPO" && s.Nombre != "IN SITU" select s;
         string sucursal = null;
 
         foreach (var item in sucursales)

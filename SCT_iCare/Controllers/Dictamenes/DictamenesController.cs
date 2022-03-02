@@ -259,7 +259,7 @@ namespace SCT_iCare.Controllers.Dictamenes
         }
 
         [HttpPost]
-        public ActionResult Create1(string nombre, string usuario, /*string sucursal, */string cantidad, string cantidadAereo, string referido, string pagoGestor)
+        public ActionResult Create1(string nombre, string usuario, /*string sucursal, */string cantidad, string cantidadAereo, string referido)
         {
             PacienteESP paciente1 = new PacienteESP();
 
@@ -323,7 +323,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                     paciente.ReferidoPor = referido;
                 }
 
-                paciente.Cuenta = pagoGestor == "on" ? "CUENTAS X COBRAR" : null;
+                paciente.Cuenta = "CUENTAS X COBRAR";
 
                 if (ModelState.IsValid)
                 {
@@ -371,7 +371,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                         paciente.ReferidoPor = referido;
                     }
 
-                    paciente.Cuenta = pagoGestor == "on" ? "CUENTAS X COBRAR" : null;
+                    paciente.Cuenta = "CUENTAS X COBRAR";
 
                     if (ModelState.IsValid)
                     {
