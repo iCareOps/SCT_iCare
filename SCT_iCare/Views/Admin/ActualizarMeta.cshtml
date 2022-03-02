@@ -163,6 +163,20 @@
                                             <input type="tel" class="form-control" id="fecha" name="meta" placeholder="@item.Meta">
                                             <input type="hidden" value="@item.idCanales" name="id" />
                                         </div>
+                                        <hr />
+                                        <div class="form-group">
+                                            <h4>Desgloce por @item.NombreCanal</h4>
+                                            @{
+                                                var canal = (from i in db.Canales where i.idCanales == item.idCanales select i).FirstOrDefault();
+                                                var referidoTipo = from i in db.Referido where i.Tipo == canal.NombreCanal select i.Nombre;
+
+                                                foreach (var i in referidoTipo)
+                                                {
+                                                    <span>@i --- @Convert.ToInt32(Convert.ToDouble(canal.Meta) / Convert.ToDouble(referidoTipo.Count()))</span><br />
+                                                }
+
+                                            }
+                                        </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -178,7 +192,7 @@
 
             flag += 1;
 
-        }
+                                                }
 
     </table>
 </div>

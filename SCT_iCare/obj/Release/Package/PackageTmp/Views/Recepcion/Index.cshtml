@@ -464,13 +464,18 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                                             <option value="Referencia OXXO">Referencia OXXO</option>
                                             <option value="Referencia Scotiabank">Referencia Scotiabank</option>
                                             <option value="Referencia BanBajío">Referencia BanBajío</option>
-                                            <option value="Transferencia vía Scotiabank">Transferencia vía Scotiabank</option>
                                             <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                                            <option value="Coppel">Coppel</option>
+                                            <option disabled>----------------------------------</option>
+                                            <option value="Pendiente de Pago">Pendiente de Pago</option>
                                         }
                                         else
                                         {
                                             <option value="Referencia Scotiabank">Referencia Scotiabank</option>
                                             <option value="Referencia BanBajío">Referencia BanBajío</option>
+                                            <option value="Coppel">Coppel</option>
+                                            <option disabled>----------------------------------</option>
+                                            <option value="Pendiente de Pago">Pendiente de Pago</option>
                                         }
                                     }
                                 </select>
@@ -545,8 +550,6 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             </div>
                         }
                     }
-                    <input type="checkbox" name="pagoGestor" />
-                    <label for="recipient-name" class="col-form-label"><b style="color:black">Pendiente de pago por gestor</b></label>
 
 
 
@@ -1451,7 +1454,8 @@ else
                             <span class="tip-content">
                                 <b>Realiza la cita: </b>@item.M.Recepcionista <br />
                                 <b>Canal: </b>@item.M.Canal <br />
-                                <b>Referido por: </b>@item.M.ReferidoPor
+                                <b>Referido por: </b>@item.M.ReferidoPor<br />
+                                <b>Pago: </b>@item.M.TipoPago
                                 @{
                                     if (Sucursal == "TAPO" || Sucursal == "ASPA")
                                     {
@@ -1495,7 +1499,7 @@ else
                         }
                         else if (item.M.EstatusPago == "paid" || item.M.EstatusPago == "Pagado")
                         {
-                            <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">Pagado</mark></b>
+                            <b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">OK <span class="glyphicon glyphicon-ok"></span></mark></b>
                         }
                     </td>
                     <td style="font-size: smaller">
@@ -1748,7 +1752,7 @@ else
                                 @{
                                     if (item.M.EstatusPago == "pending_payment" || item.M.EstatusPago == "Pendiente")
                                     {
-                                        <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Pagado</b></a>
+                                        <a href="#" data-toggle="modal" data-target="#ModalPago_@item.M.idPaciente"><b>Tipo Pago</b></a>
                                         <div class="dropdown-divider"></div>
                                         if (item.M.Canal == "Recepción" || idRol == 2)
                                         {
@@ -1887,13 +1891,18 @@ else
                                                                     <option value="Referencia OXXO">Referencia OXXO</option>
                                                                     <option value="Referencia Scotiabank">Referencia Scotiabank</option>
                                                                     <option value="Referencia BanBajío">Referencia BanBajío</option>
-                                                                    <option value="Transferencia vía Scotiabank">Transferencia vía Scotiabank</option>
                                                                     <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                                                                    <option value="Coppel">Coppel</option>
+                                                                    <option disabled>----------------------------------</option>
+                                                                    <option value="Pendiente de Pago">Pendiente de Pago</option>
                                                                 }
                                                                 else
                                                                 {
                                                                     <option value="Referencia Scotiabank">Referencia Scotiabank</option>
                                                                     <option value="Referencia BanBajío">Referencia BanBajío</option>
+                                                                    <option value="Coppel">Coppel</option>
+                                                                    <option disabled>----------------------------------</option>
+                                                                    <option value="Pendiente de Pago">Pendiente de Pago</option>
                                                                 }
                                                             }
 
@@ -1920,8 +1929,6 @@ else
                                                 </div>
                                             }
                                         }
-                                        <input type="checkbox" name="pagoGestor" />
-                                        <label for="recipient-name" class="col-form-label"><b style="color:black">Pendiente de pago por gestor</b></label>
 
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>

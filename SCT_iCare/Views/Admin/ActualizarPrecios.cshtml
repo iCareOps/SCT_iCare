@@ -159,6 +159,24 @@
                                             <input type="hidden" value="@item.idReferido" name="id" />
                                             <input type="hidden" value="@oUser.Nombre" name="usuario" />
                                         </div>
+                                        <div class="form-group">
+
+                                            @{
+                                                string[] historicoPrecios = item.HistorialPrecios != null ? item.HistorialPrecios.Split('+') : null;
+                                                int flag00 = 1;
+
+                                                if (historicoPrecios != null)
+                                                {
+                                                    <h4>Histórico de precios </h4>
+
+                                                    foreach (var i in historicoPrecios)
+                                                    {
+                                                        <span>@flag00 @i</span><br />
+                                                        flag00++;
+                                                    }
+                                                }
+                                            }
+                                        </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
