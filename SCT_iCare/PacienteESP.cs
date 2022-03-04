@@ -56,6 +56,7 @@ namespace SCT_iCare
         public string CanalTipo { get; set; }
         public string CuentaComentario { get; set; }
         public string Conciliado { get; set; }
+        public string TipoPago { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FotoPacienteESP> FotoPacienteESP { get; set; }

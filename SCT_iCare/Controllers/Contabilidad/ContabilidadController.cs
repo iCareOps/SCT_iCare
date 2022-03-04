@@ -50,7 +50,7 @@ namespace SCT_iCare.Controllers.Contabilidad
             return View();
         }
 
-        public ActionResult CambiarCuenta(int? id, string cuenta, string comentario, string usuario)
+        public ActionResult CambiarCuenta(int? id, string cuenta, string cuenta2, string comentario, string usuario, string canal, string sucursal, DateTime? fecha)
         {
             var cita = db.Cita.Find(id);
 
@@ -65,10 +65,11 @@ namespace SCT_iCare.Controllers.Contabilidad
                 db.SaveChanges();
             }
 
-            return Redirect("Index");
+            return RedirectToAction("Index", new { fecha = fecha, sucursal = sucursal, cuenta = cuenta2, canal = canal });
         }
 
-        public ActionResult CambiarCuentaALT(int? id, string cuenta, string comentario, string usuario)
+        public ActionResult CambiarCuentaALT(int? id, string cuenta, string comentario, string usuario, DateTime? fecha, string sucursal,
+            string cuenta2, string canal, string pago)
         {
             var cita = db.PacienteESP.Find(id);
 
@@ -77,13 +78,18 @@ namespace SCT_iCare.Controllers.Contabilidad
             cita.CuentaComentario = historico + comentario + cuentaAnterior + " " + DateTime.Today.ToString("dd-MMMM-yyyy") + " POR " + usuario;
             cita.Cuenta = cuenta;
 
+            if(pago != null || pago != "")
+            {
+                cita.TipoPago = pago;
+            }
+
             if (ModelState.IsValid)
             {
                 db.Entry(cita).State = EntityState.Modified;
                 db.SaveChanges();
             }
 
-            return Redirect("Index");
+            return RedirectToAction("Index", new { fecha = fecha, sucursal = sucursal, cuenta = cuenta2, canal = canal });
         }
     }
 }
