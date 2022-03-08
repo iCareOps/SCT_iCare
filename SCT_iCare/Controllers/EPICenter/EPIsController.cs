@@ -525,6 +525,27 @@ namespace SCT_iCare.Controllers.EPICenter
             base.Dispose(disposing);
         }
 
+        public ActionResult CancelarCita(string motivo, int? idCaptura, string usuario)
+        {
+            var captura = db.Captura.Find(idCaptura);
+            var idPaciente = captura.idPaciente;
+            var cita = (from i in db.Cita where i.idPaciente == idPaciente select i).FirstOrDefault();
+
+            cita.CancelaComentario = cita.CancelaComentario + " + "+motivo + " por usuario " + usuario + " en " + DateTime.Now.ToString("dd-MM-yy") +" ";
+            cita.Asistencia = "NO";
+
+            if(ModelState.IsValid)
+            {
+                db.Entry(cita).State = EntityState.Modified;
+                db.Captura.Remove(captura);
+                db.SaveChanges();
+            }
+
+            
+
+            return Redirect("Captura");
+        }
+
         public ActionResult Captura(int? pageSize, int? page, DateTime? inicio, DateTime? final)
         {
             //DateTime start = DateTime.Now;

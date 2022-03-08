@@ -95,6 +95,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
             <option value="CONEKTA">CONEKTA</option>
             <option value="ANTICIPOS">ANTICIPOS</option>
             <option value="CUENTAS X COBRAR">CUENTAS X COBRAR</option>
+            <option value="CORPORATIVO">CORPORATIVO</option>
             <option value="ACLARACIONES">ACLARACIONES</option>
             <option value="DEVOLUCIONES">DEVOLUCIONES</option>
         </select>
@@ -380,6 +381,8 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                 <div class="dropdown-divider"></div>
                                 <a href="#" data-toggle="modal" data-target="#CXC_@item.M.idCita"><b>CuentasXCobrar</b></a>
                                 <div class="dropdown-divider"></div>
+                                <a href="#" data-toggle="modal" data-target="#Corporativo_@item.M.idCita"><b>Corporativo</b></a>
+                                <div class="dropdown-divider"></div>
                                 <a href="#" data-toggle="modal" data-target="#Aclaracion_@item.M.idCita"><b>Aclaracion</b></a>
                                 <div class="dropdown-divider"></div>
                                 <a href="#" data-toggle="modal" data-target="#Devoluciones_@item.M.idCita"><b>Devoluciones</b></a>
@@ -535,6 +538,52 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                             <div class="modal-body">
                                                 <input type="hidden" name="id" value="@item.M.idCita" />
                                                 <input type="hidden" name="cuenta" value="CUENTAS X COBRAR" />
+                                                <div class="form-group" style="width:60%; min-width:320px">
+                                                    <label for="recipient-name" class="col-form-label">Nombre:</label>
+                                                    <b>@item.N.Nombre</b><br />
+                                                    <label for="recipient-name" class="col-form-label">CURP:</label>
+                                                    <b>@item.N.CURP</b><br />
+                                                    <label for="recipient-name" class="col-form-label">NoExpediente:</label>
+                                                    <b>@item.M.NoExpediente</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha:</label>
+                                                    <b>@Convert.ToDateTime(item.M.FechaReferencia).ToString("dd-MMMM-yyyy")</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                                                    <b>@item.M.Sucursal</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Doctor:</label>
+                                                    <b>@item.M.Doctor</b><br />
+                                                    <br />
+                                                    <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
+                                                    <input type="text" class="form-control" name="comentario" />
+                                                    <input type="hidden" name="usuario" value="@oUser.Nombre" />
+                                                    <input type="text" class="form-control" name="comentario" />
+                                                    <input type="hidden" name="usuario" value="@oUser.Nombre" />
+                                                    <input type="hidden" name="fecha" value="@fechaInicio" />
+                                                    <input type="hidden" name="cuenta2" value="@cuenta" />
+                                                    <input type="hidden" name="canal" value="@canal" />
+                                                    <input type="hidden" name="sucursal" value="@sucursal" />
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                <input type="submit" value="Enviar" class="btn btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!-- Efectivo -->
+                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuenta")">
+                                @Html.AntiForgeryToken()
+                                <div class="modal fade" id="Corporativo_@item.M.idCita" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="exampleModalLabel"><b>¿Está seguro de mandar los datos de esta venta a CORPORATIVO?</b></h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="hidden" name="id" value="@item.M.idCita" />
+                                                <input type="hidden" name="cuenta" value="CORPORATIVO" />
                                                 <div class="form-group" style="width:60%; min-width:320px">
                                                     <label for="recipient-name" class="col-form-label">Nombre:</label>
                                                     <b>@item.N.Nombre</b><br />
@@ -764,6 +813,8 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                 <div class="dropdown-divider"></div>
                                 <a href="#" data-toggle="modal" data-target="#CXC1_@item.idPacienteESP"><b>CuentasXCobrar</b></a>
                                 <div class="dropdown-divider"></div>
+                                <a href="#" data-toggle="modal" data-target="#Corporativo1_@item.idPacienteESP"><b>Corporativo</b></a>
+                                <div class="dropdown-divider"></div>
                                 <a href="#" data-toggle="modal" data-target="#Aclaracion1_@item.idPacienteESP"><b>Aclaracion</b></a>
                                 <div class="dropdown-divider"></div>
                                 <a href="#" data-toggle="modal" data-target="#Devoluciones1_@item.idPacienteESP"><b>Devoluciones</b></a>
@@ -934,6 +985,57 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                             <div class="modal-body">
                                                 <input type="hidden" name="id" value="@item.idPacienteESP" />
                                                 <input type="hidden" name="cuenta" value="CUENTAS X COBRAR" />
+                                                <div class="form-group" style="width:60%; min-width:320px">
+                                                    <label for="recipient-name" class="col-form-label">Nombre:</label>
+                                                    <b>@item.Nombre</b><br />
+                                                    <label for="recipient-name" class="col-form-label">CURP:</label>
+                                                    <b>@item.CURP</b><br />
+                                                    <label for="recipient-name" class="col-form-label">NoExpediente:</label>
+                                                    <b>@item.NoExpediente</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha:</label>
+                                                    <b>@Convert.ToDateTime(item.FechaCaptura).ToString("dd-MMMM-yyyy")</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Doctor:</label>
+                                                    <b>@item.Doctor</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                                    <select required name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                        <option selected disabled>Seleccionar</option>
+                                                        <option value="BanCoppel TLS">BanCoppel TLS</option>
+                                                        <option value="BanCoppel LC">BanCoppel LC</option>
+                                                        <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                        <option value="Cuenta Externa">Cuenta Externa</option>
+                                                    </select>
+                                                    <br />
+                                                    <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
+                                                    <input type="text" class="form-control" name="comentario" />
+                                                    <input type="hidden" name="usuario" value="@oUser.Nombre" />
+                                                    <input type="hidden" name="fecha" value="@fechaInicio" />
+                                                    <input type="hidden" name="cuenta2" value="@cuenta" />
+                                                    <input type="hidden" name="canal" value="@canal" />
+                                                    <input type="hidden" name="sucursal" value="@sucursal" />
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                <input type="submit" value="Enviar" class="btn btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+
+                            <!-- Efectivo -->
+                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuentaALT")">
+                                @Html.AntiForgeryToken()
+                                <div class="modal fade" id="Corporativo1_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="exampleModalLabel"><b>¿Está seguro de mandar los datos de esta venta a CORPORATIVO?</b></h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="hidden" name="id" value="@item.idPacienteESP" />
+                                                <input type="hidden" name="cuenta" value="CORPORATIVO" />
                                                 <div class="form-group" style="width:60%; min-width:320px">
                                                     <label for="recipient-name" class="col-form-label">Nombre:</label>
                                                     <b>@item.Nombre</b><br />

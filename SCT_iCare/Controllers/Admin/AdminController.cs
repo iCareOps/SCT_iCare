@@ -519,6 +519,11 @@ namespace SCT_iCare.Controllers.Admin
             }
         }
 
+        public ActionResult TablaComparacion2(string gestor)
+        {
+            return View();
+        }
+
         public ActionResult ActualizarMeta(string gestor)
         {
             if (gestor == "Diarias")

@@ -60,7 +60,7 @@ namespace SCT_iCare.Controllers.Gestoria
         }
 
 
-        public ActionResult CreateSaldo(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, string pago, string referencia, string referido, DateTime fecha)
+        public ActionResult CreateSaldo(string nombre, string telefono, string email, string usuario, string sucursal, string cantidad, string cantidadAereo, string pago, string referencia, int? referido, DateTime fecha)
         {
             Paciente paciente1 = new Paciente();
 
@@ -245,28 +245,27 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.Folio = numFolio;
                 cita.Canal = "Gestoría";
                 cita.TipoPago = pago;
-                cita.ReferidoPor = referido.ToUpper();
 
                 //Se usa el idCanal para poder hacer que en Recepción se tenga que editar el nombre si viene de gestor
                 cita.idCanal = 1;
 
-                if (referido == "ELIZABETH")
+                if (referido == 22)
                 {
                     cita.Referencia = "E1293749";
                 }
-                if (referido == "PABLO")
+                if (referido == 23)
                 {
                     cita.Referencia = "PL1293750";
                 }
-                if (referido == "NATALY FRANCO")
-                {
-                    cita.Referencia = "NF1293751";
-                }
-                if (referido == "LUIS VALENCIA")
+                //if (referido == "NATALY FRANCO")
+                //{
+                //    cita.Referencia = "NF1293751";
+                //}
+                if (referido == 36)
                 {
                     cita.Referencia = "LV1293752";
                 }
-                if (referido == "ROBERTO SALAZAR")
+                if (referido == 21)
                 {
                     cita.Referencia = "RS1293753";
                 }
@@ -325,9 +324,19 @@ namespace SCT_iCare.Controllers.Gestoria
                 //    cita.CC = referidoTipo;
                 //}
 
-                var referidoTipo = (from r in db.Referido where r.Nombre == referido && (r.Tipo != "IN SITU" || r.Tipo != "GESTOR ALT") select r.Tipo).FirstOrDefault();
-                cita.CC = referidoTipo;
-                cita.CanalTipo = referidoTipo;
+                var referidoTipo = (from r in db.Referido where r.idReferido == referido select r).FirstOrDefault();
+                cita.CC = referidoTipo.Tipo;
+                cita.CanalTipo = referidoTipo.Tipo;
+
+                cita.ReferidoPor = referidoTipo.Nombre;
+
+                if (referidoTipo.idReferido == 7 || referidoTipo.idReferido == 8 || referidoTipo.idReferido == 9 || referidoTipo.idReferido == 10 || referidoTipo.idReferido == 12 ||
+                    referidoTipo.idReferido == 13 || referidoTipo.idReferido == 20 || referidoTipo.idReferido == 26 || referidoTipo.idReferido == 27 || referidoTipo.idReferido == 29 ||
+                    referidoTipo.idReferido == 36 || referidoTipo.idReferido == 52 || referidoTipo.idReferido == 53 || referidoTipo.idReferido == 54 || referidoTipo.idReferido == 55 ||
+                    referidoTipo.idReferido == 56 || referidoTipo.idReferido == 59 || referidoTipo.idReferido == 130)
+                {
+                    cita.Cuenta = "CORPORATIVO";
+                }
 
                 //-------------------------------------------------------------
                 if (ModelState.IsValid)
@@ -473,25 +482,24 @@ namespace SCT_iCare.Controllers.Gestoria
                     cita.Referencia = referencia;
                     cita.Canal = "Gestoría";
                     cita.FechaCita = fecha;
-                    cita.ReferidoPor = referido.ToUpper();
 
-                    if (referido == "ELIZABETH")
+                    if (referido == 22)
                     {
                         cita.Referencia = "E1293749";
                     }
-                    if (referido == "PABLO")
+                    if (referido == 23)
                     {
                         cita.Referencia = "PL1293750";
                     }
-                    if (referido == "NATALY FRANCO")
-                    {
-                        cita.Referencia = "NF1293751";
-                    }
-                    if (referido == "LUIS VALENCIA")
+                    //if (referido == "NATALY FRANCO")
+                    //{
+                    //    cita.Referencia = "NF1293751";
+                    //}
+                    if (referido == 36)
                     {
                         cita.Referencia = "LV1293752";
                     }
-                    if (referido == "ROBERTO SALAZAR")
+                    if (referido == 21)
                     {
                         cita.Referencia = "RS1293753";
                     }
@@ -512,9 +520,19 @@ namespace SCT_iCare.Controllers.Gestoria
                     //    cita.CC = referidoTipo;
                     //}
 
-                    var referidoTipo = (from r in db.Referido where r.Nombre == referido && (r.Tipo != "IN SITU" || r.Tipo != "GESTOR ALT") select r.Tipo).FirstOrDefault();
-                    cita.CC = referidoTipo;
-                    cita.CanalTipo = referidoTipo;
+                    var referidoTipo = (from r in db.Referido where r.idReferido == referido select r).FirstOrDefault();
+                    cita.CC = referidoTipo.Tipo;
+                    cita.CanalTipo = referidoTipo.Tipo;
+
+                    cita.ReferidoPor = referidoTipo.Nombre;
+
+                    if (referidoTipo.idReferido == 7 || referidoTipo.idReferido == 8 || referidoTipo.idReferido == 9 || referidoTipo.idReferido == 10 || referidoTipo.idReferido == 12 ||
+                    referidoTipo.idReferido == 13 || referidoTipo.idReferido == 20 || referidoTipo.idReferido == 26 || referidoTipo.idReferido == 27 || referidoTipo.idReferido == 29 ||
+                    referidoTipo.idReferido == 36 || referidoTipo.idReferido == 52 || referidoTipo.idReferido == 53 || referidoTipo.idReferido == 54 || referidoTipo.idReferido == 55 ||
+                    referidoTipo.idReferido == 56 || referidoTipo.idReferido == 59 || referidoTipo.idReferido == 130)
+                    {
+                        cita.Cuenta = "CORPORATIVO";
+                    }
 
 
                     if (ModelState.IsValid)
@@ -553,7 +571,7 @@ namespace SCT_iCare.Controllers.Gestoria
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Orden(string nombre, string telefono, string sucursal, string usuario, DateTime? fecha, string cantidad, string cantidadAereo, string referido)
+        public ActionResult Orden(string nombre, string telefono, string sucursal, string usuario, DateTime? fecha, string cantidad, string cantidadAereo, int? referido)
         {
             GetApiKey();
 
@@ -634,7 +652,9 @@ namespace SCT_iCare.Controllers.Gestoria
             {
                 Paciente paciente = new Paciente();
 
-                paciente.Nombre = referido.ToUpper();
+                var referidoID = (from i in db.Referido where i.idReferido == referido select i.Nombre).FirstOrDefault();
+
+                paciente.Nombre = referidoID;
                 paciente.Telefono = telefono;
                 paciente.Email = mail;
 
@@ -756,29 +776,28 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.Folio = numFolio;
                 cita.Canal = "Gestoría";
                 cita.FechaCita = fecha;
-                cita.ReferidoPor = referido.ToUpper();
                 cita.FechaCreacion = DateTime.Now;
 
                 //Se usa el idCanal para poder hacer que en Recepción se tenga que editar el nombre si viene de gestor
                 cita.idCanal = 1;
 
-                if (referido == "ELIZABETH")
+                if (referido == 22)
                 {
                     cita.Referencia = "E1293749";
                 }
-                if (referido == "PABLO")
+                if (referido == 23)
                 {
                     cita.Referencia = "PL1293750";
                 }
-                if (referido == "NATALY FRANCO")
-                {
-                    cita.Referencia = "NF1293751";
-                }
-                if (referido == "LUIS VALENCIA")
+                //if (referido == "NATALY FRANCO")
+                //{
+                //    cita.Referencia = "NF1293751";
+                //}
+                if (referido == 36)
                 {
                     cita.Referencia = "LV1293752";
                 }
-                if (referido == "ROBERTO SALAZAR")
+                if (referido == 21)
                 {
                     cita.Referencia = "RS1293753";
                 }
@@ -806,9 +825,19 @@ namespace SCT_iCare.Controllers.Gestoria
                 //    cita.CC = referidoTipo;
                 //}
 
-                var referidoTipo = (from r in db.Referido where r.Nombre == referido && (r.Tipo != "IN SITU" || r.Tipo != "GESTOR ALT") select r.Tipo).FirstOrDefault();
-                cita.CC = referidoTipo;
-                cita.CanalTipo = referidoTipo;
+                var referidoTipo = (from r in db.Referido where r.idReferido == referido select r).FirstOrDefault();
+                cita.CC = referidoTipo.Tipo;
+                cita.CanalTipo = referidoTipo.Tipo;
+
+                cita.ReferidoPor = referidoTipo.Nombre;
+
+                if (referidoTipo.idReferido == 7 || referidoTipo.idReferido == 8 || referidoTipo.idReferido == 9 || referidoTipo.idReferido == 10 || referidoTipo.idReferido == 12 ||
+                    referidoTipo.idReferido == 13 || referidoTipo.idReferido == 20 || referidoTipo.idReferido == 26 || referidoTipo.idReferido == 27 || referidoTipo.idReferido == 29 ||
+                    referidoTipo.idReferido == 36 || referidoTipo.idReferido == 52 || referidoTipo.idReferido == 53 || referidoTipo.idReferido == 54 || referidoTipo.idReferido == 55 ||
+                    referidoTipo.idReferido == 56 || referidoTipo.idReferido == 59 || referidoTipo.idReferido == 130)
+                {
+                    cita.Cuenta = "CORPORATIVO";
+                }
 
 
                 if (ModelState.IsValid)
@@ -827,7 +856,9 @@ namespace SCT_iCare.Controllers.Gestoria
                 {
                     Paciente paciente = new Paciente();
 
-                    paciente.Nombre = referido.ToUpper() + " " + n;
+                    var referidoID = (from i in db.Referido where i.idReferido == referido select i.Nombre).FirstOrDefault();
+
+                    paciente.Nombre = referidoID +" " + n;
                     paciente.Telefono = telefono;
                     paciente.Email = mail;
 
@@ -954,27 +985,26 @@ namespace SCT_iCare.Controllers.Gestoria
                     cita.Canal = "Gestoría";
                     cita.TipoPago = "REFERENCIA OXXO";
                     cita.CC = usuario;
-                    cita.ReferidoPor = referido.ToUpper();
                     cita.FechaCreacion = DateTime.Now;
 
 
-                    if (referido == "ELIZABETH")
+                    if (referido == 22)
                     {
                         cita.Referencia = "E1293749";
                     }
-                    if (referido == "PABLO")
+                    if (referido == 23)
                     {
                         cita.Referencia = "PL1293750";
                     }
-                    if (referido == "NATALY FRANCO")
-                    {
-                        cita.Referencia = "NF1293751";
-                    }
-                    if (referido == "LUIS VALENCIA")
+                    //if (referido == "NATALY FRANCO")
+                    //{
+                    //    cita.Referencia = "NF1293751";
+                    //}
+                    if (referido == 36)
                     {
                         cita.Referencia = "LV1293752";
                     }
-                    if (referido == "ROBERTO SALAZAR")
+                    if (referido == 21)
                     {
                         cita.Referencia = "RS1293753";
                     }
@@ -999,9 +1029,19 @@ namespace SCT_iCare.Controllers.Gestoria
                     //    cita.CC = referidoTipo;
                     //}
 
-                    var referidoTipo = (from r in db.Referido where r.Nombre == referido && (r.Tipo != "IN SITU" || r.Tipo != "GESTOR ALT") select r.Tipo).FirstOrDefault();
-                    cita.CC = referidoTipo;
-                    cita.CanalTipo = referidoTipo;
+                    var referidoTipo = (from r in db.Referido where r.idReferido == referido select r).FirstOrDefault();
+                    cita.CC = referidoTipo.Tipo;
+                    cita.CanalTipo = referidoTipo.Tipo;
+
+                    cita.ReferidoPor = referidoTipo.Nombre;
+
+                    if (referidoTipo.idReferido == 7 || referidoTipo.idReferido == 8 || referidoTipo.idReferido == 9 || referidoTipo.idReferido == 10 || referidoTipo.idReferido == 12 ||
+                    referidoTipo.idReferido == 13 || referidoTipo.idReferido == 20 || referidoTipo.idReferido == 26 || referidoTipo.idReferido == 27 || referidoTipo.idReferido == 29 ||
+                    referidoTipo.idReferido == 36 || referidoTipo.idReferido == 52 || referidoTipo.idReferido == 53 || referidoTipo.idReferido == 54 || referidoTipo.idReferido == 55 ||
+                    referidoTipo.idReferido == 56 || referidoTipo.idReferido == 59 || referidoTipo.idReferido == 130)
+                    {
+                        cita.Cuenta = "CORPORATIVO";
+                    }
 
 
                     if (ModelState.IsValid)
@@ -1024,7 +1064,7 @@ namespace SCT_iCare.Controllers.Gestoria
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult PagoTarjeta(string nombre, string telefono, string sucursal, string usuario, DateTime fecha, string cantidad, string cantidadAereo, string card, string referido)
+        public ActionResult PagoTarjeta(string nombre, string telefono, string sucursal, string usuario, DateTime fecha, string cantidad, string cantidadAereo, string card, int? referido)
         {
             GetApiKey();
 
@@ -1101,7 +1141,9 @@ namespace SCT_iCare.Controllers.Gestoria
             {
                 Paciente paciente = new Paciente();
 
-                paciente.Nombre = referido.ToUpper();
+                var referidoID = (from i in db.Referido where i.idReferido == referido select i.Nombre).FirstOrDefault();
+
+                paciente.Nombre = referidoID;
                 paciente.Telefono = telefono;
                 paciente.Email = mail;
 
@@ -1226,7 +1268,6 @@ namespace SCT_iCare.Controllers.Gestoria
                 cita.NoOrden = link;
                 cita.Referencia = Convert.ToString(card);
                 cita.CC = usuario;
-                cita.ReferidoPor = referido.ToUpper();
                 cita.FechaCreacion = DateTime.Now;
 
                 //Se usa el idCanal para poder hacer que en Recepción se tenga que editar el nombre si viene de gestor
@@ -1249,9 +1290,19 @@ namespace SCT_iCare.Controllers.Gestoria
                 //    cita.CC = referidoTipo;
                 //}
 
-                var referidoTipo = (from r in db.Referido where r.Nombre == referido && (r.Tipo != "IN SITU" || r.Tipo != "GESTOR ALT") select r.Tipo).FirstOrDefault();
-                cita.CC = referidoTipo;
-                cita.CanalTipo = referidoTipo;
+                var referidoTipo = (from r in db.Referido where r.idReferido == referido select r).FirstOrDefault();
+                cita.CC = referidoTipo.Tipo;
+                cita.CanalTipo = referidoTipo.Tipo;
+
+                cita.ReferidoPor = referidoTipo.Nombre;
+
+                if (referidoTipo.idReferido == 7 || referidoTipo.idReferido == 8 || referidoTipo.idReferido == 9 || referidoTipo.idReferido == 10 || referidoTipo.idReferido == 12 ||
+                    referidoTipo.idReferido == 13 || referidoTipo.idReferido == 20 || referidoTipo.idReferido == 26 || referidoTipo.idReferido == 27 || referidoTipo.idReferido == 29 ||
+                    referidoTipo.idReferido == 36 || referidoTipo.idReferido == 52 || referidoTipo.idReferido == 53 || referidoTipo.idReferido == 54 || referidoTipo.idReferido == 55 ||
+                    referidoTipo.idReferido == 56 || referidoTipo.idReferido == 59 || referidoTipo.idReferido == 130)
+                {
+                    cita.Cuenta = "CORPORATIVO";
+                }
 
                 if (ModelState.IsValid)
                 {
@@ -1268,7 +1319,9 @@ namespace SCT_iCare.Controllers.Gestoria
                 {
                     Paciente paciente = new Paciente();
 
-                    paciente.Nombre = referido.ToUpper() + " " + n;
+                    var referidoID = (from i in db.Referido where i.idReferido == referido select i.Nombre).FirstOrDefault();
+
+                    paciente.Nombre = referidoID+ " " + n;
                     paciente.Telefono = telefono;
                     paciente.Email = mail;
 
@@ -1394,7 +1447,6 @@ namespace SCT_iCare.Controllers.Gestoria
                     cita.NoOrden = link;
                     cita.Referencia = Convert.ToString(card);
                     cita.CC = usuario;
-                    cita.ReferidoPor = referido.ToUpper();
                     cita.FechaCreacion = DateTime.Now;
 
 
@@ -1408,9 +1460,19 @@ namespace SCT_iCare.Controllers.Gestoria
                     //    cita.CC = referidoTipo;
                     //}
 
-                    var referidoTipo = (from r in db.Referido where r.Nombre == referido && (r.Tipo != "IN SITU" || r.Tipo != "GESTOR ALT") select r.Tipo).FirstOrDefault();
-                    cita.CC = referidoTipo;
-                    cita.CanalTipo = referidoTipo;
+                    var referidoTipo = (from r in db.Referido where r.idReferido == referido select r).FirstOrDefault();
+                    cita.CC = referidoTipo.Tipo;
+                    cita.CanalTipo = referidoTipo.Tipo;
+
+                    cita.ReferidoPor = referidoTipo.Nombre;
+
+                    if (referidoTipo.idReferido == 7 || referidoTipo.idReferido == 8 || referidoTipo.idReferido == 9 || referidoTipo.idReferido == 10 || referidoTipo.idReferido == 12 ||
+                    referidoTipo.idReferido == 13 || referidoTipo.idReferido == 20 || referidoTipo.idReferido == 26 || referidoTipo.idReferido == 27 || referidoTipo.idReferido == 29 ||
+                    referidoTipo.idReferido == 36 || referidoTipo.idReferido == 52 || referidoTipo.idReferido == 53 || referidoTipo.idReferido == 54 || referidoTipo.idReferido == 55 ||
+                    referidoTipo.idReferido == 56 || referidoTipo.idReferido == 59 || referidoTipo.idReferido == 130)
+                    {
+                        cita.Cuenta = "CORPORATIVO";
+                    }
 
                     if (ModelState.IsValid)
                     {

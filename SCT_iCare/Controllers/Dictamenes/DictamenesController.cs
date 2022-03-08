@@ -259,7 +259,7 @@ namespace SCT_iCare.Controllers.Dictamenes
         }
 
         [HttpPost]
-        public ActionResult Create1(string nombre, string usuario, /*string sucursal, */string cantidad, string cantidadAereo, string referido)
+        public ActionResult Create1(string nombre, string usuario, /*string sucursal, */string cantidad, string cantidadAereo, int? referido)
         {
             PacienteESP paciente1 = new PacienteESP();
 
@@ -308,22 +308,20 @@ namespace SCT_iCare.Controllers.Dictamenes
                 }
                 paciente.TipoLicencia = TIPOLIC;
 
-                if (referido.Contains("*"))
-                {
-                    string[] referidoCadena = referido.Split('*');
-                    string referidoUno = referidoCadena[0];
-                    var canalTipo = (from i in db.Referido where i.Nombre == referidoUno && i.Tipo == "IN SITU" select i.Tipo).FirstOrDefault();
-                    paciente.CanalTipo = canalTipo;
-                    paciente.ReferidoPor = referidoUno;
-                }
-                else
-                {
-                    var canalTipo = (from i in db.Referido where i.Nombre == referido && i.Tipo == "GESTOR ALT" select i.Tipo).FirstOrDefault();
-                    paciente.CanalTipo = canalTipo;
-                    paciente.ReferidoPor = referido;
-                }
+                var referidoTipo = (from r in db.Referido where r.idReferido == referido select r).FirstOrDefault();
+                paciente.CanalTipo = referidoTipo.Tipo;
+
+                paciente.ReferidoPor = referidoTipo.Nombre;
 
                 paciente.Cuenta = "CUENTAS X COBRAR";
+
+                if (referidoTipo.idReferido == 7 || referidoTipo.idReferido == 8 || referidoTipo.idReferido == 9 || referidoTipo.idReferido == 10 || referidoTipo.idReferido == 12 ||
+                referidoTipo.idReferido == 13 || referidoTipo.idReferido == 20 || referidoTipo.idReferido == 26 || referidoTipo.idReferido == 27 || referidoTipo.idReferido == 29 ||
+                referidoTipo.idReferido == 36 || referidoTipo.idReferido == 52 || referidoTipo.idReferido == 53 || referidoTipo.idReferido == 54 || referidoTipo.idReferido == 55 ||
+                referidoTipo.idReferido == 56 || referidoTipo.idReferido == 59 || referidoTipo.idReferido == 130)
+                {
+                    paciente.Cuenta = "CORPORATIVO";
+                }
 
                 if (ModelState.IsValid)
                 {
@@ -344,7 +342,6 @@ namespace SCT_iCare.Controllers.Dictamenes
                     paciente.Solicita = usuario;
                     paciente.FechaCita = DateTime.Now;
                     paciente.FechaSolicitud = DateTime.Now;
-                    paciente.ReferidoPor = referido.ToUpper();
 
 
                     if (n > cantidadN)
@@ -356,22 +353,20 @@ namespace SCT_iCare.Controllers.Dictamenes
                         paciente.TipoLicencia = "AUTOTRANSPORTE";
                     }
 
-                    if (referido.Contains("*"))
-                    {
-                        string[] referidoCadena = referido.Split('*');
-                        string referidoUno = referidoCadena[0];
-                        var canalTipo = (from i in db.Referido where i.Nombre == referidoUno && i.Tipo == "IN SITU" select i.Tipo).FirstOrDefault();
-                        paciente.CanalTipo = canalTipo;
-                        paciente.ReferidoPor = referidoUno;
-                    }
-                    else
-                    {
-                        var canalTipo = (from i in db.Referido where i.Nombre == referido && i.Tipo == "GESTOR ALT" select i.Tipo).FirstOrDefault();
-                        paciente.CanalTipo = canalTipo;
-                        paciente.ReferidoPor = referido;
-                    }
+                    var referidoTipo = (from r in db.Referido where r.idReferido == referido select r).FirstOrDefault();
+                    paciente.CanalTipo = referidoTipo.Tipo;
+
+                    paciente.ReferidoPor = referidoTipo.Nombre;
 
                     paciente.Cuenta = "CUENTAS X COBRAR";
+
+                    if (referidoTipo.idReferido == 7 || referidoTipo.idReferido == 8 || referidoTipo.idReferido == 9 || referidoTipo.idReferido == 10 || referidoTipo.idReferido == 12 ||
+                    referidoTipo.idReferido == 13 || referidoTipo.idReferido == 20 || referidoTipo.idReferido == 26 || referidoTipo.idReferido == 27 || referidoTipo.idReferido == 29 ||
+                    referidoTipo.idReferido == 36 || referidoTipo.idReferido == 52 || referidoTipo.idReferido == 53 || referidoTipo.idReferido == 54 || referidoTipo.idReferido == 55 ||
+                    referidoTipo.idReferido == 56 || referidoTipo.idReferido == 59 || referidoTipo.idReferido == 130)
+                    {
+                        paciente.Cuenta = "CORPORATIVO";
+                    }
 
                     if (ModelState.IsValid)
                     {
@@ -386,7 +381,7 @@ namespace SCT_iCare.Controllers.Dictamenes
 
 
         [HttpPost]
-        public ActionResult CreateVentas(string nombre, string usuario, /*string sucursal, */string cantidad, string cantidadAereo, string referido, string urgente, string pagoGestor)
+        public ActionResult CreateVentas(string nombre, string usuario, /*string sucursal, */string cantidad, string cantidadAereo, int? referido, string urgente, string pagoGestor)
         {
             PacienteESP paciente1 = new PacienteESP();
 
@@ -422,7 +417,6 @@ namespace SCT_iCare.Controllers.Dictamenes
                 paciente.FechaSolicitud = DateTime.Now;
                 //paciente.Sucursal = sucursal;
                 paciente.Solicita = usuario;
-                paciente.ReferidoPor = referido.ToUpper();
 
                 if(urgente == "on")
                 {
@@ -452,22 +446,21 @@ namespace SCT_iCare.Controllers.Dictamenes
                 }
                 paciente.TipoLicencia = TIPOLIC;
 
-                if (referido.Contains("*"))
+                var referidoTipo = (from r in db.Referido where r.idReferido == referido select r).FirstOrDefault();
+                paciente.CanalTipo = referidoTipo.Tipo;
+
+                paciente.ReferidoPor = referidoTipo.Nombre;
+
+                paciente.Cuenta = "CUENTAS X COBRAR";
+
+                if (referidoTipo.idReferido == 7 || referidoTipo.idReferido == 8 || referidoTipo.idReferido == 9 || referidoTipo.idReferido == 10 || referidoTipo.idReferido == 12 ||
+                referidoTipo.idReferido == 13 || referidoTipo.idReferido == 20 || referidoTipo.idReferido == 26 || referidoTipo.idReferido == 27 || referidoTipo.idReferido == 29 ||
+                referidoTipo.idReferido == 36 || referidoTipo.idReferido == 52 || referidoTipo.idReferido == 53 || referidoTipo.idReferido == 54 || referidoTipo.idReferido == 55 ||
+                referidoTipo.idReferido == 56 || referidoTipo.idReferido == 59 || referidoTipo.idReferido == 130)
                 {
-                    string[] referidoCadena = referido.Split('*');
-                    string referidoUno = referidoCadena[0];
-                    var canalTipo = (from i in db.Referido where i.Nombre == referidoUno && i.Tipo == "IN SITU" select i.Tipo).FirstOrDefault();
-                    paciente.CanalTipo = canalTipo;
-                    paciente.ReferidoPor = referidoUno;
-                }
-                else
-                {
-                    var canalTipo = (from i in db.Referido where i.Nombre == referido && i.Tipo == "GESTOR ALT" select i.Tipo).FirstOrDefault();
-                    paciente.CanalTipo = canalTipo;
-                    paciente.ReferidoPor = referido;
+                    paciente.Cuenta = "CORPORATIVO";
                 }
 
-                paciente.Cuenta = pagoGestor == "on" ? "CUENTAS X COBRAR" : null;
 
                 if (ModelState.IsValid)
                 {
@@ -487,7 +480,6 @@ namespace SCT_iCare.Controllers.Dictamenes
                     paciente.Solicita = usuario;
                     paciente.FechaCita = DateTime.Now;
                     paciente.FechaSolicitud = DateTime.Now;
-                    paciente.ReferidoPor = referido.ToUpper();
 
                     if (urgente == "on")
                     {
@@ -515,22 +507,20 @@ namespace SCT_iCare.Controllers.Dictamenes
                         paciente.TipoLicencia = "AUTOTRANSPORTE";
                     }
 
-                    if (referido.Contains("*"))
-                    {
-                        string[] referidoCadena = referido.Split('*');
-                        string referidoUno = referidoCadena[0];
-                        var canalTipo = (from i in db.Referido where i.Nombre == referidoUno && i.Tipo == "IN SITU" select i.Tipo).FirstOrDefault();
-                        paciente.CanalTipo = canalTipo;
-                        paciente.ReferidoPor = referidoUno;
-                    }
-                    else
-                    {
-                        var canalTipo = (from i in db.Referido where i.Nombre == referido && i.Tipo == "GESTOR ALT" select i.Tipo).FirstOrDefault();
-                        paciente.CanalTipo = canalTipo;
-                        paciente.ReferidoPor = referido;
-                    }
+                    var referidoTipo = (from r in db.Referido where r.idReferido == referido select r).FirstOrDefault();
+                    paciente.CanalTipo = referidoTipo.Tipo;
 
-                    paciente.Cuenta = pagoGestor == "on" ? "CUENTAS X COBRAR" : null;
+                    paciente.ReferidoPor = referidoTipo.Nombre;
+
+                    paciente.Cuenta = "CUENTAS X COBRAR";
+
+                    if (referidoTipo.idReferido == 7 || referidoTipo.idReferido == 8 || referidoTipo.idReferido == 9 || referidoTipo.idReferido == 10 || referidoTipo.idReferido == 12 ||
+                    referidoTipo.idReferido == 13 || referidoTipo.idReferido == 20 || referidoTipo.idReferido == 26 || referidoTipo.idReferido == 27 || referidoTipo.idReferido == 29 ||
+                    referidoTipo.idReferido == 36 || referidoTipo.idReferido == 52 || referidoTipo.idReferido == 53 || referidoTipo.idReferido == 54 || referidoTipo.idReferido == 55 ||
+                    referidoTipo.idReferido == 56 || referidoTipo.idReferido == 59 || referidoTipo.idReferido == 130)
+                    {
+                        paciente.Cuenta = "CORPORATIVO";
+                    }
 
                     if (ModelState.IsValid)
                     {

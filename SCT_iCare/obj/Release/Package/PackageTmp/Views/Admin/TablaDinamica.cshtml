@@ -4,7 +4,7 @@
 
     GMIEntities db = new GMIEntities();
 
-    var sucursales = db.Sucursales.Where(w => w.Nombre != "CULIACÁN" && w.Nombre != "MIXCOAC").OrderBy(o => o.Nombre);
+    var sucursales = db.Sucursales.Where(w => w.Nombre != "CULIACÁN" && w.Nombre != "MIXCOAC" && w.Nombre != "IN SITU").OrderBy(o => o.Nombre);
 
     int flag = 1;
 
@@ -52,7 +52,7 @@
                 <option value="Semanales">METAS SEMANALES</option>
                 <option value="Sucursales">SUCURSALES</option>
                 @*<option value="CallCenter">CALL CENTER</option>
-        <option value="Gestores">GESTORES</option>*@
+                    <option value="Gestores">GESTORES</option>*@
                 <option value="Alternativos">ACUMULADO ALT</option>
                 <option value="Comparacion">COMPARACIÓN</option>
                 <option value="Doctores">DOCTORES</option>
@@ -108,7 +108,7 @@
                             <b>EPIS</b>
                         </td>
                         <td class="sticky4">
-                            <b>REALIZADOS</b>
+                            <b>DICTÁMENES</b>
                         </td>
                         <td class="sticky5">
                             <b>PAUSADO</b>
@@ -123,7 +123,7 @@
                                     <b>EPIS</b>
                                 </td>
                                 <td>
-                                    <b>REALIZADOS</b>
+                                    <b>DICTÁMENES</b>
                                 </td>
                                 <td>
                                     <b>PAUSADO</b>
@@ -257,6 +257,358 @@
                                     int epis = (from i in db.Captura where i.Sucursal == sucursal.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 select i).Count();
                                     int pausa = (from i in db.Captura where i.Sucursal == sucursal.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
                                     int dictamen = (from i in db.Captura where i.Sucursal == sucursal.Nombre && i.FechaExpdiente >= fecha && i.FechaExpdiente < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
+
+                                    episTotal += epis;
+                                    pausaTotal += pausa;
+                                    dictamenTotal += dictamen;
+
+                                    episTotalFooter += episTotal;
+                                    pausaTotalFooter += pausaTotal;
+                                    dictamenTotalFooter += dictamenTotal;
+
+                                    episTotal = 0;
+                                    pausaTotal = 0;
+                                    dictamenTotal = 0;
+                                }
+
+
+
+                                <td style="border-bottom: 0px">
+                                    @episTotalFooter
+                                </td>
+                                <td style="border-bottom: 0px">
+                                    @dictamenTotalFooter
+                                </td>
+                                <td style="border-bottom: 0px">
+                                    @pausaTotalFooter
+                                </td>
+
+                                episTotalFooter = 0;
+                                pausaTotalFooter = 0;
+                                dictamenTotalFooter = 0;
+
+                                diaCorrienteFooter++;
+
+                            }
+
+                            episTotal = 0;
+                            pausaTotal = 0;
+                            dictamenTotal = 0;
+
+                            flag += 1;
+
+                        }
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    @{ 
+        flag = 1;
+
+        diaCorrienteHeader = 1;
+        diaCorrienteRow = 1;
+        diaCorrienteFooter = 1;
+
+        diaMes = DateTime.Today.Day;
+
+        episTotal = 0;
+        pausaTotal = 0;
+        dictamenTotal = 0;
+
+
+        episTotalTOTAL = 0;
+        pausaTotalTOTAL = 0;
+        dictamenTotalTOTAL = 0;
+
+        episTotalFooter = 0;
+        pausaTotalFooter = 0;
+        dictamenTotalFooter = 0;
+    }
+
+    <br />
+    <h4 style="color:white">Acumulado Alt</h4>
+    <div class="page-container">
+        <div class="table-container">
+            <table class="table-cebra a">
+                <thead>
+                    <tr>
+                        <th class="sticky" id="CeldaSmall">
+                            <b>TIPO EPI</b>
+                        </th>
+                        <th class="sticky2" colspan="3">
+                            <b>TOTAL</b>
+                        </th>
+
+                        @{
+
+                            while (diaCorrienteHeader <= diaMes)
+                            {
+                                DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteHeader);
+                                string fechaString = fecha.ToString("dd-MM-yy");
+                                <td class="sticky6" colspan="3">
+                                    @fechaString
+                                </td>
+                                diaCorrienteHeader++;
+
+                            }
+
+                            diaCorrienteHeader = 1;
+                        }
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td class="sticky" id="Especial"></td>
+
+                        <td class="sticky3">
+                            <b>EPIS</b>
+                        </td>
+                        <td class="sticky4">
+                            <b>DICTÁMENES</b>
+                        </td>
+                        <td class="sticky5">
+                            <b>PAUSADO</b>
+                        </td>
+
+                        @{
+
+
+                            while (diaCorrienteHeader <= diaMes)
+                            {
+                                <td>
+                                    <b>EPIS</b>
+                                </td>
+                                <td>
+                                    <b>DICTÁMENES</b>
+                                </td>
+                                <td>
+                                    <b>PAUSADO</b>
+                                </td>
+                                diaCorrienteHeader++;
+                            }
+                        }
+
+                    </tr>
+
+
+                    @foreach (var item in db.Canales.Where(w => w.NombreCanal == "IN SITU" || w.NombreCanal == "GESTOR ALT"))
+                    {
+
+                        <tr>
+
+                            <td class="sticky" id="Especial">
+                                <b>@item.NombreCanal</b>
+                            </td>
+
+                            @{
+
+
+                                while (diaCorrienteRow <= diaMes)
+                                {
+                                    DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
+                                    DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
+
+
+                                    int epis = (from i in db.PacienteESP where i.TipoTramite != "REVALORACIÓN" && i.CanalTipo == item.NombreCanal && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 select i).Count();
+                                    int pausa = (from i in db.PacienteESP where i.TipoTramite != "REVALORACIÓN" && i.CanalTipo == item.NombreCanal && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
+                                    int dictamen = (from i in db.PacienteESP where i.TipoTramite != "REVALORACIÓN" && i.CanalTipo == item.NombreCanal && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
+
+                                    episTotal += epis;
+                                    pausaTotal += pausa;
+                                    dictamenTotal += dictamen;
+
+                                    diaCorrienteRow++;
+
+                                }
+
+
+                                episTotalTOTAL += episTotal;
+                                pausaTotalTOTAL += pausaTotal;
+                                dictamenTotalTOTAL += dictamenTotal;
+
+                                diaCorrienteRow = 1;
+                            }
+
+                            <td class="sticky3" id="Grisaseo">
+                                <b>@episTotal</b>
+                            </td>
+                            <td class="sticky4" id="Grisaseo">
+                                <b>@dictamenTotal</b>
+                            </td>
+                            <td class="sticky5" id="Grisaseo">
+                                <b>@pausaTotal</b>
+                            </td>
+
+                            @{
+
+
+                                while (diaCorrienteRow <= diaMes)
+                                {
+                                    DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
+                                    DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
+
+                                    int epis = (from i in db.PacienteESP where i.TipoTramite != "REVALORACIÓN" && i.CanalTipo == item.NombreCanal && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 select i).Count();
+                                    int pausa = (from i in db.PacienteESP where i.TipoTramite != "REVALORACIÓN" && i.CanalTipo == item.NombreCanal && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
+                                    int dictamen = (from i in db.PacienteESP where i.TipoTramite != "REVALORACIÓN" && i.CanalTipo == item.NombreCanal && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
+
+                                    episTotal += epis;
+                                    pausaTotal += pausa;
+                                    dictamenTotal += dictamen;
+
+                                    <td>
+                                        @epis
+                                    </td>
+                                    <td>
+                                        @dictamen
+                                    </td>
+                                    <td>
+                                        @pausa
+                                    </td>
+                                    diaCorrienteRow++;
+
+                                }
+
+                                diaCorrienteRow = 1;
+                            }
+
+                            @{
+                                episTotal = 0;
+                                pausaTotal = 0;
+                                dictamenTotal = 0;
+                            }
+
+                        </tr>
+
+                        flag += 1;
+
+                    }
+
+                    <tr>
+
+                        <td class="sticky" id="Especial">
+                            <b>REVALORACIONES</b>
+                        </td>
+
+                        @{
+
+
+                            while (diaCorrienteRow <= diaMes)
+                            {
+                                DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
+                                DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
+
+
+                                int epis = (from i in db.PacienteESP where i.TipoTramite == "REVALORACIÓN" && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 select i).Count();
+                                int pausa = (from i in db.PacienteESP where i.TipoTramite == "REVALORACIÓN" && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
+                                int dictamen = (from i in db.PacienteESP where i.TipoTramite == "REVALORACIÓN" && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
+
+                                episTotal += epis;
+                                pausaTotal += pausa;
+                                dictamenTotal += dictamen;
+
+                                diaCorrienteRow++;
+
+                            }
+
+
+                            episTotalTOTAL += episTotal;
+                            pausaTotalTOTAL += pausaTotal;
+                            dictamenTotalTOTAL += dictamenTotal;
+
+                            diaCorrienteRow = 1;
+                        }
+
+                        <td class="sticky3" id="Grisaseo">
+                            <b>@episTotal</b>
+                        </td>
+                        <td class="sticky4" id="Grisaseo">
+                            <b>@dictamenTotal</b>
+                        </td>
+                        <td class="sticky5" id="Grisaseo">
+                            <b>@pausaTotal</b>
+                        </td>
+
+                        @{
+
+
+                            while (diaCorrienteRow <= diaMes)
+                            {
+                                DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
+                                DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
+
+                                int epis = (from i in db.PacienteESP where i.TipoTramite == "REVALORACIÓN" && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 select i).Count();
+                                int pausa = (from i in db.PacienteESP where i.TipoTramite == "REVALORACIÓN" && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
+                                int dictamen = (from i in db.PacienteESP where i.TipoTramite == "REVALORACIÓN" && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
+
+                                episTotal += epis;
+                                pausaTotal += pausa;
+                                dictamenTotal += dictamen;
+
+                                <td>
+                                    @epis
+                                </td>
+                                <td>
+                                    @dictamen
+                                </td>
+                                <td>
+                                    @pausa
+                                </td>
+                                diaCorrienteRow++;
+
+                            }
+
+                            diaCorrienteRow = 1;
+                        }
+
+                        @{
+                            episTotal = 0;
+                            pausaTotal = 0;
+                            dictamenTotal = 0;
+                        }
+
+                    </tr>
+
+                    <tr>
+                        <td class="sticky" id="Especial" style="border-bottom: 0px">
+                            <b>TOTALES</b>
+                        </td>
+                        <td class="sticky3" id="Grisaseo" style="border-bottom: 0px">
+                            <b>@episTotalTOTAL</b>
+                        </td>
+                        <td class="sticky4" id="Grisaseo" style="border-bottom: 0px">
+                            <b>@dictamenTotalTOTAL</b>
+                        </td>
+                        <td class="sticky5" id="Grisaseo" style="border-bottom: 0px">
+                            <b>@pausaTotalTOTAL</b>
+                        </td>
+
+
+                        @{
+
+                            while (diaCorrienteFooter <= diaMes)
+                            {
+                                DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteFooter);
+                                DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteFooter).AddDays(1);
+
+                                foreach (var item in db.Canales.Where(w => w.NombreCanal == "IN SITU" || w.NombreCanal == "GESTOR ALT"))
+                                {
+
+
+                                    int epis = (from i in db.PacienteESP where i.CanalTipo == item.NombreCanal && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 select i).Count();
+                                    int pausa = (from i in db.PacienteESP where i.CanalTipo == item.NombreCanal && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
+                                    int dictamen = (from i in db.PacienteESP where i.CanalTipo == item.NombreCanal && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
 
                                     episTotal += epis;
                                     pausaTotal += pausa;
