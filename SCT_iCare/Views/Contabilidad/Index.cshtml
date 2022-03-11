@@ -16,10 +16,15 @@
     string canal = "";
     string pago = "";
 
-    if (ViewBag.Fecha != null)
+    if (ViewBag.FechaInicio != null)
     {
-        fechaInicio = Convert.ToDateTime(ViewBag.Fecha);
-        fechaFinal = fechaInicio.AddDays(1);
+        fechaInicio = Convert.ToDateTime(ViewBag.FechaInicio);        
+    }
+
+    if (ViewBag.FechaFinal != null)
+    {
+        fechaFinal = Convert.ToDateTime(ViewBag.FechaFinal);
+        fechaFinal = fechaFinal.AddDays(1);
     }
 
     if (ViewBag.Sucursal != "")
@@ -168,64 +173,13 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
 
         @{
 
-            DateTime ViewBagFecha = Convert.ToDateTime(ViewBag.fecha);
-            int IDia = 0;
-            int IMes = 0;
-            string Dia = null;
-            string Mes = null;
-            string Anio = null;
-            string DiaMenor = null;
-            string MesMenor = null;
-            string SetFecha = null;
+            DateTime ViewBagFechaInicio = Convert.ToDateTime(ViewBag.fechaInicio);
+            var SetFechaInicio = ViewBagFechaInicio.Date.ToString("yyyy-MM-dd");
 
-            if (ViewBag.fecha != null)
+            if (ViewBag.fechaInicio != null)
             {
-                Dia = Convert.ToString(ViewBagFecha.Day);
-                Mes = Convert.ToString(ViewBagFecha.Month);
-                Anio = Convert.ToString(ViewBagFecha.Year);
-                IDia = Convert.ToInt32(ViewBagFecha.Day);
-                IMes = Convert.ToInt32(ViewBagFecha.Month);
 
-                if (IDia < 10 && IMes < 10)
-                {
-
-                    MesMenor = "-0";
-                    DiaMenor = "-0";
-                    SetFecha = Anio + MesMenor + Mes + DiaMenor + Dia;
-
-                }
-
-                else if (IDia < 10 && IMes >= 10)
-
-                {
-
-                    MesMenor = "-";
-                    DiaMenor = "-0";
-                    SetFecha = Anio + MesMenor + Mes + DiaMenor + Dia;
-
-                }
-
-                else if (IMes < 10 && IDia >= 10)
-
-                {
-
-                    MesMenor = "-0";
-                    DiaMenor = "-";
-                    SetFecha = Anio + MesMenor + Mes + DiaMenor + Dia;
-
-                }
-
-                else
-
-                {
-
-                    MesMenor = "-";
-                    DiaMenor = "-";
-                    SetFecha = Anio + MesMenor + Mes + DiaMenor + Dia;
-
-                }
-
-                <input type="date" name="fecha" class="form-control" value="@SetFecha" />
+                <input type="date" name="fechaInicio" class="form-control" value="@SetFechaInicio" />
 
             }
 
@@ -233,7 +187,29 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
 
             {
 
-                <input type="date" name="fecha" class="form-control" value="" />
+                <input type="date" name="fechaInicio" class="form-control" value="" />
+
+            }
+
+        }
+
+        @{
+
+            DateTime ViewBagFechaFinal = Convert.ToDateTime(ViewBag.fechaFinal);
+            var SetFechaFinal = ViewBagFechaFinal.Date.ToString("yyyy-MM-dd");
+
+            if (ViewBag.fechaFinal != null)
+            {
+
+                <input type="date" name="fechaFinal" class="form-control" value="@SetFechaFinal" />
+
+            }
+
+            else
+
+            {
+
+                <input type="date" name="fechaFinal" class="form-control" value="" />
 
             }
 
