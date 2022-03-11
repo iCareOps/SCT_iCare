@@ -16,7 +16,7 @@ namespace SCT_iCare.Controllers.Contabilidad
     {
         GMIEntities db = new GMIEntities();
         // GET: Maqueta
-        public ActionResult Index(string canal, string cuenta, string sucursal, DateTime? fecha)
+        public ActionResult Index(string canal, string cuenta, string sucursal, DateTime? fecha, string tipoPago)
         {
             if (sucursal == "" || sucursal == null)
             {
@@ -43,6 +43,15 @@ namespace SCT_iCare.Controllers.Contabilidad
             else
             {
                 ViewBag.Cuenta = cuenta;
+            }
+
+            if (tipoPago == "" || tipoPago == null)
+            {
+                ViewBag.Pago = "";
+            }
+            else
+            {
+                ViewBag.Pago = tipoPago;
             }
 
             ViewBag.Fecha = fecha != null ? fecha : null;

@@ -675,16 +675,28 @@ namespace SCT_iCare.Controllers.Admin
             return Redirect("ActualizarMeta");
         }
 
-        public ActionResult EditarPrecios(int? id, string precio, string usuario)
+        public ActionResult EditarPrecios(int? id, string precio, string precioIVA, string usuario)
         {
             Referido referido = db.Referido.Find(id);
 
             string precioAnterior = referido.PrecioNormal;
+            string precioAnteriorIVA = referido.PrecioNormalconIVA;
 
             string historico = referido.HistorialPrecios == null ? "" : referido.HistorialPrecios + "+";
             referido.HistorialPrecios = historico +  " "+usuario+" en " + DateTime.Today.ToString("dd-MM-yyyy") + " de " + precioAnterior + " a " +precio;
 
             referido.PrecioNormal = precio == "" ? referido.PrecioNormal : precio;
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(referido).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            historico = referido.HistorialPrecios == null ? "" : referido.HistorialPrecios + "+";
+            referido.HistorialPrecios = historico + " " + usuario + " en " + DateTime.Today.ToString("dd-MM-yyyy") + " de " + precioAnteriorIVA + " a " + precioIVA;
+
+            referido.PrecioNormalconIVA = precioIVA == "" ? referido.PrecioNormalconIVA : precioIVA;
 
             if (ModelState.IsValid)
             {

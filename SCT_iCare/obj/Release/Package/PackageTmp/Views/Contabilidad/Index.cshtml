@@ -14,6 +14,7 @@
     string sucursal = "";
     string cuenta = null;
     string canal = "";
+    string pago = "";
 
     if (ViewBag.Fecha != null)
     {
@@ -31,6 +32,11 @@
         canal = ViewBag.Canal;
     }
 
+    if (ViewBag.Pago != "")
+    {
+        pago = ViewBag.Pago;
+    }
+
     string nombreExcel = "Contabilidad";
 
     if (ViewBag.Cuenta != "")
@@ -39,17 +45,34 @@
         nombreExcel = ViewBag.Cuenta;
     }
 
+    if(ViewBag.Cuenta == "TODOS")
+    {
+        cuenta = "";
+        sucursal = "";
+    }
+
 
     var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).
 Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFinal
-&& (s.M.Sucursal.Contains(sucursal) && s.M.CanalTipo.Contains(canal) && s.M.Cuenta == cuenta));
+&& (s.M.Sucursal.Contains(sucursal) && s.M.CanalTipo.Contains(canal) && s.M.Cuenta == cuenta && s.M.TipoPago.Contains(pago)));
 
-    var modelo1 = db.PacienteESP.Where(s => s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && (s.CanalTipo.Contains(canal) && s.Cuenta == cuenta));
+
+    var modelo1 = db.PacienteESP.Where(s => s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && (s.CanalTipo.Contains(canal) && s.Cuenta == cuenta && s.TipoPago.Contains(pago)));
+
 
     var modeloExcel = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).
 Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFinal);
 
     var modeloExcel1 = db.PacienteESP.Where(s => s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal);
+
+    if (ViewBag.Cuenta == "TODOS")
+    {
+        modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFinal);
+        modelo1 = db.PacienteESP.Where(s => s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal);
+        modeloExcel = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFinal);
+        modeloExcel1 = db.PacienteESP.Where(s => s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal);
+        cuenta = "TODOS";
+    }
 
 }
 
@@ -98,6 +121,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
             <option value="CORPORATIVO">CORPORATIVO</option>
             <option value="ACLARACIONES">ACLARACIONES</option>
             <option value="DEVOLUCIONES">DEVOLUCIONES</option>
+            <option value="TODOS">TODOS</option>
         </select>
 
         <select name="canal" style="font-size:2vh" class="form-control">
@@ -117,6 +141,29 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     <option value="@item.NombreCanal">@item.NombreCanal</option>
                 }
             }
+        </select>
+
+        <select name="tipoPago" style="font-size:2vh" class="form-control">
+            @{
+                if (ViewBag.Pago == "" || ViewBag.Pago == null)
+                {
+                    <option value="">TIPO DE PAGO</option>
+                }
+                else
+                {
+                    <option value="@pago">@pago</option>
+                }
+            }
+            <option value="Referencia OXXO">Referencia OXXO</option>
+            <option value="Referencía BanBajío">Referencía BanBajío</option>
+            <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+            <option value="BanCoppel">BanCoppel</option>
+            <option value="BanCoppel TLS">BanCoppel TLS</option>
+            <option value="BanCoppel LC">BanCoppel LC</option>
+            <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+            <option value="Banco Azteca LC">Banco Azteca LC</option>
+            <option value="Cuenta Externa">Cuenta Externa</option>
+            <option value="Pendiente de Pago">Pendiente de Pago</option>
         </select>
 
         @{
@@ -193,7 +240,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
         }
 
         <input type="submit" class="btn btn-info" value="Enviar" />
-        <a href="~/Contabilidad/Index"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+        <a href="~/Contabilidad/Index"><button type="button" class="btn btn-success">Limpiar</button></a>
 
     </div>
 
@@ -463,8 +510,6 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                    <input type="text" class="form-control" name="comentario" />
-                                                    <input type="hidden" name="usuario" value="@oUser.Nombre" />
                                                     <input type="hidden" name="fecha" value="@fechaInicio" />
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
@@ -507,8 +552,6 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                     <b>@item.M.Doctor</b><br />
                                                     <br />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
-                                                    <input type="text" class="form-control" name="comentario" />
-                                                    <input type="hidden" name="usuario" value="@oUser.Nombre" />
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
                                                     <input type="hidden" name="fecha" value="@fechaInicio" />
@@ -555,8 +598,6 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                    <input type="text" class="form-control" name="comentario" />
-                                                    <input type="hidden" name="usuario" value="@oUser.Nombre" />
                                                     <input type="hidden" name="fecha" value="@fechaInicio" />
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
@@ -599,8 +640,6 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                     <b>@item.M.Doctor</b><br />
                                                     <br />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
-                                                    <input type="text" class="form-control" name="comentario" />
-                                                    <input type="hidden" name="usuario" value="@oUser.Nombre" />
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
                                                     <input type="hidden" name="fecha" value="@fechaInicio" />
@@ -647,8 +686,6 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                    <input type="text" class="form-control" name="comentario" />
-                                                    <input type="hidden" name="usuario" value="@oUser.Nombre" />
                                                     <input type="hidden" name="fecha" value="@fechaInicio" />
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
@@ -691,8 +728,6 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                     <b>@item.M.Doctor</b><br />
                                                     <br />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
-                                                    <input type="text" class="form-control" name="comentario" />
-                                                    <input type="hidden" name="usuario" value="@oUser.Nombre" />
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
                                                     <input type="hidden" name="fecha" value="@fechaInicio" />
@@ -851,6 +886,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                        <option value="Banco Azteca LC">Banco Azteca LC</option>
                                                         <option value="Cuenta Externa">Cuenta Externa</option>
                                                     </select>
                                                     <br />
@@ -901,6 +937,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                        <option value="Banco Azteca LC">Banco Azteca LC</option>
                                                         <option value="Cuenta Externa">Cuenta Externa</option>
                                                     </select>
                                                     <br />
@@ -952,6 +989,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                        <option value="Banco Azteca LC">Banco Azteca LC</option>
                                                         <option value="Cuenta Externa">Cuenta Externa</option>
                                                     </select>
                                                     <br />
@@ -1002,6 +1040,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                        <option value="Banco Azteca LC">Banco Azteca LC</option>
                                                         <option value="Cuenta Externa">Cuenta Externa</option>
                                                     </select>
                                                     <br />
@@ -1053,6 +1092,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                        <option value="Banco Azteca LC">Banco Azteca LC</option>
                                                         <option value="Cuenta Externa">Cuenta Externa</option>
                                                     </select>
                                                     <br />
@@ -1103,6 +1143,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                        <option value="Banco Azteca LC">Banco Azteca LC</option>
                                                         <option value="Cuenta Externa">Cuenta Externa</option>
                                                     </select>
                                                     <br />
@@ -1153,6 +1194,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                        <option value="Banco Azteca LC">Banco Azteca LC</option>
                                                         <option value="Cuenta Externa">Cuenta Externa</option>
                                                     </select>
                                                     <br />

@@ -97,7 +97,10 @@
                     Canal
                 </th>
                 <th>
-                    Precio Actual
+                    Precio sin IVA
+                </th>
+                <th>
+                    Precio con IVA
                 </th>
                 <th></th>
             </tr>
@@ -107,88 +110,119 @@
         @foreach (var item in referido)
         {
 
-            <tr @*style="border-top-color: black; border-top-width:2px"*@>
-                <td class="bg-info">
-                    <b>@item.Nombre</b>
-                </td>
-                <td>
-                    @item.Tipo
-                </td>
-                <td>
+    <tr @*style="border-top-color: black; border-top-width:2px"*@>
+        <td class="bg-info">
+            <b>@item.Nombre</b>
+        </td>
+        <td>
+            @item.Tipo
+        </td>
+        <td>
 
-                    @{
-                        string[] historico = item.HistorialPrecios != null ? item.HistorialPrecios.Split('+') : null;
-                        int flag0 = 1;
+            @{
+                string[] historico = item.HistorialPrecios != null ? item.HistorialPrecios.Split('+') : null;
+                int flag0 = 1;
 
-                        if (item.HistorialPrecios == null)
-                        {
-                            <b>$@item.PrecioNormal</b>
-                        }
-                        else
-                        {
-                            <span class="field-tip">
-                                <b>$@item.PrecioNormal</b>
-                                <span class="tip-content">
+                if (item.HistorialPrecios == null)
+                {
+                    <b>$@item.PrecioNormal</b>
+                }
+                else
+                {
+                    <span class="field-tip">
+                        <b>$@item.PrecioNormal</b>
+                        <span class="tip-content">
+                            @{
+                                foreach (var i in historico)
+                                {
+                                    <span>@flag0 @i</span><br />
+                                    flag0++;
+                                }
+                            }
+                        </span>
+                    </span>
+                }
+            }
+        </td>
+        <td>
+
+            @{
+                string[] historico1 = item.HistorialPrecios != null ? item.HistorialPrecios.Split('+') : null;
+                int flag01 = 1;
+
+                if (item.HistorialPrecios == null)
+                {
+                    <b>$@item.PrecioNormalconIVA</b>
+                }
+                else
+                {
+                    <span class="field-tip">
+                        <b>$@item.PrecioNormalconIVA</b>
+                        <span class="tip-content">
+                            @{
+                                foreach (var i in historico1)
+                                {
+                                    <span>@flag01 @i</span><br />
+                                    flag01++;
+                                }
+                            }
+                        </span>
+                    </span>
+                }
+            }
+        </td>
+        <td>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#metasCanal_@item.idReferido">Actualizar Precio</button>
+
+            <!-- Modal -->
+            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/EditarPrecios")">
+                <div class="modal fade" id="metasCanal_@item.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background-color:aquamarine">
+                                <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;Editar Precio</h3>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">Ingrese los nuevos precios para @item.Nombre:</label>
+                                    <br />
+                                    <label for="recipient-name" class="col-form-label">Precio sin IVA:</label>
+                                    <input type="number" class="form-control" id="fecha" name="precio" placeholder="@item.PrecioNormal">
+                                    <label for="recipient-name" class="col-form-label">Precio con IVA:</label>
+                                    <input type="number" class="form-control" id="fecha" name="precioIVA" placeholder="@item.PrecioNormalconIVA">
+                                    <input type="hidden" value="@item.idReferido" name="id" />
+                                    <input type="hidden" value="@oUser.Nombre" name="usuario" />
+                                </div>
+                                <div class="form-group">
+
                                     @{
-                                        foreach (var i in historico)
+                                        string[] historicoPrecios = item.HistorialPrecios != null ? item.HistorialPrecios.Split('+') : null;
+                                        int flag00 = 1;
+
+                                        if (historicoPrecios != null)
                                         {
-                                            <span>@flag0 @i</span><br />
-                                            flag0++;
+                                            <h4>Histórico de precios </h4>
+
+                                            foreach (var i in historicoPrecios)
+                                            {
+                                                <span>@flag00 @i</span><br />
+                                                flag00++;
+                                            }
                                         }
                                     }
-                                </span>
-                            </span>
-                        }
-                    }
-                </td>
-                <td>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#metasCanal_@item.idReferido">Actualizar Precio</button>
-
-                    <!-- Modal -->
-                    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/EditarPrecios")">
-                        <div class="modal fade" id="metasCanal_@item.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header" style="background-color:aquamarine">
-                                        <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;Editar Precio</h3>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="form-group">
-                                            <label for="recipient-name" class="col-form-label">Ingrese el nuevo precio para @item.Nombre:</label>
-                                            <input type="number" class="form-control" id="fecha" name="precio" placeholder="@item.PrecioNormal">
-                                            <input type="hidden" value="@item.idReferido" name="id" />
-                                            <input type="hidden" value="@oUser.Nombre" name="usuario" />
-                                        </div>
-                                        <div class="form-group">
-
-                                            @{
-                                                string[] historicoPrecios = item.HistorialPrecios != null ? item.HistorialPrecios.Split('+') : null;
-                                                int flag00 = 1;
-
-                                                if (historicoPrecios != null)
-                                                {
-                                                    <h4>Histórico de precios </h4>
-
-                                                    foreach (var i in historicoPrecios)
-                                                    {
-                                                        <span>@flag00 @i</span><br />
-                                                        flag00++;
-                                                    }
-                                                }
-                                            }
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                        <input type="submit" value="Enviar" class="btn btn-primary" />
-                                    </div>
                                 </div>
-
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <input type="submit" value="Enviar" class="btn btn-primary" />
                             </div>
                         </div>
-                    </form>
-                </td>
-            </tr>
+
+                    </div>
+                </div>
+            </form>
+        </td>
+    </tr>
 
             flag += 1;
 
