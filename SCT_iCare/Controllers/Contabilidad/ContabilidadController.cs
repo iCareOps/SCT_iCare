@@ -16,8 +16,10 @@ namespace SCT_iCare.Controllers.Contabilidad
     {
         GMIEntities db = new GMIEntities();
         // GET: Maqueta
-        public ActionResult Index(string canal, string cuenta, string sucursal, DateTime? fechaInicio, DateTime? fechaFinal, string tipoPago)
+        public ActionResult Index(string canal, string cuenta, string sucursal, DateTime? fechaInicio, DateTime? fechaFinal, string tipoPago, int? referido)
         {
+            var Referido = db.Referido.Find(referido);
+
             if (sucursal == "" || sucursal == null)
             {
                 ViewBag.Sucursal = "";
@@ -54,13 +56,24 @@ namespace SCT_iCare.Controllers.Contabilidad
                 ViewBag.Pago = tipoPago;
             }
 
+            if (referido == null)
+            {
+                ViewBag.Referido = "";
+                ViewBag.idReferido = 0;
+            }
+            else
+            {
+                ViewBag.Referido = Referido.Nombre;
+                ViewBag.idReferido = Referido.idReferido;
+            }
+
             ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
             ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
 
             return View();
         }
 
-        public ActionResult CambiarCuenta(int? id, string cuenta, string cuenta2, string comentario, string usuario, string canal, string sucursal, DateTime? fecha)
+        public ActionResult CambiarCuenta(int? id, string cuenta, string cuenta2, string comentario, string usuario, string canal, string sucursal, DateTime? fechaInicio, DateTime? fechaFinal, DateTime? fechaContable)
         {
             var cita = db.Cita.Find(id);
 
@@ -68,6 +81,7 @@ namespace SCT_iCare.Controllers.Contabilidad
             string cuentaAnterior = cita.Cuenta == null ? "" : " PROVIENE DE " + cita.Cuenta;
             cita.CuentaComentario = historico + comentario + cuentaAnterior + " " + DateTime.Today.ToString("dd-MMMM-yyyy") + " POR " + usuario;
             cita.Cuenta = cuenta;
+            cita.FechaContable = fechaContable == null ? DateTime.Now : fechaContable;
 
             if (ModelState.IsValid)
             {
@@ -75,10 +89,10 @@ namespace SCT_iCare.Controllers.Contabilidad
                 db.SaveChanges();
             }
 
-            return RedirectToAction("Index", new { fecha = fecha, sucursal = sucursal, cuenta = cuenta2, canal = canal });
+            return RedirectToAction("Index", new { fechaInicio = fechaInicio, fechaFinal = fechaFinal, sucursal = sucursal, cuenta = cuenta2, canal = canal });
         }
 
-        public ActionResult CambiarCuentaALT(int? id, string cuenta, string comentario, string usuario, DateTime? fecha, string sucursal,
+        public ActionResult CambiarCuentaALT(int? id, string cuenta, string comentario, string usuario, DateTime? fechaInicio, DateTime? fechaFinal, DateTime? fechaContable, string sucursal,
             string cuenta2, string canal, string pago)
         {
             var cita = db.PacienteESP.Find(id);
@@ -87,6 +101,7 @@ namespace SCT_iCare.Controllers.Contabilidad
             string cuentaAnterior = cita.Cuenta == null ? "" : " PROVIENE DE " + cita.Cuenta;
             cita.CuentaComentario = historico + comentario + cuentaAnterior + " " + DateTime.Today.ToString("dd-MMMM-yyyy") + " POR " + usuario;
             cita.Cuenta = cuenta;
+            cita.FechaContable = fechaContable == null ? DateTime.Now : fechaContable;
 
             if(pago != null || pago != "")
             {
@@ -99,7 +114,7 @@ namespace SCT_iCare.Controllers.Contabilidad
                 db.SaveChanges();
             }
 
-            return RedirectToAction("Index", new { fecha = fecha, sucursal = sucursal, cuenta = cuenta2, canal = canal });
+            return RedirectToAction("Index", new { fechaInicio = fechaInicio, fechaFinal = fechaFinal, sucursal = sucursal, cuenta = cuenta2, canal = canal });
         }
     }
 }

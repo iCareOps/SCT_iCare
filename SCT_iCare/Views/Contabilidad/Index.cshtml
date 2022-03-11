@@ -15,10 +15,12 @@
     string cuenta = null;
     string canal = "";
     string pago = "";
+    string referido = "";
+    string tipoReferido = "";
 
     if (ViewBag.FechaInicio != null)
     {
-        fechaInicio = Convert.ToDateTime(ViewBag.FechaInicio);        
+        fechaInicio = Convert.ToDateTime(ViewBag.FechaInicio);
     }
 
     if (ViewBag.FechaFinal != null)
@@ -42,6 +44,15 @@
         pago = ViewBag.Pago;
     }
 
+    int idReferido = ViewBag.idReferido;
+
+    if (ViewBag.Referido != "" && ViewBag.idReferido != 0)
+    {
+        referido = ViewBag.Referido;
+        var Tipo = (from i in db.Referido where i.idReferido == idReferido select i).FirstOrDefault();
+        tipoReferido = Tipo.Tipo;
+    }
+
     string nombreExcel = "Contabilidad";
 
     if (ViewBag.Cuenta != "")
@@ -59,16 +70,16 @@
 
     var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).
 Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFinal
-&& s.M.Asistencia == null && s.M.TipoTramite != "REVALORACIÓN" && (s.M.Sucursal.Contains(sucursal) && s.M.CanalTipo.Contains(canal) && s.M.Cuenta == cuenta && s.M.TipoPago.Contains(pago)));
+&& s.M.Asistencia == null && s.M.TipoTramite != "REVALORACIÓN" && (s.M.ReferidoPor.Contains(referido) && s.M.CanalTipo.Contains(tipoReferido) && s.M.Sucursal.Contains(sucursal) && s.M.CanalTipo.Contains(canal) && s.M.Cuenta == cuenta && s.M.TipoPago.Contains(pago)));
 
 
-    var modelo1 = db.PacienteESP.Where(s => s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null && (s.CanalTipo.Contains(canal) && s.Cuenta == cuenta && s.TipoPago.Contains(pago)));
+    var modelo1 = db.PacienteESP.Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido) && s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null && (s.CanalTipo.Contains(canal) && s.Cuenta == cuenta && s.TipoPago.Contains(pago)));
 
 
     var modeloExcel = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).
-Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFinal && s.M.Asistencia == null && s.M.TipoTramite != "REVALORACIÓN");
+Where(s => s.M.ReferidoPor.Contains(referido) && s.M.CanalTipo.Contains(tipoReferido) && s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFinal && s.M.Asistencia == null && s.M.TipoTramite != "REVALORACIÓN");
 
-    var modeloExcel1 = db.PacienteESP.Where(s => s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.Asistencia == null && s.TipoTramite != "REVALORACIÓN");
+    var modeloExcel1 = db.PacienteESP.Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido) && s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.Asistencia == null && s.TipoTramite != "REVALORACIÓN");
 
     if (ViewBag.Cuenta == "TODOS")
     {
@@ -171,6 +182,24 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
             <option value="Pendiente de Pago">Pendiente de Pago</option>
         </select>
 
+        <select name="referido" style="font-size:2vh" class="form-control">
+            @{
+                if (ViewBag.Referido == "" || ViewBag.Referido == null)
+                {
+                    <option value="">REFERIDO POR</option>
+                }
+                else
+                {
+                    <option value="@referido">@referido</option>
+                }
+            }
+            @foreach (var item in db.Referido.OrderBy(o => o.Tipo).ThenBy(o => o.Nombre))
+            {
+                <option value="@item.idReferido">@item.Nombre -- @item.Tipo</option>
+            }
+
+        </select>
+
         @{
 
             DateTime ViewBagFechaInicio = Convert.ToDateTime(ViewBag.fechaInicio);
@@ -214,6 +243,8 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
             }
 
         }
+
+
 
         <input type="submit" class="btn btn-info" value="Enviar" />
         <a href="~/Contabilidad/Index"><button type="button" class="btn btn-success">Limpiar</button></a>
@@ -273,6 +304,9 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     FechaPago
                 </th>
                 <th>
+                    FechaContable
+                </th>
+                <th>
                     Precio
                 </th>
                 <th>
@@ -318,6 +352,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     <td>
                         @Convert.ToDateTime(item.M.FechaCita).ToString("dd-MM-yy")
                     </td>
+
                     <td style="font-size:smaller">
                         @item.M.Sucursal
                     </td>
@@ -331,15 +366,15 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                         <b>@item.M.ReferidoPor</b>
                     </td>
                     <td>
-                        @{ 
-                            if(item.M.Cuenta == null)
-                {
-                    <span>Caja</span>
-                }
-                else
-                {
-                    <span>@item.M.Cuenta</span>
-                }
+                        @{
+                            if (item.M.Cuenta == null)
+                            {
+                                <span>Caja</span>
+                            }
+                            else
+                            {
+                                <span>@item.M.Cuenta</span>
+                            }
                         }
                     </td>
                     <td>
@@ -364,6 +399,16 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     </td>
                     <td>
                         @Convert.ToDateTime(item.M.FechaReferencia).ToString("dd-MM-yy")
+                    </td>
+                    <td>
+                        @if (item.M.FechaContable == null)
+                        {
+                            <span>------</span>
+                        }
+                        else
+                        {
+                            @Convert.ToDateTime(item.M.FechaContable).ToString("dd-MM-yy")
+                        }
                     </td>
                     <td>
                         @{
@@ -435,10 +480,13 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                     <label for="recipient-name" class="col-form-label">Doctor:</label>
                                                     <b>@item.M.Doctor</b><br />
                                                     <br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
+                                                    <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                    <input type="hidden" name="fecha" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaFinal" value="@fechaFinal" />
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
                                                     <input type="hidden" name="sucursal" value="@sucursal" />
@@ -479,10 +527,13 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                     <label for="recipient-name" class="col-form-label">Doctor:</label>
                                                     <b>@item.M.Doctor</b><br />
                                                     <br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
+                                                    <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                    <input type="hidden" name="fecha" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaFinal" value="@fechaFinal" />
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
                                                     <input type="hidden" name="sucursal" value="@sucursal" />
@@ -523,10 +574,13 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                     <label for="recipient-name" class="col-form-label">Doctor:</label>
                                                     <b>@item.M.Doctor</b><br />
                                                     <br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
+                                                    <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                    <input type="hidden" name="fecha" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaFinal" value="@fechaFinal" />
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
                                                     <input type="hidden" name="sucursal" value="@sucursal" />
@@ -567,10 +621,13 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                     <label for="recipient-name" class="col-form-label">Doctor:</label>
                                                     <b>@item.M.Doctor</b><br />
                                                     <br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
+                                                    <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                    <input type="hidden" name="fecha" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaFinal" value="@fechaFinal" />
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
                                                     <input type="hidden" name="sucursal" value="@sucursal" />
@@ -611,10 +668,13 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                     <label for="recipient-name" class="col-form-label">Doctor:</label>
                                                     <b>@item.M.Doctor</b><br />
                                                     <br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
+                                                    <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                    <input type="hidden" name="fecha" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaFinal" value="@fechaFinal" />
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
                                                     <input type="hidden" name="sucursal" value="@sucursal" />
@@ -655,10 +715,13 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                     <label for="recipient-name" class="col-form-label">Doctor:</label>
                                                     <b>@item.M.Doctor</b><br />
                                                     <br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
+                                                    <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                    <input type="hidden" name="fecha" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaFinal" value="@fechaFinal" />
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
                                                     <input type="hidden" name="sucursal" value="@sucursal" />
@@ -699,10 +762,13 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                     <label for="recipient-name" class="col-form-label">Doctor:</label>
                                                     <b>@item.M.Doctor</b><br />
                                                     <br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
+                                                    <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                    <input type="hidden" name="fecha" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaFinal" value="@fechaFinal" />
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
                                                     <input type="hidden" name="sucursal" value="@sucursal" />
@@ -761,6 +827,7 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     <td>
                         @Convert.ToDateTime(item.FechaCaptura).ToString("dd-MM-yy")
                     </td>
+
                     <td>
                         -----
                     </td>
@@ -774,15 +841,15 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                         <b>@item.ReferidoPor</b>
                     </td>
                     <td>
-                        @{ 
-                            if(item.Cuenta == null)
-                {
-                    <span>Caja</span>
-                }
-                else
-                {
-                    <span>@item.Cuenta</span>
-                }
+                        @{
+                            if (item.Cuenta == null)
+                            {
+                                <span>Caja</span>
+                            }
+                            else
+                            {
+                                <span>@item.Cuenta</span>
+                            }
                         }
                     </td>
                     <td>
@@ -790,6 +857,16 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     </td>
                     <td>
                         @Convert.ToDateTime(item.FechaSolicitud).ToString("dd-MM-yy")
+                    </td>
+                    <td>
+                        @if (item.FechaContable == null)
+                        {
+                            <span>------</span>
+                        }
+                        else
+                        {
+                            @Convert.ToDateTime(item.FechaContable).ToString("dd-MM-yy")
+                        }
                     </td>
                     <td>
                         @{
@@ -868,10 +945,13 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                         <option value="Cuenta Externa">Cuenta Externa</option>
                                                     </select>
                                                     <br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
+                                                    <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                    <input type="hidden" name="fecha" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaFinal" value="@fechaFinal" />
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
                                                     <input type="hidden" name="sucursal" value="@sucursal" />
@@ -919,11 +999,13 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                         <option value="Cuenta Externa">Cuenta Externa</option>
                                                     </select>
                                                     <br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
+                                                    <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
                                                     <input type="text" class="form-control" name="comentario" />
-
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                    <input type="hidden" name="fecha" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaFinal" value="@fechaFinal" />
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
                                                     <input type="hidden" name="sucursal" value="@sucursal" />
@@ -971,10 +1053,13 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                         <option value="Cuenta Externa">Cuenta Externa</option>
                                                     </select>
                                                     <br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
+                                                    <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                    <input type="hidden" name="fecha" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaFinal" value="@fechaFinal" />
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
                                                     <input type="hidden" name="sucursal" value="@sucursal" />
@@ -1022,10 +1107,13 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                         <option value="Cuenta Externa">Cuenta Externa</option>
                                                     </select>
                                                     <br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
+                                                    <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                    <input type="hidden" name="fecha" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaFinal" value="@fechaFinal" />
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
                                                     <input type="hidden" name="sucursal" value="@sucursal" />
@@ -1074,10 +1162,13 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                         <option value="Cuenta Externa">Cuenta Externa</option>
                                                     </select>
                                                     <br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
+                                                    <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                    <input type="hidden" name="fecha" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaFinal" value="@fechaFinal" />
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
                                                     <input type="hidden" name="sucursal" value="@sucursal" />
@@ -1125,10 +1216,13 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                         <option value="Cuenta Externa">Cuenta Externa</option>
                                                     </select>
                                                     <br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
+                                                    <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                    <input type="hidden" name="fecha" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaFinal" value="@fechaFinal" />
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
                                                     <input type="hidden" name="sucursal" value="@sucursal" />
@@ -1176,10 +1270,13 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                                                         <option value="Cuenta Externa">Cuenta Externa</option>
                                                     </select>
                                                     <br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
+                                                    <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
                                                     <input type="text" class="form-control" name="comentario" />
                                                     <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                    <input type="hidden" name="fecha" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaFinal" value="@fechaFinal" />
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
                                                     <input type="hidden" name="sucursal" value="@sucursal" />
@@ -1233,6 +1330,9 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     FechaPago
                 </th>
                 <th>
+                    FechaContable
+                </th>
+                <th>
                     Comisión
                 </th>
                 <th>
@@ -1257,9 +1357,9 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
             foreach (var item in modeloExcel)
             {
                 <tr>
-                            <td>
-                                <b>@item.N.Nombre</b>
-                            </td>
+                    <td>
+                        <b>@item.N.Nombre</b>
+                    </td>
                     <td>
                         @Convert.ToDateTime(item.M.FechaCita).AddDays(1).ToString("dd-MMMM-yyyy")
                     </td>
@@ -1297,7 +1397,16 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                         @Convert.ToDateTime(item.M.FechaReferencia).AddDays(1).ToString("dd-MMMM-yyyy")
                     </td>
                     <td>
-
+                        @if (item.M.FechaContable == null)
+                        {
+                            <span>------</span>
+                        }
+                        else
+                        {
+                            @Convert.ToDateTime(item.M.FechaContable).ToString("dd-MM-yy")
+                        }
+                    </td>
+                    <td>
                     </td>
                     <td>
                         @{
@@ -1320,24 +1429,23 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                         @item.M.Recepcionista
                     </td>
                     <td>
-                        
                     </td>
                     <td>
-                        @{ 
-                            if(item.M.Cuenta == null)
-                {
-                    <span>CAJA</span>
-                }
-                else
-                {
-                    <span>@item.M.Cuenta</span>
-                }
+                        @{
+                            if (item.M.Cuenta == null)
+                            {
+                                <span>CAJA</span>
+                            }
+                            else
+                            {
+                                <span>@item.M.Cuenta</span>
+                            }
                         }
                     </td>
                     <td>
                         @item.M.CuentaComentario
                     </td>
-                    
+
                 </tr>
             }
         }
@@ -1346,9 +1454,9 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
             foreach (var item in modeloExcel1)
             {
                 <tr>
-                            <td>
-                                <b>@item.Nombre</b>
-                            </td>
+                    <td>
+                        <b>@item.Nombre</b>
+                    </td>
                     <td>
                         @Convert.ToDateTime(item.FechaCaptura).AddDays(1).ToString("dd-MMMM-yyyy")
                     </td>
@@ -1371,6 +1479,16 @@ Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFina
                     </td>
                     <td>
                         @Convert.ToDateTime(item.FechaSolicitud).AddDays(1).ToString("dd-MMMM-yyyy")
+                    </td>
+                    <td>
+                        @if (item.FechaContable == null)
+                        {
+                            <span>------</span>
+                        }
+                        else
+                        {
+                            @Convert.ToDateTime(item.FechaContable).ToString("dd-MM-yy")
+                        }
                     </td>
                     <td>
                     </td>

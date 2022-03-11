@@ -42,6 +42,7 @@ namespace SCT_iCare
         public string CanalTipo { get; set; }
         public string CuentaComentario { get; set; }
         public string Conciliado { get; set; }
+        public Nullable<System.DateTime> FechaContable { get; set; }
     
         public virtual Canal Canal1 { get; set; }
         public virtual Paciente Paciente { get; set; }

@@ -57,6 +57,7 @@ namespace SCT_iCare
         public string CuentaComentario { get; set; }
         public string Conciliado { get; set; }
         public string TipoPago { get; set; }
+        public Nullable<System.DateTime> FechaContable { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FotoPacienteESP> FotoPacienteESP { get; set; }
