@@ -54,23 +54,23 @@
 
     var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).
 Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFinal
-&& s.M.Asistencia == null && (s.M.Sucursal.Contains(sucursal) && s.M.CanalTipo.Contains(canal) && s.M.Cuenta == cuenta && s.M.TipoPago.Contains(pago)));
+&& s.M.Asistencia == null && s.M.TipoTramite != "REVALORACIÓN" && (s.M.Sucursal.Contains(sucursal) && s.M.CanalTipo.Contains(canal) && s.M.Cuenta == cuenta && s.M.TipoPago.Contains(pago)));
 
 
-    var modelo1 = db.PacienteESP.Where(s => s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.Asistencia == null && (s.CanalTipo.Contains(canal) && s.Cuenta == cuenta && s.TipoPago.Contains(pago)));
+    var modelo1 = db.PacienteESP.Where(s => s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null && (s.CanalTipo.Contains(canal) && s.Cuenta == cuenta && s.TipoPago.Contains(pago)));
 
 
     var modeloExcel = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).
-Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFinal && s.M.Asistencia == null);
+Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFinal && s.M.Asistencia == null && s.M.TipoTramite != "REVALORACIÓN");
 
-    var modeloExcel1 = db.PacienteESP.Where(s => s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.Asistencia == null);
+    var modeloExcel1 = db.PacienteESP.Where(s => s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.Asistencia == null && s.TipoTramite != "REVALORACIÓN");
 
     if (ViewBag.Cuenta == "TODOS")
     {
-        modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFinal && s.M.Asistencia == null);
-        modelo1 = db.PacienteESP.Where(s => s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.Asistencia == null);
-        modeloExcel = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFinal && s.M.Asistencia == null);
-        modeloExcel1 = db.PacienteESP.Where(s => s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.Asistencia == null);
+        modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFinal && s.M.TipoTramite != "REVALORACIÓN" && s.M.Asistencia == null);
+        modelo1 = db.PacienteESP.Where(s => s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.Asistencia == null && s.TipoTramite != "REVALORACIÓN");
+        modeloExcel = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= fechaInicio && s.M.FechaReferencia < fechaFinal && s.M.TipoTramite != "REVALORACIÓN" && s.M.Asistencia == null);
+        modeloExcel1 = db.PacienteESP.Where(s => s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.Asistencia == null && s.TipoTramite != "REVALORACIÓN");
         cuenta = "TODOS";
     }
 
