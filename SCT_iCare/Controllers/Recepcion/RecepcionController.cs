@@ -186,7 +186,7 @@ namespace SCT_iCare.Controllers.Recepcion
             return View();
         }
 
-        public ActionResult CambiarGestor(int? id, int? referido, string usuario, string gestorAnterior)
+        public ActionResult CambiarGestor(int? id, int? referido, string usuario, string gestorAnterior, string tipoPago, string referencia)
         {
             Cita cita = db.Cita.Find(id);
 
@@ -197,6 +197,10 @@ namespace SCT_iCare.Controllers.Recepcion
             cita.ReferidoPor = referidoTipo.Nombre;
 
             cita.CancelaComentario = cita.CancelaComentario + " + " + usuario + " cambió de " + gestorAnterior + " a " + referidoTipo.Nombre + " el " + DateTime.Now.ToString("dd-MM-yy");
+
+            cita.TipoPago = tipoPago;
+
+            cita.Referencia = referencia == "" ? cita.Referencia : referencia;
 
             if(ModelState.IsValid)
             {
@@ -2273,7 +2277,7 @@ namespace SCT_iCare.Controllers.Recepcion
                 TIPOT = tipoT;
             }
 
-            if (pago == "")
+            if (pago == "" || pago == null)
             {
                 PAGO = cita.TipoPago;
             }

@@ -173,7 +173,6 @@ Where(s => s.M.ReferidoPor.Contains(referido) && s.M.CanalTipo.Contains(tipoRefe
             <option value="Referencia OXXO">Referencia OXXO</option>
             <option value="Referencía BanBajío">Referencía BanBajío</option>
             <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
-            <option value="BanCoppel">BanCoppel</option>
             <option value="BanCoppel TLS">BanCoppel TLS</option>
             <option value="BanCoppel LC">BanCoppel LC</option>
             <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -483,6 +482,15 @@ Where(s => s.M.ReferidoPor.Contains(referido) && s.M.CanalTipo.Contains(tipoRefe
                                                     <b>@item.M.Sucursal</b><br />
                                                     <label for="recipient-name" class="col-form-label">Doctor:</label>
                                                     <b>@item.M.Doctor</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                                    <select required name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                        <option selected disabled>Seleccionar</option>
+                                                        <option value="BanCoppel TLS">BanCoppel TLS</option>
+                                                        <option value="BanCoppel LC">BanCoppel LC</option>
+                                                        <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                        <option value="Banco Azteca LC">Banco Azteca LC</option>
+                                                        <option value="Cuenta Externa">Cuenta Externa</option>
+                                                    </select>
                                                     <br />
                                                     <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
                                                     <input type="date" class="form-control" name="fechaContable" />
@@ -494,6 +502,16 @@ Where(s => s.M.ReferidoPor.Contains(referido) && s.M.CanalTipo.Contains(tipoRefe
                                                     <input type="hidden" name="cuenta2" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
                                                     <input type="hidden" name="sucursal" value="@sucursal" />
+                                                    @{
+                                                        if (idReferido == 0)
+                                                        {
+                                                            <input type="hidden" name="idGestor" value="" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="hidden" name="idGestor" value="@idReferido" />
+                                                        }
+                                                    }
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -530,6 +548,15 @@ Where(s => s.M.ReferidoPor.Contains(referido) && s.M.CanalTipo.Contains(tipoRefe
                                                     <b>@item.M.Sucursal</b><br />
                                                     <label for="recipient-name" class="col-form-label">Doctor:</label>
                                                     <b>@item.M.Doctor</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                                    <select required name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                        <option selected disabled>Seleccionar</option>
+                                                        <option value="BanCoppel TLS">BanCoppel TLS</option>
+                                                        <option value="BanCoppel LC">BanCoppel LC</option>
+                                                        <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                        <option value="Banco Azteca LC">Banco Azteca LC</option>
+                                                        <option value="Cuenta Externa">Cuenta Externa</option>
+                                                    </select>
                                                     <br />
                                                     <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
                                                     <input type="date" class="form-control" name="fechaContable" />
@@ -577,6 +604,15 @@ Where(s => s.M.ReferidoPor.Contains(referido) && s.M.CanalTipo.Contains(tipoRefe
                                                     <b>@item.M.Sucursal</b><br />
                                                     <label for="recipient-name" class="col-form-label">Doctor:</label>
                                                     <b>@item.M.Doctor</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                                    <select required name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                        <option selected disabled>Seleccionar</option>
+                                                        <option value="BanCoppel TLS">BanCoppel TLS</option>
+                                                        <option value="BanCoppel LC">BanCoppel LC</option>
+                                                        <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                        <option value="Banco Azteca LC">Banco Azteca LC</option>
+                                                        <option value="Cuenta Externa">Cuenta Externa</option>
+                                                    </select>
                                                     <br />
                                                     <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
                                                     <input type="date" class="form-control" name="fechaContable" />
@@ -624,6 +660,15 @@ Where(s => s.M.ReferidoPor.Contains(referido) && s.M.CanalTipo.Contains(tipoRefe
                                                     <b>@item.M.Sucursal</b><br />
                                                     <label for="recipient-name" class="col-form-label">Doctor:</label>
                                                     <b>@item.M.Doctor</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                                    <select required name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                        <option selected disabled>Seleccionar</option>
+                                                        <option value="BanCoppel TLS">BanCoppel TLS</option>
+                                                        <option value="BanCoppel LC">BanCoppel LC</option>
+                                                        <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                        <option value="Banco Azteca LC">Banco Azteca LC</option>
+                                                        <option value="Cuenta Externa">Cuenta Externa</option>
+                                                    </select>
                                                     <br />
                                                     <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
                                                     <input type="date" class="form-control" name="fechaContable" />
@@ -671,6 +716,15 @@ Where(s => s.M.ReferidoPor.Contains(referido) && s.M.CanalTipo.Contains(tipoRefe
                                                     <b>@item.M.Sucursal</b><br />
                                                     <label for="recipient-name" class="col-form-label">Doctor:</label>
                                                     <b>@item.M.Doctor</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                                    <select required name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                        <option selected disabled>Seleccionar</option>
+                                                        <option value="BanCoppel TLS">BanCoppel TLS</option>
+                                                        <option value="BanCoppel LC">BanCoppel LC</option>
+                                                        <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                        <option value="Banco Azteca LC">Banco Azteca LC</option>
+                                                        <option value="Cuenta Externa">Cuenta Externa</option>
+                                                    </select>
                                                     <br />
                                                     <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
                                                     <input type="date" class="form-control" name="fechaContable" />
@@ -718,6 +772,15 @@ Where(s => s.M.ReferidoPor.Contains(referido) && s.M.CanalTipo.Contains(tipoRefe
                                                     <b>@item.M.Sucursal</b><br />
                                                     <label for="recipient-name" class="col-form-label">Doctor:</label>
                                                     <b>@item.M.Doctor</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                                    <select required name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                        <option selected disabled>Seleccionar</option>
+                                                        <option value="BanCoppel TLS">BanCoppel TLS</option>
+                                                        <option value="BanCoppel LC">BanCoppel LC</option>
+                                                        <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                        <option value="Banco Azteca LC">Banco Azteca LC</option>
+                                                        <option value="Cuenta Externa">Cuenta Externa</option>
+                                                    </select>
                                                     <br />
                                                     <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
                                                     <input type="date" class="form-control" name="fechaContable" />
@@ -765,6 +828,15 @@ Where(s => s.M.ReferidoPor.Contains(referido) && s.M.CanalTipo.Contains(tipoRefe
                                                     <b>@item.M.Sucursal</b><br />
                                                     <label for="recipient-name" class="col-form-label">Doctor:</label>
                                                     <b>@item.M.Doctor</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                                    <select required name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                        <option selected disabled>Seleccionar</option>
+                                                        <option value="BanCoppel TLS">BanCoppel TLS</option>
+                                                        <option value="BanCoppel LC">BanCoppel LC</option>
+                                                        <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                        <option value="Banco Azteca LC">Banco Azteca LC</option>
+                                                        <option value="Cuenta Externa">Cuenta Externa</option>
+                                                    </select>
                                                     <br />
                                                     <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
                                                     <input type="date" class="form-control" name="fechaContable" />

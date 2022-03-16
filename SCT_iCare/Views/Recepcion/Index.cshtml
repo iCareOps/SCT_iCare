@@ -464,16 +464,22 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                                             <option value="Referencia OXXO">Referencia OXXO</option>
                                             <option value="Referencia BanBajío">Referencia BanBajío</option>
                                             <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
-                                            <option value="BanCoppel">BanCoppel</option>
                                             <option value="Banorte">Banorte</option>
+                                            <option value="BanCoppel TLS">BanCoppel TLS</option>
+                                            <option value="BanCoppel LC">BanCoppel LC</option>
+                                            <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                            <option value="Banco Azteca LC">Banco Azteca LC</option>
                                             <option disabled>----------------------------------</option>
                                             <option value="Pendiente de Pago">Pendiente de Pago</option>
                                         }
                                         else
                                         {
                                             <option value="Referencia BanBajío">Referencia BanBajío</option>
-                                            <option value="BanCoppel">BanCoppel</option>
                                             <option value="Banorte">Banorte</option>
+                                            <option value="BanCoppel TLS">BanCoppel TLS</option>
+                                            <option value="BanCoppel LC">BanCoppel LC</option>
+                                            <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                            <option value="Banco Azteca LC">Banco Azteca LC</option>
                                             <option disabled>----------------------------------</option>
                                             <option value="Pendiente de Pago">Pendiente de Pago</option>
                                         }
@@ -1752,7 +1758,7 @@ else
                                 @{
                                     if (oUser.idRol == 2)
                                     {
-                                        <a href="#" data-toggle="modal" data-target="#ModalGestor_@item.M.idPaciente"><b>Cambiar Gestor</b></a>
+                                        <a href="#" data-toggle="modal" data-target="#ModalGestor_@item.M.idPaciente"><b>Modificar Datos</b></a>
                                         <div class="dropdown-divider"></div>
                                     }
                                 }
@@ -1898,16 +1904,24 @@ else
                                                                     <option value="Referencia OXXO">Referencia OXXO</option>
                                                                     <option value="Referencia BanBajío">Referencia BanBajío</option>
                                                                     <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
-                                                                    <option value="BanCoppel">BanCoppel</option>
                                                                     <option value="Banorte">Banorte</option>
+                                                                    <option value="BanCoppel TLS">BanCoppel TLS</option>
+                                                                    <option value="BanCoppel LC">BanCoppel LC</option>
+                                                                    <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                                    <option value="Banco Azteca LC">Banco Azteca LC</option>
                                                                     <option disabled>----------------------------------</option>
                                                                     <option value="Pendiente de Pago">Pendiente de Pago</option>
                                                                 }
                                                                 else
                                                                 {
+                                                                    <option value="Referencia OXXO">Referencia OXXO</option>
                                                                     <option value="Referencia BanBajío">Referencia BanBajío</option>
-                                                                    <option value="BanCoppel">BanCoppel</option>
+                                                                    <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                                     <option value="Banorte">Banorte</option>
+                                                                    <option value="BanCoppel TLS">BanCoppel TLS</option>
+                                                                    <option value="BanCoppel LC">BanCoppel LC</option>
+                                                                    <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                                    <option value="Banco Azteca LC">Banco Azteca LC</option>
                                                                     <option disabled>----------------------------------</option>
                                                                     <option value="Pendiente de Pago">Pendiente de Pago</option>
                                                                 }
@@ -1978,13 +1992,16 @@ else
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea cambiar gestor de <span class="text-danger">@item.N.Nombre</span>?</b></h4>
+                                            <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea cambiar datos de <span class="text-danger">@item.N.Nombre</span>?</b></h4>
                                         </div>
                                         <div class="modal-body">
                                             <div class="form-group" style="width:60%; min-width:320px">
                                                 <label for="recipient-name" class="col-form-label">Seleccionar nuevo gestor:</label>
                                                 <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select" required>
-                                                    <option selected value="@item.M.ReferidoPor">@item.M.ReferidoPor</option>
+                                                    @{ 
+                                                        var IDREFERIDO = (from i in db.Referido where i.Tipo == item.M.CanalTipo && i.Nombre == item.M.ReferidoPor select i.idReferido).FirstOrDefault();
+                                                    }
+                                                    <option selected value="@IDREFERIDO">@item.M.ReferidoPor</option>
                                                     @{
                                                         //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
                                                         var referidosGestor = (from r in db.Referido where r.Tipo == "GESTOR" select r).OrderBy(o => o.Nombre);
@@ -2024,6 +2041,26 @@ else
                                                         }
                                                     }
                                                 </select>
+                                            </div>
+                                            <div class="form-group" style="width:60%; min-width:320px">
+                                                <label for="recipient-name" class="col-form-label">Seleccionar nuevo Tipo de Pago:</label>
+                                                <select name="tipoPago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select" required>
+                                                    <option selected value="@item.M.TipoPago">@item.M.TipoPago</option>
+                                                    <option value="Referencia OXXO">Referencia OXXO</option>
+                                                    <option value="Referencia BanBajío">Referencia BanBajío</option>
+                                                    <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                                                    <option value="Banorte">Banorte</option>
+                                                    <option value="BanCoppel TLS">BanCoppel TLS</option>
+                                                    <option value="BanCoppel LC">BanCoppel LC</option>
+                                                    <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                    <option value="Banco Azteca LC">Banco Azteca LC</option>
+                                                    <option disabled>----------------------------------</option>
+                                                    <option value="Pendiente de Pago">Pendiente de Pago</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Referencia:</label>
+                                                <input type="text" class="form-control" name="referencia" placeholder="@item.M.Referencia" />
                                             </div>
                                             <div class="form-group">
                                                 <input type="hidden" name="id" value="@item.M.idCita" />
@@ -2421,10 +2458,15 @@ else
                                                     <select name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
                                                         <option value="@item.M.TipoPago">@item.M.TipoPago</option>
                                                         <option value="Referencia OXXO">Referencia OXXO</option>
-                                                        <option value="Referencia Scotiabank">Referencia Scotiabank</option>
                                                         <option value="Referencia BanBajío">Referencia BanBajío</option>
-                                                        <option value="Transferencia vía Scotiabank">Transferencia vía Scotiabank</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                                                        <option value="Banorte">Banorte</option>
+                                                        <option value="BanCoppel TLS">BanCoppel TLS</option>
+                                                        <option value="BanCoppel LC">BanCoppel LC</option>
+                                                        <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                        <option value="Banco Azteca LC">Banco Azteca LC</option>
+                                                        <option disabled>----------------------------------</option>
+                                                        <option value="Pendiente de Pago">Pendiente de Pago</option>
                                                     </select>
                                                 </div>
                                                 <div class="form-group">
