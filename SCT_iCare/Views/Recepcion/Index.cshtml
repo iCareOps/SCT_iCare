@@ -457,7 +457,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                         {
                             <div class="form-group" style="width:60%; min-width:320px">
                                 <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
-                                <select name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                <select name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select" required>
                                     @{
                                         if (Sucursal != "ASPA" && Sucursal != "TAPO")
                                         {
@@ -465,6 +465,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                                             <option value="Referencia BanBajío">Referencia BanBajío</option>
                                             <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                             <option value="BanCoppel">BanCoppel</option>
+                                            <option value="Banorte">Banorte</option>
                                             <option disabled>----------------------------------</option>
                                             <option value="Pendiente de Pago">Pendiente de Pago</option>
                                         }
@@ -472,6 +473,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                                         {
                                             <option value="Referencia BanBajío">Referencia BanBajío</option>
                                             <option value="BanCoppel">BanCoppel</option>
+                                            <option value="Banorte">Banorte</option>
                                             <option disabled>----------------------------------</option>
                                             <option value="Pendiente de Pago">Pendiente de Pago</option>
                                         }
@@ -484,7 +486,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                             </div>
                             <div class="form-group" style="width:60%; min-width:320px">
                                 <label for="recipient-name" class="col-form-label">Referido Por:</label>
-                                <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select" required>
                                     <option selected disabled>SELECCIONAR</option>
                                     @{
                                         //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
@@ -745,7 +747,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                     }
                     <div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Referido Por:</label>
-                        <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                        <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select" required>
                             <option selected disabled>SELECCIONAR</option>
                             @{
                                 //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
@@ -985,7 +987,7 @@ registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new 
                     }
                     <div class="form-group" style="width:60%; min-width:320px">
                         <label for="recipient-name" class="col-form-label">Referido Por:</label>
-                        <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                        <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select" required>
                             <option selected disabled>SELECCIONAR</option>
                             @{
                                 //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
@@ -1897,6 +1899,7 @@ else
                                                                     <option value="Referencia BanBajío">Referencia BanBajío</option>
                                                                     <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                                     <option value="BanCoppel">BanCoppel</option>
+                                                                    <option value="Banorte">Banorte</option>
                                                                     <option disabled>----------------------------------</option>
                                                                     <option value="Pendiente de Pago">Pendiente de Pago</option>
                                                                 }
@@ -1904,6 +1907,7 @@ else
                                                                 {
                                                                     <option value="Referencia BanBajío">Referencia BanBajío</option>
                                                                     <option value="BanCoppel">BanCoppel</option>
+                                                                    <option value="Banorte">Banorte</option>
                                                                     <option disabled>----------------------------------</option>
                                                                     <option value="Pendiente de Pago">Pendiente de Pago</option>
                                                                 }
@@ -1979,7 +1983,7 @@ else
                                         <div class="modal-body">
                                             <div class="form-group" style="width:60%; min-width:320px">
                                                 <label for="recipient-name" class="col-form-label">Seleccionar nuevo gestor:</label>
-                                                <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select" required>
                                                     <option selected value="@item.M.ReferidoPor">@item.M.ReferidoPor</option>
                                                     @{
                                                         //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;

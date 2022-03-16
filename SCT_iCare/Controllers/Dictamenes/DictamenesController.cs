@@ -314,6 +314,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                 paciente.ReferidoPor = referidoTipo.Nombre;
 
                 paciente.Cuenta = "CUENTAS X COBRAR";
+                paciente.TipoPago = "Pendiente de Pago";
 
                 if (referidoTipo.idReferido == 7 || referidoTipo.idReferido == 8 || referidoTipo.idReferido == 9 || referidoTipo.idReferido == 10 || referidoTipo.idReferido == 12 ||
                 referidoTipo.idReferido == 13 || referidoTipo.idReferido == 20 || referidoTipo.idReferido == 26 || referidoTipo.idReferido == 27 || referidoTipo.idReferido == 29 ||
@@ -359,6 +360,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                     paciente.ReferidoPor = referidoTipo.Nombre;
 
                     paciente.Cuenta = "CUENTAS X COBRAR";
+                    paciente.TipoPago = "Pendiente de Pago";
 
                     if (referidoTipo.idReferido == 7 || referidoTipo.idReferido == 8 || referidoTipo.idReferido == 9 || referidoTipo.idReferido == 10 || referidoTipo.idReferido == 12 ||
                     referidoTipo.idReferido == 13 || referidoTipo.idReferido == 20 || referidoTipo.idReferido == 26 || referidoTipo.idReferido == 27 || referidoTipo.idReferido == 29 ||
@@ -452,6 +454,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                 paciente.ReferidoPor = referidoTipo.Nombre;
 
                 paciente.Cuenta = "CUENTAS X COBRAR";
+                paciente.TipoPago = "Pendiente de Pago";
 
                 if (referidoTipo.idReferido == 7 || referidoTipo.idReferido == 8 || referidoTipo.idReferido == 9 || referidoTipo.idReferido == 10 || referidoTipo.idReferido == 12 ||
                 referidoTipo.idReferido == 13 || referidoTipo.idReferido == 20 || referidoTipo.idReferido == 26 || referidoTipo.idReferido == 27 || referidoTipo.idReferido == 29 ||
@@ -513,6 +516,7 @@ namespace SCT_iCare.Controllers.Dictamenes
                     paciente.ReferidoPor = referidoTipo.Nombre;
 
                     paciente.Cuenta = "CUENTAS X COBRAR";
+                    paciente.TipoPago = "Pendiente de Pago";
 
                     if (referidoTipo.idReferido == 7 || referidoTipo.idReferido == 8 || referidoTipo.idReferido == 9 || referidoTipo.idReferido == 10 || referidoTipo.idReferido == 12 ||
                     referidoTipo.idReferido == 13 || referidoTipo.idReferido == 20 || referidoTipo.idReferido == 26 || referidoTipo.idReferido == 27 || referidoTipo.idReferido == 29 ||

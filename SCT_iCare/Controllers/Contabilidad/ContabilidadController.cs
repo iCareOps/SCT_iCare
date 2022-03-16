@@ -73,7 +73,8 @@ namespace SCT_iCare.Controllers.Contabilidad
             return View();
         }
 
-        public ActionResult CambiarCuenta(int? id, string cuenta, string cuenta2, string comentario, string usuario, string canal, string sucursal, DateTime? fechaInicio, DateTime? fechaFinal, DateTime? fechaContable)
+        public ActionResult CambiarCuenta(int? id, string cuenta, string cuenta2, string comentario, string usuario, string canal, string sucursal, 
+            DateTime? fechaInicio, DateTime? fechaFinal, DateTime? fechaContable, string pago, int? idGestor)
         {
             var cita = db.Cita.Find(id);
 
@@ -83,17 +84,22 @@ namespace SCT_iCare.Controllers.Contabilidad
             cita.Cuenta = cuenta;
             cita.FechaContable = fechaContable == null ? DateTime.Now : fechaContable;
 
+            if (pago != null || pago != "")
+            {
+                cita.TipoPago = pago;
+            }
+
             if (ModelState.IsValid)
             {
                 db.Entry(cita).State = EntityState.Modified;
                 db.SaveChanges();
             }
 
-            return RedirectToAction("Index", new { fechaInicio = fechaInicio, fechaFinal = fechaFinal, sucursal = sucursal, cuenta = cuenta2, canal = canal });
+            return RedirectToAction("Index", new { fechaInicio = fechaInicio, fechaFinal = fechaFinal, sucursal = sucursal, cuenta = cuenta2, canal = canal, referido = idGestor });
         }
 
         public ActionResult CambiarCuentaALT(int? id, string cuenta, string comentario, string usuario, DateTime? fechaInicio, DateTime? fechaFinal, DateTime? fechaContable, string sucursal,
-            string cuenta2, string canal, string pago)
+            string cuenta2, string canal, string pago, int? idGestor)
         {
             var cita = db.PacienteESP.Find(id);
 
@@ -114,7 +120,7 @@ namespace SCT_iCare.Controllers.Contabilidad
                 db.SaveChanges();
             }
 
-            return RedirectToAction("Index", new { fechaInicio = fechaInicio, fechaFinal = fechaFinal, sucursal = sucursal, cuenta = cuenta2, canal = canal });
+            return RedirectToAction("Index", new { fechaInicio = fechaInicio, fechaFinal = fechaFinal, sucursal = sucursal, cuenta = cuenta2, canal = canal, referido = idGestor });
         }
     }
 }
