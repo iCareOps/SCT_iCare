@@ -3,6 +3,8 @@
 
     GMIEntities db = new GMIEntities();
 
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
     var canales = db.Canales.OrderBy(o => o.NombreCanal);
 
     int flag = 1;
@@ -93,9 +95,14 @@
             <option value="Alternativos">ACUMULADO ALT</option>
             <option value="Comparacion">COMPARACIÓN</option>
             <option value="Doctores">DOCTORES</option>
-            <option disabled>-------------------------</option>
-            <option value="Metas">ACTUALIZAR METAS</option>
-            <option value="Precios">ACTUALIZAR PRECIOS</option>
+            @{
+                if (oUser.Nombre == "Jesús Zenteno" || oUser.Nombre == "Jorge Rodriguez" || oUser.Nombre == "Administrador")
+                {
+                    <option disabled>-------------------------</option>
+                    <option value="Metas">ACTUALIZAR METAS</option>
+                    <option value="Precios">ACTUALIZAR PRECIOS</option>
+                }
+            }
         </select>
         @*<input type="month" class="form-control" />*@
         <input type="submit" class="btn btn-info" value="Enviar" />

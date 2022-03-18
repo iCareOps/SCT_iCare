@@ -810,6 +810,15 @@
           <Property Name="Contador" Type="int" />
           <Property Name="ContadorFecha" Type="datetime" />
         </EntityType>
+        <EntityType Name="Tickets">
+          <Key>
+            <PropertyRef Name="idTicket" />
+          </Key>
+          <Property Name="idTicket" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Ticket" Type="varbinary(max)" />
+          <Property Name="FechaCarga" Type="datetime" />
+          <Property Name="idPaciente" Type="int" />
+        </EntityType>
         <EntityType Name="Tipificaciones">
           <Key>
             <PropertyRef Name="idTipificacion" />
@@ -898,6 +907,7 @@
           <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RolMenu" EntityType="Self.RolMenu" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Sucursales" EntityType="Self.Sucursales" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tickets" EntityType="Self.Tickets" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tipificaciones" EntityType="Self.Tipificaciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UrgentesCount" EntityType="Self.UrgentesCount" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
@@ -1591,6 +1601,7 @@
             <End Role="PacienteESP" EntitySet="PacienteESP" />
             <End Role="HuellasESP" EntitySet="HuellasESP" />
           </AssociationSet>
+          <EntitySet Name="Tickets" EntityType="DevModel.Tickets" />
           </EntityContainer>
         <EntityType Name="CapturaIncidencia">
           <Key>
@@ -2685,6 +2696,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Tickets">
+          <Key>
+            <PropertyRef Name="idTicket" />
+          </Key>
+          <Property Name="idTicket" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Ticket" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="FechaCarga" Type="DateTime" Precision="3" />
+          <Property Name="idPaciente" Type="Int32" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3583,6 +3603,16 @@
                 <ScalarProperty Name="Grupo" ColumnName="Grupo" />
                 <ScalarProperty Name="NombreDoctor" ColumnName="NombreDoctor" />
                 <ScalarProperty Name="idDoctor2" ColumnName="idDoctor2" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tickets">
+            <EntityTypeMapping TypeName="DevModel.Tickets">
+              <MappingFragment StoreEntitySet="Tickets">
+                <ScalarProperty Name="idPaciente" ColumnName="idPaciente" />
+                <ScalarProperty Name="FechaCarga" ColumnName="FechaCarga" />
+                <ScalarProperty Name="Ticket" ColumnName="Ticket" />
+                <ScalarProperty Name="idTicket" ColumnName="idTicket" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

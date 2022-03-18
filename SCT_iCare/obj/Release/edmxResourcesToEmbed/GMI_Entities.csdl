@@ -685,6 +685,7 @@
       <End Role="PacienteESP" EntitySet="PacienteESP" />
       <End Role="HuellasESP" EntitySet="HuellasESP" />
     </AssociationSet>
+    <EntitySet Name="Tickets" EntityType="DevModel.Tickets" />
   </EntityContainer>
   <EntityType Name="CapturaIncidencia">
     <Key>
@@ -1779,4 +1780,13 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <EntityType Name="Tickets">
+    <Key>
+      <PropertyRef Name="idTicket" />
+    </Key>
+    <Property Name="idTicket" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Ticket" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="FechaCarga" Type="DateTime" Precision="3" />
+    <Property Name="idPaciente" Type="Int32" />
+  </EntityType>
 </Schema>

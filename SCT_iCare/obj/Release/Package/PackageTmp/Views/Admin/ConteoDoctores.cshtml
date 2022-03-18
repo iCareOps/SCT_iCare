@@ -8,6 +8,8 @@
 
     GMIEntities db = new GMIEntities();
 
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
     var doctores = db.Doctores2.OrderByDescending(o => o.idDoctor2);
     int? numeroDoctores = doctores.Count();
 
@@ -59,13 +61,18 @@
             <option value="Semanales">METAS SEMANALES</option>
             <option value="Sucursales">SUCURSALES</option>
             @*<option value="CallCenter">CALL CENTER</option>
-                <option value="Gestores">GESTORES</option>*@
+        <option value="Gestores">GESTORES</option>*@
             <option value="Alternativos">ACUMULADO ALT</option>
             <option value="Comparacion">COMPARACIÓN</option>
             <option value="Doctores">DOCTORES</option>
-            <option disabled>-------------------------</option>
-            <option value="Metas">ACTUALIZAR METAS</option>
-            <option value="Precios">ACTUALIZAR PRECIOS</option>
+            @{
+                if (oUser.Nombre == "Jesús Zenteno" || oUser.Nombre == "Jorge Rodriguez" || oUser.Nombre == "Administrador")
+                {
+                    <option disabled>-------------------------</option>
+                    <option value="Metas">ACTUALIZAR METAS</option>
+                    <option value="Precios">ACTUALIZAR PRECIOS</option>
+                }
+            }
         </select>
         <select name="grupo" style="font-size:2vh" class="form-control">
             <option>Seleccionar grupo</option>

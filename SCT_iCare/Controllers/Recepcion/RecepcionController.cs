@@ -186,7 +186,7 @@ namespace SCT_iCare.Controllers.Recepcion
             return View();
         }
 
-        public ActionResult CambiarGestor(int? id, int? referido, string usuario, string gestorAnterior, string tipoPago, string referencia)
+        public ActionResult CambiarGestor(int? id, int? referido, string usuario, string gestorAnterior, string tipoPago, string referencia, HttpPostedFileBase ticket, int? ide)
         {
             Cita cita = db.Cita.Find(id);
 
@@ -206,6 +206,53 @@ namespace SCT_iCare.Controllers.Recepcion
             {
                 db.Entry(cita).State = EntityState.Modified;
                 db.SaveChanges();
+            }
+
+            byte[] bytesTicket = null;
+
+            var consultaTicket = db.Tickets.Where(w => w.idPaciente == ide).Select(s => new { s.idPaciente, s.idTicket }).FirstOrDefault();
+
+            if (ticket != null && ticket.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(ticket.FileName);
+
+                byte[] bytes;
+                using (BinaryReader br = new BinaryReader(ticket.InputStream))
+                {
+                    bytes = br.ReadBytes(ticket.ContentLength);
+                }
+
+                bytesTicket = bytes;
+
+                if (consultaTicket != null)
+                {
+                    Tickets ticketArchivo = db.Tickets.Find(consultaTicket.idTicket);
+
+                    ticketArchivo.FechaCarga = DateTime.Now;
+                    ticketArchivo.idPaciente = Convert.ToInt32(id);
+                    ticketArchivo.Ticket = bytesTicket;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Entry(ticketArchivo).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    Tickets ticketArchivo = new Tickets();
+
+                    ticketArchivo.FechaCarga = DateTime.Now;
+                    ticketArchivo.idPaciente = Convert.ToInt32(id);
+                    ticketArchivo.Ticket = bytesTicket;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Tickets.Add(ticketArchivo);
+                        db.SaveChanges();
+                    }
+                }
+
             }
 
             return Redirect("Index");
@@ -1906,7 +1953,8 @@ namespace SCT_iCare.Controllers.Recepcion
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Digitalizar(HttpPostedFileBase file, string id, string usuario, string nombre, string doctor, string numero, string tipoL, string tipoT, string curp, DateTime? fecha)
+        public ActionResult Digitalizar(HttpPostedFileBase file, string id, string usuario, string nombre, string doctor, string numero, string tipoL, 
+            string tipoT, string curp, DateTime? fecha, HttpPostedFileBase ticket)
         {
 
             //var noExpedienteRepetido = (from i in db.Cita where i.NoExpediente == numero orderby i.idCita descending select i).FirstOrDefault();
@@ -1958,6 +2006,53 @@ namespace SCT_iCare.Controllers.Recepcion
                 //Response.AddHeader("content-disposition", "attachment;filename=MyPDF.pdf");
                 //Response.BinaryWrite(bytesBinary);
                 //Response.End();
+            }
+
+            byte[] bytesTicket = null;
+
+            var consultaTicket = db.Tickets.Where(w => w.idPaciente == ide).Select(s => new { s.idPaciente, s.idTicket }).FirstOrDefault();
+
+            if (ticket != null && ticket.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(ticket.FileName);
+
+                byte[] bytes;
+                using (BinaryReader br = new BinaryReader(ticket.InputStream))
+                {
+                    bytes = br.ReadBytes(ticket.ContentLength);
+                }
+
+                bytesTicket = bytes;
+
+                if(consultaTicket != null)
+                {
+                    Tickets ticketArchivo = db.Tickets.Find(consultaTicket.idTicket);
+
+                    ticketArchivo.FechaCarga = DateTime.Now;
+                    ticketArchivo.idPaciente = Convert.ToInt32(id);
+                    ticketArchivo.Ticket = bytesTicket;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Entry(ticketArchivo).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    Tickets ticketArchivo = new Tickets();
+
+                    ticketArchivo.FechaCarga = DateTime.Now;
+                    ticketArchivo.idPaciente = Convert.ToInt32(id);
+                    ticketArchivo.Ticket = bytesTicket;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Tickets.Add(ticketArchivo);
+                        db.SaveChanges();
+                    }
+                }
+                
             }
 
             string CURP = null;
@@ -2201,7 +2296,7 @@ namespace SCT_iCare.Controllers.Recepcion
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult EditarCompleto(HttpPostedFileBase file, string id, string nombre, string doctor, string numero, string tipoL, string tipoT
-            , string pago, string telefono, string email, string referencia, string curp, DateTime? fecha)
+            , string pago, string telefono, string email, string referencia, string curp, DateTime? fecha, HttpPostedFileBase ticket)
         {
             int ide = Convert.ToInt32(id);
 
@@ -2350,6 +2445,53 @@ namespace SCT_iCare.Controllers.Recepcion
                         db.SaveChanges();
                     }
                 }
+            }
+
+            byte[] bytesTicket = null;
+
+            var consultaTicket = db.Tickets.Where(w => w.idPaciente == ide).Select(s => new { s.idPaciente, s.idTicket }).FirstOrDefault();
+
+            if (ticket != null && ticket.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(ticket.FileName);
+
+                byte[] bytes;
+                using (BinaryReader br = new BinaryReader(ticket.InputStream))
+                {
+                    bytes = br.ReadBytes(ticket.ContentLength);
+                }
+
+                bytesTicket = bytes;
+
+                if (consultaTicket != null)
+                {
+                    Tickets ticketArchivo = db.Tickets.Find(consultaTicket.idTicket);
+
+                    ticketArchivo.FechaCarga = DateTime.Now;
+                    ticketArchivo.idPaciente = Convert.ToInt32(id);
+                    ticketArchivo.Ticket = bytesTicket;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Entry(ticketArchivo).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    Tickets ticketArchivo = new Tickets();
+
+                    ticketArchivo.FechaCarga = DateTime.Now;
+                    ticketArchivo.idPaciente = Convert.ToInt32(id);
+                    ticketArchivo.Ticket = bytesTicket;
+
+                    if (ModelState.IsValid)
+                    {
+                        db.Tickets.Add(ticketArchivo);
+                        db.SaveChanges();
+                    }
+                }
+
             }
 
             paciente.Nombre = NOMBRE;
