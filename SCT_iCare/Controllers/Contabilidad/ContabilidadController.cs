@@ -80,13 +80,18 @@ namespace SCT_iCare.Controllers.Contabilidad
 
             string historico = cita.CuentaComentario == null ? "" : cita.CuentaComentario + "+";
             string cuentaAnterior = cita.Cuenta == null ? "" : " PROVIENE DE " + cita.Cuenta;
-            cita.CuentaComentario = historico + comentario + cuentaAnterior + " " + DateTime.Today.ToString("dd-MMMM-yyyy") + " POR " + usuario;
+            cita.CuentaComentario = historico + comentario + cuentaAnterior + " " + DateTime.Today.ToString("dd-MM-yy") + " POR " + usuario;
             cita.Cuenta = cuenta;
             cita.FechaContable = fechaContable == null ? DateTime.Now : fechaContable;
 
             if (pago != null || pago != "")
             {
                 cita.TipoPago = pago;
+            }
+
+            if(cuenta == "CONCILIADO")
+            {
+                cita.Conciliado = DateTime.Today.Day.ToString("dd") + "-" + DateTime.Today.Month.ToString("MM")+  "-" + DateTime.Today.Year.ToString("yy");
             }
 
             if (ModelState.IsValid)
@@ -105,7 +110,7 @@ namespace SCT_iCare.Controllers.Contabilidad
 
             string historico = cita.CuentaComentario == null ? "" : cita.CuentaComentario + "+"; 
             string cuentaAnterior = cita.Cuenta == null ? "" : " PROVIENE DE " + cita.Cuenta;
-            cita.CuentaComentario = historico + comentario + cuentaAnterior + " " + DateTime.Today.ToString("dd-MMMM-yyyy") + " POR " + usuario;
+            cita.CuentaComentario = historico + comentario + cuentaAnterior + " " + DateTime.Today.ToString("dd-MM-yy") + " POR " + usuario;
             cita.Cuenta = cuenta;
             cita.FechaContable = fechaContable == null ? DateTime.Now : fechaContable;
 
@@ -121,6 +126,29 @@ namespace SCT_iCare.Controllers.Contabilidad
             }
 
             return RedirectToAction("Index", new { fechaInicio = fechaInicio, fechaFinal = fechaFinal, sucursal = sucursal, cuenta = cuenta2, canal = canal, referido = idGestor });
+        }
+
+        public ActionResult AbrirTicket(int? id)
+        {
+            if (id != null)
+            {
+                TempData["ID"] = id;
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["ID"] = null;
+                return RedirectToAction("Index");
+            }
+        }
+
+        public ActionResult AbrirTicket2(int id)
+        {
+            Tickets ticket = db.Tickets.Find(id);
+
+            var bytesBinary = ticket.Ticket;
+            TempData["ID"] = null;
+            return File(bytesBinary, "application/pdf");
         }
     }
 }
