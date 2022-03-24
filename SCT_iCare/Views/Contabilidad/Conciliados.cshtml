@@ -34,22 +34,22 @@
     var modelo = db.Paciente.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
         Join(db.Captura, a => a.M.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
         Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B.EstatusCaptura == "Terminado" && s.A.M.Asistencia == null
-        && s.A.M.Asistencia == null && s.A.M.TipoTramite != "REVALORACIÓN" && s.A.M.Conciliado == null).OrderBy(o => o.A.M.Cuenta);
+        && s.A.M.Asistencia == null && s.A.M.TipoTramite != "REVALORACIÓN" && s.A.M.Conciliado != null).OrderBy(o => o.A.M.Cuenta);
 
 
     var modelo1 = db.PacienteESP.
         Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido) && s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.EstatusCaptura == "Terminado"
-        && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null && s.Conciliado == null).OrderBy(o => o.Cuenta);
+        && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null && s.Conciliado != null).OrderBy(o => o.Cuenta);
 
 
     var modeloExcel = db.Paciente.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
         Join(db.Captura, a => a.M.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
         Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B.EstatusCaptura == "Terminado" && s.A.M.Asistencia == null
-        && s.A.M.Asistencia == null && s.A.M.TipoTramite != "REVALORACIÓN" && s.A.M.Conciliado == null).OrderBy(o => o.A.M.Cuenta);
+        && s.A.M.Asistencia == null && s.A.M.TipoTramite != "REVALORACIÓN" && s.A.M.Conciliado != null).OrderBy(o => o.A.M.Cuenta);
 
     var modeloExcel1 = db.PacienteESP.
         Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido) && s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.EstatusCaptura == "Terminado"
-        && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null && s.Conciliado == null).OrderBy(o => o.Cuenta);
+        && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null && s.Conciliado != null).OrderBy(o => o.Cuenta);
 
     if (ViewBag.Sucursal != "")
     {
@@ -315,7 +315,7 @@
 
 |   <div>
     <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
-    <a href="~/Contabilidad/Conciliados"><button class="btn btn-info">Ir a Conciliados</button></a>
+    <a href="~/Contabilidad/Index"><button class="btn btn-info">Ir a No Conciliados</button></a>
 </div>
 
 <br />
@@ -476,6 +476,7 @@
                     </td>
                     <td>
                         <div class="btn-group">
+
 
                             @{
 
@@ -1037,7 +1038,7 @@
                                         }
                                     </span>
                                 </span>
-                                            }
+                            }
                         }
                     </td>
 
@@ -1857,3 +1858,5 @@
         </script>
     }
 }
+
+
