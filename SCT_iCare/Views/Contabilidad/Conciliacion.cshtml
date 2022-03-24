@@ -1,0 +1,623 @@
+﻿
+@{
+    ViewBag.Title = "Conciliacion";
+
+    GMIEntities db = new GMIEntities();
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    DateTime fecha1 = DateTime.Today;
+    DateTime fecha2 = DateTime.Today.AddDays(1);
+
+    int dinero = 0;
+}
+
+<br />
+<h2 style="color: white">Conciliación</h2>
+<br />
+
+<h3 style="color: white">EPIs</h3>
+<div class="tablaScroll" style="min-height: 300px; max-height:300px">
+    <table class="table  table-hover tablas table-bordered" style="color: #2F2D6B">
+        <thead style="color:white">
+            <tr>
+                <th style="text-align:center">
+                    Sucursal
+                </th>
+                <th style="text-align:center">
+                    EPIs
+                </th>
+                <th style="text-align:center">
+                    Conekta
+                </th>
+                <th style="text-align:center">
+                    BanBajío
+                </th>
+                <th style="text-align:center">
+                    Banorte
+                </th>
+                <th style="text-align:center">
+                    Coppel TLS
+                </th>
+                <th style="text-align:center">
+                    Azteca TLS
+                </th>
+                <th style="text-align:center">
+                    Coppel LC
+                </th>
+                <th style="text-align:center">
+                    Azteca LC
+                </th>
+                <th style="text-align:center">
+                    CXC
+                </th>
+                <th style="text-align:center">
+                    Aclaraciones
+                </th>
+            </tr>
+        </thead>
+
+        @{
+            foreach (var item in db.Sucursales.Where(w => w.Nombre != "MIXCOAC" && w.Nombre != "IN SITU"))
+            {
+                <tr>
+                    <td><b>@item.Nombre</b></td>
+                    <td style="text-align:center">
+                        @{
+                            int epis = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN").Count();
+                        }
+                        <span><b>@epis</b></span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int conekta = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                (w.N.TipoPago == "Referencia OXXO" || w.N.TipoPago == "Pago con Tarjeta")).Count();
+                        }
+                        <span>@conekta</span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int bajio = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                (w.N.TipoPago == "Referencia BanBajío" || w.N.TipoPago == "Transferencia vía BanBajío")).Count();
+                        }
+                        <span>@bajio</span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int banorte = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                w.N.TipoPago == "Banorte").Count();
+                        }
+                        <span>@banorte</span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int coppelTLS = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                w.N.TipoPago == "BanCoppel TLS").Count();
+                        }
+                        <span>@coppelTLS</span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int aztecaTLS = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                w.N.TipoPago == "Banco Azteca TLS").Count();
+                        }
+                        <span>@aztecaTLS</span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int coppelLC = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                w.N.TipoPago == "BanCoppel LC").Count();
+                        }
+                        <span>@coppelLC</span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int aztecaLC = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                w.N.TipoPago == "Banco Azteca LC").Count();
+                        }
+                        <span>@aztecaLC</span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int cxc = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                w.N.TipoPago == "Pendiente de Pago").Count();
+                        }
+                        <span>@cxc</span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int aclaraciones = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                w.N.Cuenta == "ACLARACIÓN").Count();
+                        }
+                        <span>@aclaraciones</span>
+                    </td>
+                </tr>
+
+            }
+        }
+
+    </table>
+</div>
+
+<h3 style="color: white">Cantidades</h3>
+<div class="tablaScroll" style="min-height: 300px; max-height:300px">
+    <table class="table  table-hover tablas table-bordered" style="color: #2F2D6B">
+        <thead style="color:white">
+            <tr>
+                <th style="text-align:center">
+                    Sucursal
+                </th>
+                <th style="text-align:center">
+                    EPIs
+                </th>
+                <th style="text-align:center">
+                    Conekta
+                </th>
+                <th style="text-align:center">
+                    BanBajío
+                </th>
+                <th style="text-align:center">
+                    Banorte
+                </th>
+                <th style="text-align:center">
+                    Coppel TLS
+                </th>
+                <th style="text-align:center">
+                    Azteca TLS
+                </th>
+                <th style="text-align:center">
+                    Coppel LC
+                </th>
+                <th style="text-align:center">
+                    Azteca LC
+                </th>
+                <th style="text-align:center">
+                    CXC
+                </th>
+                <th style="text-align:center">
+                    Aclaraciones
+                </th>
+            </tr>
+        </thead>
+
+        @{
+            foreach (var item in db.Sucursales.Where(w => w.Nombre != "MIXCOAC" && w.Nombre != "IN SITU"))
+            {
+                <tr>
+                    <td><b>@item.Nombre</b></td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var epis = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN");
+
+                            foreach (var i in epis)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.N.ReferidoPor && e.Tipo == i.N.CanalTipo select e).FirstOrDefault();
+
+                                if (i.N.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span><b>$@dinero.ToString("###,###,###,###")</b></span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var conekta = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                            Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                            w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                            (w.N.TipoPago == "Referencia OXXO" || w.N.TipoPago == "Pago con Tarjeta"));
+
+                            foreach (var i in conekta)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.N.ReferidoPor && e.Tipo == i.N.CanalTipo select e).FirstOrDefault();
+
+                                if (i.N.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var bajio = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                            Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                            w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                            (w.N.TipoPago == "Referencia BanBajío" || w.N.TipoPago == "Transferencia vía BanBajío"));
+
+                            foreach (var i in bajio)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.N.ReferidoPor && e.Tipo == i.N.CanalTipo select e).FirstOrDefault();
+
+                                if (i.N.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var banorte = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                            Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                            w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                            w.N.TipoPago == "Banorte");
+
+                            foreach (var i in banorte)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.N.ReferidoPor && e.Tipo == i.N.CanalTipo select e).FirstOrDefault();
+
+                                if (i.N.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var coppelTLS = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                            Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                            w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                            w.N.TipoPago == "BanCoppel TLS");
+
+                            foreach (var i in coppelTLS)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.N.ReferidoPor && e.Tipo == i.N.CanalTipo select e).FirstOrDefault();
+
+                                if (i.N.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var aztecaTLS = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                            Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                            w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                            w.N.TipoPago == "Banco Azteca TLS");
+
+                            foreach (var i in aztecaTLS)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.N.ReferidoPor && e.Tipo == i.N.CanalTipo select e).FirstOrDefault();
+
+                                if (i.N.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var coppelLC = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                            Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                            w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                            w.N.TipoPago == "BanCoppel LC");
+
+                            foreach (var i in coppelLC)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.N.ReferidoPor && e.Tipo == i.N.CanalTipo select e).FirstOrDefault();
+
+                                if (i.N.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var aztecaLC = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                            Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                            w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                            w.N.TipoPago == "Banco Azteca LC");
+
+                            foreach (var i in aztecaLC)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.N.ReferidoPor && e.Tipo == i.N.CanalTipo select e).FirstOrDefault();
+
+                                if (i.N.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var cxc = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                            Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                            w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                            w.N.TipoPago == "Pendiente de Pago");
+
+                            foreach (var i in cxc)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.N.ReferidoPor && e.Tipo == i.N.CanalTipo select e).FirstOrDefault();
+
+                                if (i.N.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var aclaraciones = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                            Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                            w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                            w.N.Cuenta == "ACLARACIÓN");
+
+                            foreach (var i in aclaraciones)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.N.ReferidoPor && e.Tipo == i.N.CanalTipo select e).FirstOrDefault();
+
+                                if (i.N.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                </tr>
+
+            }
+        }
+
+    </table>
+</div>
+

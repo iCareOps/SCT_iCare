@@ -130,6 +130,11 @@ namespace SCT_iCare.Controllers.Contabilidad
             return View();
         }
 
+        public ActionResult Conciliacion()
+        {
+            return View();
+        }
+
         public ActionResult CambiarCuenta(int? id, string cuenta, string cuenta2, string comentario, string usuario, string canal, string sucursal, 
             DateTime? fechaInicio, DateTime? fechaFinal, DateTime? fechaContable, string pago, int? idGestor)
         {
