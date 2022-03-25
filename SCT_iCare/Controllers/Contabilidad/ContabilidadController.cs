@@ -73,6 +73,68 @@ namespace SCT_iCare.Controllers.Contabilidad
             return View();
         }
 
+        public ActionResult Conciliados(string canal, string cuenta, string sucursal, DateTime? fechaInicio, DateTime? fechaFinal, string tipoPago, int? referido)
+        {
+            var Referido = db.Referido.Find(referido);
+
+            if (sucursal == "" || sucursal == null)
+            {
+                ViewBag.Sucursal = "";
+            }
+            else
+            {
+                ViewBag.Sucursal = sucursal;
+            }
+
+            if (canal == "" || canal == null)
+            {
+                ViewBag.Canal = "";
+            }
+            else
+            {
+                ViewBag.Canal = canal;
+            }
+
+            if (cuenta == "" || cuenta == null)
+            {
+                ViewBag.Cuenta = "";
+            }
+            else
+            {
+                ViewBag.Cuenta = cuenta;
+            }
+
+            if (tipoPago == "" || tipoPago == null)
+            {
+                ViewBag.Pago = "";
+            }
+            else
+            {
+                ViewBag.Pago = tipoPago;
+            }
+
+            if (referido == null)
+            {
+                ViewBag.Referido = "";
+                ViewBag.idReferido = 0;
+            }
+            else
+            {
+                ViewBag.Referido = Referido.Nombre;
+                ViewBag.idReferido = Referido.idReferido;
+            }
+
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
+
+            return View();
+        }
+
+        public ActionResult Conciliacion()
+        {
+            return View();
+        }
+
         public ActionResult CambiarCuenta(int? id, string cuenta, string cuenta2, string comentario, string usuario, string canal, string sucursal, 
             DateTime? fechaInicio, DateTime? fechaFinal, DateTime? fechaContable, string pago, int? idGestor)
         {
@@ -89,10 +151,7 @@ namespace SCT_iCare.Controllers.Contabilidad
                 cita.TipoPago = pago;
             }
 
-            if(cuenta == "CONCILIADO")
-            {
-                cita.Conciliado = DateTime.Today.Day.ToString("dd") + "-" + DateTime.Today.Month.ToString("MM")+  "-" + DateTime.Today.Year.ToString("yy");
-            }
+            cita.Conciliado = DateTime.Today.Day.ToString() + "-" + DateTime.Today.Month.ToString() + "-" + DateTime.Today.Year.ToString();
 
             if (ModelState.IsValid)
             {
@@ -118,6 +177,8 @@ namespace SCT_iCare.Controllers.Contabilidad
             {
                 cita.TipoPago = pago;
             }
+
+            cita.Conciliado = DateTime.Today.Day.ToString() + "-" + DateTime.Today.Month.ToString() + "-" + DateTime.Today.Year.ToString();
 
             if (ModelState.IsValid)
             {

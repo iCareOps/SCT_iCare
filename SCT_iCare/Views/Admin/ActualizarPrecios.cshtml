@@ -64,32 +64,39 @@
 <h2 style="color:white">Lista de Referidos</h2>
 <br />
 
-<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/TablaMetas")">
-    <div>
+@{
+    if (oUser.Nombre != "José Luis Mora")
+    {
+        <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/TablaMetas")">
+            <div>
 
-        <select name="gestor" style="font-size:2vh" class="form-control">
-            <option>Seleccionar</option>
-            <option value="Diarias">METAS DIARIAS</option>
-            <option value="Semanales">METAS SEMANALES</option>
-            <option value="Sucursales">SUCURSALES</option>
-            @*<option value="CallCenter">CALL CENTER</option>
-                <option value="Gestores">GESTORES</option>*@
-            <option value="Alternativos">ACUMULADO ALT</option>
-            <option value="Comparacion">COMPARACIÓN</option>
-            <option value="Doctores">DOCTORES</option>
-            @{
-                if (oUser.Nombre == "Jesús Zenteno" || oUser.Nombre == "Jorge Rodriguez" || oUser.Nombre == "Administrador")
-                {
-                    <option disabled>-------------------------</option>
-                    <option value="Metas">ACTUALIZAR METAS</option>
-                    <option value="Precios">ACTUALIZAR PRECIOS</option>
-                }
-            }
-        </select>
-        @*<input type="month" class="form-control" />*@
-        <input type="submit" class="btn btn-info" value="Enviar" />
-    </div>
-</form>
+                <select name="gestor" style="font-size:2vh" class="form-control">
+                    <option>Seleccionar</option>
+                    <option value="Diarias">METAS DIARIAS</option>
+                    <option value="Semanales">METAS SEMANALES</option>
+                    <option value="Sucursales">SUCURSALES</option>
+                    @*<option value="CallCenter">CALL CENTER</option>
+                        <option value="Gestores">GESTORES</option>*@
+                    <option value="Alternativos">ACUMULADO ALT</option>
+                    <option value="Comparacion">COMPARACIÓN</option>
+                    <option value="Doctores">DOCTORES</option>
+                    @{
+                        if (oUser.Nombre == "Jesús Zenteno" || oUser.Nombre == "Jorge Rodriguez" || oUser.Nombre == "Administrador")
+                        {
+                            <option disabled>-------------------------</option>
+                            <option value="Metas">ACTUALIZAR METAS</option>
+                            <option value="Precios">ACTUALIZAR PRECIOS</option>
+                        }
+                    }
+                </select>
+                @*<input type="month" class="form-control" />*@
+                <input type="submit" class="btn btn-info" value="Enviar" />
+            </div>
+        </form>
+    }
+}
+
+
 
 <script>
 
@@ -111,7 +118,7 @@
 
 <br />
 
-<div class="tablaScroll" style="max-width:700px">   
+<div class="tablaScroll" style="max-width:700px">
     <table class="table  table-bordered table-hover tablas" style="color: #2F2D6B">
         <thead>
             <tr style="color:white">
