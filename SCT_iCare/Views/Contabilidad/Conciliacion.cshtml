@@ -5,10 +5,21 @@
     GMIEntities db = new GMIEntities();
     var oUser = (Usuarios)HttpContext.Current.Session["User"];
 
-    DateTime fecha1 = DateTime.Today;
-    DateTime fecha2 = DateTime.Today.AddDays(1);
+    DateTime fecha1 = DateTime.Today.AddDays(-1);
+    DateTime fecha2 = DateTime.Today;
 
     int dinero = 0;
+
+    int totalFooterEPIS = 0;
+    int totalFooterConekta = 0;
+    int totalFooterBajio = 0;
+    int totalFooterBanorte = 0;
+    int totalFooterCoppelTLS = 0;
+    int totalFooterCoppelLC = 0;
+    int totalFooterAztecaTLS = 0;
+    int totalFooterAztecaLC = 0;
+    int totalFooterCXC = 0;
+    int totalFooterAclaraciones = 0;
 }
 
 <br />
@@ -16,7 +27,7 @@
 <br />
 
 <h3 style="color: white">EPIs</h3>
-<div class="tablaScroll" style="min-height: 300px; max-height:300px">
+<div class="tablaScroll" style="min-height: 300px; max-height:400px">
     <table class="table  table-hover tablas table-bordered" style="color: #2F2D6B">
         <thead style="color:white">
             <tr>
@@ -27,31 +38,31 @@
                     EPIs
                 </th>
                 <th style="text-align:center">
-                    Conekta
+                    @Html.ActionLink("Conekta", "Index", new { tipoPago = "OXXO", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
                 </th>
                 <th style="text-align:center">
-                    BanBajío
+                    @Html.ActionLink("BanBajío", "Index", new { tipoPago = "BanBajío", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
                 </th>
                 <th style="text-align:center">
-                    Banorte
+                    @Html.ActionLink("Banorte", "Index", new { tipoPago = "Banorte", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
                 </th>
                 <th style="text-align:center">
-                    Coppel TLS
+                    @Html.ActionLink("Coppel TLS", "Index", new { tipoPago = "Coppel TLS", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
                 </th>
                 <th style="text-align:center">
-                    Azteca TLS
+                    @Html.ActionLink("Azteca TLS", "Index", new { tipoPago = "Azteca TLS", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
                 </th>
                 <th style="text-align:center">
-                    Coppel LC
+                    @Html.ActionLink("Coppel LC", "Index", new { tipoPago = "Coppel LC", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
                 </th>
                 <th style="text-align:center">
-                    Azteca LC
+                    @Html.ActionLink("Azteca LC", "Index", new { tipoPago = "Azteca LC", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
                 </th>
                 <th style="text-align:center">
-                    CXC
+                    @Html.ActionLink("CXC", "Index", new { tipoPago = "Pendiente de Pago", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
                 </th>
                 <th style="text-align:center">
-                    Aclaraciones
+                    @Html.ActionLink("Aclarciones", "Index", new { cuenta = "ACLARCIONES", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
                 </th>
             </tr>
         </thead>
@@ -60,12 +71,14 @@
             foreach (var item in db.Sucursales.Where(w => w.Nombre != "MIXCOAC" && w.Nombre != "IN SITU"))
             {
                 <tr>
-                    <td><b>@item.Nombre</b></td>
+                    <td><b>@Html.ActionLink(item.Nombre, "Index", new { sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</b></td>
                     <td style="text-align:center">
                         @{
                             int epis = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
                                 Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
                                 w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN").Count();
+
+                            totalFooterEPIS += epis;
                         }
                         <span><b>@epis</b></span>
                     </td>
@@ -75,8 +88,11 @@
                                 Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
                                 w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
                                 (w.N.TipoPago == "Referencia OXXO" || w.N.TipoPago == "Pago con Tarjeta")).Count();
+
+                            totalFooterConekta += conekta;
                         }
-                        <span>@conekta</span>
+                        <span>@Html.ActionLink(conekta.ToString(), "Index", new { tipoPago = "OXXO", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                        
                     </td>
                     <td style="text-align:center">
                         @{
@@ -84,8 +100,10 @@
                                 Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
                                 w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
                                 (w.N.TipoPago == "Referencia BanBajío" || w.N.TipoPago == "Transferencia vía BanBajío")).Count();
+
+                            totalFooterBajio += bajio;
                         }
-                        <span>@bajio</span>
+                        <span>@Html.ActionLink(bajio.ToString(), "Index", new { tipoPago = "BanBajío", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
                     </td>
                     <td style="text-align:center">
                         @{
@@ -93,8 +111,10 @@
                                 Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
                                 w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
                                 w.N.TipoPago == "Banorte").Count();
+
+                            totalFooterBanorte += banorte;
                         }
-                        <span>@banorte</span>
+                        <span>@Html.ActionLink(banorte.ToString(), "Index", new { tipoPago = "Banorte", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
                     </td>
                     <td style="text-align:center">
                         @{
@@ -102,8 +122,10 @@
                                 Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
                                 w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
                                 w.N.TipoPago == "BanCoppel TLS").Count();
+
+                            totalFooterCoppelTLS += coppelTLS;
                         }
-                        <span>@coppelTLS</span>
+                        <span>@Html.ActionLink(coppelTLS.ToString(), "Index", new { tipoPago = "Coppel TLS", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
                     </td>
                     <td style="text-align:center">
                         @{
@@ -111,8 +133,10 @@
                                 Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
                                 w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
                                 w.N.TipoPago == "Banco Azteca TLS").Count();
+
+                            totalFooterAztecaTLS += aztecaTLS;
                         }
-                        <span>@aztecaTLS</span>
+                        <span>@Html.ActionLink(aztecaTLS.ToString(), "Index", new { tipoPago = "Azteca TLS", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
                     </td>
                     <td style="text-align:center">
                         @{
@@ -120,8 +144,10 @@
                                 Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
                                 w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
                                 w.N.TipoPago == "BanCoppel LC").Count();
+
+                            totalFooterCoppelLC += coppelLC;
                         }
-                        <span>@coppelLC</span>
+                        <span>@Html.ActionLink(coppelLC.ToString(), "Index", new { tipoPago = "Coppel LC", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
                     </td>
                     <td style="text-align:center">
                         @{
@@ -129,8 +155,10 @@
                                 Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
                                 w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
                                 w.N.TipoPago == "Banco Azteca LC").Count();
+
+                            totalFooterAztecaLC += aztecaLC;
                         }
-                        <span>@aztecaLC</span>
+                        <span>@Html.ActionLink(aztecaLC.ToString(), "Index", new { tipoPago = "Azteca LC", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
                     </td>
                     <td style="text-align:center">
                         @{
@@ -138,8 +166,10 @@
                                 Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
                                 w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
                                 w.N.TipoPago == "Pendiente de Pago").Count();
+
+                            totalFooterCXC += cxc;
                         }
-                        <span>@cxc</span>
+                        <span>@Html.ActionLink(cxc.ToString(), "Index", new { tipoPago = "Pendiente de Pago", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
                     </td>
                     <td style="text-align:center">
                         @{
@@ -147,19 +177,163 @@
                                 Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
                                 w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
                                 w.N.Cuenta == "ACLARACIÓN").Count();
+
+                            totalFooterAclaraciones += aclaraciones;
                         }
-                        <span>@aclaraciones</span>
+                        <span>@Html.ActionLink(aclaraciones.ToString(), "Index", new { Cuenta = "ACLARACIONES", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
                     </td>
                 </tr>
 
             }
         }
 
+        @{
+            foreach (var item in db.Canales.Where(w => w.NombreCanal == "IN SITU" || w.NombreCanal == "GESTOR ALT"))
+            {
+                <tr>
+                    <td><b>@Html.ActionLink(item.NombreCanal, "Index", new { Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</b></td>
+                    <td style="text-align:center">
+                        @{
+                            int epis = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN").Count();
+
+                            totalFooterEPIS += epis;
+
+                        }
+                        <span><b>@epis</b></span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int conekta = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                (w.TipoPago == "Referencia OXXO" || w.TipoPago == "Pago con Tarjeta")).Count();
+
+                            totalFooterConekta += conekta;
+                        }
+                        <span>@Html.ActionLink(conekta.ToString(), "Index", new { tipoPago = "OXXO", Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B text-decoration: none" })</span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int bajio = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                (w.TipoPago == "Referencia BanBajío" || w.TipoPago == "Transferencia vía BanBajío")).Count();
+
+                            totalFooterBajio += bajio;
+                        }
+                        <span>@Html.ActionLink(bajio.ToString(), "Index", new { tipoPago = "Bajío", Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int banorte = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                w.TipoPago == "Banorte").Count();
+
+                            totalFooterBanorte += banorte;
+                        }
+                        <span>@Html.ActionLink(banorte.ToString(), "Index", new { tipoPago = "Banorte", Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int coppelTLS = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                w.TipoPago == "BanCoppel TLS").Count();
+
+
+                            totalFooterCoppelTLS += coppelTLS;
+                        }
+                        <span>@Html.ActionLink(coppelTLS.ToString(), "Index", new { tipoPago = "Coppel TLS", Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int aztecaTLS = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                w.TipoPago == "Banco Azteca TLS").Count();
+
+                            totalFooterAztecaTLS += aztecaTLS;
+                        }
+                        <span>@Html.ActionLink(aztecaTLS.ToString(), "Index", new { tipoPago = "Azteca TLS", Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int coppelLC = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                w.TipoPago == "BanCoppel LC").Count();
+
+                            totalFooterCoppelLC += coppelLC;
+
+                        }
+                        <span>@Html.ActionLink(coppelLC.ToString(), "Index", new { tipoPago = "Coppel LC", Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int aztecaLC = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                w.TipoPago == "Banco Azteca LC").Count();
+
+                            totalFooterAztecaLC += aztecaLC;
+
+                        }
+                        <span>@Html.ActionLink(aztecaLC.ToString(), "Index", new { tipoPago = "Azteca LC", Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int cxc = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                w.TipoPago == "Pendiente de Pago").Count();
+
+                            totalFooterCXC += cxc;
+
+
+                        }
+                        <span>@Html.ActionLink(cxc.ToString(), "Index", new { tipoPago = "Pendiente de Pago", Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            int aclaraciones = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                w.TipoPago == "ACLARACIÓN").Count();
+
+                            totalFooterAclaraciones += aclaraciones;
+                        }
+                        <span>@Html.ActionLink(aclaraciones.ToString(), "Index", new { cuenta = "ACLARACIONES", Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                    </td>
+                </tr>
+
+            }
+        }
+
+        <tr>
+            <td><b>TOTALES</b></td>
+            <td style="text-align:center"><b>@totalFooterEPIS</b></td>
+            <td style="text-align:center">@totalFooterConekta</td>
+            <td style="text-align:center">@totalFooterBajio</td>
+            <td style="text-align:center">@totalFooterBanorte</td>
+            <td style="text-align:center">@totalFooterCoppelTLS</td>
+            <td style="text-align:center">@totalFooterAztecaTLS</td>
+            <td style="text-align:center">@totalFooterCoppelLC</td>
+            <td style="text-align:center">@totalFooterAztecaLC</td>
+            <td style="text-align:center">@totalFooterCXC</td>
+            <td style="text-align:center">@totalFooterAclaraciones</td>
+        </tr>
+
     </table>
 </div>
 
+@{ 
+    totalFooterEPIS = 0;
+    totalFooterConekta = 0;
+    totalFooterBajio = 0;
+    totalFooterBanorte = 0;
+    totalFooterCoppelTLS = 0;
+    totalFooterCoppelLC = 0;
+    totalFooterAztecaTLS = 0;
+    totalFooterAztecaLC = 0;
+    totalFooterCXC = 0;
+    totalFooterAclaraciones = 0;
+}
+
 <h3 style="color: white">Cantidades</h3>
-<div class="tablaScroll" style="min-height: 300px; max-height:300px">
+<div class="tablaScroll" style="min-height: 300px; max-height:400px">
     <table class="table  table-hover tablas table-bordered" style="color: #2F2D6B">
         <thead style="color:white">
             <tr>
@@ -219,16 +393,20 @@
                                 if (i.N.TipoTramite == "AEREO")
                                 {
                                     dinero += 3480;
+
+                                    totalFooterEPIS += 3480;
                                 }
                                 else
                                 {
                                     if (precio.PrecioNormalconIVA != null)
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterEPIS += Convert.ToInt32(precio.PrecioNormalconIVA);
                                     }
                                     else
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterEPIS += Convert.ToInt32(precio.PrecioNormal);
                                     }
                                 }
                             }
@@ -260,16 +438,19 @@
                                 if (i.N.TipoTramite == "AEREO")
                                 {
                                     dinero += 3480;
+                                    totalFooterConekta += 3480;
                                 }
                                 else
                                 {
                                     if (precio.PrecioNormalconIVA != null)
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterConekta += Convert.ToInt32(precio.PrecioNormalconIVA);
                                     }
                                     else
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterConekta += Convert.ToInt32(precio.PrecioNormal);
                                     }
                                 }
                             }
@@ -301,16 +482,19 @@
                                 if (i.N.TipoTramite == "AEREO")
                                 {
                                     dinero += 3480;
+                                    totalFooterBajio += 3480; ;
                                 }
                                 else
                                 {
                                     if (precio.PrecioNormalconIVA != null)
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterBajio += Convert.ToInt32(precio.PrecioNormalconIVA);
                                     }
                                     else
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterBajio += Convert.ToInt32(precio.PrecioNormal);
                                     }
                                 }
                             }
@@ -342,16 +526,19 @@
                                 if (i.N.TipoTramite == "AEREO")
                                 {
                                     dinero += 3480;
+                                    totalFooterBanorte += 3480;
                                 }
                                 else
                                 {
                                     if (precio.PrecioNormalconIVA != null)
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterBanorte += Convert.ToInt32(precio.PrecioNormalconIVA);
                                     }
                                     else
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterBanorte += Convert.ToInt32(precio.PrecioNormal);
                                     }
                                 }
                             }
@@ -383,16 +570,22 @@
                                 if (i.N.TipoTramite == "AEREO")
                                 {
                                     dinero += 3480;
+                                    totalFooterCoppelTLS += 3480;
+
                                 }
                                 else
                                 {
                                     if (precio.PrecioNormalconIVA != null)
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterCoppelTLS += Convert.ToInt32(precio.PrecioNormalconIVA);
+
                                     }
                                     else
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterCoppelTLS += Convert.ToInt32(precio.PrecioNormal);
+
                                     }
                                 }
                             }
@@ -424,16 +617,19 @@
                                 if (i.N.TipoTramite == "AEREO")
                                 {
                                     dinero += 3480;
+                                    totalFooterAztecaTLS += 3480;
                                 }
                                 else
                                 {
                                     if (precio.PrecioNormalconIVA != null)
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterAztecaTLS += Convert.ToInt32(precio.PrecioNormalconIVA);
                                     }
                                     else
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterAztecaTLS += Convert.ToInt32(precio.PrecioNormal);
                                     }
                                 }
                             }
@@ -465,16 +661,19 @@
                                 if (i.N.TipoTramite == "AEREO")
                                 {
                                     dinero += 3480;
+                                    totalFooterCoppelLC += 3480;
                                 }
                                 else
                                 {
                                     if (precio.PrecioNormalconIVA != null)
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterCoppelLC += Convert.ToInt32(precio.PrecioNormalconIVA);
                                     }
                                     else
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterCoppelLC += Convert.ToInt32(precio.PrecioNormal);
                                     }
                                 }
                             }
@@ -506,16 +705,19 @@
                                 if (i.N.TipoTramite == "AEREO")
                                 {
                                     dinero += 3480;
+                                    totalFooterAztecaLC += 3480;
                                 }
                                 else
                                 {
                                     if (precio.PrecioNormalconIVA != null)
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterAztecaLC += Convert.ToInt32(precio.PrecioNormalconIVA);
                                     }
                                     else
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterAztecaLC += Convert.ToInt32(precio.PrecioNormal);
                                     }
                                 }
                             }
@@ -547,16 +749,19 @@
                                 if (i.N.TipoTramite == "AEREO")
                                 {
                                     dinero += 3480;
+                                    totalFooterCXC += 3480;
                                 }
                                 else
                                 {
                                     if (precio.PrecioNormalconIVA != null)
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterCXC += Convert.ToInt32(precio.PrecioNormalconIVA);
                                     }
                                     else
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterCXC += Convert.ToInt32(precio.PrecioNormal);
                                     }
                                 }
                             }
@@ -588,16 +793,19 @@
                                 if (i.N.TipoTramite == "AEREO")
                                 {
                                     dinero += 3480;
+                                    totalFooterAclaraciones += 3480;
                                 }
                                 else
                                 {
                                     if (precio.PrecioNormalconIVA != null)
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterAclaraciones += Convert.ToInt32(precio.PrecioNormalconIVA);
                                     }
                                     else
                                     {
                                         dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterAclaraciones += Convert.ToInt32(precio.PrecioNormal);
                                     }
                                 }
                             }
@@ -617,6 +825,540 @@
 
             }
         }
+
+        @{
+            foreach (var item in db.Canales.Where(w => w.NombreCanal == "IN SITU" || w.NombreCanal == "GESTOR ALT"))
+            {
+                <tr>
+                    <td><b>@item.NombreCanal</b></td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var epis = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN");
+
+                            foreach (var i in epis)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.ReferidoPor && e.Tipo == i.CanalTipo select e).FirstOrDefault();
+
+                                if (i.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                    totalFooterEPIS += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterEPIS += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterEPIS += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span><b>$@dinero.ToString("###,###,###,###")</b></span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var conekta = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                (w.TipoPago == "Referencia OXXO" || w.TipoPago == "Pago con Tarjeta"));
+
+                            foreach (var i in conekta)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.ReferidoPor && e.Tipo == i.CanalTipo select e).FirstOrDefault();
+
+                                if (i.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                    totalFooterConekta += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterConekta += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterConekta += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var bajio = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                (w.TipoPago == "Referencia BanBajío" || w.TipoPago == "Transferencia vía BanBajío"));
+
+                            foreach (var i in bajio)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.ReferidoPor && e.Tipo == i.CanalTipo select e).FirstOrDefault();
+
+                                if (i.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                    totalFooterBajio += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterBajio += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterBajio += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var banorte = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                w.TipoPago == "Banorte");
+
+                            foreach (var i in banorte)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.ReferidoPor && e.Tipo == i.CanalTipo select e).FirstOrDefault();
+
+                                if (i.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                    totalFooterBanorte += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterBanorte += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterBanorte += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var coppelTLS = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                w.TipoPago == "BanCoppel TLS");
+
+                            foreach (var i in coppelTLS)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.ReferidoPor && e.Tipo == i.CanalTipo select e).FirstOrDefault();
+
+                                if (i.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                    totalFooterCoppelTLS += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterCoppelTLS += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterCoppelTLS += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var aztecaTLS = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                w.TipoPago == "Banco Azteca TLS");
+
+                            foreach (var i in aztecaTLS)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.ReferidoPor && e.Tipo == i.CanalTipo select e).FirstOrDefault();
+
+                                if (i.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                    totalFooterAztecaTLS += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterAztecaTLS += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterAztecaTLS += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var coppelLC = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                w.TipoPago == "BanCoppel LC");
+
+                            foreach (var i in coppelLC)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.ReferidoPor && e.Tipo == i.CanalTipo select e).FirstOrDefault();
+
+                                if (i.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                    totalFooterCoppelLC += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterCoppelLC += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterCoppelLC += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var aztecaLC = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                w.TipoPago == "Banco Azteca LC");
+
+                            foreach (var i in aztecaLC)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.ReferidoPor && e.Tipo == i.CanalTipo select e).FirstOrDefault();
+
+                                if (i.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                    totalFooterAztecaLC += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterAztecaLC += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterAztecaLC += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var cxc = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                w.TipoPago == "Pendiente de Pago");
+
+                            foreach (var i in cxc)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.ReferidoPor && e.Tipo == i.CanalTipo select e).FirstOrDefault();
+
+                                if (i.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                    totalFooterCXC += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterCXC += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterCXC += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            dinero = 0;
+
+                            var aclaraciones = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                w.TipoPago == "ACLARACIÓN");
+
+                            foreach (var i in aclaraciones)
+                            {
+                                var precio = (from e in db.Referido where e.Nombre == i.ReferidoPor && e.Tipo == i.CanalTipo select e).FirstOrDefault();
+
+                                if (i.TipoTramite == "AEREO")
+                                {
+                                    dinero += 3480;
+                                    totalFooterAclaraciones += 3480;
+                                }
+                                else
+                                {
+                                    if (precio.PrecioNormalconIVA != null)
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                        totalFooterAclaraciones += Convert.ToInt32(precio.PrecioNormalconIVA);
+                                    }
+                                    else
+                                    {
+                                        dinero += Convert.ToInt32(precio.PrecioNormal);
+                                        totalFooterAclaraciones += Convert.ToInt32(precio.PrecioNormal);
+                                    }
+                                }
+                            }
+                        }
+                        @{
+                            if (dinero == 0)
+                            {
+                                <span>-------</span>
+                            }
+                            else
+                            {
+                                <span>$@dinero.ToString("###,###,###,###")</span>
+                            }
+                        }
+                    </td>
+                </tr>
+
+            }
+        }
+
+    <tr>
+        <td><b>TOTALES</b></td>
+        @{
+            if (totalFooterEPIS != 0)
+            {
+                <td style="text-align:center"><b>$@totalFooterEPIS.ToString("###,###,###,###")</b></td>
+            }
+            else
+            {
+                <td style="text-align:center"><b>-----</b></td>
+            }
+
+            if (totalFooterConekta != 0)
+            {
+                <td style="text-align:center"><b>$@totalFooterConekta.ToString("###,###,###,###")</b></td>
+            }
+            else
+            {
+                <td style="text-align:center"><b>-----</b></td>
+            }
+
+            if (totalFooterBajio != 0)
+            {
+                <td style="text-align:center"><b>$@totalFooterBajio.ToString("###,###,###,###")</b></td>
+            }
+            else
+            {
+                <td style="text-align:center"><b>-----</b></td>
+            }
+
+            if (totalFooterBanorte != 0)
+            {
+                <td style="text-align:center"><b>$@totalFooterBanorte.ToString("###,###,###,###")</b></td>
+            }
+            else
+            {
+                <td style="text-align:center"><b>-----</b></td>
+            }
+
+            if (totalFooterCoppelTLS != 0)
+            {
+                <td style="text-align:center"><b>$@totalFooterCoppelTLS.ToString("###,###,###,###")</b></td>
+            }
+            else
+            {
+                <td style="text-align:center"><b>-----</b></td>
+            }
+
+            if (totalFooterAztecaTLS != 0)
+            {
+                <td style="text-align:center"><b>$@totalFooterAztecaTLS.ToString("###,###,###,###")</b></td>
+            }
+            else
+            {
+                <td style="text-align:center"><b>-----</b></td>
+            }
+
+            if (totalFooterCoppelLC != 0)
+            {
+                <td style="text-align:center"><b>$@totalFooterCoppelLC.ToString("###,###,###,###")</b></td>
+            }
+            else
+            {
+                <td style="text-align:center"><b>-----</b></td>
+            }
+
+            if (totalFooterAztecaLC != 0)
+            {
+                <td style="text-align:center"><b>$@totalFooterAztecaLC.ToString("###,###,###,###")</b></td>
+            }
+            else
+            {
+                <td style="text-align:center"><b>-----</b></td>
+            }
+
+            if (totalFooterCXC != 0)
+            {
+                <td style="text-align:center"><b>$@totalFooterCXC.ToString("###,###,###,###")</b></td>
+            }
+            else
+            {
+                <td style="text-align:center"><b>-----</b></td>
+            }
+
+            if (totalFooterAclaraciones != 0)
+            {
+                <td style="text-align:center"><b>$@totalFooterAclaraciones.ToString("###,###,###,###")</b></td>
+            }
+            else
+            {
+                <td style="text-align:center"><b>-----</b></td>
+            }
+        }
+    </tr>
 
     </table>
 </div>
