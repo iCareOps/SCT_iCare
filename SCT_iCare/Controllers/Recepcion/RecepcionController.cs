@@ -162,29 +162,7 @@ namespace SCT_iCare.Controllers.Recepcion
             }
 
             return RedirectToAction("Foto");
-        }
-
-
-        // GET: Pacientes/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Paciente paciente = db.Paciente.Find(id);
-            if (paciente == null)
-            {
-                return HttpNotFound();
-            }
-            return View(paciente);
-        }
-
-        // GET: Pacientes/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+        }       
 
         public ActionResult CambiarGestor(int? id, int? referido, string usuario, string gestorAnterior, string tipoPago, string referencia, HttpPostedFileBase ticket, int? ide)
         {
