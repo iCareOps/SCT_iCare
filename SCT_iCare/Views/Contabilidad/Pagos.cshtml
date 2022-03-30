@@ -1,0 +1,203 @@
+﻿
+@{
+    ViewBag.Title = "Pagos";
+
+    GMIEntities db = new GMIEntities();
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    DateTime fecha1 = new DateTime(2022, 03, 01); 
+    DateTime fecha2 = DateTime.Today.AddDays(1);
+
+    if (ViewBag.FechaInicio != null)
+    {
+        fecha1 = Convert.ToDateTime(ViewBag.FechaInicio);
+    }
+
+    if (ViewBag.FechaFinal != null)
+    {
+        fecha2 = Convert.ToDateTime(ViewBag.FechaFinal);
+        fecha2 = fecha2.AddDays(1);
+    }
+
+    int deuda = 0;
+    int saldo = 0;
+    int pago = 0;
+
+}
+
+<br />
+<h2 style="color: white">Pagos</h2>
+<br />
+
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Pagos")">
+    <div>
+
+        @{
+
+            DateTime ViewBagFechaInicio = Convert.ToDateTime(ViewBag.fechaInicio);
+            var SetFechaInicio = ViewBagFechaInicio.Date.ToString("yyyy-MM-dd");
+
+            if (ViewBag.fechaInicio != null)
+            {
+
+                <input type="date" name="fechaInicio" class="form-control" value="@SetFechaInicio" style="width: 160px;" />
+
+            }
+
+            else
+
+            {
+
+                <input type="date" name="fechaInicio" class="form-control" value="" style="width: 160px;" />
+
+            }
+
+        }
+
+        @{
+
+            DateTime ViewBagFechaFinal = Convert.ToDateTime(ViewBag.fechaFinal);
+            var SetFechaFinal = ViewBagFechaFinal.Date.ToString("yyyy-MM-dd");
+
+            if (ViewBag.fechaFinal != null)
+            {
+
+                <input type="date" name="fechaFinal" class="form-control" value="@SetFechaFinal" style="width: 160px;" />
+
+            }
+
+            else
+
+            {
+
+                <input type="date" name="fechaFinal" class="form-control" value="" style="width: 160px;" />
+
+            }
+
+        }
+
+
+
+        <input type="submit" class="btn btn-info" value="Enviar" />
+        <a href="~/Contabilidad/Pagos"><button type="button" class="btn btn-success">Limpiar</button></a>
+
+    </div>
+
+
+</form>
+
+
+<br />
+<div class="tablaScroll" style="min-height: 300px; max-height:450px">
+    <table class="table  table-hover tablas table-bordered" style="color: #2F2D6B">
+        <thead style="color:white">
+            <tr>
+                <th>Gestor/Canal</th>
+                <th>Deuda</th>
+                <th>Pago</th>
+                <th>Saldo</th>
+                <th>Estatus</th>
+            </tr>
+        </thead>
+        @foreach (var item in db.Referido.OrderBy(o => o.Tipo).ThenBy(o => o.Nombre))
+        {
+            int gestoresNoNullos = (from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i).Count();
+
+            if (gestoresNoNullos != 0)
+            {
+                <tr>
+                    <td>
+                        <b>@item.Nombre</b><span style="font-size:xx-small"> @item.Tipo</span>
+                    </td>
+                    <td>
+                        @{
+                            int deudaGestor = (from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i).Count();
+
+                            deuda = item.PrecioNormalconIVA == null ? deudaGestor * Convert.ToInt32(item.PrecioNormal) : deudaGestor * Convert.ToInt32(item.PrecioNormalconIVA);
+
+                            if (deudaGestor != 0)
+                            {
+                                <span>$@deuda.ToString("###,###,###,###")</span>
+                            }
+                            else
+                            {
+                                <span>-----</span>
+                            }
+                        }
+                    </td>
+                    <td>
+                        @{
+                            int pagoGestor = (from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.TipoPago != "Pendiente de Pago" && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i).Count();
+
+                            pago = item.PrecioNormalconIVA == null ? pagoGestor * Convert.ToInt32(item.PrecioNormal) : pagoGestor * Convert.ToInt32(item.PrecioNormalconIVA);
+
+                            if (pagoGestor != 0)
+                            {
+                                <span>$@pago.ToString("###,###,###,###")</span>
+                            }
+                    else
+                    {
+                        <span>-----</span>
+                    }
+                        }
+                    </td>
+                    <td>
+                        @{
+                            int saldoGestor = (from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.TipoPago == "Pendiente de Pago" && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i).Count();
+
+                            saldo = item.PrecioNormalconIVA == null ? saldoGestor * Convert.ToInt32(item.PrecioNormal) : saldoGestor * Convert.ToInt32(item.PrecioNormalconIVA);
+
+                            if (saldoGestor != 0)
+                            {
+                                <span>$@saldo.ToString("###,###,###,###")</span>
+                            }
+                    else
+                    {
+                        <span>$0.00</span>
+                    }
+                        }
+                    </td>
+                    <td>
+                        @{
+                            var estatus = from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.TipoPago == "Pendiente de Pago" && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i;
+
+                            string texto = "";
+
+                            foreach(var i in estatus)
+                            {
+                                if(i.FechaCita < DateTime.Today.AddDays(-30))
+                                {
+                                    texto = "text-danger";
+                                    break;
+                                }
+                                else if(i.FechaCita < DateTime.Today.AddDays(-15))
+                                {
+                                    texto = "text-warning";
+                                    break;
+                                }
+                                else
+                                {
+                                    texto = "text-success";
+                                    break;
+                                }
+                            }
+                            <div style="width:2px;"></div>
+                            <span class="@texto">•</span>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</div>
+
+@*<option value="Referencia OXXO">Referencia OXXO</option>
+<option value="Referencía BanBajío">Referencía BanBajío</option>
+<option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+<option value="BanCoppel TLS">BanCoppel TLS</option>
+<option value="BanCoppel LC">BanCoppel LC</option>
+<option value="Banco Azteca TLS">Banco Azteca TLS</option>
+<option value="Banco Azteca LC">Banco Azteca LC</option>
+<option value="Cuenta Externa">Cuenta Externa</option>
+<option value="Pendiente de Pago">Pendiente de Pago</option>*@
+
