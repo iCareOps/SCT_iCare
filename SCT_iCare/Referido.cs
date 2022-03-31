@@ -24,5 +24,7 @@ namespace SCT_iCare
         public string PrecioALTIS { get; set; }
         public string HistorialPrecios { get; set; }
         public string PrecioNormalconIVA { get; set; }
+        public string Deuda { get; set; }
+        public string Efectivo { get; set; }
     }
 }
