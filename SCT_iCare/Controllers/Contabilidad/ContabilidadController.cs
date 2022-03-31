@@ -130,8 +130,21 @@ namespace SCT_iCare.Controllers.Contabilidad
             return View();
         }
 
-        public ActionResult Conciliacion()
+        public ActionResult Conciliacion(DateTime? fechaInicio, DateTime? fechaFinal)
         {
+
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
+
+            return View();
+        }
+
+        public ActionResult Pagos(DateTime? fechaInicio, DateTime? fechaFinal)
+        {
+
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
+
             return View();
         }
 
@@ -211,5 +224,64 @@ namespace SCT_iCare.Controllers.Contabilidad
             TempData["ID"] = null;
             return File(bytesBinary, "application/pdf");
         }
+
+        public ActionResult Deuda(int? id, string deuda)
+        {
+            var gestor = db.Referido.Find(id);
+
+            gestor.Deuda = deuda != null ? deuda : null;
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(gestor).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            return Redirect("Pagos");
+        }
+
+        public ActionResult Efectivo(int? id, string efectivo, DateTime? fecha1, DateTime? fecha2)
+        {
+            var gestor = db.Referido.Find(id);
+
+            gestor.Efectivo = efectivo != null ? efectivo : null;
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(gestor).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            int episEquivalentes = 0;
+
+            if(gestor.PrecioNormalconIVA != null)
+            {
+                episEquivalentes = Convert.ToInt32(efectivo) / Convert.ToInt32(gestor.PrecioNormalconIVA);
+            }
+            else
+            {
+                episEquivalentes = Convert.ToInt32(efectivo) / Convert.ToInt32(gestor.PrecioNormal);
+            }
+
+            var citasCXC = (from i in db.Cita where i.CanalTipo == gestor.Tipo && i.ReferidoPor == gestor.Nombre && i.TipoPago == "Pendiente de Pago" && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i).OrderBy(o => o.FechaCita).Take(episEquivalentes);
+
+            foreach(var item in citasCXC)
+            {
+                var cita = db.Cita.Find(item.idCita);
+
+                cita.Conciliado = DateTime.Today.Day.ToString() + "-" + DateTime.Today.Month.ToString() + "-" + DateTime.Today.Year.ToString();
+                cita.TipoPago = "Efectivo";
+                cita.Cuenta = "EFECTIVO";
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(cita).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
+            return Redirect("Pagos");
+        }
+
     }
 }

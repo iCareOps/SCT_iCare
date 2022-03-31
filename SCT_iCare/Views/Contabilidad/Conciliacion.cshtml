@@ -5,8 +5,19 @@
     GMIEntities db = new GMIEntities();
     var oUser = (Usuarios)HttpContext.Current.Session["User"];
 
-    DateTime fecha1 = DateTime.Today.AddDays(-1);
-    DateTime fecha2 = DateTime.Today;
+    DateTime fecha1 = DateTime.Today;
+    DateTime fecha2 = DateTime.Today.AddDays(1);
+
+    if (ViewBag.FechaInicio != null)
+    {
+        fecha1 = Convert.ToDateTime(ViewBag.FechaInicio);
+    }
+
+    if (ViewBag.FechaFinal != null)
+    {
+        fecha2 = Convert.ToDateTime(ViewBag.FechaFinal);
+        fecha2 = fecha2.AddDays(1);
+    }
 
     int dinero = 0;
 
@@ -26,8 +37,65 @@
 <h2 style="color: white">Conciliación</h2>
 <br />
 
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Conciliacion")">
+    <div>
+
+        @{
+
+            DateTime ViewBagFechaInicio = Convert.ToDateTime(ViewBag.fechaInicio);
+            var SetFechaInicio = ViewBagFechaInicio.Date.ToString("yyyy-MM-dd");
+
+            if (ViewBag.fechaInicio != null)
+            {
+
+                <input type="date" name="fechaInicio" class="form-control" value="@SetFechaInicio" style="width: 160px;" />
+
+            }
+
+            else
+
+            {
+
+                <input type="date" name="fechaInicio" class="form-control" value="" style="width: 160px;" />
+
+            }
+
+        }
+
+        @{
+
+            DateTime ViewBagFechaFinal = Convert.ToDateTime(ViewBag.fechaFinal);
+            var SetFechaFinal = ViewBagFechaFinal.Date.ToString("yyyy-MM-dd");
+
+            if (ViewBag.fechaFinal != null)
+            {
+
+                <input type="date" name="fechaFinal" class="form-control" value="@SetFechaFinal" style="width: 160px;" />
+
+            }
+
+            else
+
+            {
+
+                <input type="date" name="fechaFinal" class="form-control" value="" style="width: 160px;" />
+
+            }
+
+        }
+
+
+
+        <input type="submit" class="btn btn-info" value="Enviar" />
+        <a href="~/Contabilidad/Conciliacion"><button type="button" class="btn btn-success">Limpiar</button></a>
+
+    </div>
+
+
+</form>
+
 <h3 style="color: white">EPIs</h3>
-<div class="tablaScroll" style="min-height: 300px; max-height:400px">
+<div class="tablaScroll" style="min-height: 300px; max-height:450px">
     <table class="table  table-hover tablas table-bordered" style="color: #2F2D6B">
         <thead style="color:white">
             <tr>
@@ -333,7 +401,7 @@
 }
 
 <h3 style="color: white">Cantidades</h3>
-<div class="tablaScroll" style="min-height: 300px; max-height:400px">
+<div class="tablaScroll" style="min-height: 300px; max-height:450px">
     <table class="table  table-hover tablas table-bordered" style="color: #2F2D6B">
         <thead style="color:white">
             <tr>

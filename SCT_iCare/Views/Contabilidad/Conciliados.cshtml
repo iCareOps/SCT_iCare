@@ -518,6 +518,40 @@
                                 {
                                     <b style="font-size:x-small">CONCILIADO </b><span class="glyphicon glyphicon-ok" style="font-size:x-small"></span>
                                 }
+                                else
+                                {
+                                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                    </button>
+
+                                    <div class="dropdown-menu" style="padding:10px">
+                                        @{
+                                            var consultaTicket = (from i in db.Tickets where i.idPaciente == item.A.M.idPaciente select i.idTicket).FirstOrDefault();
+
+                                            if (consultaTicket != 0)
+                                            {
+                                                <b>@Html.ActionLink("Ticket de Pago", "AbrirTicket", new { id = consultaTicket }, new { style = "color: crimson; text-decoration: none" })</b>
+                                            }
+                                        }
+                                        <a href="#" data-toggle="modal" data-target="#Efectivo_@item.A.M.idCita"><b>Bancos</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="#" data-toggle="modal" data-target="#Conekta_@item.A.M.idCita"><b>Conekta</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="#" data-toggle="modal" data-target="#Anticipos_@item.A.M.idCita"><b>Anticipos</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="#" data-toggle="modal" data-target="#CXC_@item.A.M.idCita"><b>CuentasXCobrar</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        @*<a href="#" data-toggle="modal" data-target="#Corporativo_@item.A.M.idCita"><b>Corporativo</b></a>
+                    <div class="dropdown-divider"></div>*@
+                                        <a href="#" data-toggle="modal" data-target="#Aclaracion_@item.A.M.idCita"><b>Aclaracion</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="#" data-toggle="modal" data-target="#Devoluciones_@item.A.M.idCita"><b>Devoluciones</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        @*<a href="#" data-toggle="modal" data-target="#CONCILIADO_@item.A.M.idPaciente"><b>CONCILIADO</b></a>
+                    <div class="dropdown-divider"></div>*@
+
+                                    </div>
+                                }
                             }
 
                             <!-- Efectivo -->
@@ -1141,6 +1175,32 @@
                                 else if (item.Conciliado != null)
                                 {
                                     <b style="font-size:x-small">CONCILIADO </b><span class="glyphicon glyphicon-ok" style="font-size:x-small"></span>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                    </button>
+
+                                    <div class="dropdown-menu" style="padding:10px">
+                                        <a href="#" data-toggle="modal" data-target="#Efectivo_@item.idPacienteESP"><b>Bancos</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="#" data-toggle="modal" data-target="#Conekta_@item.idPacienteESP"><b>Conekta</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="#" data-toggle="modal" data-target="#Anticipos_@item.idPacienteESP"><b>Anticipos</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="#" data-toggle="modal" data-target="#CXC_@item.idPacienteESP"><b>CuentasXCobrar</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        @*<a href="#" data-toggle="modal" data-target="#Corporativo_@item.A.M.idCita"><b>Corporativo</b></a>
+                    <div class="dropdown-divider"></div>*@
+                                        <a href="#" data-toggle="modal" data-target="#Aclaracion_@item.idPacienteESP"><b>Aclaracion</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="#" data-toggle="modal" data-target="#Devoluciones_@item.idPacienteESP"><b>Devoluciones</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        @*<a href="#" data-toggle="modal" data-target="#CONCILIADO_@item.A.M.idPaciente"><b>CONCILIADO</b></a>
+                    <div class="dropdown-divider"></div>*@
+
+                                    </div>
                                 }
                             }
 
