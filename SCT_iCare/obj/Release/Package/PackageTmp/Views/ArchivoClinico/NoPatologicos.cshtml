@@ -1,0 +1,164 @@
+﻿
+@{
+    ViewBag.Title = "NoPatologicos";
+    GMIEntities db = new GMIEntities();
+
+    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+    <style>
+        .toggle.ios, .toggle-on.ios, .toggle-off.ios {
+            border-radius: 20rem;
+            background-color: white;
+        }
+
+            .toggle.ios .toggle-handle {
+                border-radius: 20rem;
+                background-color: white;
+            }
+    </style>
+}
+
+<br />
+<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Antecedentes Personales No Patológicos: </span>@nombrePaciente </h3>
+<br />
+
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Heredofamiliares</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="#" style="text-decoration:none; color:goldenrod"><b>NO PATOLÓGICOS</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Patológicos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Aparatos y Sistemas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Exploración Física</a>
+    </li>
+</ul>
+
+<br />
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_NoPatologicos")" style="display:inline-block; margin:0.5%">
+
+    <div class="form-group">
+        <label style="color:white">1. ¿Cuenta con las vacunas Completas?</label><br />
+        <input type="checkbox" name="vacunas" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div>
+        <label style="color:white">2. Estado Civil </label><br />
+        <select class="form-select" aria-label="Default select example" name="civil">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="Soltero">Soltero</option>
+            <option value="Casado">Casado</option>
+            <option value="Libre">Unión Libre</option>
+            <option value="Viudo">Viudo</option>
+            <option value="Divorciado">Divorciado</option>
+        </select>
+    </div>
+    <br />
+    <div class="form-group">
+        <label style="color:white">3. Religión: </label><br />
+        <select class="form-select" aria-label="Default select example" name="religion">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="Catolica">Católica</option>
+            <option value="Cristiana">Cristiana</option>
+            <option value="Testigo">Testigo de Jehova</option>
+            <option value="Mormon">Mormón</option>
+            <option value="Otro">Otro</option>
+        </select>
+    </div>
+    <br />
+
+    <div>
+        <label style="color:white">4. Escolaridad: </label><br />
+        <select class="form-select" aria-label="Default select example" name="escolaridad">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="Ninguna">Ninguna</option>
+            <option value="Primaria">Primaria</option>
+            <option value="Secundaria">Secundaria</option>
+            <option value="Bachillerato">Bachilerato</option>
+            <option value="Licenciatura">Licenciatura</option>
+        </select>
+    </div>
+    <br />
+    <div>
+        <label style="color:white">5. Número de hijos: </label><br />
+        <select class="form-select" aria-label="Default select example" name="hijos">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="1Sin hijos">Sin hijos</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="MAS">Más de 3</option>
+        </select>
+    </div>
+    <br />
+
+    <script type="text/javascript">
+        function f_padecimiento() {
+            element_padecimiento = document.getElementById("c_padecimiento");
+            check_padecimiento = document.getElementById("s_padecimiento");
+            disabled_padecimiento = document.getElementById("r_padecimiento");
+
+            if (check_padecimiento.checked) {
+                element_padecimiento.style.display = 'block';
+                disabled_padecimiento.disabled = false
+            }
+            else {
+                element_padecimiento.style.display = 'none';
+                disabled_padecimiento.disabled = true
+            }
+        }
+    </script>
+
+    <h4 style="color:white">Padecimiento Actual</h4>
+    <div class="form-group">
+        <label style="color:white">6. ¿Padece alguna enfermedad?</label><br />
+        <input type="checkbox" id="s_padecimiento" onchange="javascript: f_padecimiento()" name="padecimiento" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group" id="c_padecimiento" style="display: none;">
+        <label style="color:white">Especificar</label><br />
+        <textarea id="r_padecimiento" name="esp_padecimiento" required disabled></textarea>
+    </div>
+
+    <br />
+    <input type="hidden" value="@idPaciente" name="id" />
+    @*<input type="submit" class="btn btn-success" value="Guardar Examen" />*@
+
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmacion">Guardar Examen</button>
+
+    <div class="modal fade" id="confirmacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>¿Desea guardar lo datos del examen médico?</b></h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input type="submit" class="btn btn-success" value="Guardar Examen" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>
+<br />
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
+    <input type="hidden" value="@idPaciente" name="id" />
+    <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />
+</form>
+
+
+

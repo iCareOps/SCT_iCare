@@ -1,0 +1,102 @@
+﻿
+@{
+    ViewBag.Title = "Facturación";
+
+    GMIEntities db = new GMIEntities();
+
+    int idPaciente = ViewBag.idPaciente;
+    string expediente = ViewBag.Expediente;
+
+    var captura = new Captura();
+    var paciente = new Paciente();
+    var dictamen = new Dictamen();
+    var cita = new Cita();
+
+    int idGestor = Convert.ToInt32(TempData["ID"]);
+
+    if (idPaciente != null && expediente != null)
+    {
+        paciente = (from p in db.Paciente where p.idPaciente == idPaciente select p).FirstOrDefault();
+        cita = (from c in db.Cita where c.NoExpediente == expediente select c).FirstOrDefault();
+        captura = (from c in db.Captura where c.idPaciente == idPaciente select c).FirstOrDefault();
+    }
+}
+
+<br />
+<br />
+<br />
+<br />
+
+<h2 style="color:white; text-shadow:2px 2px 2px black">Estatus del dictamen</h2>
+<br />
+<body class="bg-primary bodyLogin" style="color:black">
+
+    <div class="form-horizontal col-sm-6" style="border-radius: 10px; background-color:rgb(255 255 255 / 0.90); box-shadow: 3px 3px 23px gray">
+        <br />
+        <h3><b>Información del Paciente:</b></h3>
+        <hr />
+        @*<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ConsultaDictamen/Estatus")">
+            @Html.AntiForgeryToken()*@
+
+        <h4>
+            El paciente con el nombre <b class="text-primary">@paciente.Nombre</b> con el Número de Expediente
+            <b class="text-primary">@captura.NoExpediente</b> se hizo el Examen Psicométrico Integral el día
+            <b class="text-primary">@Convert.ToDateTime(cita.FechaCita).ToString("dd-MMMM-yyyy")</b> en la sucursal
+            <b class="text-primary">@captura.Sucursal</b>. <br />
+            El tipo de licencia para este trámite es <b class="text-primary">@cita.TipoLicencia </b>.
+        </h4>
+        <br />
+        <h4>
+            El estatus de su trámite es:
+        </h4>
+        <br />
+        @{
+            if (captura.EstatusCaptura == "Terminado")
+            {
+                <center><a href=@Url.Action("DescargarDictamen", "ConsultaDictamen", new { id = captura.idCaptura, idGestor = idGestor })><button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-download-alt"></span>&nbsp; Listo para descargar</button></a></center>
+
+            }
+            else
+            {
+                <center><h2>En proceso...</h2></center>
+            }
+        }
+        <br />
+        <h4>
+            <a data-toggle="modal" data-target="#exampleModal" style="cursor: pointer">¿Existe algún problema con su dictamen o proceso? Reporte su caso con nosotros haciendo click aquí</a>
+        </h4>
+        <br />
+
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Ingrese un comentario</b></h3>
+                </div>
+                <div class="modal-body">
+                    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ConsultaDictamen/Proceso")">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" class="form-control" id="id" name="id" value="@captura.idCaptura">
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label">Comentario:</label>
+                            <input type="text" class="form-control" id="comentario" name="comentario" required>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input type="submit" value="Enviar" class="btn btn-primary" />
+                </div></form>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+

@@ -1,0 +1,140 @@
+﻿
+@{
+    ViewBag.Title = "CarruselMedico";
+
+    GMIEntities db = new GMIEntities();
+
+    var modelo = db.DoctorModulo;
+
+    int flag = 1;
+
+}
+
+<br />
+
+<br />
+
+<h3 style="color:white" class="text-center">Carrusel Médico</h3>
+<br />
+<a href="#"><button type="button" style="color:white" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#asignacion"><span class="glyphicon glyphicon-plus"></span>&nbsp; Agregar Asignación</button></a>
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Usuarios/AsignarModulo")">
+    <div class="modal fade" id="asignacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="exampleModalLabel"><b>Asignación de doctor a módulos</b></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group" style="width:60%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Doctor:</label>
+                        <select name="doctor" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            @{
+                                var doctores = from s in db.Usuarios where s.idRol == 12 || s.idRol == 15 select s;
+
+                                foreach (var item1 in doctores)
+                                {
+                                    <option value="@item1.idUsuario">@item1.Nombre</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group" style="width:60%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                        <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            @{
+                                var sucursal = from s in db.Sucursales select s;
+
+                                foreach (var item1 in sucursal)
+                                {
+                                    <option value="@item1.idSucursal">@item1.Nombre</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group" style="width:60%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Módulo:</label>
+                        <select name="modulo" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            @{
+                                var modulo = from s in db.Modulos select s;
+
+                                foreach (var item1 in modulo)
+                                {
+                                    <option value="@item1.idModulo">@item1.Nombre</option>
+                                    @*if (item1.idModulo > 8)
+                                    {
+                                        <option value="@item1.idModulo">@item1.Nombre</option>
+                                    }
+                else
+                {
+                        <option value="@item1.idModulo">@item1.Nombre</option>
+                }*@
+
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input type="submit" value="Asignar" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<br />
+
+<div class="tablaScroll">
+    <table class="table tablas table-responsive" style="color: #2F2D6B">
+        <thead>
+            <tr class="bg-primary">
+                <th></th>
+                <th>
+                    <h4>Doctor</h4>
+                </th>
+                <th>
+                    <h4>Módulo</h4>
+                </th>
+                <th>
+                    <h4>Sucursal</h4>
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+
+
+        @foreach (var item in modelo)
+        {
+            <tr>
+                <td>
+                    @flag
+                </td>
+                <td>
+                    @{
+                        var doctor = (from d in db.Usuarios where d.idUsuario == item.idUsuario select d.Nombre).FirstOrDefault();
+                        <b>@doctor</b>
+                    }
+                </td>
+                <td>
+                    @{
+                        var modulos = (from d in db.Modulos where d.idModulo == item.idModulo select d.Nombre).FirstOrDefault();
+                        <b>@modulos</b>
+                    }
+                </td>
+                <td>
+                    @{
+                        var nombreSucursal = (from d in db.Sucursales where d.idSucursal == item.idSucursal select d.Nombre).FirstOrDefault();
+                        <b>@nombreSucursal</b>
+                    }
+                </td>
+                <td>
+                </td>
+            </tr>
+
+                            flag++;
+                        }
+
+    </table>
+</div>

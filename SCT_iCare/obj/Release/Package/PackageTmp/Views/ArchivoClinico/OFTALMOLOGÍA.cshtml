@@ -1,0 +1,242 @@
+﻿@{
+
+
+                <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+                            <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+                                        <style>
+                                            .toggle.ios, .toggle-on.ios, .toggle-off.ios {
+                                                border-radius: 20rem;
+                                                background-color: white;
+                                            }
+
+                                                .toggle.ios .toggle-handle {
+                                                    border-radius: 20rem;
+                                                    background-color: white;
+                                                }
+                                        </style> 
+                                        ViewBag.Title = "OFTALMOLOGÍA";
+                                                    GMIEntities db = new GMIEntities();
+
+                                                    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+                                                    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault(); }
+
+<br />
+<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Examen Oftalmología: </span>@nombrePaciente </h3>
+<br />
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Oftalmologia")" style="display:inline-block; margin:0.5%">
+
+    <h4 style="color:white">OJO IZQUIERDO</h4>
+
+    <div class="form-group">
+        <label style="color:white">1. Agudeza Visual Cercana :</label><br />
+        <select class="form-select" id="estereopsis" name="izquierdoavc" aria-label="Default select example">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="0.1">0.1</option>
+            <option value="0.2">0.2</option>
+            <option value="0.28">0.28</option>
+            <option value="0.4">0.4</option>
+            <option value="0.5">0.5</option>
+            <option value="0.7">0.7</option>
+            <option value="0.8">0.8</option>
+            <option value="1.0">1.0</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">2. Agudeza Visual Media :</label><br />
+        <select class="form-select" id="estereopsis" name="izquierdoavm" aria-label="Default select example">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="0.1">0.1</option>
+            <option value="0.2">0.2</option>
+            <option value="0.28">0.28</option>
+            <option value="0.4">0.4</option>
+            <option value="0.5">0.5</option>
+            <option value="0.7">0.7</option>
+            <option value="0.8">0.8</option>
+            <option value="1.0">1.0</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">3. Agudeza Visual Lejana :</label><br />
+        <select class="form-select" id="estereopsis" name="izquierdoavl" aria-label="Default select example">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="0.1">0.1</option>
+            <option value="0.2">0.2</option>
+            <option value="0.28">0.28</option>
+            <option value="0.4">0.4</option>
+            <option value="0.5">0.5</option>
+            <option value="0.7">0.7</option>
+            <option value="0.8">0.8</option>
+            <option value="1.0">1.0</option>
+        </select>
+    </div>
+
+
+    <h4 style="color:white">OJO DERECHO</h4>
+
+
+    <div class="form-group">
+        <label style="color:white">4. Agudeza Visual Cercana :</label><br />
+        <select class="form-select" id="estereopsis" name="derechoavc" aria-label="Default select example">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="0.1">0.1</option>
+            <option value="0.2">0.2</option>
+            <option value="0.28">0.28</option>
+            <option value="0.4">0.4</option>
+            <option value="0.5">0.5</option>
+            <option value="0.7">0.7</option>
+            <option value="0.8">0.8</option>
+            <option value="1.0">1.0</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">5. Agudeza Visual Media :</label><br />
+        <select class="form-select" id="estereopsis" name="derechoavm" aria-label="Default select example">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="0.1">0.1</option>
+            <option value="0.2">0.2</option>
+            <option value="0.28">0.28</option>
+            <option value="0.4">0.4</option>
+            <option value="0.5">0.5</option>
+            <option value="0.7">0.7</option>
+            <option value="0.8">0.8</option>
+            <option value="1.0">1.0</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">6. Agudeza Visual Lejana :</label><br />
+        <select class="form-select" id="estereopsis" name="derechoavl" aria-label="Default select example">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="0.1">0.1</option>
+            <option value="0.2">0.2</option>
+            <option value="0.28">0.28</option>
+            <option value="0.4">0.4</option>
+            <option value="0.5">0.5</option>
+            <option value="0.7">0.7</option>
+            <option value="0.8">0.8</option>
+            <option value="1.0">1.0</option>
+        </select>
+    </div>
+
+
+    <div class="form-group">
+        <label style="color:white">7. ¿Utiliza Lentes para corregir su agudeza visual? </label><br />
+        <input type="checkbox" id="agudezavisual" name="agudezavisual" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="SI" data-off="NO">
+    </div>
+
+
+    <div>
+        <label style="color:white">8. Sentido de Profundidad o Estereopsis : </label><br />
+        <select class="form-select" id="estereopsis" name="estereopsis" aria-label="Default select example">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="40">40</option>
+            <option value="50">50</option>
+            <option value="60">60</option>
+            <option value="80">80</option>
+            <option value="100">100</option>
+            <option value="140">140</option>
+            <option value="200">200</option>
+            <option value="400">400</option>
+            <option value="800">800</option>
+        </select>
+    </div>
+
+    <br />
+    <div class="form-group">
+        <label style="color:white">9. ¿Presenta carta de no accidentes y evaluación médica del desempeño? </label><br />
+        <input type="checkbox" id="cartaaccidentes" name="cartaaccidentes" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="SI" data-off="NO">
+    </div>
+
+
+    <div class="form-group">
+        <label style="color:white">10. Campo Visual </label><br />
+        <input type="checkbox" checked id="campovisual" name="campovisual" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="NORMAL" data-off="ALTERADO">
+    </div>
+
+
+    <div class="form-group">
+        <label style="color:white">11. Movimientos Oculares  </label><br />
+        <input type="checkbox" checked id="movimientosoculares" name="movimientosoculares" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="NORMAL" data-off="ALTERADO">
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">12. Ojo derecho reflejos pupilares </label><br />
+        <input type="checkbox" checked id="derechorp" name="derechorp" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="NORMAL" data-off="ALTERADO">
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">13. Ojo izquierdo reflejos pupilares </label><br />
+        <input type="checkbox" checked id="izquierdorp" name="izquierdorp" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="NORMAL" data-off="ALTERADO">
+    </div>
+
+
+    <div>
+        <label style="color:white">14. Test de visión cromática: </label><br />
+        <select class="form-select" aria-label="Default select example " id="cromatica" name="cromatica">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="Normal">Normal</option>
+            <option value="Deuteranop">Deuteranopia con carta de no accidentes y desempeño</option>
+            <option value="Ir a SCT">Deuteranopia con carta de no accidentes sin carta de desempeño (Ir a SCT)</option>
+            <option value="Protanopia">Protanopia</option>
+        </select>
+    </div>
+
+    <br />
+    <br />
+    <input type="hidden" value="@idPaciente" name="id" />
+    @*<input type="submit" class="btn btn-success" value="Guardar Examen" />*@
+
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmacion">Guardar Examen</button>
+
+    <div class="modal fade" id="confirmacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>¿Desea guardar lo datos del examen médico?</b></h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input type="submit" class="btn btn-success" value="Guardar Examen" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</form>
+<br />
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
+    <input type="hidden" value="@idPaciente" name="id" />
+    <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />
+</form>
+
+
+
+@*@{
+        ViewBag.Title = "OFTALMOLOGÍA";
+        GMIEntities db = new GMIEntities();
+
+        int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+        var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+    }
+
+    <br />
+    <h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Examen Oftalmología: </span>@nombrePaciente </h3>
+    <br />
+
+    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Oftalmologia")" style="display:inline-block; margin:0.5%">
+        <input type="hidden" value="@idPaciente" name="id" />
+        <input type="submit" class="btn btn-success" value="Guardar Examen" />
+    </form>
+
+    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
+        <input type="hidden" value="@idPaciente" name="id" />
+        <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />
+    </form>*@

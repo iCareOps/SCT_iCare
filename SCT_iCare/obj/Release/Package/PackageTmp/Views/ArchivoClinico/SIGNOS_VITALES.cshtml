@@ -1,0 +1,164 @@
+﻿
+@{
+    ViewBag.Title = "SIGNOS_VITALES";
+    GMIEntities db = new GMIEntities();
+
+    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+}
+
+<br />
+<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Examen Signos Vitales: </span>@nombrePaciente </h3>
+<br />
+
+
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_SignosVitales")" style="display:inline-block; margin:0.5%">
+
+    <div>
+        <label style="color:white">Sexo: </label><br />
+        <select class="form-select" aria-label="Default select example" name="sexo">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Masculino">Masculino</option>
+
+        </select>
+    </div>
+    <br />
+
+    <div>
+        <label style="color:white">Grupo Sanguíneo: </label><br />
+        <select class="form-select" aria-label="Default select example" name="sangre">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="DESCONOCE">DESCONOCE</option>
+
+        </select>
+    </div>
+    <br />
+
+    <div class="form-group">
+        <label style="color:white">1. Presión arterial sistólica:</label>
+        <input type="tel" name="sistolica" class="form-control" id="presion_sistolica" placeholder="" required>
+
+    </div>
+
+
+    <div class="form-group">
+        <label style="color:white">2. Presión Arterial Diastólica:</label>
+        <input type="tel" name="diastolica" class="form-control" id="presion_diastolica" placeholder="" required>
+
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">3. Frecuencia Cardiaca:</label>
+        <input type="tel" name="cardiaca" class="form-control" id="frecuencia cardiaca" placeholder="" required>
+
+    </div>
+
+
+    <div class="form-group">
+        <label style="color:white">4. Frecuencia respiratoria:</label>
+        <input type="tel" name="respiratoria" class="form-control" id="frecuencia_cardiaca" placeholder="" required>
+
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">5. Temperatura:</label>
+        <input type="tel" step="any" name="temperatura" class="form-control" id="frecuencia_cardiaca" placeholder="" required>
+
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">6. Peso (kgs):</label>
+        <input type="tel" step="any" name="peso" class="form-control" id="peso" onkeyup="myFunction()" placeholder="" required>
+
+    </div>
+
+
+    <div class="form-group">
+        <label style="color:white">7. Estatura (cms):</label>
+        <input type="tel" name="estatura" class="form-control" id="estatura" onkeyup="myFunction()" placeholder="" required>
+
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">8. IMC:</label>
+        <number type="tel" step="any" name="imc" class="form-control" id="imc" placeholder="" required>
+
+            <!-- SCRIPT PARA CALCULAR IMC -->
+            <script type="text/javascript">
+                calc = document.getElementById("calc");
+                kg = document.getElementById("peso");
+                m = document.getElementById("estatura");
+                imc_JS = document.getElementById("imc");
+
+                function myFunction() {
+                    if (kg.value != "" && m.value != "") {
+                        imcx = (kg.value / (Math.pow(m.value / 100, 2)));
+                        imcx_red = imcx.toFixed(2);
+                        imc.innerHTML = imcx_red
+                        console.log(imcx_red);
+                    }
+
+                };</script>
+
+    </div>
+
+
+    <div class="form-group">
+        <label style="color:white">9. Cintura (cms):</label>
+        <input type="tel" name="cintura" class="form-control" id="cintura" placeholder="" required>
+
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">10. Cuello (cms):</label>
+        <input type="tel" class="form-control" name="cuello" id="cuello" placeholder="" required>
+
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">11. Porcentaje De Grasa:</label>
+        <input type="tel" name="grasa" class="form-control" id="porcentajegrasa" placeholder="" required>
+
+    </div>
+
+    <br />
+
+    <input type="hidden" value="@idPaciente" name="id" />
+    @*<input type="submit" class="btn btn-success" value="Guardar Examen" />*@
+
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmacion">Guardar Examen</button>
+
+    <div class="modal fade" id="confirmacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>¿Desea guardar lo datos del examen médico?</b></h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input type="submit" class="btn btn-success" value="Guardar Examen" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>
+
+<br />
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
+    <input type="hidden" value="@idPaciente" name="id" />
+    <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />
+</form>
+

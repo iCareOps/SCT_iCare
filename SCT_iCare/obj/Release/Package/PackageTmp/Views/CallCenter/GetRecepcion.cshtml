@@ -1,0 +1,54 @@
+﻿@model IEnumerable<SCT_iCare.Consultorios>
+@{
+    ViewBag.Title = "Login";
+    Layout = null;
+}
+
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+
+<body class="bodyLogin">
+    <div class="container formularioLogin">
+        <div class="row">
+            <div class="">
+                <div>
+                    <form action="@Url.Content("~/CallCenter/Index")" asp-controller="Login" id="Login" method="post">
+                        <div>
+                            <img src="~/Images/IcareLogo.png" class="imagenLogin" />
+                        </div>
+                        <br />
+                        <div class="form-group labelGral col-md-12">
+                            <h4 style="font-size:3vh" class="text-info">Selecciona un consultorio:</h4>
+                        </div>
+                        <br />
+                        <div class="form-group labelGral col-md-12">
+                            <select name="consultorio" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                <option value="value1" selected>--Estados, Consultorios y Doctores--</option>
+                                @{
+                                    var consultorios = Model.OrderBy(i => i.Estado).ToList(); //from c in Model select c;
+
+                                    foreach (var item in consultorios)
+                                    {
+                                        <option value="@item.Consultorio">@item.Estado , @item.Consultorio</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <br />
+                            <input type="submit" asp-for="callcenter" class="form-control btn btn-warning inputLogin" value="Listo" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+@{
+    if (TempData["Consultorio"] == "value1")
+    {
+        <script>alert("Se debe elegir un consultorio");</script>
+    }
+}

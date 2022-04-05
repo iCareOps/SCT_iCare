@@ -1,0 +1,421 @@
+﻿
+@{
+    ViewBag.Title = "Patologicos";
+
+    GMIEntities db = new GMIEntities();
+
+    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+    <style>
+        .toggle.ios, .toggle-on.ios, .toggle-off.ios {
+            border-radius: 20rem;
+            background-color: white;
+        }
+
+            .toggle.ios .toggle-handle {
+                border-radius: 20rem;
+                background-color: white;
+            }
+    </style>
+
+
+}
+
+<br />
+<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Antecedentes Personales Patológicos: </span>@nombrePaciente </h3>
+<br />
+
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Heredofamiliares</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">No Patológicos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="#" style="text-decoration:none; color:goldenrod"><b>PATOLÓGICOS</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Aparatos y Sistemas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Exploración Física</a>
+    </li>
+</ul>
+
+<br />
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Patologicos")" style="display:inline-block; margin:0.5%">
+
+    <script type="text/javascript">
+        function enfcongenita() {
+            element_enfcong = document.getElementById("content_enfcong");
+            check_enfcong = document.getElementById("enf_cong");
+            disabled_enfcong = document.getElementById("required_enfcong");
+
+            if (check_enfcong.checked) {
+                element_enfcong.style.display = 'block';
+                disabled_enfcong.disabled = false
+            }
+            else {
+                element_enfcong.style.display = 'none';
+                disabled_enfcong.disabled = true
+            }
+        }
+    </script>
+
+    <div class="form-group">
+        <label style="color:white">1. ¿Nació con alguna enfermedad congenita?:</label><br />
+        <input type="checkbox" id="enf_cong" onchange="javascript: enfcongenita()" name="congenita" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group" id="content_enfcong" style="display: none;">
+        <label style="color:white">Especificar enfermedad</label><br />
+        <textarea id="required_enfcong" name="congenita_esp" required disabled></textarea>
+    </div>
+
+    <script type="text/javascript">
+        function f_alergia() {
+            element_alergia = document.getElementById("c_alergia");
+            check_alergia = document.getElementById("alergia");
+            disabled_alergia = document.getElementById("r_alergia");
+
+            if (check_alergia.checked) {
+                element_alergia.style.display = 'block';
+                disabled_alergia.disabled = false
+            }
+            else {
+                element_alergia.style.display = 'none';
+                disabled_alergia.disabled = true
+            }
+        }
+    </script>
+
+    <div class="form-group">
+        <label style="color:white">2. ¿Historia de Alergias?:</label><br />
+        <input type="checkbox" id="alergia" onchange="javascript: f_alergia()" name="alergias" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group" id="c_alergia" style="display: none;">
+        <label style="color:white">Especificar alergias</label><br />
+        <textarea id="r_alergia" name="alergias_esp" required disabled></textarea>
+    </div>
+
+    <script type="text/javascript">
+        function transtornosmemoria() {
+            element_tmemoria = document.getElementById("c_t_memoria");
+            check_tmemoria = document.getElementById("t_memoria");
+            disabled_tmemoria = document.getElementById("r_memoria");
+
+            if (check_tmemoria.checked) {
+                element_tmemoria.style.display = 'block';
+                disabled_tmemoria.disabled = false
+            }
+            else {
+                element_tmemoria.style.display = 'none';
+                disabled_tmemoria.disabled = true
+            }
+        }
+    </script>
+
+    <div class="form-group">
+        <label style="color:white">3. ¿Tiene Transtornos de la Memoria?:</label><br />
+        <input type="checkbox" id="t_memoria" onchange="javascript: transtornosmemoria()" name="memoria" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group" id="c_t_memoria" style="display: none;">
+        <label style="color:white">Especificar</label><br />
+        <textarea id="r_memoria" name="memoria_esp" required disabled></textarea>
+    </div>
+
+    <script type="text/javascript">
+        function f_enf_obst() {
+            element_enf_obst = document.getElementById("c_enf_obst");
+            check_enf_obst = document.getElementById("enf_obst");
+            disabled_enf_obst = document.getElementById("r_enf_obst");
+
+            if (check_enf_obst.checked) {
+                element_enf_obst.style.display = 'block';
+                disabled_enf_obst.disabled = false
+            }
+            else {
+                element_enf_obst.style.display = 'none';
+                disabled_enf_obst.disabled = true
+            }
+        }
+    </script>
+
+    <div class="form-group">
+        <label style="color:white">4. ¿Historia de Enfermedad Pulmonar Obstructiva?:</label><br />
+        <input type="checkbox" id="enf_obst" onchange="javascript: f_enf_obst()" name="obstructiva" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group" id="c_enf_obst" style="display: none;">
+        <label style="color:white">Especificar</label><br />
+        <textarea id="r_enf_obst" name="obstructiva_esp" required disabled></textarea>
+    </div>
+
+    <script type="text/javascript">
+        function f_quirurgico() {
+            element_quirurgico = document.getElementById("c_quirurgico");
+            check_quirurgico = document.getElementById("quirurgico");
+            disabled_quirurgico = document.getElementById("r_quirurgico");
+
+            if (check_quirurgico.checked) {
+                element_quirurgico.style.display = 'block';
+                disabled_quirurgico.disabled = false
+            }
+            else {
+                element_quirurgico.style.display = 'none';
+                disabled_quirurgico.disabled = true
+            }
+        }
+    </script>
+
+    <div class="form-group">
+        <label style="color:white">5. ¿Antecedentes Quirurgicos?:</label><br />
+        <input type="checkbox" id="quirurgico" onchange="javascript: f_quirurgico()" name="quirurgicos" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group" id="c_quirurgico" style="display: none;">
+        <label style="color:white">Especificar</label><br />
+        <textarea id="r_quirurgico" name="quirurgicos_esp" required disabled></textarea>
+    </div>
+
+    <script type="text/javascript">
+        function f_transfuncionales() {
+            element_transfuncionales = document.getElementById("c_transfuncionales");
+            check_transfuncionales = document.getElementById("s_transfuncionales");
+            disabled_transfuncionales = document.getElementById("r_transfuncionales");
+
+            if (check_transfuncionales.checked) {
+                element_transfuncionales.style.display = 'block';
+                disabled_transfuncionales.disabled = false
+            }
+            else {
+                element_transfuncionales.style.display = 'none';
+                disabled_transfuncionales.disabled = true
+            }
+        }
+    </script>
+
+    <div class="form-group">
+        <label style="color:white">6. ¿Antecedentes Transfusionales?</label><br />
+        <input type="checkbox" id="s_transfuncionales" onchange="javascript: f_transfuncionales()" name="transfuncionales" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group" id="c_transfuncionales" style="display: none;">
+        <label style="color:white">Especificar</label><br />
+        <textarea id="r_transfuncionales" name="transfuncionales_esp" required disabled></textarea>
+    </div>
+
+    <script type="text/javascript">
+        function f_Diabetes() {
+            element_Diabetes = document.getElementById("c_Diabetes");
+            check_Diabetes = document.getElementById("s_Diabetes");
+            disabled_Diabetes = document.getElementById("r_Diabetes");
+
+            if (check_Diabetes.checked) {
+                element_Diabetes.style.display = 'block';
+                disabled_Diabetes.disabled = false
+            }
+            else {
+                element_Diabetes.style.display = 'none';
+                disabled_Diabetes.disabled = true
+            }
+        }
+    </script>
+
+    <div class="form-group">
+        <label style="color:white">7. ¿Padece Diabetes?:</label><br />
+        <input type="checkbox" id="s_Diabetes" onchange="javascript: f_Diabetes()" name="diabetes" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group" id="c_Diabetes" style="display: none;">
+        <label style="color:white">Especificar</label><br />
+        <textarea id="r_Diabetes" name="diabetes_esp" required disabled></textarea>
+    </div>
+
+    <script type="text/javascript">
+        function f_traumatismo() {
+            element_traumatismo = document.getElementById("c_traumatismo");
+            check_traumatismo = document.getElementById("s_traumatismo");
+            disabled_traumatismo = document.getElementById("r_traumatismo");
+
+            if (check_traumatismo.checked) {
+                element_traumatismo.style.display = 'block';
+                disabled_traumatismo.disabled = false
+            }
+            else {
+                element_traumatismo.style.display = 'none';
+                disabled_traumatismo.disabled = true
+            }
+        }
+    </script>
+
+    <div class="form-group">
+        <label style="color:white">8. ¿Antecedentes de traumatismo?:</label><br />
+        <input type="checkbox" id="s_traumatismo" onchange="javascript: f_traumatismo()" name="traumatismo" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group" id="c_traumatismo" style="display: none;">
+        <label style="color:white">Especificar</label><br />
+        <textarea id="r_traumatismo" name="traumatismo_esp" required disabled></textarea>
+    </div>
+
+    <script type="text/javascript">
+        function f_Convulsivas() {
+            element_Convulsivas = document.getElementById("c_Convulsivas");
+            check_Convulsivas = document.getElementById("s_Convulsivas");
+            disabled_Convulsivas = document.getElementById("r_Convulsivas");
+
+            if (check_Convulsivas.checked) {
+                element_Convulsivas.style.display = 'block';
+                disabled_Convulsivas.disabled = false
+            }
+            else {
+                element_Convulsivas.style.display = 'none';
+                disabled_Convulsivas.disabled = true
+            }
+        }
+    </script>
+
+    <div class="form-group">
+        <label style="color:white">9. ¿Padece Crisis Convulsivas?:</label><br />
+        <input type="checkbox" id="s_Convulsivas" onchange="javascript: f_Convulsivas()" name="convulsivas" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group" id="c_Convulsivas" style="display: none;">
+        <label style="color:white">Especificar</label><br />
+        <textarea id="r_Convulsivas" name="convulsivas_esp" required disabled></textarea>
+    </div>
+
+    <script type="text/javascript">
+        function f_Oncologicos() {
+            element_Oncologicos = document.getElementById("c_Oncologicos");
+            check_Oncologicos = document.getElementById("s_Oncologicos");
+            disabled_Oncologicos = document.getElementById("r_Oncologicos");
+
+            if (check_Oncologicos.checked) {
+                element_Oncologicos.style.display = 'block';
+                disabled_Oncologicos.disabled = false
+            }
+            else {
+                element_Oncologicos.style.display = 'none';
+                disabled_Oncologicos.disabled = true
+            }
+        }
+    </script>
+
+    <div class="form-group">
+        <label style="color:white">10. ¿Antecedentes Oncológicos?:</label><br />
+        <input type="checkbox" id="s_Oncologicos" onchange="javascript: f_Oncologicos()" name="oncologicos" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group" id="c_Oncologicos" style="display: none;">
+        <label style="color:white">Especificar</label><br />
+        <textarea id="r_Oncologicos" name="oncologicos_esp" required disabled></textarea>
+    </div>
+
+    <script type="text/javascript">
+        function f_Cardiopatias() {
+            element_Cardiopatias = document.getElementById("c_Cardiopatias");
+            check_Cardiopatias = document.getElementById("s_Cardiopatias");
+            disabled_Cardiopatias = document.getElementById("r_Cardiopatias");
+
+            if (check_Cardiopatias.checked) {
+                element_Cardiopatias.style.display = 'block';
+                disabled_Cardiopatias.disabled = false
+            }
+            else {
+                element_Cardiopatias.style.display = 'none';
+                disabled_Cardiopatias.disabled = true
+            }
+        }
+    </script>
+
+    <div class="form-group">
+        <label style="color:white">11. ¿Antecedentes de Cardiopatías?:</label><br />
+        <input type="checkbox" id="s_Cardiopatias" onchange="javascript: f_Cardiopatias()" name="cardiopatias" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group" id="c_Cardiopatias" style="display: none;">
+        <label style="color:white">Especificar</label><br />
+        <textarea id="r_Cardiopatias" name="cardiopatias_esp" required disabled></textarea>
+    </div>
+
+    <script type="text/javascript">
+        function f_Hipertension() {
+            element_Hipertension = document.getElementById("c_Hipertension");
+            check_Hipertension = document.getElementById("s_Hipertension");
+            disabled_Hipertension = document.getElementById("r_Hipertension");
+
+            if (check_Hipertension.checked) {
+                element_Hipertension.style.display = 'block';
+                disabled_Hipertension.disabled = false
+            }
+            else {
+                element_Hipertension.style.display = 'none';
+                disabled_Hipertension.disabled = true
+            }
+        }
+    </script>
+
+    <div class="form-group">
+        <label style="color:white">12. ¿Padece de Hipertensión?:</label><br />
+        <input type="checkbox" id="s_Hipertension" onchange="javascript: f_Hipertension()" name="hipertension" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group" id="c_Hipertension" style="display: none;">
+        <label style="color:white">Especificar</label><br />
+        <textarea id="r_Hipertension" name="hipertension_esp" required disabled></textarea>
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">13. ¿Consume Bebidas Alcoholicas?:</label><br />
+        <input type="checkbox" name="alcoholicas" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">14. ¿Fuma?</label><br />
+        <input type="checkbox" name="fuma" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">15. ¿Consume Drogas?:</label><br />
+        <input type="checkbox" name="drogas" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <br />
+    <input type="hidden" value="@idPaciente" name="id" />
+    @*<input type="submit" class="btn btn-success" value="Guardar Examen" />*@
+
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmacion">Guardar Examen</button>
+
+    <div class="modal fade" id="confirmacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>¿Desea guardar lo datos del examen médico?</b></h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input type="submit" class="btn btn-success" value="Guardar Examen" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>
+<br />
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
+    <input type="hidden" value="@idPaciente" name="id" />
+    <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />
+</form>
+
+

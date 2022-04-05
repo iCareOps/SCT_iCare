@@ -1,0 +1,171 @@
+﻿@model IEnumerable<SCT_iCare.CERTIFICADO>
+
+@*@using PagedList.Mvc;
+@model PagedList.IPagedList<SCT_iCare.CERTIFICADO>*@
+
+@{
+    ViewBag.Title = "Index";
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+    int idUser = oUser.idUsuario;
+    string nombreUsuario = oUser.Nombre;
+
+    GMIEntities db = new GMIEntities();
+
+    var listaOrdenada = from l in db.CERTIFICADO orderby l.idCertificado descending select l;
+
+}
+
+<br />
+<br />
+<h3 style="color:white" class="text-center">Certificados</h3>
+
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Nuevo Certificado</button>
+<br />
+<br />
+
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Ingresa los datos para generar un nuevo certificado</b></h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/CERTIFICADOes/Create")">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Nombre(s):</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Apellido Paterno:</label>
+                        <input type="text" class="form-control" id="paterno" name="paterno" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Apellido Materno:</label>
+                        <input type="text" class="form-control" id="materno" name="materno" requires>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Número de Pasaporte:</label>
+                        <input type="text" class="form-control" id="pasaporte" name="pasaporte">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Fecha de Nacimiento:</label>
+                        <input type="date" class="form-control" id="nacimiento" name="nacimiento" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Fecha de Toma:</label>
+                        <input type="datetime-local" class="form-control" id="nacimiento" name="toma" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Sexo:</label>
+                        <select name="sexo" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option value="Femenino">Femenino</option>
+                            <option value="Masculino">Masculino</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Resultado:</label>
+                        <select name="resultado" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option value="Negativo">Negativo</option>
+                            <option value="Positivo">Positivo</option>
+                        </select>
+                    </div>
+                    <input type="hidden" value="@nombreUsuario" name="usuario" />
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <input type="submit" value="Enviar Datos" class="btn btn-primary" />
+            </div></form>
+        </div>
+    </div>
+</div>
+
+<div class="tablaScroll">
+    <table class="table tablas">
+        <thead>
+            <tr style="background-color:#62E3C9">
+                <th>
+                    @Html.DisplayNameFor(model => model.Nombre)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Pasaporte)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Respuesta)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FechaNacimiento)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FechaToma)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Sexo)
+                </th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+
+        @foreach (var item in listaOrdenada)
+        {
+            <tr>
+                <td>
+                    <b>@Html.DisplayFor(modelItem => item.Nombre)</b>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Pasaporte)
+                </td>
+                <td>
+                    <b>@Html.DisplayFor(modelItem => item.Respuesta)</b>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaNacimiento)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaToma)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Sexo)
+                </td>
+                <td>
+                    <!--@Html.ActionLink("Edit", "Edit", new { id = item.idCertificado }) |-->
+                    @*@Html.ActionLink("Details", "Details", new { id = item.idCertificado }) |*@
+                    <!--@Html.ActionLink("Delete", "Delete", new { id = item.idCertificado }) ||||-->
+                    @Html.ActionLink("Descargar", "Descargar", new { id = item.idCertificado })
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>
+
+
+@*@using (Html.BeginForm("Index", "CERTIFICADOes", FormMethod.Post))
+    {
+        <p>
+            <h5 class="labelGral">
+                Mostrando: <select name="PageSize" id="PageSize" onchange="this.form.submit();">
+                    <option @if ((int)ViewBag.PageSize == 10) { @Html.Raw("selected") } value="10">10</option>
+                    <option @if ((int)ViewBag.PageSize == 20) { @Html.Raw("selected") } value="20">20</option>
+                    <option @if ((int)ViewBag.PageSize == 50) { @Html.Raw("selected") } value="50">50</option>
+                    <option @if ((int)ViewBag.PageSize == 100) { @Html.Raw("selected") } value="100">100</option>
+                </select> registros
+            </h5>
+        </p>
+    }
+
+    <h5 class="labelGral">Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount. Elementos totales: @Model.TotalItemCount</h5>
+
+    @Html.PagedListPager(Model, page => Url.Action("Indez", "CERTIFICADOes", new { page, pageSize = ViewBag.PageSize }))*@
+
+
+

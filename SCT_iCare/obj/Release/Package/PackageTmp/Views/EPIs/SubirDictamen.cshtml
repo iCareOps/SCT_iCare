@@ -1,0 +1,176 @@
+﻿@model SCT_iCare.Captura
+
+@{
+    ViewBag.Title = "SubirDictamen";
+    int id = ViewBag.ID;
+}
+
+<br />
+<h2 style="color:white">Subir Dictamen</h2>
+
+<div>
+    <h4 style="color:white">Datos del Dictamen</h4>
+    <hr />
+
+    @*<h5 style="color:white">Si ocurrió una incidencia al tratar de obtener un dictamen haz click para notificar el problema</h5>*@
+
+    @{ 
+        GMIEntities db = new GMIEntities();
+        string capturista = (from i in db.Captura where i.idCaptura == id select i.Capturista).FirstOrDefault().ToString();
+        string folio = (from i in db.Captura where i.idCaptura == id select i.NoExpediente).FirstOrDefault().ToString();
+        string paciente = (from i in db.Captura where i.idCaptura == id select i.NombrePaciente).FirstOrDefault().ToString();
+    }
+
+    <p>
+        <button class="btn btn-outline-warning boton-transparentePendiente botonesGral" style="color:white; width:100%" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            Si ocurrió una incidencia al tratar de obtener un dictamen haz click para notificar el problema <br /><span class="glyphicon glyphicon-chevron-down"></span>
+        </button>
+    </p>
+    <div class="collapse" id="collapseExample">
+        <div class="card card-body">
+            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Pendiente")" style="display:inline-block">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" asp-for="id" class="labelGral" required value=@id />
+                <input type="hidden" name="capturista" asp-for="id" class="labelGral" required value=@capturista />
+                <input type="hidden" name="folio" asp-for="id" class="labelGral" required value=@folio />
+                <input type="hidden" name="paciente" asp-for="id" class="labelGral" required value=@paciente />
+                <input type="hidden" name="incidencia" asp-for="id" class="labelGral" required value="Falla del Sistema" />
+                <input type="hidden" name="falla" asp-for="id" class="labelGral" required value="2" />
+                <button class="btn btn-outline-warning boton-transparentePendiente botonesGral" style="color:white" type="submit" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="glyphicon glyphicon-alert"></span>&nbsp; Falla del sistema Metra
+                </button>
+            </form>
+            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Pendiente")" style="display:inline-block">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" asp-for="id" class="labelGral" required value=@id />
+                <input type="hidden" name="capturista" asp-for="id" class="labelGral" required value=@capturista />
+                <input type="hidden" name="folio" asp-for="id" class="labelGral" required value=@folio />
+                <input type="hidden" name="paciente" asp-for="id" class="labelGral" required value=@paciente />
+                <input type="hidden" name="falla" asp-for="id" class="labelGral" required value="3" />
+                <input type="hidden" name="incidencia" asp-for="id" class="labelGral" required value="Error en los Biométricos" />
+                <button class="btn btn-outline-warning boton-transparentePendiente botonesGral" style="color:white" type="submit" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="glyphicon glyphicon-alert"></span>&nbsp; Error en los Biométricos
+                </button>
+            </form>
+            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Pendiente")" style="display:inline-block">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" asp-for="id" class="labelGral" required value=@id />
+                <input type="hidden" name="capturista" asp-for="id" class="labelGral" required value=@capturista />
+                <input type="hidden" name="folio" asp-for="id" class="labelGral" required value=@folio />
+                <input type="hidden" name="paciente" asp-for="id" class="labelGral" required value=@paciente />
+                <input type="hidden" name="falla" asp-for="id" class="labelGral" required value="4" />
+                <input type="hidden" name="incidencia" asp-for="id" class="labelGral" required value="Error en la Captura" />
+                <button class="btn btn-outline-warning boton-transparentePendiente botonesGral" style="color:white" type="submit" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="glyphicon glyphicon-alert"></span>&nbsp; Error en la Captura
+                </button>
+            </form>
+        </div>
+        <hr />
+    </div>
+
+    <br />
+
+    <dl class="dl-horizontal labelGral">
+        <dt>
+            <h4>Nombre del Paciente: </h4>
+        </dt>
+
+        <dd>
+            <h4 style="color:white">@Html.DisplayFor(model => model.NombrePaciente)</h4>
+        </dd>
+
+        <dt>
+            <h4>Número de Expediente:</h4>
+        </dt>
+
+        <dd>
+            <h4 style="color:white">@Html.DisplayFor(model => model.NoExpediente)</h4>
+        </dd>
+
+        <dt>
+            <h4>Tipo de Epi:</h4>
+        </dt>
+
+        <dd>
+            <h4 style="color:white">@Html.DisplayFor(model => model.TipoTramite)</h4>
+        </dd>
+
+
+        <dt>
+            <h4>Doctor Asignado:</h4>
+        </dt>
+
+        <dd>
+            <h4 style="color:white">@Html.DisplayFor(model => model.Doctor)</h4>
+        </dd>
+
+        @*<dt>
+            <h4>Sucursal:</h4>
+        </dt>
+
+        <dd>
+            <h4 style="color:white">@Html.DisplayFor(model => model.Sucursal)</h4>
+        </dd>
+        <dt>
+            <h4></h4>
+        </dt>*@
+        <br />
+        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Dictaminar")">
+            @Html.AntiForgeryToken()
+            <dt>
+                <h4>Aptitud:</h4>
+            </dt>
+
+            <dd>
+                <select name="aptitud" style="width:50%; min-height:5vh; font-size:2vh" class="form-select">
+                    <option value="APTO">APTO</option>
+                    <option value="NO APTO">NO APTO</option>
+                </select>
+            </dd>
+            <br />
+            <dt>
+                <h4>Comentario de Aptitud:</h4>
+            </dt>
+
+            <dd>
+                <input type="text" maxlength="200" class="form-control" id="comentario" name="comentario">
+            </dd>
+            <dt>
+                <h4>Fecha de Vigencia Dictamen:</h4>
+            </dt>
+
+            <dd>
+                <input type="date" class="form-control" id="comentario" name="vigencia" required>
+            </dd>
+            <br />
+            <dd>
+                <div class=" labelGral">
+                    <input type="file" name="file" asp-for="file" class="labelGral" required value="file" />
+                    <input type="hidden" name="id" asp-for="id" class="labelGral" required value=@ViewBag.ID />
+                </div>
+            </dd>
+
+            <br />
+            <br />
+            <dt>
+                <div class="enlaceSinBoton">
+                    @Html.ActionLink("Volver a la lista", "capturaSucursal", new { sucursal = ViewBag.Sucursal })
+                </div>
+            </dt>
+
+
+            <dd>
+                <input type="submit" value="Subir Dictamen" class="btn btn-outline-warning boton-transparente botonesGral" />
+            </dd>
+        </form>
+
+    </dl>
+
+
+</div>
+
+@*<br />
+
+<div class="enlaceSinBoton">
+    @Html.ActionLink("Volver a la lista", "capturaSucursal", new { sucursal = ViewBag.Sucursal } )
+</div>*@

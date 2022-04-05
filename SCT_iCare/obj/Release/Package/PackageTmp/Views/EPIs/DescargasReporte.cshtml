@@ -1,0 +1,534 @@
+﻿<head>
+    @*Scripts necesarios para descargar la tabla de excel*@
+    <script src="https://unpkg.com/xlsx@0.17.2/dist/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/file-saverjs@1.3.6/FileSaver.min.js"></script>
+    <script src="https://unpkg.com/tableexport@5.2.0/dist/js/tableexport.min.js"></script>
+
+    @*Scripts para generar archivo Zip*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.js"></script>
+    <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
+
+    @*XLSX*@
+    <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+</head>
+
+
+@using PagedList.Mvc;
+@model PagedList.IPagedList<SCT_iCare.Cita>
+
+@{
+    ViewBag.Title = "Captura";
+
+    GMIEntities db = new GMIEntities();
+
+    DateTime start = DateTime.Now;
+    //DateTime startDay = Convert.ToDateTime(start.Day);
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    string nombreUsuario = null;
+    int idUser = 0;
+    int? idRol = 0;
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
+    }
+
+    string Query = "";
+    if (TempData["ERROR"] == "ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO")
+    {
+        Query = TempData["ERROR"].ToString();
+    }
+
+    DateTime maxDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+
+    string fechaMAX = Convert.ToDateTime(maxDate).ToString("yyyy-MM-dd");
+
+    string parameter = ViewBag.Parameter;
+    DateTime rango = Convert.ToDateTime(ViewBag.Fecha);
+
+
+    int year = start.Year;
+    int month = start.Month;
+    int day = start.Day;
+    int tomorrorDay = day + 1;
+    DateTime thisDate = Convert.ToDateTime(ViewBag.Inicio);
+    //thisDate = thisDate.AddDays(1);
+    DateTime tomorrowDate = Convert.ToDateTime(ViewBag.Final);
+
+    var tablaFinal = db.Paciente.
+        Join(db.Cita, a => a.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
+        Where(w => w.B.FechaCita >= thisDate && w.B.FechaCita < tomorrowDate).
+        Join(db.Captura, c => c.A.idPaciente, d => d.idPaciente, (c, d) => new { C = c, D = d }).
+        Select(s => new
+        {
+            s.C.B.FechaReferencia,
+            s.C.B.FechaCita,
+            s.C.A.Nombre,
+            s.C.B.NoExpediente,
+            s.C.A.Telefono,
+            s.C.A.Email,
+            s.C.A.Folio,
+            s.C.A.CURP,
+            s.C.B.TipoTramite,
+            s.C.B.TipoLicencia,
+            s.C.B.TipoPago,
+            s.C.B.Sucursal,
+            s.C.B.Doctor,
+            s.C.B.Recepcionista,
+            s.C.B.Referencia,
+            s.C.B.CanalTipo,
+            s.C.B.Asistencia,
+            s.D.FechaExpdiente,
+            s.D.Capturista,
+            s.D.EstatusCaptura,
+            s.D.InicioCaptura,
+            s.D.FinalCaptura,
+            s.D.Aptitud,
+            s.D.FechaVigencia,
+            s.C.B.ReferidoPor
+        }).OrderBy(o => o.FechaReferencia) ;
+
+    string fila_1 = ""; //Background row de tabla invisible
+
+    //var repoCentral = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
+    var repoCentral = (from r in db.Captura orderby r.TipoTramite select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").ToList();
+
+    var repoCentral2 = (from r in db.Captura select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").Count();
+
+
+    int epis = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).Count();
+    int episSinIniciar = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").Count();
+
+
+    int dictamenes = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Terminado").Count();
+
+    int pendientes = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "No iniciado").Count();
+
+    int enCaptura = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "En captura...").Count();
+
+    int incidencia = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Pendiente").Count();
+
+    var sucursalesLista = from s in db.Sucursales select s.Nombre;
+
+    var capturistas = from c in db.Usuarios where c.idRol == 7 && c.idUsuario != 13 && c.idUsuario != 25 select c.Nombre;
+
+    var capturistasAnexa = from c in db.Usuarios where c.idRol == 9 select c.Nombre;
+
+    string fecha = DateTime.Now.ToString("dd-MMMM-yyyy");
+
+    string fila = "";
+    int flag = 1; //contador de la tabla
+
+}
+
+<br />
+<br />
+@*<h5 style="color:white" class="text-right">@fecha</h5>*@
+<h3 style="color:white" class="text-center">Centro de Descarga de Reportes &nbsp; &nbsp; &nbsp;<span class="h4" style="color:#AC9070"><b>@fecha</b></span></h3>
+<br />
+@if (ViewBag.Estado == 1)
+{
+    <h5 style="color:darkgray">Mostrando resultados de: <span style="color:white">@ViewBag.Inicio.ToString("dd-MMMM-yyyy")</span> hasta <span style="color:white">@ViewBag.Final.ToString("dd-MMMM-yyyy")</span></h5>
+}
+
+
+
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/DescargasReporte")">
+    <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px">
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+        <input type="date" class="form-control" min="2021-08-02" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+        <input type="date" class="form-control" name="final" max="@fechaMAX" /> &nbsp; &nbsp;
+        <input type="submit" class="btn btn-primary" value="Enviar" />
+        <a href="~/EPIs/DescargasReporte"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+    </div>
+
+    <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
+        <div class="input-group">
+            <input type="text" class="form-control input-g" id="buscador" name="dato" placeholder="Paciente o Expediente">
+            <span class="input-group-btn">
+                <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+        </div>
+    </div>
+</form>
+<br />
+<br />
+
+@if (ViewBag.Estado == 1)
+{
+    //Aqui empieza la tabla invisible final//
+
+    @*<button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="exportTableToCSV('Reporte.csv')">ZIP</button>*@
+    <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
+    @*<input type="button" id="btnExportar" value="Exportar Datos a Excel" style="background-color:limegreen; display" class="btn btn-info dropdown-toggle">*@
+    @*<button id="btnExportar">Exportar</button>*@
+
+    @*Script donde se incorporan los archivos zip*@
+    @*<script>
+
+        function exportTableToCSV() {
+            var zip = new JSZip();
+
+            zip.file("Hello.txt", "Hello World\n");
+
+            // Generate the zip file asynchronously
+            zip.generateAsync({ type: "blob" })
+                .then(function (content) {
+                    // Force down of the Zip file
+                    saveAs(content, "archive.zip");
+                });
+        }
+    </script>*@
+
+    <script>
+
+        function ExportToExcel(type, fn, dl) {
+            var elt = document.getElementById('tbl_exporttable_to_xls');
+            var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+            return dl ?
+                XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+                XLSX.writeFile(wb, fn || ('Reporte del @ViewBag.Inicio.ToString("dd-MMMM-yyyy") al @ViewBag.Final.AddDays(-1).ToString("dd-MMMM-yyyy").' + (type || 'xlsx')));
+        }
+
+    </script>
+
+    @*<script>
+
+            function downloadCSV(csv, filename) {
+                var csvFile;
+                var downloadLink;
+
+                // CSV file
+                csvFile = new Blob([csv], { type: "text/csv" });
+
+                // Download link
+                downloadLink = document.createElement("a");
+
+                // File name
+                downloadLink.download = filename;
+
+                // Create a link to the file
+                downloadLink.href = window.URL.createObjectURL(csvFile);
+
+                // Hide download link
+                downloadLink.style.display = "none";
+
+                // Add the link to DOM
+                document.body.appendChild(downloadLink);
+
+                // Click download link
+                downloadLink.click();
+            }
+
+        </script>*@
+
+
+    @*<script>
+
+            function exportTableToCSV(filename) {
+                var csv = [];
+                var rows = document.querySelectorAll("table tr");
+
+                for (var i = 0; i < rows.length; i++) {
+                    var row = [], cols = rows[i].querySelectorAll("td, th");
+
+                    for (var j = 0; j < cols.length; j++)
+                        row.push(cols[j].innerText);
+
+                    csv.push(row.join(","));
+                }
+
+                // Download CSV file
+                downloadCSV(csv.join("\n"), filename);
+            }
+
+        </script>*@
+
+    <table id="tbl_exporttable_to_xls" class="table tablas" style="color: #2F2D6B; display:none">
+
+        <tr>
+            <th></th>
+            <th>Fecha Creación</th>
+            <th>Hora Creación</th>
+            <th>Fecha Cita</th>
+            <th>Nombre</th>
+            <th>No. Expediente</th>
+            <th>Telefono</th>
+            <th>Email</th>
+            <th>Folio</th>
+            <th>CURP</th>
+            <th>Tipo de Tramite</th>
+            <th>Tipo de Licencia</th>
+            <th>Tipo de Pago</th>
+            <th>Sucursal</th>
+            <th>Doctor</th>
+            <th>Persona que realizo la cita</th>
+            <th>Referencia de Pago</th>
+            <th>Canal</th>
+            <th>¿Asisto?</th>
+            <th>Fecha de Captura</th>
+            <th>Capturista</th>
+            <th>Estatus de Captura</th>
+            <th>Inicio de Captura</th>
+            <th>Final de Captura</th>
+            <th>Aptitud</th>
+            <th>Fecha de Vigencia</th>
+            <th>Referido Por</th>
+        </tr>
+
+        @{ foreach (var n in tablaFinal)
+            {
+
+                if (n.TipoLicencia == "AEREO")
+                {
+                    fila_1 = "plum";
+                }
+                else
+                {
+                    fila_1 = "white";
+                }
+
+                <tr style="background-color:@fila_1">
+
+                    <td>@flag</td>
+                    <td>@Convert.ToDateTime(n.FechaReferencia).ToString("dd/MM/yyyy")</td>
+                    <td>@Convert.ToDateTime(n.FechaReferencia).ToString("HH:mm")</td>
+                    <td>@Convert.ToDateTime(n.FechaCita)</td>
+                    <td>@n.Nombre</td>
+                    <td>@n.NoExpediente</td>
+                    <td>@n.Telefono</td>
+                    <td>@n.Email</td>
+                    <td>@n.Folio</td>
+                    <td>@n.CURP</td>
+                    <td>@n.TipoTramite</td>
+                    <td>@n.TipoLicencia</td>
+                    <td>@n.TipoPago</td>
+                    <td>@n.Sucursal</td>
+                    <td>@n.Doctor</td>
+                    <td>@n.Recepcionista</td>
+                    <td>@n.Referencia</td>
+                    <td>@n.CanalTipo</td>
+                    <td>@n.Asistencia</td>
+                    <td>@Convert.ToDateTime(n.FechaExpdiente)</td>
+                    <td>@n.Capturista</td>
+                    <td>@n.EstatusCaptura</td>
+                    <td>@Convert.ToDateTime(n.InicioCaptura)@*.ToString("dd-MMMM-yyyy HH:mm:ss")*@</td>
+                    <td>@Convert.ToDateTime(n.FinalCaptura)@*.ToString("dd-MMMM-yyyy HH:mm:ss")*@</td>
+                    <td>@n.Aptitud</td>
+                    <td>@Convert.ToDateTime(n.FechaVigencia)@*.AddDays(1).ToString("dd-MMMM-yyyy")*@</td>
+                    <td>@n.ReferidoPor</td>
+                </tr>
+                flag++;
+            }
+
+
+        }
+
+    </table>
+
+    @*Script excel lento*@
+
+    @*<script>
+
+            const $btnExportar = document.querySelector("#btnExportar"),
+                $tabla = document.querySelector("#tabla");
+
+            $btnExportar.addEventListener("click", function () {
+                let tableExport = new TableExport($tabla, {
+                    exportButtons: false, // No queremos botones
+                    filename: "Reporte del " + "@ViewBag.Inicio.ToString("dd-MMMM-yyyy") " + "al @ViewBag.Final.ToString("dd-MMMM-yyyy")" , //Nombre del archivo de Excel
+                    sheetname: "Reporte", //Título de la hoja
+                });
+                let datos = tableExport.getExportData();
+                let preferenciasDocumento = datos.tabla.xlsx;
+                tableExport.export2file(preferenciasDocumento.data, preferenciasDocumento.mimeType, preferenciasDocumento.filename, preferenciasDocumento.fileExtension, preferenciasDocumento.merges, preferenciasDocumento.RTL, preferenciasDocumento.sheetname);
+            });
+
+    </script>*@
+
+}
+else
+{
+    <h1 style="color:white"> Seleccione un rango de fecha para descargar el Reporte General </h1>
+}
+
+@section scripts{
+    @if (TempData["ID"] != null)
+    {
+        <script>
+            @*location.href='@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })';*@
+            window.open('@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })');
+        </script>
+    }
+
+    @if (Query == "ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO")
+    {
+        <script>
+            alert("ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO");
+        </script>
+    }
+
+    <script>
+    $(function () {
+        $(".buscar").click(function () {
+            var url = "@Url.Action("BuscarTodo", "EPIs")";
+            var dato = $("#buscador").val();
+            var data = { dato: dato };
+
+            $.post(url, data).done(function (data) {
+                console.log(data);
+                let miResultado = "";
+                if ($.isEmptyObject(data)) {
+                    miResultado = "<h3>No se encontraron registros.</h3>"
+                }
+                else {
+                    miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>Estatus Captura</th><th>Tipo Trámite</th><th>Fecha Captura</th><th>Sucursal</th><th></th></tr>"
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].EstatusCaptura === "No iniciado" || data[i].EstatusCaptura === "Pausado") {
+
+                            var epi = '<b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = "xxxxx" }, new { style = "color: black; text-decoration: none" })</b>';
+                            epi = epi.replace("xxxxx", data[i].idCaptura);
+                            miResultado += "<tr style=\"border:1px solid gray\">" +
+                                "<td><b>" + data[i].Nombre + "</b></td>" +
+                                "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                "<td><b>" + data[i].TipoTramite + " (" + data[i].TipoLicencia + ")</b></td>" +
+                                "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                                "<td><b>" + data[i].Sucursal + " (" + data[i].Doctor + ")</b></td>" +
+                                "<td><div class=\"btn-group\">" +
+                                "<button type=\"button\" class=\"btn btn-info dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">" +
+                                "Acciones <span class=\"glyphicon glyphicon-triangle-bottom\"></span>" +
+                                "</button>" +
+
+                                "<div class=\"dropdown-menu\" style=\"padding:10px\">" +
+                                "<b>" + epi + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "</div>" +
+
+                                "</td> " +
+                                "</tr>"
+                        }
+                        else if (data[i].EstatusCaptura === "Pendiente" || data[i].EstatusCaptura === "En captura...") {
+                            var url = '@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = "xxxx" })';
+                            url = url.replace("xxxx", data[i].idCaptura);
+
+                            var epi = '<b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = "xxxxx" }, new { style = "color: black; text-decoration: none" })</b>';
+                            epi = epi.replace("xxxxx", data[i].idCaptura);
+
+                            miResultado += "<tr style=\"border:1px solid gray\">" +
+                                "<td><b>" + data[i].Nombre + "</b></td>" +
+                                "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                "<td><b>" + data[i].TipoTramite + " (" + data[i].TipoLicencia + ")</b></td>" +
+                                "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                                "<td><b>" + data[i].Sucursal + " (" + data[i].Doctor + ")</b></td>" +
+                                "<td><div class=\"btn-group\">" +
+                                "<button type=\"button\" class=\"btn btn-info dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">" +
+                                "Acciones <span class=\"glyphicon glyphicon-triangle-bottom\"></span>" +
+                                "</button>" +
+
+                                "<div class=\"dropdown-menu\" style=\"padding:10px\">" +
+                                "<b>" + url + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "<b>" + epi + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "</div>" +
+
+                                "</td> " +
+                                "</tr>"
+                        }
+                        else if (data[i].EstatusCaptura === "Terminado") {
+                            var url = '@Html.ActionLink("Descargar", "DescargarPDF", new { id = "xxxx" })';
+                            url = url.replace("xxxx", data[i].idCaptura);
+
+                            var epi = '<b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = "xxxxx" }, new { style = "color: black; text-decoration: none" })</b>';
+                            epi = epi.replace("xxxxx", data[i].idCaptura);
+
+                            miResultado += "<tr style=\"border:1px solid gray\">" +
+                                "<td><b>" + data[i].Nombre + "</b></td>" +
+                                "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                "<td><b>" + data[i].TipoTramite + " (" + data[i].TipoLicencia + ")</b></td>" +
+                                "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                                "<td><b>" + data[i].Sucursal + " (" + data[i].Doctor + ")</b></td>" +
+                                "<td><div class=\"btn-group\">" +
+                                "<button type=\"button\" class=\"btn btn-info dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">" +
+                                "Acciones <span class=\"glyphicon glyphicon-triangle-bottom\"></span>" +
+                                "</button>" +
+
+                                "<div class=\"dropdown-menu\" style=\"padding:10px\">" +
+                                "<b>" + url + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "<b>" + epi + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "</div>" +
+
+                                "</td> " +
+                                "</tr>"
+                        }
+                    }
+                }
+
+                $('#exampleModal10').modal('show');
+                document.getElementById("tablaEjemploSS").innerHTML = miResultado;
+
+            }).fail().always(function () {
+
+            });
+        });
+    });
+
+    </script>
+
+    <script>
+        var input = document.getElementById("buscador");
+        input.addEventListener("keydown", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("buscar").click();
+            }
+        });
+    </script>
+
+}
+
+
+<div class="modal fade" id="exampleModal10" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width:60%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body">
+                <div class="tablaScroll">
+                    <table class="table tablas table-responsive" id="tablaEjemploSS" style="color: #2F2D6B">
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@*Script excel fomato viejo*@
+
+@*<script>
+
+        var tableToExcelCaptura = (function () {
+            var uri = 'data:application/vnd.ms-excel;base64,'
+                , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+                , base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) }
+                , format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) }
+            return function (table, name) {
+                if (!table.nodeType) table = document.getElementById(table)
+                var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+                window.location.href = uri + base64(format(template, ctx))
+            }
+        })()
+
+    </script>*@

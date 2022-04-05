@@ -1,0 +1,1152 @@
+﻿@using PagedList.Mvc;
+@model PagedList.IPagedList<SCT_iCare.Cita>
+
+@{
+    ViewBag.Title = "Captura";
+
+    GMIEntities db = new GMIEntities();
+
+    DateTime start = DateTime.Now;
+    //DateTime startDay = Convert.ToDateTime(start.Day);
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    string nombreUsuario = null;
+    int idUser = 0;
+    int? idRol = 0;
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
+    }
+
+    string Query = "";
+    if (TempData["ERROR"] == "ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO")
+    {
+        Query = TempData["ERROR"].ToString();
+    }
+
+    DateTime maxDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+
+    string fechaMAX = Convert.ToDateTime(maxDate).ToString("yyyy-MM-dd");
+
+    string parameter = ViewBag.Parameter;
+    DateTime rango = Convert.ToDateTime(ViewBag.Fecha);
+
+
+    int year = start.Year;
+    int month = start.Month;
+    int day = start.Day;
+    int tomorrorDay = day + 1;
+    DateTime thisDate = Convert.ToDateTime(ViewBag.Inicio);
+    DateTime tomorrowDate = Convert.ToDateTime(ViewBag.Final);
+
+    var tablaFinal = db.Paciente.
+        Join(db.Cita, a => a.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
+        Where(w => w.B.FechaCita >= thisDate && w.B.FechaCita < tomorrowDate).
+        Join(db.Captura, c => c.A.idPaciente, d => d.idPaciente, (c, d) => new { C = c, D = d }).
+        Select(s => new
+        {
+            s.C.A.Nombre,
+            s.C.B.NoExpediente,
+            s.C.A.Telefono,
+            s.C.A.Email,
+            s.C.A.Folio,
+            s.C.A.CURP,
+            s.C.B.TipoTramite,
+            s.C.B.TipoLicencia,
+            s.C.B.Sucursal,
+            s.C.B.Doctor,
+            s.C.B.Recepcionista,
+            s.C.B.Referencia,
+            s.C.B.Canal,
+            s.C.B.Asistencia,
+            s.D.FechaExpdiente,
+            s.D.Capturista,
+            s.D.EstatusCaptura,
+            s.D.InicioCaptura,
+            s.D.FinalCaptura,
+            s.D.Aptitud,
+            s.D.FechaVigencia,
+            s.C.B.ReferidoPor
+        });
+
+
+    //var repoCentral = (from r in db.EPI orderby r.TipoEPI select r).Select(i => new { i.Capturista, i.Dictamen, i.Doctor, i.Estatus, i.FechaExpediente, i.FinalCaptura, i.idEPI, i.InicioCaptura, i.NoFolio, i.NombrePaciente, i.Sucursal, i.TipoEPI, i.Usuario }).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).ToList();
+    var repoCentral = (from r in db.Captura orderby r.TipoTramite select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado" && w.NoExpediente != null).OrderByDescending(o => o.idCaptura).ToList();
+
+    var repoCentral2 = (from r in db.Captura select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado" && w.NoExpediente != null).Count();
+
+
+    int epis = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).Count();
+    int episSinIniciar = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura != "Terminado").Count();
+
+
+    int dictamenes = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Terminado").Count();
+
+    int pendientes = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "No iniciado").Count();
+
+    int enCaptura = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "En captura...").Count();
+
+    int incidencia = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Pendiente").Count();
+
+    var sucursalesLista = from s in db.Sucursales 
+                          where s.Nombre != "CULIACÁN" && s.Nombre != "MIXCOAC" && s.Nombre != "ASPA" && s.Nombre != "TAPO" && s.Nombre != "IN SITU"  select s.Nombre;
+
+    var capturistas = from c in db.Usuarios where c.idRol == 7 && c.idUsuario != 13 && c.idUsuario != 25 select c.Nombre;
+
+    string fecha = DateTime.Now.ToString("dd-MMMM-yyyy");
+
+    string fila = "";
+    int flag = 1; //contador de la tabla
+
+}
+
+<br />
+<br />
+@*<h5 style="color:white" class="text-right">@fecha</h5>*@
+<h3 style="color:white" class="text-center">EPI Center &nbsp; &nbsp; &nbsp;<span class="h4" style="color:#AC9070"><b>@fecha</b></span></h3>
+@if (ViewBag.Estado == 1)
+{
+    <h5 style="color:darkgray">Mostrando resultados de: <span style="color:white">@ViewBag.Inicio.ToString("dd-MMMM-yyyy")</span> hasta <span style="color:white">@ViewBag.Final.ToString("dd-MMMM-yyyy")</span></h5>
+}
+
+
+
+@{
+    if (nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España" || nombreUsuario == "Soporte Captura" || idRol == 2)
+    {
+
+        <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Captura")">
+            <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px">
+                <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+                <input type="date" class="form-control" min="2021-08-02" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+                <input type="date" class="form-control" name="final" max="@fechaMAX"/> &nbsp; &nbsp;
+                <input type="submit" class="btn btn-primary" value="Enviar" />
+                <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+            </div>
+
+            <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
+                <div class="input-group">
+                    <input type="text" class="form-control input-g" id="buscador" name="dato" placeholder="Paciente o Expediente">
+                    <span class="input-group-btn">
+                        <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                    </span>
+                </div>
+            </div>
+        </form>
+        <br />
+        <br />
+    }
+    else
+    {
+        int episProgeso = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).Count();
+        int dictamenesProgreso = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "Terminado").Count();
+
+        int porcentaje;
+
+        if (episProgeso == 0)
+        {
+            porcentaje = 0;
+        }
+        else
+        {
+            porcentaje = (dictamenesProgreso * 100) / episProgeso;
+        }
+
+        string progreso = "Progreso:";
+
+        if (porcentaje == 0)
+        {
+            progreso = "Comenzamos el día. Vamos a capturar esos EPIs!";
+        }
+        else if (porcentaje > 0 && porcentaje < 10)
+        {
+            progreso = "Vamos bien. Echémosle galleta!";
+        }
+        else if (porcentaje >= 10 && porcentaje < 45)
+        {
+            progreso = "Uff. Si le echamos montón vamos a terminar rápido";
+        }
+        else if (porcentaje >= 45 && porcentaje < 55)
+        {
+            progreso = "Estamos a la mitad del camino";
+        }
+        else if (porcentaje >= 55 && porcentaje < 75)
+        {
+            progreso = "Ya estamos más para acá que para allá!";
+        }
+        else if (porcentaje >= 75 && porcentaje < 95)
+        {
+            progreso = "Unos cuantos más y lo logramos!!";
+        }
+        else if (porcentaje >= 95 && porcentaje < 100)
+        {
+            progreso = "SI SE PUEDE!! SI SE PUEDE!!";
+        }
+        else if (porcentaje == 100)
+        {
+            progreso = "LO LOGRAMOS!!!!";
+        }
+
+
+        <h4 style="color:chartreuse">@progreso</h4>
+        <div class="progress">
+            <div class="progress-bar bg-warning" role="progressbar" style="width: @porcentaje%; background-color:#57D94E" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">@porcentaje%</div>
+        </div>
+
+        <br />
+    }
+
+}
+
+
+@{ if (nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España" || nombreUsuario == "Soporte Captura" || idRol == 2)
+    {
+
+        @*<p class="col-md-4">
+                <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorAm botonesGral" data-toggle="collapse" data-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample1"><h4><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs Existentes: <b>@epis</b></h4></button>
+            </p>
+            <div class="collapse col-md-4" id="collapseExample1">
+                <div class="card card-body  col-md-4" style="padding:20px; width:40%; min-width:400px; border-radius: 10px; background-color: white">
+                    @{
+                        foreach (var item in sucursalesLista)
+                        {
+                            var elemento = (from v in db.EPI where v.Sucursal == item select v).Where(w => w.FechaExpediente >= thisDate && w.FechaExpediente < tomorrowDate).Count();
+                            <h4><b>@item:</b> @elemento</h4>
+                        }
+                    }
+                </div>
+                <hr />
+            </div>*@
+
+        <div class="container">
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorAm botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal1" style="color:white">
+                <h4><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs TOTALES: <b>@epis</b></h4>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:gold">
+                            <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs Existentes: <b>@epis</b></h3>
+                        </div>
+                        <div class="modal-body">
+                            @{
+                                foreach (var item in sucursalesLista)
+                                {
+                                    var elemento = (from v in db.Captura where v.Sucursal == item select v).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).Count();
+                                    if (elemento > 0)
+                                    {
+                                        <h4><b>@item:</b> @elemento</h4>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorAz botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal2" style="color:white">
+                <h4><span class="glyphicon glyphicon-ok"></span> &nbsp; &nbsp;Dictámenes Generados: <b>@dictamenes</b></h4>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:aquamarine">
+                            <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-ok"></span> &nbsp; &nbsp;Dictámenes Generados: <b>@dictamenes</b></h3>
+                        </div>
+                        <div class="modal-body">
+                            @{
+                                foreach (var item in sucursalesLista)
+                                {
+                                    var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "Terminado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate select v).Count();
+                                    {
+                                        if (elemento > 0)
+                                        {
+                                            <h4><b>@item:</b> @elemento</h4>
+                                        }
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorRo botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal3" style="color:white">
+                <h4><span class="glyphicon glyphicon-time"></span> &nbsp; &nbsp;EPIs NO Iniciados: <b>@pendientes</b></h4>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:orangered">
+                            <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs NO Iniciados: <b>@pendientes</b></h3>
+                        </div>
+                        <div class="modal-body">
+                            @{
+                                foreach (var item in sucursalesLista)
+                                {
+                                    var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "No iniciado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate select v).Count();
+                                    {
+                                        if (elemento > 0)
+                                        {
+                                            <h4><b>@item:</b> @elemento</h4>
+                                        }
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorAm botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal4" style="color:white">
+                <h4><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs en Captura: <b>@enCaptura</b></h4>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:gold">
+                            <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs en Captura: <b>@enCaptura</b></h3>
+                        </div>
+                        <div class="modal-body">
+                            @{
+                                foreach (var item in sucursalesLista)
+                                {
+                                    var elemento = (from v in db.Captura where v.Sucursal == item select v).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "En captura...").Count();
+                                    {
+                                        if (elemento > 0)
+                                        {
+                                            <h4><b>@item:</b> @elemento</h4>
+                                        }
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorAz botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal5" style="color:white">
+                <h4><span class="glyphicon glyphicon-user"></span> &nbsp; &nbsp;Dictámenes por Capturista</h4>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:aquamarine">
+                            <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-user"></span> &nbsp; &nbsp;Dictámenes por Capturista</h3>
+                        </div>
+                        <div class="modal-body">
+                            @{
+                                foreach (var item in capturistas)
+                                {
+                                    var elemento = (from v in db.Captura where v.EstatusCaptura == "Terminado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate && v.Capturista == item select v).Count();
+                                    var sumaMinutos = ((from v in db.Captura where v.EstatusCaptura == "Terminado" && v.FechaExpdiente >= thisDate && v.FechaExpdiente < tomorrowDate && v.Capturista == item select v.Duracion).Sum()) / elemento;
+                                    if (sumaMinutos == null)
+                                    {
+                                        sumaMinutos = 0;
+                                    }
+                                    <h4><b>@item:</b> @elemento <b class="text-primary h6">(@sumaMinutos mins/Dictamen)</b></h4>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorRo botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal6" style="color:white">
+                <h4><span class="glyphicon glyphicon-alert"></span> &nbsp; &nbsp;Pendientes por Dictaminar: <b>@incidencia</b></h4>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:orange">
+                            <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-alert"></span> &nbsp; &nbsp;Pendientes por Dictaminar: <b>@incidencia</b></h3>
+                        </div>
+                        <div class="modal-body">
+                            @{
+                                foreach (var item in sucursalesLista)
+                                {
+                                    var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "Pendiente" select v).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).Count();
+                                    if (elemento > 0)
+                                    {
+                                        <h4><b>@item:</b> @elemento</h4>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br />
+
+
+        @*<div id="contenedor_carga" style="background-color:white">
+                <div id="carga" >
+                </div>
+            </div>
+
+            <script>
+                window.onload = function () {
+                    var contenedor = document.getElementById('contenedor_carga');
+
+                    contenedor.style.visibility = 'hidden';
+                    contenedor.style.opacity = '0';
+                }
+            </script>*@
+    }
+    else
+    {
+        <div class="container">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorAm botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal4" style="color:white">
+                <h4><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs en Captura: <b>@enCaptura</b></h4>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:gold">
+                            <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs en Captura: <b>@enCaptura</b></h3>
+                        </div>
+                        <div class="modal-body">
+                            @{
+                                foreach (var item in sucursalesLista)
+                                {
+                                    var elemento = (from v in db.Captura where v.Sucursal == item select v).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.EstatusCaptura == "En captura...").Count();
+                                    <h4><b>@item:</b> @elemento</h4>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-outline-warning boton-transparenteIndicadorRo botonesGral col-md-4" data-toggle="modal" data-target="#exampleModal6" style="color:white">
+                <h4><span class="glyphicon glyphicon-alert"></span> &nbsp; &nbsp;Pendientes por Dictaminar: <b>@incidencia</b></h4>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:orange">
+                            <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-alert"></span> &nbsp; &nbsp;Pendientes por Dictaminar: <b>@incidencia</b></h3>
+                        </div>
+                        <div class="modal-body">
+                            @{
+                                foreach (var item in sucursalesLista)
+                                {
+                                    var elemento = (from v in db.Captura where v.Sucursal == item && v.EstatusCaptura == "Pendiente" select v).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).Count();
+                                    if (elemento > 0)
+                                    {
+                                        <h4><b>@item:</b> @elemento</h4>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <br />
+
+    }
+
+
+}
+
+<h4 style="color:white" class="text-center">Sucursales</h4>
+<center>
+    @{
+        var sucursales = from s in db.Sucursales where s.Nombre != "CULIACÁN" && s.Nombre != "MIXCOAC" && s.Nombre != "ASPA" && s.Nombre != "TAPO" && s.Nombre != "IN SITU" select s;
+        string sucursal = null;
+
+        foreach (var item in sucursales)
+        {
+            sucursal = item.Nombre;
+            <a href=@Url.Action("capturaSucursal", "EPIs", new { sucursal = sucursal })><button style="color:white" type="button" class="btn btn-outline-warning boton-transparenteExcel botonesGral"><span class="glyphicon glyphicon-folder-open"></span> &nbsp; &nbsp;@item.Nombre</button></a>
+
+        }
+        if (nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España" || nombreUsuario == "Soporte Captura" || oUser.idRol == 2)
+        {
+            <a href=@Url.Action("Index", "ControlDictamen")><button style="color:white" type="button" class="btn btn-outline-warning boton-transparenteAzul botonesGral"><span class="glyphicon glyphicon-th-list"></span> &nbsp; &nbsp;CENTRO DE CONTROL</button></a>
+        }
+    }
+</center>
+<br />
+<br />
+
+@*@{ 
+    if(nombreUsuario == "Viridiana España")
+            {
+                <div style="width:30%">
+                    <img width="100%" src="data:image/jpeg;base64,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" />
+                </div>
+            }
+}*@
+
+
+@*@using (Html.BeginForm("EditExpediente", "EPIs"))*@
+@{
+
+    if (epis != 0 && episSinIniciar != 0)
+    {
+        <div class="tablaScroll">
+            <table class="table tablas table-responsive" id="tablaEjemplo" style="color: #2F2D6B">
+                <thead>
+                    <tr class="bg-primary" @*style="background-color:#62E3C9"*@>
+                        <th>
+                        </th>
+                        <th>
+                            Nombre Paciente
+                        </th>
+
+                        <th>
+                            NoExpediente
+                        </th>
+                        <th>
+                            Tipo de Trámite
+                        </th>
+                        <th>
+                            Estatus
+                        </th>
+                        <th>
+                            Inicio Captura
+                        </th>
+                        <th>
+                            Final Captura
+                        </th>
+                        <th>
+                            Doctor Dictaminador
+                        </th>
+                        <th>
+                            Sucursal
+                        </th>
+                        <th>
+                            Capturista
+                        </th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+
+
+                @if (ViewBag.Estado == 1)
+                {
+                    var repoCompleta = (from r in db.Captura select r).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.NoExpediente != null).OrderBy(o => o.FechaExpdiente).ThenBy(t => t.NombrePaciente).ToList();
+
+                    foreach (var item in repoCompleta)
+                    {
+
+                        if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) != "AEREO")
+                        {
+                            fila = "#BBDEFB";
+                        }
+                        else if (item.TipoTramite != "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                        {
+                            fila = "#D1C4E9";
+                        }
+                        else if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                        {
+                            fila = "#9575CD";
+                        }
+                        else
+                        {
+                            fila = "white";
+                        }
+
+
+                        <tr style="background-color:@fila">
+                            <td>
+                                @flag
+                            </td>
+                            <td>
+                                @{
+
+                                    if (item.CarruselMedico == null)
+                                    {
+                                        if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 2 && idUser != 3 && idUser != 13 && idUser != 25 && nombreUsuario == "Viridiana España"))
+                                        {
+                                            @Html.DisplayFor(modelItem => item.NombrePaciente)
+                                        }
+                                        else
+                                        {
+                                            <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_EC", new { id = item.idCaptura }, new { style = "color: black; text-decoration: none" })</b>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <b>@Html.ActionLink(item.NombrePaciente, "PreDictamen", new { id = item.idPaciente}, new { style = "color: black; text-decoration: none" })</b>
+                                    }
+                                }
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.NoExpediente)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TipoTramite)
+                            </td>
+                            <td>
+                                @{
+                                    if (item.EstatusCaptura == "Pausado")
+                                    {
+                                        var comentario = (from c in db.CapturaIncidencia where c.idCaptura == item.idCaptura orderby c.idCapturaIncidencia descending select c.Comentario).FirstOrDefault();
+
+                                        <span class="field-tip">
+                                            <h6>
+                                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                                <span class="tip-content">@comentario</span>
+                                            </h6>
+                                        </span>
+                                    }
+                                    else if (item.EstatusCaptura == "Pendiente")
+                                    {
+                                        var comentario = (from c in db.IncidenciaDictamen where c.idCaptura == item.idCaptura orderby c.idIncidencia descending select c.Incidencia).FirstOrDefault();
+
+                                        <span class="field-tip">
+                                            <h6>
+                                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                                <span class="tip-content">@comentario</span>
+                                            </h6>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                    }
+                                }
+                            </td>
+                            <td>
+
+                                @Html.DisplayFor(modelItem => item.InicioCaptura)
+                            </td>
+                            <td>
+                                @if (item.Duracion != null)
+                                {
+                                    @Html.DisplayFor(modelItem => item.FinalCaptura)<b> (Dur: @item.Duracion min)</b>
+                                }
+                                else
+                                {
+                                    @Html.DisplayFor(modelItem => item.FinalCaptura)
+                                }
+
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Doctor)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Sucursal)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Capturista)
+                            </td>
+                            <td>
+                                @{
+                                    if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico == null)
+                                    {
+                                        using (Html.BeginForm("EditExpediente", "EPIs"))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                        }
+                                    }
+                                    else if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico != null)
+                                    {
+                                        <b>@Html.ActionLink("Abrir EPI", "PreDictamen", new { id = item.idPaciente })</b>
+                                        <div class="dropdown-divider"></div>
+                                    }
+                                    else if (item.EstatusCaptura == "En captura..." || item.EstatusCaptura == "Pendiente")
+                                    {
+                                        <div class="btn-group">
+                                            @*<a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idCaptura})><button type="button" class="btn btn-warning">Dictaminar</button></a>*@
+                                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                            </button>
+
+                                            <div class="dropdown-menu" style="padding:10px">
+                                                @if (item.CarruselMedico == null)
+                                                {
+                                                    <b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = item.idCaptura })</b>
+                                                    <div class="dropdown-divider"></div>
+                                                }
+                                                else
+                                                {
+                                                    <b>@Html.ActionLink("Abrir EPI", "PreDictamen", new { id = item.idPaciente })</b>
+                                                    <div class="dropdown-divider"></div>
+                                                }
+                                                <b>@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = item.idCaptura })</b>
+                                                <div class="dropdown-divider"></div>
+                                            </div>
+                                        </div>
+
+                                    }
+                                    else if (item.EstatusCaptura == "Terminado")
+                                    {
+                                        <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
+                                    }
+
+                                }
+                            </td>
+                        </tr>
+                        flag++;
+                    }                  
+
+                }
+                else
+                {
+                    foreach (var item in repoCentral)
+                    {
+
+                        if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) != "AEREO")
+                        {
+                            fila = "#BBDEFB";
+                        }
+                        else if (item.TipoTramite != "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                        {
+                            fila = "#D1C4E9";
+                        }
+                        else if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                        {
+                            fila = "#9575CD";
+                        }
+                        else
+                        {
+                            fila = "white";
+                        }
+
+
+                        <tr tr style="background-color:@fila">
+                            <td>
+                                @flag
+                            </td>
+                            <td>
+                                @{
+                                    if (item.CarruselMedico == null)
+                                    {
+                                        if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 2 && idUser != 3 && idUser != 13 && idUser != 25 && nombreUsuario == "Viridiana España"))
+                                        {
+                                            @Html.DisplayFor(modelItem => item.NombrePaciente)
+                                        }
+                                        else
+                                        {
+                                            <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_EC", new { id = item.idCaptura }, new { style = "color: black; text-decoration: none" })</b>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var revisionEKG = (from i in db.Archivos where i.idPaciente == item.idPaciente select i).FirstOrDefault();
+
+                                        if(revisionEKG.ElectroCardiograma != null)
+                                        {
+                                            <b>@Html.ActionLink(item.NombrePaciente, "PreDictamen", new { id = item.idPaciente }, new { style = "color: black; text-decoration: none" })</b>
+                                        }
+
+                                        
+                                    }
+                                }
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.NoExpediente)
+                            </td>
+                            <td>
+                                @*@Html.DisplayFor(modelItem => item.TipoTramite)*@
+                                @{
+                                    var licencia = (from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault();
+                                }
+                                @item.TipoTramite (<b>@licencia</b>)
+                            </td>
+                            <td>
+                                @{
+                                    if (item.EstatusCaptura == "Pausado")
+                                    {
+                                        var comentario = (from c in db.CapturaIncidencia where c.idCaptura == item.idCaptura orderby c.idCapturaIncidencia descending select c.Comentario).FirstOrDefault();
+
+                                        <span class="field-tip">
+                                            <h6>
+                                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                                <span class="tip-content">@comentario</span>
+                                            </h6>
+                                        </span>
+                                    }
+                                    else if (item.EstatusCaptura == "Pendiente")
+                                    {
+                                        var comentario = (from c in db.IncidenciaDictamen where c.idCaptura == item.idCaptura orderby c.idIncidencia descending select c.Incidencia).FirstOrDefault();
+
+                                        <span class="field-tip">
+                                            <h6>
+                                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                                <span class="tip-content">@comentario</span>
+                                            </h6>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                    }
+                                }
+
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.InicioCaptura)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FinalCaptura)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Doctor)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Sucursal)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Capturista)
+                            </td>
+                            <td>
+                                @{
+                                    if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico == null)
+                                    {
+                                        using (Html.BeginForm("EditExpediente", "EPIs"))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                        }
+                                    }
+                                    else if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico != null)
+                                    {
+                                        <a href=@Url.Action("PreDictamen", "EPIs", new { id = item.idPaciente, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                    }
+                                    else if (item.EstatusCaptura == "En captura..." || item.EstatusCaptura == "Pausado" || item.EstatusCaptura == "Pendiente")
+                                    {
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                </button>
+
+                                <div class="dropdown-menu" style="padding:10px">
+                                    @if (oUser.idRol == 2)
+                                    {
+                                        <a href="#" data-toggle="modal" data-target="#Cancelar_@item.idCaptura"><b> Cancelar EPI</b></a>
+                                        <div class="dropdown-divider"></div>
+                                    }
+                                    @if (item.EstatusCaptura != "Pausado")
+                                    {
+                                        if (item.CarruselMedico == null)
+                                        {
+                                            <b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = item.idCaptura })</b>
+                                            <div class="dropdown-divider"></div>
+                                        }
+                                        else
+                                        {
+                                            <b>@Html.ActionLink("Abrir EPI", "Predictamen", new { id = item.idPaciente })</b>
+                                            <div class="dropdown-divider"></div>
+                                        }
+                                        <b>@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = item.idCaptura })</b>
+                                        <div class="dropdown-divider"></div>
+                                    }
+
+                                    @{
+                                        if ((nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Jesús Zenteno" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España") && item.EstatusCaptura != "Pausado" && item.EstatusCaptura != "Pendiente")
+                                        {
+                                            <a href="#" data-toggle="modal" data-target="#Pausa_@item.idCaptura"><span class="glyphicon glyphicon-pause text-warning"></span><b> Pausa</b></a>
+                                            <div class="dropdown-divider"></div>
+                                        }
+                                        if ((nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Jesús Zenteno" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España") && item.EstatusCaptura == "Pausado" && item.EstatusCaptura != "Pendiente")
+                                        {
+
+                                            //using (Html.BeginForm("Reanudar", "EPIs"))
+                                            //{
+                                            <span class="glyphicon glyphicon-play text-success"></span><b>@Html.ActionLink("Reanudar", "Reanudar", new { idCaptura = item.idCaptura })</b>
+                                            <div class="dropdown-divider"></div>
+                                            //}
+                                        }
+                                    }
+                                </div>
+
+                                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Pausa")">
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal fade" id="Pausa_@item.idCaptura" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>Describa el motivo de la pausa</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="col-form-label">Motivo:</label>
+                                                        <input type="text" class="form-control" id="motivo" name="motivo" required>
+                                                        <input type="hidden" class="form-control" id="idCaptura" name="idCaptura" value="@item.idCaptura">
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/CancelarCita")">
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal fade" id="Cancelar_@item.idCaptura" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea cancelar el epi de @item.NombrePaciente?</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="col-form-label">Motivo:</label>
+                                                        <input type="text" class="form-control" id="motivo" name="motivo" required>
+                                                        <input type="hidden" class="form-control" id="idCaptura" name="idCaptura" value="@item.idCaptura">
+                                                        <input type="hidden" class="form-control" id="usuario" name="usuario" value="@nombreUsuario">
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                                    }
+                                    else if (item.EstatusCaptura == "Terminado")
+                                    {
+                                        <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
+                                    }
+
+
+                                }
+                            </td>
+                        </tr>
+                        flag++;
+                    }
+                }
+
+
+
+            </table>
+        </div>
+
+        <br />
+
+        @*using (Html.BeginForm("Captura", "EPIs", FormMethod.Post))
+            {
+                <p>
+                    <h5 class="labelGral">
+                        Mostrando: <select name="PageSize" id="PageSize" onchange="this.form.submit();">
+                            <option @if ((int)ViewBag.PageSize == 10) { @Html.Raw("selected") } value="10">10</option>
+                            <option @if ((int)ViewBag.PageSize == 20) { @Html.Raw("selected") } value="20">20</option>
+                            <option @if ((int)ViewBag.PageSize == 50) { @Html.Raw("selected") } value="50">50</option>
+                            <option @if ((int)ViewBag.PageSize == 100) { @Html.Raw("selected") } value="100">100</option>
+                        </select> registros
+                    </h5>
+                </p>
+            }
+
+            <h5 class="labelGral">Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount. Elementos totales: @Model.TotalItemCount</h5>
+
+            @Html.PagedListPager(Model, page => Url.Action("Captura", "EPIs", new { page, pageSize = ViewBag.PageSize }))*@
+    }
+    else
+    {
+        <h1 class="text-center" style="color:white">No existen EPIs digitalizados el día de hoy!!</h1>
+    }
+
+
+}
+
+@section scripts{
+    @if (TempData["ID"] != null)
+    {
+        <script>
+            @*location.href='@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })';*@
+            window.open('@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })');
+        </script>
+    }
+
+    @if (Query == "ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO")
+    {
+        <script>
+            alert("ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO");
+        </script>
+    }
+
+    <script>
+    $(function () {
+        $(".buscar").click(function () {
+            var url = "@Url.Action("BuscarTodo", "EPIs")";
+            var dato = $("#buscador").val();
+            var data = { dato: dato };
+
+            $.post(url, data).done(function (data) {
+                console.log(data);
+                let miResultado = "";
+                if ($.isEmptyObject(data)) {
+                    miResultado = "<h3>No se encontraron registros.</h3>"
+                }
+                else {
+                    miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>Estatus Captura</th><th>Tipo Trámite</th><th>Fecha Captura</th><th>Sucursal</th><th></th></tr>"
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].EstatusCaptura === "No iniciado" || data[i].EstatusCaptura === "Pausado") {
+
+                            var epi = '<b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = "xxxxx" }, new { style = "color: black; text-decoration: none" })</b>';
+                            epi = epi.replace("xxxxx", data[i].idCaptura);
+                            miResultado += "<tr style=\"border:1px solid gray\">" +
+                                "<td><b>" + data[i].Nombre + "</b></td>" +
+                                "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                "<td><b>" + data[i].TipoTramite + " (" + data[i].TipoLicencia + ")</b></td>" +
+                                "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                                "<td><b>" + data[i].Sucursal + " (" + data[i].Doctor + ")</b></td>" +
+                                "<td><div class=\"btn-group\">" +
+                                "<button type=\"button\" class=\"btn btn-info dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">" +
+                                "Acciones <span class=\"glyphicon glyphicon-triangle-bottom\"></span>" +
+                                "</button>" +
+
+                                "<div class=\"dropdown-menu\" style=\"padding:10px\">" +
+                                "<b>" + epi + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "</div>" +
+
+                                "</td> " +
+                                "</tr>"
+                        }
+                        else if (data[i].EstatusCaptura === "Pendiente" || data[i].EstatusCaptura === "En captura...") {
+                            var url = '@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = "xxxx" })';
+                            url = url.replace("xxxx", data[i].idCaptura);
+
+                            var epi = '<b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = "xxxxx" }, new { style = "color: black; text-decoration: none" })</b>';
+                            epi = epi.replace("xxxxx", data[i].idCaptura);
+
+                            miResultado += "<tr style=\"border:1px solid gray\">" +
+                                "<td><b>" + data[i].Nombre + "</b></td>" +
+                                "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                "<td><b>" + data[i].TipoTramite + " (" + data[i].TipoLicencia + ")</b></td>" +
+                                "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                                "<td><b>" + data[i].Sucursal + " (" + data[i].Doctor + ")</b></td>" +
+                                "<td><div class=\"btn-group\">" +
+                                "<button type=\"button\" class=\"btn btn-info dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">" +
+                                "Acciones <span class=\"glyphicon glyphicon-triangle-bottom\"></span>" +
+                                "</button>" +
+
+                                "<div class=\"dropdown-menu\" style=\"padding:10px\">" +
+                                "<b>" + url + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "<b>" + epi + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "</div>" +
+
+                                "</td> " +
+                                "</tr>"
+                        }
+                        else if (data[i].EstatusCaptura === "Terminado") {
+                            var url = '@Html.ActionLink("Descargar", "DescargarPDF", new { id = "xxxx" })';
+                            url = url.replace("xxxx", data[i].idCaptura);
+
+                            var epi = '<b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = "xxxxx" }, new { style = "color: black; text-decoration: none" })</b>';
+                            epi = epi.replace("xxxxx", data[i].idCaptura);
+
+                            miResultado += "<tr style=\"border:1px solid gray\">" +
+                                "<td><b>" + data[i].Nombre + "</b></td>" +
+                                "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                "<td><b>" + data[i].TipoTramite + " (" + data[i].TipoLicencia + ")</b></td>" +
+                                "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                                "<td><b>" + data[i].Sucursal + " (" + data[i].Doctor + ")</b></td>" +
+                                "<td><div class=\"btn-group\">" +
+                                "<button type=\"button\" class=\"btn btn-info dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">" +
+                                "Acciones <span class=\"glyphicon glyphicon-triangle-bottom\"></span>" +
+                                "</button>" +
+
+                                "<div class=\"dropdown-menu\" style=\"padding:10px\">" +
+                                "<b>" + url + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "<b>" + epi + "</b>" +
+                                "<div class=\"dropdown-divider\"></div>" +
+                                "</div>" +
+
+                                "</td> " +
+                                "</tr>"
+                        }
+                    }
+                }
+
+                $('#exampleModal10').modal('show');
+                document.getElementById("tablaEjemploSS").innerHTML = miResultado;
+
+            }).fail().always(function () {
+
+            });
+        });
+    });
+
+    </script>
+
+    <script>
+        var input = document.getElementById("buscador");
+        input.addEventListener("keydown", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("buscar").click();
+            }
+        });
+    </script>
+
+}
+
+
+<div class="modal fade" id="exampleModal10" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width:60%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body">
+                <div class="tablaScroll">
+                    <table class="table tablas table-responsive" id="tablaEjemploSS" style="color: #2F2D6B">
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+

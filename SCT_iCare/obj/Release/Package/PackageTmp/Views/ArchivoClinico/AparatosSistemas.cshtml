@@ -1,0 +1,182 @@
+﻿
+@{
+    ViewBag.Title = "AparatosSistemas";
+
+    GMIEntities db = new GMIEntities();
+
+    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+    <style>
+        .toggle.ios, .toggle-on.ios, .toggle-off.ios {
+            border-radius: 20rem;
+            background-color: white;
+        }
+
+            .toggle.ios .toggle-handle {
+                border-radius: 20rem;
+                background-color: white;
+            }
+    </style>
+}
+
+<br />
+<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Examen Historia Clínica: </span>@nombrePaciente </h3>
+<br />
+
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Heredofamiliares</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">No Patológicos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Patológicos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="#" style="text-decoration:none; color:goldenrod"><b>APARATOS Y SISTEMAS</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Exploración Física</a>
+    </li>
+</ul>
+
+<br />
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_AparatosSistemas")" style="display:inline-block; margin:0.5%">
+
+    <div class="form-group">
+        <label style="color:white">1. ¿Tiene Algun Síntoma?</label><br />
+        <input type="checkbox" name="sintoma" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">2. ¿Tiene alguna alteracíon de la vista?</label><br />
+        <input type="checkbox" name="alteracion" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    @*<div class="form-group">
+            <label style="color:white">¿Utiliza Lentes?</label>
+            <input type="checkbox" name="lentes" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+        </div>*@
+
+    <div>
+        <label style="color:white">3. ¿Utiliza lentes?: </label><br />
+        <select class="form-select" aria-label="Default select example" name="lentes">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="NO">NO</option>
+            <option value="AEREO">Aéreo</option>
+            <option value="CONTACTO">Contacto</option>
+
+        </select>
+    </div>
+    <br />
+    <div class="form-group">
+        <label style="color:white">4. ¿Tiene alguna alteración de la audición?</label><br />
+        <input type="checkbox" name="audicion" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">5. ¿Utiliza aparato auditivo?</label><br />
+        <input type="checkbox" name="auditivo" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">6. ¿Tiene alguna alteración de la nariz?</label><br />
+        <input type="checkbox" name="nariz" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">7. ¿Tiene alguna alteración de la boca o el gusto?</label><br />
+        <input type="checkbox" name="boca" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">8. ¿Tiene alguna alteración cardiaca?</label><br />
+        <input type="checkbox" name="cardiaca" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">9. ¿Tiene alguna alteración respiratoria?</label><br />
+        <input type="checkbox" name="respiratoria" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">10. ¿Tiene alguna alteración endocrinológica?</label><br />
+        <input type="checkbox" name="endocrino" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">11. ¿Tiene alguna alteración urinaria?</label><br />
+        <input type="checkbox" name="urinaria" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">12. ¿Tiene alguna alteración de las venas?</label><br />
+        <input type="checkbox" name="venas" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">13. ¿Tiene alguna alteración de las intestinal?</label><br />
+        <input type="checkbox" name="intestinal" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">14. ¿Tiene alguna alteración de cáncer en la sangre?</label><br />
+        <input type="checkbox" name="cancer" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">15. ¿Tiene alguna alteración de las articulaciones?</label><br />
+        <input type="checkbox" name="articulaciones" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">16. ¿Tiene alguna alteración del sueño?</label><br />
+        <input type="checkbox" name="suenio" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">17. ¿Tiene alguna alteración con apnea del sueño?</label><br />
+        <input type="checkbox" name="apnea" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">18. ¿Tiene alguna alteración neurológica?</label><br />
+        <input type="checkbox" name="neurologica" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">19. ¿Tiene alguna alteración de la cabeza o cuello?</label><br />
+        <input type="checkbox" name="cuello" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">20. ¿Tiene alguna alteración en el abdomen?</label><br />
+        <input type="checkbox" name="abdomen" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+    <div class="form-group">
+        <label style="color:white">21. ¿Tiene alguna alteración en las extremidades?</label><br />
+        <input type="checkbox" name="extremidades" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No">
+    </div>
+
+    <br />
+
+
+    <input type="hidden" value="@idPaciente" name="id" />
+    @*<input type="submit" class="btn btn-success" value="Guardar Examen" />*@
+
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmacion">Guardar Examen</button>
+
+    <div class="modal fade" id="confirmacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>¿Desea guardar lo datos del examen médico?</b></h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input type="submit" class="btn btn-success" value="Guardar Examen" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>
+<br />
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
+    <input type="hidden" value="@idPaciente" name="id" />
+    <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />
+</form>
+
+

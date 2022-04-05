@@ -1,0 +1,438 @@
+﻿@model IEnumerable<SCT_iCare.Paciente>
+
+@{
+
+    ViewBag.Title = "Index";
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    GMIEntities db = new GMIEntities();
+    System.Web.Script.Serialization.JavaScriptSerializer js = new System.Web.Script.Serialization.JavaScriptSerializer();
+
+    var Recepcion = new int?();
+    var Hospital = "";
+    var idHospital = 0;
+    string Sucursal = null;
+    int idUser = 14;
+    string nombreUsuario = null;
+    string fila = "";
+    int registros = 0;
+
+    int flag = 1; //contador de la tabla
+
+    DateTime start = DateTime.Now;
+    DateTime finish = DateTime.Now.AddDays(1);
+
+    int year = start.Year;
+    int month = start.Month;
+    int day = start.Day;
+
+    int year1 = finish.Year;
+    int month1 = finish.Month;
+    int day1 = finish.Day;
+
+    int tomorrorDay = day + 1;
+    DateTime thisDate = new DateTime(year, month, day);
+    DateTime tomorrowDate = new DateTime(year1, month1, day1);
+
+    var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+    int? idRol = 0;
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
+
+        if (idRol == 13 || idRol == 12)
+        {
+            Recepcion = (from r in db.DoctorModulo where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
+            Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
+            idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
+            Sucursal = Hospital.ToString();
+
+            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).
+                Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal && s.M.EstatusPago == "Pagado" && s.M.Asistencia != "NO" && s.M.idCanal != null);
+
+            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).
+                Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal && s.M.EstatusPago == "Pagado" && s.M.Asistencia != "NO" && s.M.idCanal != null).Count();
+
+        }
+        else
+        {
+            Hospital = "GENERAL";
+            Sucursal = Hospital.ToString();
+
+            modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.EstatusPago == "Pagado" && s.M.Asistencia != "NO" && s.M.idCanal != null/* && s.M.NoExpediente != null*/)/*.OrderByDescending(o => o.M.TipoTramite)*/;
+
+            registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.EstatusPago == "Pagado" && s.M.Asistencia != "NO" && s.M.idCanal != null/* && s.M.NoExpediente != null*/).Count();
+
+        }
+    }
+
+
+}
+
+
+<br />
+<h3 class="text-center" style="color:white">Archivo Clínico: <span class="text-warning">@Sucursal</span></h3>
+<br />
+
+@{
+    if (registros == 0)
+    {
+        <h1 style="color:white">No existen pacientes para revisión</h1>
+    }
+    else
+    {
+        if (idRol == 13 || idRol == 17)
+        {
+            <div class="tablaScroll">
+                <table class="table tablas" style="color: #2F2D6B">
+                    <thead>
+                        <tr class="bg-primary" style="border-top-color: black">
+                            <th>
+                            </th>
+
+                            <th>
+                                Paciente
+                            </th>
+                            <th>
+                                No. Expediente
+                            </th>
+                            @{
+                                if (idRol == 17)
+                                {
+                                    <th>
+                                        Sucursal
+                                    </th>
+                                }
+                            }
+                            <th>
+                                Signos Vitales
+                            </th>
+                            <th>
+                                Audiología
+                            </th>
+                            <th>
+                                Oftalmología
+                            </th>
+                            <th>
+                                Cardiología
+                            </th>
+                            <th>
+                                Laboratorio
+                            </th>
+                            <th>
+                                Odontología
+                            </th>
+                            <th>
+                                Historía Clínica
+                            </th>
+                            <th>Pre-Dictamen</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+
+                    @foreach (var item in modelo)
+                    {
+
+                        if (item.M.TipoTramite == "PRIMERA VEZ" && item.M.TipoLicencia != "AEREO")
+                        {
+                            fila = "#BBDEFB";
+                        }
+                        else if (item.M.TipoTramite != "PRIMERA VEZ" && item.M.TipoLicencia == "AEREO")
+                        {
+                            fila = "#D1C4E9";
+                        }
+                        else if (item.M.TipoTramite == "PRIMERA VEZ" && item.M.TipoLicencia == "AEREO")
+                        {
+                            fila = "#9575CD";
+                        }
+                        else
+                        {
+                            fila = "white";
+                        }
+
+                        var expedienteExistente = (from i in db.Expedientes where i.idPaciente == item.M.idPaciente select i.idPaciente).FirstOrDefault();
+
+                        if (expedienteExistente == null)
+                        {
+                            <tr style="background-color:@fila">
+                                <td>
+                                    @flag
+                                </td>
+
+                                <td>
+                                    <span class="field-tip">
+                                        <b>@Html.DisplayFor(modelItem => item.N.Nombre)</b>
+                                        <span class="tip-content">
+                                            <h6>
+                                                <b>Teléfono:</b><br />
+                                                @item.N.Telefono <br />
+                                                <b>Email:</b><br />
+                                                @item.N.Email <br />
+                                                <b>Folio:</b><br />
+                                                @item.N.Folio <br />
+                                            </h6>
+                                        </span>
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <b>@Html.DisplayFor(modelItem => item.M.NoExpediente)</b>
+                                </td>
+                                @{
+                                    if (idRol == 17)
+                                    {
+                                        <td>
+                                            <span class="field-tip">
+                                                @item.M.Sucursal
+                                                <span class="tip-content">
+                                                    <b>Doctor: </b>@item.M.Doctor <br />
+                                                </span>
+                                            </span>
+                                        </td>
+                                    }
+                                }
+                                <td>
+                                    @{
+                                        if ((from c in db.CarruselMedico where c.idPaciente == item.N.idPaciente select c.Fin_SignosVitales).FirstOrDefault() == null)
+                                        {
+                                            <span class="glyphicon glyphicon-minus" style="color:dodgerblue"></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="glyphicon glyphicon-ok" style="color:forestgreen"></span>
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    @{
+                                        if ((from c in db.CarruselMedico where c.idPaciente == item.N.idPaciente select c.Fin_Audiologia).FirstOrDefault() == null)
+                                        {
+                                            <span class="glyphicon glyphicon-minus" style="color:dodgerblue"></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="glyphicon glyphicon-ok" style="color:forestgreen"></span>
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    @{
+                                        if ((from c in db.CarruselMedico where c.idPaciente == item.N.idPaciente select c.Fin_Oftalmologia).FirstOrDefault() == null)
+                                        {
+                                            <span class="glyphicon glyphicon-minus" style="color:dodgerblue"></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="glyphicon glyphicon-ok" style="color:forestgreen"></span>
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    @{
+                                        if ((from c in db.CarruselMedico where c.idPaciente == item.N.idPaciente select c.Fin_Cardiologia).FirstOrDefault() == null)
+                                        {
+                                            <span class="glyphicon glyphicon-minus" style="color:dodgerblue"></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="glyphicon glyphicon-ok" style="color:forestgreen"></span>
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    @{
+                                        if ((from c in db.CarruselMedico where c.idPaciente == item.N.idPaciente select c.Fin_Laboratorio).FirstOrDefault() == null)
+                                        {
+                                            <span class="glyphicon glyphicon-minus" style="color:dodgerblue"></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="glyphicon glyphicon-ok" style="color:forestgreen"></span>
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    @{
+                                        if ((from c in db.CarruselMedico where c.idPaciente == item.N.idPaciente select c.Fin_Odontologia).FirstOrDefault() == null)
+                                        {
+                                            <span class="glyphicon glyphicon-minus" style="color:dodgerblue"></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="glyphicon glyphicon-ok" style="color:forestgreen"></span>
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    @{
+                                        if ((from c in db.CarruselMedico where c.idPaciente == item.N.idPaciente select c.Fin_HistoriaClinica).FirstOrDefault() == null)
+                                        {
+                                            <span class="glyphicon glyphicon-minus" style="color:dodgerblue"></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="glyphicon glyphicon-ok" style="color:forestgreen"></span>
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    @{
+                                        var dictamen = (from d in db.EPI_DictamenAptitud where d.idPaciente == item.N.idPaciente orderby d.idDictamenAptitud descending select d).FirstOrDefault();
+                                        var revaloracionLista = (from d in db.ExpedienteRevaloracion where d.idPaciente == item.M.idPaciente orderby d.idExpedienteRevaloracion descending select d).FirstOrDefault();
+
+                                        if (dictamen != null)
+                                        {
+                                            if (revaloracionLista != null)
+                                            {
+                                                <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Revalorado</mark></b>
+                                            }
+                                            else if (dictamen.Motivo == "Enviar a Revaloración")
+                                            {
+                                                <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Revaloración</mark></b>
+                                            }
+                                            else if (dictamen.Motivo == "Concluir examen como NO APTO")
+                                            {
+                                                <b><mark style="background-color: #FC4B08; padding:5px; border-radius:10px">NO APTO</b>
+                                            }
+                                            else
+                                            {
+                                                <b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">APTO</mark></b>
+                                            }
+
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    @*<a href="~/ArchivoClinico/Index"><button type="button" style="color:white" class="btn btn-info">Iniciar Examen</button></a>*@
+                                    @{
+                                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")">
+                                            <input type="hidden" value="@item.N.idPaciente" name="id" />
+                                            <input type="submit" class="btn btn-info" value="Carrusel Médico" />
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+
+                            flag += 1;
+                        }
+                    }
+
+                </table>
+            </div>
+
+        }
+        else
+        {
+            <div class="tablaScroll">
+                <table class="table tablas" style="color: #2F2D6B">
+                    <thead>
+                        <tr class="bg-primary" style="border-top-color: black">
+                            <th>
+                            </th>
+
+                            <th>
+                                Paciente
+                            </th>
+                            <th>
+                                No. Expediente
+                            </th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+
+                    @foreach (var item in modelo)
+                    {
+
+                        if (item.M.TipoTramite == "PRIMERA VEZ" && item.M.TipoLicencia != "AEREO")
+                        {
+                            fila = "#BBDEFB";
+                        }
+                        else if (item.M.TipoTramite != "PRIMERA VEZ" && item.M.TipoLicencia == "AEREO")
+                        {
+                            fila = "#D1C4E9";
+                        }
+                        else if (item.M.TipoTramite == "PRIMERA VEZ" && item.M.TipoLicencia == "AEREO")
+                        {
+                            fila = "#9575CD";
+                        }
+                        else
+                        {
+                            fila = "white";
+                        }
+
+                        <tr style="background-color:@fila">
+                            <td>
+                                @flag
+                            </td>
+
+                            <td>
+                                <span class="field-tip">
+                                    <b>@Html.DisplayFor(modelItem => item.N.Nombre)</b>
+                                    <span class="tip-content">
+                                        <h6>
+                                            <b>Teléfono:</b><br />
+                                            @item.N.Telefono <br />
+                                            <b>Email:</b><br />
+                                            @item.N.Email <br />
+                                            <b>Folio:</b><br />
+                                            @item.N.Folio <br />
+                                        </h6>
+                                    </span>
+                                </span>
+                            </td>
+
+                            <td>
+                                <b>@Html.DisplayFor(modelItem => item.M.NoExpediente)</b>
+                            </td>
+                            <td>
+                                @{
+                                    var dictamen = (from d in db.EPI_DictamenAptitud where d.idPaciente == item.N.idPaciente orderby d.idPaciente descending select d).FirstOrDefault();
+
+                                    if (dictamen != null)
+                                    {
+                                        <b>Pre-Dictaminado</b>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @*<a href="~/ArchivoClinico/Index"><button type="button" style="color:white" class="btn btn-info">Iniciar Examen</button></a>*@
+                                @{
+                                    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")">
+                                        <input type="hidden" value="@item.N.idPaciente" name="id" />
+                                        <input type="submit" class="btn btn-info" value="Carrusel Médico" />
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+
+                        flag += 1;
+
+                    }
+
+                </table>
+            </div>
+        }
+    }
+}
+
+
+@section scripts{
+    @if (TempData["ID"] != null)
+    {
+        <script>
+            @*Se setea el id para que genere el mismo PDF por ahora*@
+            window.open('@Url.Action("Descargar","ArchivoClinico", new { id = TempData["ID"] })');
+        </script>
+    }
+}
+
+
+
+

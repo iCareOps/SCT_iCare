@@ -1,0 +1,422 @@
+﻿@*@model IEnumerable<SCT_iCare.EPI>*@
+
+@{
+    ViewBag.Title = "capturaSucursal";
+    GMIEntities db = new GMIEntities();
+
+    string doctorSucursal = ViewBag.Doctor;
+    string doctorSucursal2 = TempData["Doctor"].ToString();
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+    string nombreUsuario = null;
+    int idUser = 0;
+    int? idRol = 0;
+
+    var Recepcion = new int?();
+    var Hospital = "";
+    string Sucursal = "";
+
+    string Query = "";
+    if (TempData["ERROR"] == "ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO")
+    {
+        Query = TempData["ERROR"].ToString();
+    }
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+        Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
+        Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
+        Sucursal = ViewBag.Sucursal;
+        idRol = oUser.idRol;
+    }
+
+    DateTime start = DateTime.Now;
+    //DateTime startDay = Convert.ToDateTime(start.Day);
+
+    int year = start.Year;
+    int month = start.Month;
+    int day = start.Day;
+    DateTime tomorrorDay = DateTime.Now.AddDays(1);
+    DateTime thisDate = new DateTime(year, month, day);
+    DateTime tomorrowDate = new DateTime(tomorrorDay.Year, tomorrorDay.Month, tomorrorDay.Day);
+
+    var Restriccion1 = db.Captura.Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate).ToList();
+    //var Restriccion = from r in Restriccion1 orderby r.TipoTramite where r.Sucursal == ViewBag.Sucursal select r;
+    var Restriccion = (from r in Restriccion1 orderby r.TipoTramite select r).Where(w => w.Sucursal == ViewBag.Sucursal && (w.Doctor == ViewBag.Doctor || w.Doctor == doctorSucursal2));
+
+    int epis = (from e in db.Captura select e).Where(w => w.FechaExpdiente >= thisDate && w.FechaExpdiente < tomorrowDate && w.Sucursal == Sucursal && (w.Doctor == doctorSucursal || w.Doctor == doctorSucursal2)).Count();
+
+    string fila = "";
+    int flag = 1;
+}
+
+<br />
+<br />
+<h3 style="color:white" class="text-center">EPI Center</h3>
+<h4 style="color:#AC9070" class="text-center">Captura del Doctor: <span style="color:white">@ViewBag.Doctor</span></h4>
+
+@*<script>
+        var i = 0;
+        //var id = setInterval('document.location.reload()', 1000);
+
+        var id = setInterval(function () {
+            document.location.reload();
+
+            i++;
+
+        } if (i == 2) {
+            clearInterval(id);
+        }, 1000);
+
+
+
+    </script>*@
+<br />
+<div class="form-inline">
+    @{
+        var idSucursal = (from i in db.Sucursales where i.Nombre == Sucursal select i.idSucursal).FirstOrDefault();
+        var Doctores = from d in db.Doctores where d.idSucursal == idSucursal select d.Nombre;
+
+        foreach (var doctor in Doctores)
+        {
+            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/capturaDoctor")" style="display: inline-block">
+                @Html.AntiForgeryToken()
+                <input type="hidden" value="@Sucursal" name="sucursal" />
+                <button style="color:white; white-space:normal" type="submit" name="doctor" value="@doctor" class="btn btn-outline-warning boton-transparenteExcel botonesGral"><span class="glyphicon glyphicon-folder-open"></span> &nbsp; &nbsp;@doctor</button>
+            </form>
+        }
+        <a href=@Url.Action("capturaSucursal", "EPIs", new { sucursal = ViewBag.Sucursal })><button style="color:white; white-space: normal" type="button" class="btn btn-outline-warning boton-transparenteAzul botonesGral"><span class="glyphicon glyphicon-th-list"></span> &nbsp; &nbsp;TODOS LOS EPIs DE ESTA SUCURSAL</button></a>
+
+    }
+    <div class="input-group pull-right">
+        <div class="enlaceSinBoton">
+            @Html.ActionLink("Volver a la EPI Center", "Captura")
+        </div>
+    </div>
+</div>
+
+@*@{
+        var idSucursal = (from i in db.Sucursales where i.Nombre == Sucursal select i.idSucursal).FirstOrDefault();
+        var Doctores = from d in db.Doctores where d.idSucursal == idSucursal select d.Nombre;
+
+        foreach(var doctor in Doctores)
+        {
+        <a href=@Url.Action("capturaDoctor", "EPIs", new { sucursal = Sucursal })><button style="color:white; white-space:normal" type="button" class="btn btn-outline-warning boton-transparenteExcel botonesGral"><span class="glyphicon glyphicon-folder-open"></span> &nbsp; &nbsp;@doctor</button></a>
+        }
+    }*@
+
+@*<div class="enlaceSinBoton">
+        @Html.ActionLink("Volver a la EPI Center", "Captura")
+    </div>*@
+
+<br />
+@using (Html.BeginForm("EditExpediente", "EPIs"))
+{
+    @Html.AntiForgeryToken()
+
+    if (epis != 0)
+    {
+        <div class="tablaScroll">
+            <table class="table tablas table-responsive" style="color: #2F2D6B">
+                <thead>
+                    <tr class="bg-primary">
+                        <th></th>
+                        <th>
+                            Nombre Paciente
+                        </th>
+
+                        <th>
+                            NoExpediente
+                        </th>
+                        <th>
+                            Trámite
+                        </th>
+                        <th>
+                            Estatus
+                        </th>
+                        <th>
+                            Fecha Expediente
+                        </th>
+                        <th>
+                            Inicio Captura
+                        </th>
+                        <th>
+                            Final Captura
+                        </th>
+                        <th>
+                            Doctor Dictaminador
+                        </th>
+                        <th>
+                            Sucursal
+                        </th>
+                        <th>
+                            Capturista
+                        </th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+
+                @foreach (var item in Restriccion)
+                {
+
+                    if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) != "AEREO")
+                    {
+                        fila = "#BBDEFB";
+                    }
+                    else if (item.TipoTramite != "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                    {
+                        fila = "#D1C4E9";
+                    }
+                    else if (item.TipoTramite == "PRIMERA VEZ" && ((from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault()) == "AEREO")
+                    {
+                        fila = "#9575CD";
+                    }
+                    else
+                    {
+                        fila = "white";
+                    }
+
+
+                    <tr style="background-color:@fila">
+                        <td>@flag</td>
+                        <td>
+                            @*@{
+            if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 11 && idUser != 16 && idRol != 2 && nombreUsuario != "Viridiana España"))
+            {
+                @Html.DisplayFor(modelItem => item.NombrePaciente)
+            }
+            else
+            {
+                <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_D", new { id = item.idCaptura, sucursal = Sucursal, doctor = doctorSucursal }, new { style = "color: black; text-decoration: none" })</b>
+            }
+        }*@
+
+                            @{
+                                if (item.CarruselMedico == null)
+                                {
+                                    if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 11 && idUser != 16 && idRol != 2 && nombreUsuario != "Viridiana España"))
+                                    {
+                                        @Html.DisplayFor(modelItem => item.NombrePaciente)
+                                    }
+                                    else
+                                    {
+                                        <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_D", new { id = item.idCaptura, sucursal = Sucursal, doctor = doctorSucursal }, new { style = "color: black; text-decoration: none" })</b>
+                                    }
+                                }
+                                else
+                                {
+                                    var revisionEKG = (from i in db.Archivos where i.idPaciente == item.idPaciente select i).FirstOrDefault();
+
+                                    if (revisionEKG.ElectroCardiograma != null)
+                                    {
+                                        <b>@Html.ActionLink(item.NombrePaciente, "PreDictamen", new { id = item.idPaciente }, new { style = "color: black; text-decoration: none" })</b>
+                                    }
+
+                                    @*<b>@Html.ActionLink(item.NombrePaciente, "PreDictamen", new { id = item.idPaciente }, new { style = "color: black; text-decoration: none" })</b>*@
+                                }
+                            }
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NoExpediente)
+                        </td>
+                        <td>
+                            @*@Html.DisplayFor(modelItem => item.TipoTramite)*@
+                            @{
+                                var licencia = (from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault();
+                            }
+                            @item.TipoTramite (<b>@licencia</b>)
+
+                        </td>
+                        <td>
+                            @{
+                                if (item.EstatusCaptura == "Terminado")
+                                {
+                                    <b><i><a href=@Url.Action("AbrirDictamenD", "EPIs",  new { id = item.idCaptura, usuario = nombreUsuario, sucursal = Sucursal, doctor = doctorSucursal }) style="color:midnightblue; text-decoration:none">@item.EstatusCaptura</a></i></b>
+                                }
+                                else
+                                {
+                                    @Html.DisplayFor(modelItem => item.EstatusCaptura)
+                                }
+                            }
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FechaExpdiente)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.InicioCaptura)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FinalCaptura)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Doctor)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Sucursal)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Capturista)
+                        </td>
+                        <td>
+                            @{
+                                if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico == null)
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <a href=@Url.Action("EditExpedienteD", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario, sucursal = Sucursal, doctor = doctorSucursal}) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                }
+                                else if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico != null)
+                                {
+                        <a href=@Url.Action("PreDictamen", "EPIs", new { id = item.idPaciente, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                    <div class="dropdown-divider"></div>
+                                }
+                                else if (item.EstatusCaptura == "En captura...")
+                                {
+                                    @*<a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idCaptura})><button type="button" class="btn btn-warning">Dictaminar</button></a>*@
+                                    <div class="btn-group">
+                                        @*<a href=@Url.Action("SubirDictamen", "EPIs", new { id = item.idCaptura})><button type="button" class="btn btn-warning">Dictaminar</button></a>*@
+                                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                        </button>
+
+                                        <div class="dropdown-menu" style="padding:10px">
+
+                                            @if (item.CarruselMedico == null)
+                                            {
+                                                <b>@Html.ActionLink("Abrir EPI", "AbrirEPI_D", new { id = item.idCaptura, sucursal = Sucursal, doctor = doctorSucursal2 })</b>
+                                                <div class="dropdown-divider"></div>
+                                            }
+                                            else
+                                            {
+                                                <b>@Html.ActionLink("Abrir EPI", "PreDictamen", new { id = item.idPaciente })</b>
+                                                <div class="dropdown-divider"></div>
+                                            }
+
+                                            <b>@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = item.idCaptura })</b>
+                                            <div class="dropdown-divider"></div>
+                                        </div>
+                                    </div>
+                                }
+                                else if (item.EstatusCaptura == "Terminado")
+                                {
+                                    <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
+                                }
+
+                            }
+
+                            @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1" data-id="@item.idEPI">Open modal for @item.idEPI</button>
+        @Html.ActionLink("Editar", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#modalEdit" }) |
+        @Html.ActionLink("Detalles", "#", new { id = item.idEPI }, new { @data_toggle = "modal", @data_target = "#YourModalId" })*@
+                            @*@Html.ActionLink("Edit", "Edit", new { id = item.idEPI }) |
+        @Html.ActionLink("Details", "Details", new { id = item.idEPI }) |
+        @Html.ActionLink("Delete", "Delete", new { id = item.idEPI })*@
+                        </td>
+                    </tr>
+
+                    flag++;
+                }
+
+            </table>
+        </div>
+
+    }
+    else
+    {
+        <h1 class="text-center" style="color:white">No existen EPIs digitalizados el día de hoy!!</h1>
+    }
+
+
+
+}
+
+
+<div class="modal fade" id="Dictaminar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Selecciona un archivo PDF para subir el Dictamen</b></h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Create")">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Nombre del Paciente:</label>
+                        <input type="text" class="form-control" id="paciente" name="paciente" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Número de Folio:</label>
+                        <input type="text" class="form-control" id="folio" name="folio" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="file" class="col-form-label">Archivo:</label>
+                        <input type="file" name="file" asp-for="file" class="" required value="file" />
+                        <input type="hidden" name="sucursal" asp-for="file" class="" required value="@Sucursal" />
+                        <input type="hidden" name="usuario" asp-for="file" class="" required value="@nombreUsuario" />
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Doctor asignado en METRA:</label>
+
+                        <select name="doctor" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            @{
+                                var consultorios = from c in db.Doctores select c;
+
+                                foreach (var item in consultorios)
+                                {
+                                    <option value="@item.Nombre">@item.Nombre</option>
+                                }
+                            }
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Tipo de EPI:</label>
+
+                        <select name="tipo" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option value="REVALIDACIÓN">REVALIDACIÓN</option>
+                            <option value="PRIMERA VEZ">PRIMERA VEZ</option>
+                        </select>
+
+                    </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <input type="submit" value="Subir PDF" class="btn btn-primary" />
+            </div></form>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    @if (TempData["ID"] != null)
+    {
+        <script>
+            @*location.href='@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })';*@
+            window.open('@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })');
+        </script>
+    }
+
+    @if (TempData["ID2"] != null)
+    {
+        <script>
+            @*location.href='@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })';*@
+            window.open('@Url.Action("AbrirDictamen","EPIs", new { id = TempData["ID2"] })');
+        </script>
+    }
+
+    @if (Query == "ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO")
+    {
+        <script>
+            alert("ESTE EXPEDIENTE YA HA SIDO TOMADO POR OTRO USUARIO");
+        </script>
+    }
+}
+
+

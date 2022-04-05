@@ -1,0 +1,845 @@
+﻿<head>
+    @*Scripts necesarios para descargar la tabla de excel*@
+    <script src="https://unpkg.com/xlsx@0.17.2/dist/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/file-saverjs@1.3.6/FileSaver.min.js"></script>
+    <script src="https://unpkg.com/tableexport@5.2.0/dist/js/tableexport.min.js"></script>
+
+    @*Scripts para generar archivo Zip*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.js"></script>
+    <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
+
+    @*XLSX*@
+    <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+</head>
+
+
+@model IEnumerable<SCT_iCare.Paciente>
+
+@{
+    ViewBag.Title = "Captura";
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    GMIEntities db = new GMIEntities();
+    System.Web.Script.Serialization.JavaScriptSerializer js = new System.Web.Script.Serialization.JavaScriptSerializer();
+
+    var Recepcion = new int?();
+    var Hospital = "";
+    var idHospital = 0;
+    string Sucursal = null;
+    int idUser = 14;
+    string nombreUsuario = null;
+    string fila = "";
+    int registros;
+
+    int flag = 1; //contador de la tabla
+
+    DateTime start = DateTime.Now;
+    DateTime finish = DateTime.Now.AddDays(1);
+
+    int year = start.Year;
+    int month = start.Month;
+    int day = start.Day;
+
+    int year1 = finish.Year;
+    int month1 = finish.Month;
+    int day1 = finish.Day;
+
+    int tomorrorDay = day + 1;
+    DateTime thisDate = ViewBag.Inicio;
+    DateTime tomorrowDate = ViewBag.Final;
+
+    var modelo = db.PacienteESP.Where(s => (s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && (s.NoExpediente != null || s.CURP != null) && s.Genero != null && s.Doctor != null && s.Asistencia == null && s.Estatura != null
+    && s.Metra != null) || (s.Metra != null && s.Genero != null && s.Doctor != null && s.Asistencia == null && s.Estatura != null && (s.EstatusCaptura == null || s.EstatusCaptura == "En Proceso"))).OrderByDescending(o => o.CancelaComentario == "Urgente").ThenByDescending(t => t.FechaCita);
+    int? idRol = 0;
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
+
+        Hospital = "GENERAL";
+        Sucursal = Hospital.ToString();
+
+        registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
+
+        //if (idUser != 14 && oUser.idRol != 2)
+        //{
+        //    Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
+        //    Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
+        //    idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
+        //    Sucursal = Hospital.ToString();
+
+        //    registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal).Count();
+
+        //}
+        //else
+        //{
+        //    Hospital = "GENERAL";
+        //    Sucursal = Hospital.ToString();
+
+        //    registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
+
+        //}
+    }
+
+}
+
+<br />
+<br />
+<h3 style="color:#AC9070" class="text-center"><span style="color:white"><a style="text-decoration:none; color:white; cursor:pointer">Centro de Captura</a></span></h3>
+@*<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>
+    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>*@
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/Captura")">
+    <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px">
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+        <input type="date" class="form-control" min="2021-08-02" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+        <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
+        <input type="submit" class="btn btn-primary" value="Enviar" />
+        <input type="hidden" id="usuarioJS" value="@nombreUsuario" /> @*Se inserta el nombre de usuario para obtenerlo en la modal*@
+        <a href="~/Dictamenes/Citas"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+    </div>
+
+    <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
+        <div class="input-group">
+            <input type="text" class="form-control input-g" id="buscador" name="dato" placeholder="Paciente o Expediente">
+            <span class="input-group-btn">
+                <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+        </div>
+    </div>
+</form>
+
+
+@section scripts{
+
+    <script>
+        var input = document.getElementById("buscador");
+        input.addEventListener("keydown", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("buscar").click();
+            }
+        });
+
+    </script>
+
+    <script>
+    $(function () {
+        $(".buscar").click(function () {
+            var url = "@Url.Action("Buscar", "Dictamenes")";
+            var dato = $("#buscador").val();
+            var data = { dato: dato };
+
+            $.post(url, data).done(function (data) {
+                console.log(data);
+                let miResultado = "";
+                if ($.isEmptyObject(data)) {
+                    miResultado = "<h3>No se encontraron registros!!</h3>"
+                }
+                else {
+                    miResultado +=  "<thead><tr class=\"bg-primary \"><th>Nombre</th><th>CURP</th><th>NoExpediente</th><th>Tipo Trámite</th><th>Fecha</th><th>Datos</th><th>Estatus</th><th></th></tr></thead>"
+                    for (let i = 0; i < data.length; i++) {
+
+                        if (data[i].EstatusCaptura === null) {
+                            if (data[i].Estatura === null || data[i].Doctor === null || data[i].Metra === null || data[i].Genero === null || data[i].CURP === null || data[i].NoExpediente === null) {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><span class=\"field-tip field-tip3\"><b><mark style=\"background-color: #FFFF00; padding: 5px; border-radius: 7px\">Incompletos</b></mark><span class=\"tip-content\">" +
+                                    "<b>CURP: </b><span>" + data[i].CURP + "</span><br/>" +
+                                    "<b>NoExpediente: </b><span>" + data[i].NoExpediente + "</span><br/>" +
+                                    "<b>Metra: </b><span>" + data[i].Metra + "</span><br/>" +
+                                    "<b>Género: </b><span>" + data[i].Genero + "</span><br/>" +
+                                    "<b>Estatura: </b><span>" + data[i].Estatura + "</span><br/>" +
+                                    "<b>Doctor: </b><span>" + data[i].Doctor + "</span><br/>" +
+                                    "</span ></span ></td > " +
+                                    "<td><b>Sin iniciar</b></td>" +
+                                    "<td><b>Sin iniciar</b></td>" +
+                                    "</tr>"
+                            } else {
+
+                                var usuario = document.getElementById('usuarioJS');
+                                    var url = '<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/IniciarCaptura")">'+
+                                        '<input type="hidden" class="form-control" id="id" name="id" value="' + data[i].idPacienteESP + '">' +
+                                        '<input type="hidden" class="form-control" id="id" name="capturista" value="' + usuario.value + '">' +
+                                            '<input type="submit" value="Iniciar" class="btn btn-primary" />'+
+                                        '</form>';
+
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                        "<td><b>" + data[i].Nombre + "</b></td>" +
+                                        "<td><b>" + data[i].CURP + "</b></td>" +
+                                        "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                        "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                        "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                        "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                        "<td><b>Sin iniciar</td>" +
+                                        "<td><b>"+url+"</td>" +
+                                        "</tr>"
+
+                            }
+                        } else {
+                            if (data[i].Estatura === null && data[i].Doctor === null && data[i].Metra === null && data[i].Genero === null && data[i].CURP === null && data[i].NoExpediente === null) {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><span class=\"field-tip field-tip3\"><b><mark style=\"background-color: #FFFF00; padding: 5px; border-radius: 7px\">Incompletos</b></mark><span class=\"tip-content\">" +
+                                    "<b>CURP: </b><span>" + data[i].CURP + "</span><br/>" +
+                                    "<b>NoExpediente: </b><span>" + data[i].NoExpediente + "</span><br/>" +
+                                    "<b>Metra: </b><span>" + data[i].Metra + "</span><br/>" +
+                                    "<b>Género: </b><span>" + data[i].Genero + "</span><br/>" +
+                                    "<b>Estatura: </b><span>" + data[i].Estatura + "</span><br/>" +
+                                    "<b>Doctor: </b><span>" + data[i].Doctor + "</span><br/>" +
+                                    "</span ></span ></td > " +
+                                    "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                    "</tr>"
+                            } else {
+
+                                if (data[i].EstatusCaptura === "Terminado") {
+                                    var url = '@Url.Action("DescargarPDF","Dictamenes", new {id="xxxx"})';
+                                    url = url.replace("xxxx", data[i].idPacienteESP);
+
+                                    miResultado += "<tr style=\"border:1px solid gray\">" +
+                                        "<td><b>" + data[i].Nombre + "</b></td>" +
+                                        "<td><b>" + data[i].CURP + "</b></td>" +
+                                        "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                        "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                        "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                        "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                        "<td><b>" + data[i].EstatusCaptura + "</b></td>" +
+                                        "<td><a href=" + url + "><button type=\"button\" class=\"btn btn-warning\">Descargar</button></a></td>" +
+                                        "</tr>"
+                                }
+                                else {
+                                    var usuario = document.getElementById('usuarioJS');
+                                    var url = '<button type=\"button\" class=\"btn btn-info\" data-toggle=\"modal\"  onclick=\"$(\'#ModalEdit2_' + data[i].idPacienteESP + '\').modal(\'show\');\">Dictaminar</button>' +
+                                        '<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/Dictaminar")">'+
+                            '<div class="modal fade" id="ModalEdit2_'+data[i].idPacienteESP+'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">'+
+                                '<div class="modal-dialog" role="document">'+
+                                    '<div class="modal-content">'+
+                                        '<div class="modal-header">'+
+                                        '</div>'+
+                                        '<div class="modal-body">'+
+                                            '<div class="form-group">'+
+                                                '<label for="recipient-name" class="col-form-label">Dictamen:</label>'+
+                                        '<input type="file"  id="nombre" name="dictamen" required>' +
+                                        '<input type="hidden" class="form-control" id="id" name="id" value="' + data[i].idPacienteESP + '">' +
+                                        '<input type="hidden" class="form-control" id="id" name="usuario" value="' + usuario.value + '">' +
+                                        '</div>'+
+                                        '<div class="modal-footer">'+
+                                            '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>'+
+                                            '<input type="submit" value="Guardar" class="btn btn-primary" />'+
+                                        '</div>'+
+                                    '</div>'+
+                                '</div>'+
+                            '</div>'+
+                                        '</form>';
+
+                                    $(document).on('hidden.bs.modal', function (event) {
+                                        if ($('.modal:visible').length) {
+                                            $('body').addClass('modal-open');
+                                        }
+                                    });
+
+                                    miResultado += "<tr style=\"border:1px solid gray\">" +
+                                        "<td><b>" + data[i].Nombre + "</b></td>" +
+                                        "<td><b>" + data[i].CURP + "</b></td>" +
+                                        "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                        "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                        "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                        "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                        "<td><b>" + data[i].EstatusCaptura + "</td>" +
+                                        "<td>"+url+"</td>" +
+                                        "</tr>"
+                                }
+                            }
+
+                        }
+
+                    }
+                }
+
+                $('#exampleModal5').modal('show');
+                document.getElementById("tablaEjemploSS").innerHTML = miResultado;
+
+            }).fail().always(function () {
+
+            });
+        });
+    });
+    </script>
+
+    @if (TempData["Link"] != null)
+    {
+        <script>
+            @*location.href='@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })';*@
+            window.open('@TempData["Link"]');
+        </script>
+    }
+
+
+
+    @if (TempData["Electro"] != null)
+    {
+        <script>
+            window.open('@Url.Action("DescargarElectro","Dictamenes")');
+        </script>
+    }
+
+    @if (TempData["Documentos"] != null)
+    {
+        <script>
+            window.open('@Url.Action("DescargarDocumentos","Dictamenes", new { id = TempData["Documentos"] })');
+        </script>
+    }
+
+    @if (TempData["NoAccidentes"] != null)
+    {
+        <script>
+            window.open('@Url.Action("DescargarNoAccidentes","Dictamenes", new { id = TempData["NoAccidentes"] })');
+        </script>
+    }
+
+    @if (TempData["Declaracion"] != null)
+    {
+        <script>
+            window.open('@Url.Action("DescargarDeclaracion","Dictamenes", new { id = TempData["Declaracion"] })');
+        </script>
+    }
+
+    @if (TempData["Glucosilada"] != null)
+    {
+        <script>
+            window.open('@Url.Action("DescargarGlucosilada","Dictamenes", new { id = TempData["Glucosilada"] })');
+        </script>
+    }
+}
+
+<br />
+
+
+@if (modelo.FirstOrDefault() == null)
+{
+    <br />
+    <h1 style="color:white">No existen citas registradas el día de hoy</h1>
+}
+else
+{
+    <div class="tablaScroll">
+        <br />
+        <table class="table tablas" style="color: #2F2D6B">
+            <thead>
+                <tr class="bg-primary" style="border-top-color: black; font-size:smaller">
+                    <th>
+                    </th>
+
+                    <th>
+                        Nombre
+                    </th>
+
+                    <th>
+                        NoExpediente
+                    </th>
+                    <th>
+                        Doctor
+                    </th>
+
+                    <th>
+                        Tipo de Trámite
+                    </th>
+                    <th>
+                        Fecha Solicitud
+                    </th>
+                    <th>
+                        Estatus
+                    </th>
+                    <th>
+                        Capturista
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+
+
+            @foreach (var item in modelo)
+            {
+
+                if (item.TipoTramite == "PRIMERA VEZ" && item.TipoLicencia != "AEREO")
+                {
+                    fila = "#BBDEFB";
+                }
+                else if (item.TipoTramite != "PRIMERA VEZ" && item.TipoLicencia == "AEREO")
+                {
+                    fila = "#D1C4E9";
+                }
+                else if (item.TipoTramite == "PRIMERA VEZ" && item.TipoLicencia == "AEREO")
+                {
+                    fila = "#9575CD";
+                }
+                else
+                {
+                    fila = "white";
+                }
+
+                <tr style="background-color:@fila">
+                    <td>
+                        @flag
+                    </td>
+
+                    <td>
+                        <b>@Html.DisplayFor(modelItem => item.Nombre) </b>
+                        @{
+                            if (item.CancelaComentario == "Urgente")
+                            {
+                                <br />
+                                <span style="font-size:x-small;color:red"><b>URGENTE!!</b></span>
+                            }
+                        }
+
+                        @if (item.Entregado != null)
+                        {
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        }
+                    </td>
+
+                    <td>
+                        <b>@Html.DisplayFor(modelItem => item.NoExpediente)</b>
+                    </td>
+                    <td>
+                        <b>@Html.DisplayFor(modelItem => item.Doctor)</b>
+                    </td>
+                    <td>
+                        <b>@Html.DisplayFor(modelItem => item.TipoTramite)</b><br /> (@item.TipoLicencia)
+                    </td>
+                    <td>
+                        <span style="font-size:smaller">@Convert.ToDateTime(item.FechaCita).ToString("dd-MMMM-yyyy")</span>
+                    </td>
+                    <td style="font-size: smaller">
+                        @{
+                            if (item.EstatusCaptura == null)
+                            {
+                                <b>NO INICIADO</b>
+                            }
+                            else
+                            {
+                                <b>@item.EstatusCaptura.ToUpper()</b>
+                            }
+                        }
+
+                    </td>
+                    <td style="font-size: smaller">
+                        <span>@item.Capturista</span>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+
+                            @{
+                                if (item.EstatusCaptura == null || (item.EstatusCaptura == "En Proceso" && item.Capturista == null))
+                                {
+                                    <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/IniciarCaptura")">
+                                        <input type="submit" class="btn btn-primary" value="Iniciar" />
+                                        <input type="hidden" value="@item.idPacienteESP" name="id" />
+                                        <input type="hidden" value="@nombreUsuario" name="capturista" />
+                                    </form>
+                                }
+                                else if (item.EstatusCaptura == "Terminado")
+                                {
+                                    @*<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/IniciarCaptura")">
+                                            <input type="submit" class="btn btn-warning" value="Descargar" />
+                                            <input type="hidden" value="@item.idPacienteESP" name="id" />
+                                        </form>*@
+                                    <a href=@Url.Action("DescargarPDF", "Dictamenes", new { id = item.idPacienteESP })><button class="btn btn-warning">Descargar</button></a>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                    </button>
+                                }
+
+                                <div class="dropdown-menu" style="padding:10px">
+                                    @{
+                                        var revisionFoto2 = (from i in db.FotoPacienteESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
+                                        var revisionDocumentos2 = (from i in db.DocumentosESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
+                                        var revisionCartaNO2 = (from i in db.CartaNoAccidentesESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
+                                        var revisionDeclaracion2 = (from i in db.DeclaracionSaludESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
+                                        var revisionGlucosilada2 = (from i in db.HemoglobinaGlucosiladaESP where i.idPacienteESP == item.idPacienteESP select i.idPacienteESP).FirstOrDefault();
+
+                                        <a href="#" data-toggle="modal" data-target="#DescargarEPI_@item.idPacienteESP"><b>Descargar EPI</b></a>
+                                        <div class="dropdown-divider"></div>
+                                        @*<a href="#" data-toggle="modal" data-target="#DescargarEKG_@item.idPacienteESP">Electrocardiograma</a>*@
+                                        @*<b>@Html.ActionLink("Descargar EKG", "AbrirElectro", null, new { style = "text-decoration: none" })</b>
+                                            <div class="dropdown-divider"></div>
+                                            <b>@Html.ActionLink("Huella 2", "DescargarHuellasZIP", new { id = item.idPacienteESP, h2 = "SI"}, new { style = "text-decoration: none" })</b>
+                                            <div class="dropdown-divider"></div>
+                                            <b>@Html.ActionLink("Huella 3", "DescargarHuellasZIP", new { id = item.idPacienteESP, h3 = "SI"}, new { style = "text-decoration: none" })</b>
+                                            <div class="dropdown-divider"></div>
+                                            <b>@Html.ActionLink("Huella 7", "DescargarHuellasZIP", new { id = item.idPacienteESP, h7 = "SI"}, new { style = "text-decoration: none" })</b>
+                                            <div class="dropdown-divider"></div>
+                                            <b>@Html.ActionLink("Huella 8", "DescargarHuellasZIP", new { id = item.idPacienteESP, h8 = "SI"}, new { style = "text-decoration: none" })</b>
+                                            <div class="dropdown-divider"></div>*@
+                                        @*<a href="#" data-toggle="modal" data-target="#DescargarDocumentos_@item.idPacienteESP">Documentación</a>*@
+                                        <b>@Html.ActionLink("Documentos", "AbrirDocumentos", new { id = item.idPacienteESP }, new { style = "text-decoration: none" })</b>
+                                        <div class="dropdown-divider"></div>
+
+                                        if (revisionCartaNO2 != null)
+                                        {
+                                            @*<a href="#" data-toggle="modal" data-target="#DescargarNoAccidentes_@item.idPacienteESP">Carta NoAccidentes</a>*@
+                                            <b>@Html.ActionLink("Carta NoAccidentes", "AbrirNoAccidenres", new { id = item.idPacienteESP }, new { style = "text-decoration: none" })</b>
+                                            <div class="dropdown-divider"></div>
+                                        }
+                                        if (revisionDeclaracion2 != null)
+                                        {
+                                            @*<a href="#" data-toggle="modal" data-target="#DescargarDeclaracionSalud_@item.idPacienteESP">Declaración Salud</a>*@
+                                            <b>@Html.ActionLink("Declaración Salud", "AbrirDeclaracion", new { id = item.idPacienteESP }, new { style = "text-decoration: none" })</b>
+                                            <div class="dropdown-divider"></div>
+                                        }
+                                        if (revisionGlucosilada2 != null)
+                                        {
+                                            @*<a href="#" data-toggle="modal" data-target="#DescargarGlucosilada_@item.idPacienteESP">H. Glucosilada</a>*@
+                                            <b>@Html.ActionLink("H.Glucosilada", "AbrirGlucosilada", new { id = item.idPacienteESP }, new { style = "text-decoration: none" })</b>
+                                            <div class="dropdown-divider"></div>
+                                        }
+                                        <span>---------------------------</span><br />
+
+                                        if (item.EstatusCaptura == "En Proceso")
+                                        {
+                                            <b><a href="#" data-toggle="modal" data-target="#Reportar_@item.idPacienteESP">Reportar Problema</a></b>
+                                            <div class="dropdown-divider"></div>
+                                        }
+
+                                        <b><a href="#" data-toggle="modal" data-target="#Dictaminar_@item.idPacienteESP">Dictaminar</a></b>
+                                        <div class="dropdown-divider"></div>
+                                    }
+                                </div>
+
+                            }
+
+                            <!-- -------------------------------------------------------------------------------------------------------------- -->
+                            <!-- Modal para Completar Datos -->
+                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/Dictaminar")">
+                                @Html.AntiForgeryToken()
+                                <div class="modal fade" id="Dictaminar_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Dictaminar a @item.Nombre</b></h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label for="file" class="col-form-label">Dictamen:</label>
+                                                    <input type="file" name="dictamen" required />
+                                                    <input type="hidden" name="id" value="@item.idPacienteESP" />
+                                                    <input type="hidden" name="usuario" value="@nombreUsuario" />
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                <input type="submit" value="Guardar" class="btn btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!-- Modal para Reportar Problema -->
+                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/ReportarProblema")">
+                                @Html.AntiForgeryToken()
+                                <div class="modal fade" id="Reportar_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Reportar problema con Dictamen de @item.Nombre</b></h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label for="recipient-name" class="col-form-label">Problema:</label>
+                                                    <input type="text" maxlength="200" class="form-control" id="comentario" name="comentario" required>
+                                                    <input type="hidden" name="id" value="@item.idPacienteESP" />
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                <input type="submit" value="Enviar" class="btn btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <script>
+
+                                function ExportToExcel(type, fn, dl) {
+                                    var elt = document.getElementById('tbl_exporttable_to_xls');
+                                    var wb = XLSX.utils.table_to_book(elt, { sheet: "EPI_RPA" });
+                                    return dl ?
+                                        XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+                                        XLSX.writeFile(wb, fn || ('@item.Nombre @item.NoExpediente.' + (type || 'xlsx')));
+                                }
+
+                            </script>
+
+                            <!-- Modal para Completar Datos -->
+                            <div class="modal fade" id="DescargarEPI_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Descargar datos en Excel de @item.Nombre</b></h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <table id="tbl_exporttable_to_xls" style="color: #2F2D6B; display:none">
+                                                <tr>
+                                                    <th>No. EXP</th>
+                                                    <th>Genero</th>
+                                                    <th>Sistolica</th>
+                                                    <th>Diastolica</th>
+                                                    <th>Cardiaca</th>
+                                                    <th>Respiratoria</th>
+                                                    <th>Temperatura</th>
+                                                    <th>Peso</th>
+                                                    <th>Estatura</th>
+                                                    <th>Cintura</th>
+                                                    <th>Cuello</th>
+                                                    <th>Grasa</th>
+
+                                                    <th>Glucosa</th>
+                                                    <th>Hemoglobina</th>
+
+                                                    <th>Frecuencia</th>
+                                                    <th>Eje</th>
+                                                    <th>PR</th>
+                                                    <th>QT</th>
+                                                    <th>QRS</th>
+                                                    <th>OndaP</th>
+                                                    <th>OndaT</th>
+
+                                                    <th>AVCD</th>
+                                                    <th>AVCI</th>
+                                                    <th>AVID</th>
+                                                    <th>AVII</th>
+                                                    <th>AVLD</th>
+                                                    <th>AVLI</th>
+                                                    <th>LENTES</th>
+                                                    <th>ESTEREOPSIS</th>
+                                                    <th>CARTA</th>
+                                                    <th>CAMPOVISUAL</th>
+                                                    <th>MOVOCULARES</th>
+                                                    <th>RPD</th>
+                                                    <th>RPI</th>
+                                                    <th>NOTA</th>
+                                                    <th>TEST VC</th>
+
+                                                    <th>MadreVive</th>
+                                                    <th>CausaM</th>
+                                                    <th>PadreVive</th>
+                                                    <th>CausaP</th>
+                                                    <th>HermanosViven</th>
+                                                    <th>CausaH</th>
+                                                    <th>VacComp</th>
+                                                    <th>Ecivil</th>
+                                                    <th>Religion</th>
+                                                    <th>Escolaridad</th>
+                                                    <th>#Hijos</th>
+                                                    <th>Econgenita</th>
+                                                    <th>EspDiag</th>
+                                                    <th>Alergia</th>
+                                                    <th>Diabetes</th>
+                                                    <th>EspDiab</th>
+                                                    <th>DiagHipArt</th>
+                                                    <th>EspDiagArt</th>
+                                                    <th>Alcohol</th>
+                                                    <th>Fuma</th>
+                                                    <th>Drogas</th>
+                                                    <th>UsaLentes</th>
+                                                    <th>TLentes</th>
+                                                    <th>Uregla</th>
+                                                    <th>#Embara</th>
+                                                    <th>#Aborto</th>
+                                                    <th>#Parto</th>
+                                                    <th>#Cesarea</th>
+                                                    <th>IVSex</th>
+                                                    <th>Genero</th>
+
+                                                    <th>PATOLOGIAS</th>
+                                                    <th>INTERPRETACION</th>
+                                                    <th>NOTA MEDICA</th>
+                                                    <th>125</th>
+                                                    <th>250</th>
+                                                    <th>500</th>
+                                                    <th>1000</th>
+                                                    <th>2000</th>
+                                                    <th>4000</th>
+                                                    <th>8000</th>
+                                                    <th>12000</th>
+                                                    <th>125i</th>
+                                                    <th>250i</th>
+                                                    <th>500i</th>
+                                                    <th>1000i</th>
+                                                    <th>2000i</th>
+                                                    <th>4000i</th>
+                                                    <th>8000i</th>
+                                                    <th>12000i</th>
+                                                </tr>
+                                                <tr>
+                                                    <td>@item.NoExpediente</td>
+                                                    <td>@item.Genero</td>
+                                                    <td>120</td>
+                                                    <td>80</td>
+                                                    <td>80</td>
+                                                    <td>18</td>
+                                                    <td>36</td>
+                                                    @{
+                                                        int numeroRandom = 0;
+                                                        double numeroDecimalRandom = 0;
+                                                        double decimalRandom = 0.00;
+                                                        double altura = 1.74;
+                                                        double peso = 0.00;
+                                                        float cadenaPeso;
+
+                                                        Random ran = new Random();
+                                                        numeroRandom = ran.Next(57);
+
+                                                        numeroDecimalRandom = ran.Next(2223, 2878) / 100.00;
+
+                                                        peso = numeroDecimalRandom * (altura * altura);
+                                                        cadenaPeso = (float)(Math.Round((double)peso, 2));
+
+                                                        <td>@cadenaPeso</td>
+                                                    }
+
+                                                    <td>@item.Estatura</td>
+                                                    <td>90</td>
+                                                    <td>38</td>
+                                                    <td>25</td>
+
+                                                    <td>100</td>
+                                                    <td>6.5</td>
+
+                                                    <td>80</td>
+                                                    <td>60</td>
+                                                    <td>160</td>
+                                                    <td>220</td>
+                                                    <td>300</td>
+                                                    <td>120</td>
+                                                    <td>200</td>
+
+                                                    <td>1</td>
+                                                    <td>1</td>
+                                                    <td>1</td>
+                                                    <td>1</td>
+                                                    <td>1</td>
+                                                    <td>1</td>
+                                                    <td>NO</td>
+                                                    <td>60</td>
+                                                    <td>NO</td>
+                                                    <td>NORMAL</td>
+                                                    <td>NORMAL</td>
+                                                    <td>NORMAL</td>
+                                                    <td>NORMAL</td>
+                                                    <td>SANO VE BIEN</td>
+                                                    <td>NORMAL</td>
+
+                                                    <td>SI</td>
+                                                    <td>NULL</td>
+                                                    <td>SI</td>
+                                                    <td>NULL</td>
+                                                    <td>SI</td>
+                                                    <td>NULL</td>
+                                                    <td>SI</td>
+                                                    <td>UNIONLIBRE</td>
+                                                    <td>OTRO</td>
+                                                    <td>SECUNDARIA</td>
+                                                    <td>0</td>
+                                                    <td>NO</td>
+                                                    <td>Esta limpio</td>
+                                                    <td>Ninguna</td>
+                                                    <td>NO</td>
+                                                    <td>Null</td>
+                                                    <td>NO</td>
+                                                    <td>Null</td>
+                                                    <td>NO</td>
+                                                    <td>NO</td>
+                                                    <td>NO</td>
+                                                    <td>NO</td>
+                                                    <td>Null</td>
+                                                    <td>@DateTime.Now.AddDays(-20).ToString("yyyy-MM-dd").Replace("-", "")</td>
+                                                    <td>0</td>
+                                                    <td>0</td>
+                                                    <td>0</td>
+                                                    <td>0</td>
+                                                    <td>18</td>
+                                                    <td>@item.Genero</td>
+
+                                                    <td>NINGUNO</td>
+                                                    <td>NORMAL</td>
+                                                    <td>NORMAL</td>
+                                                    <td>0</td>
+                                                    <td>-5</td>
+                                                    <td>0</td>
+                                                    <td>5</td>
+                                                    <td>-5</td>
+                                                    <td>-10</td>
+                                                    <td>0</td>
+                                                    <td>5</td>
+                                                    <td>5</td>
+                                                    <td>0</td>
+                                                    <td>-10</td>
+                                                    <td>-5</td>
+                                                    <td>5</td>
+                                                    <td>0</td>
+                                                    <td>-5</td>
+                                                    <td>0</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </td>
+                </tr>
+
+                flag += 1;
+
+            }
+
+        </table>
+    </div>
+}
+
+
+<div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width:70%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body" id="">
+                <div class="tablaScroll">
+                    <table class="table table-hover tablas table-responsive" id="tablaEjemploSS" style="color: #2F2D6B">
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+

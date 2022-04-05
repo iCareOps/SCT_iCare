@@ -1,0 +1,819 @@
+﻿
+@{
+    ViewBag.Title = "Administrador";
+
+    GMIEntities db = new GMIEntities();
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    string nombreUsuario = null;
+    int idUser = 0;
+    int? idRol = 0;
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
+    }
+
+    var sucursalesLista = from s in db.Sucursales select s;
+
+    int diaHoy = DateTime.Now.Day;
+    int mesHoy = DateTime.Now.Month;
+    int anioHoy = DateTime.Now.Year;
+
+    DateTime dateToday = new DateTime(anioHoy, mesHoy, diaHoy);
+
+    int diaManana = DateTime.Now.AddDays(1).Day;
+    int mesManana = DateTime.Now.AddDays(1).Month;
+    int anioManana = DateTime.Now.AddDays(1).Year;
+
+    DateTime dateTomorrow = new DateTime(anioManana, mesManana, diaManana);
+
+    dateToday = Convert.ToDateTime(ViewBag.Inicio);
+    dateTomorrow = Convert.ToDateTime(ViewBag.Final);
+
+    var citasHoy = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.TipoTramite != "REVALORACIÓN");
+    int citasHoyConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.TipoTramite != "REVALORACIÓN").Count();
+
+    var episHoy = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente < dateTomorrow && w.NoExpediente != null && w.TipoTramite != "REVALORACIÓN");
+    int episHoyConteo = (from c in db.Captura select c).Where(w => w.FechaExpdiente >= dateToday && w.FechaExpdiente< dateTomorrow && w.NoExpediente != null && w.TipoTramite != "REVALORACIÓN").Count();
+
+    var episSinIVA = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null &&
+    (w.ReferidoPor == "PABLO" || w.ReferidoPor == "ELIZABETH" || w.ReferidoPor == "LUIS VALENCIA" || w.ReferidoPor == "ROBERTO HERRERA" || w.ReferidoPor == "NATALY FRANCO") && w.TipoTramite != "REVALORACIÓN");
+    int episSinIVAConteo = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null &&
+    (w.ReferidoPor == "PABLO" || w.ReferidoPor == "ELIZABETH" || w.ReferidoPor == "LUIS VALENCIA" || w.ReferidoPor == "ROBERTO HERRERA" || w.ReferidoPor == "NATALY FRANCO") && w.TipoTramite != "REVALORACIÓN").Count();
+
+    int money = 0;
+    int moneyTAXES = 0;
+    int moneyWTAXES = 0;
+    int moneyNORMAL = 0;
+
+    var dineroG = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && (w.CC == "GESTOR") && w.TipoTramite != "REVALORACIÓN");
+    int dineroAGCount = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && w.TipoLicencia == "AEREO" && (w.CC == "GESTOR") && w.TipoTramite != "REVALORACIÓN").Count();
+    int dineroNGCount = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && w.TipoLicencia != "AEREO" && (w.CC == "GESTOR") && w.TipoTramite != "REVALORACIÓN").Count();
+
+    var dinero = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && w.TipoTramite != "REVALORACIÓN");
+    int dineroACount = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && w.TipoLicencia == "AEREO" && w.TipoTramite != "REVALORACIÓN").Count();
+    int dineroNCount = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && w.TipoLicencia != "AEREO" && w.TipoTramite != "REVALORACIÓN").Count();
+
+    var dineroSinIVA = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null &&
+(w.ReferidoPor == "PABLO" || w.ReferidoPor == "ELIZABETH" || w.ReferidoPor == "LUIS VALENCIA" || w.ReferidoPor == "ROBERTO HERRERA" || w.ReferidoPor == "NATALY FRANCO") && w.TipoTramite != "REVALORACIÓN");
+    int dineroSinIVA_ACount = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null &&
+(w.ReferidoPor == "PABLO" || w.ReferidoPor == "ELIZABETH" || w.ReferidoPor == "LUIS VALENCIA" || w.ReferidoPor == "ROBERTO HERRERA" || w.ReferidoPor == "NATALY FRANCO") && w.TipoLicencia == "AEREO" && w.TipoTramite != "REVALORACIÓN").Count();
+    int dineroSinIVA_NCount = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null &&
+(w.ReferidoPor == "PABLO" || w.ReferidoPor == "ELIZABETH" || w.ReferidoPor == "LUIS VALENCIA" || w.ReferidoPor == "ROBERTO HERRERA" || w.ReferidoPor == "NATALY FRANCO") && w.TipoLicencia != "AEREO" && w.TipoTramite != "REVALORACIÓN").Count();
+
+    moneyWTAXES = (dineroSinIVA_ACount * 3000) + (dineroSinIVA_NCount * 2450);
+    int moneyWFiction = (dineroSinIVA_ACount * 3480) + (dineroSinIVA_NCount * 2842);
+    moneyTAXES = ((dineroAGCount * 3480) + (dineroNGCount * 2842)) - ((dineroSinIVA_ACount * 3480) + (dineroSinIVA_NCount * 2842));
+    moneyNORMAL = ((dineroACount * 3480) + (dineroNCount * 2842)) - (moneyWFiction - moneyWTAXES);
+
+    int flag = 1;
+    int saldoOXXO = 0;
+    int saldoRefSB = 0;
+    int saldoRefBB = 0;
+    int saldoTarjeta = 0;
+    int saldoTranSB = 0;
+    int saldoTranBB = 0;
+}
+
+<br />
+
+<h3 style="color:white" class="text-center"><span style="color:#AC9070">Bienvenido</span> @nombreUsuario </h3>
+
+<br />
+@if (ViewBag.Estado == 1)
+{
+    <h5 style="color:darkgray">Mostrando resultados de: <span style="color:white">@ViewBag.Inicio.ToString("dd-MMMM-yyyy")</span> hasta <span style="color:white">@ViewBag.Final.ToString("dd-MMMM-yyyy")</span></h5>
+}
+
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/Dashboard")">
+    <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px">
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+        <input type="date" class="form-control" min="2021-09-11" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+        <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
+        <input type="submit" class="btn btn-primary" value="Enviar" />
+        <a href="~/Admin/Dashboard"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+    </div>
+
+    <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
+        <div class="input-group">
+            <input type="text" class="form-control input-g" id="buscador" name="dato" placeholder="Paciente o Expediente">
+            <span class="input-group-btn">
+                <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+        </div>
+    </div>
+</form>
+
+<br />
+<br />
+
+
+@section scripts{
+
+    <script>
+        var input = document.getElementById("buscador");
+        input.addEventListener("keydown", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("buscar").click();
+            }
+        });
+
+    </script>
+
+    <script>
+    $(function () {
+        $(".buscar").click(function () {
+                    var url = "@Url.Action("BuscarTodo", "Admin")";
+                    var dato = $("#buscador").val();
+                    var data = { dato: dato };
+
+            $.post(url, data).done(function (data) {
+                    console.log(data);
+                    let miResultado = "";
+                    if ($.isEmptyObject(data)) {
+                        miResultado = "<h3>No se encontraron registros.</h3>"
+                    }
+                else {
+                        miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>Expediente</th><th>Email</th><th>Teléfono</th><th>Fecha Cita</th><th>Sucursal</th><th></th></tr>"
+                    for (let i = 0; i < data.length; i++) {
+                            var url = '@Url.Action("DescargarPDF","EPIs", new {id="xxxx"})';
+                            var epi = '<b>@Html.ActionLink("XXX", "AbrirEPI_EC", new { id = "xxxxx" }, new { style = "color: black; text-decoration: none" })</b>';
+                            url = url.replace("xxxx", data[i].idCaptura);
+                            epi = epi.replace("XXX", data[i].Nombre);
+                            epi = epi.replace("xxxxx", data[i].idCaptura);
+                            miResultado += "<tr style=\"border:1px solid gray\">" +
+                                "<td><b>" + epi + "</b></td>" +
+                                "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                "<td><b>" + data[i].Email + "</b></td>" +
+                                "<td><b>" + data[i].Telefono + "</b></td>" +
+                                "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                                "<td><b>" + data[i].Sucursal + "</b></td>" +
+                                "<td><a href="+url+"> <b.autton type=\"button\" class=\"btn btn-danger\">Descargar</button></a></td>" +
+
+                                "</tr>"
+                    }
+                    }
+
+                $('#exampleModal10').modal('show');
+                    document.getElementById("tablaEjemplo").innerHTML = miResultado;
+
+                }).fail().always(function () {
+
+                });
+            });
+        });
+
+    </script>
+
+    @if (TempData["ID"] != null)
+    {
+        <script>
+            window.open('@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })');
+        </script>
+    }
+
+}
+
+<div class="modal fade" id="exampleModal10" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width:70%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body">
+                <div class="tablaScroll">
+                    <table class="table tablas table-responsive" id="tablaEjemplo" style="color: #2F2D6B">
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-outline-warning boton-transparenteIndicador1 botonesGral col-md-4" data-toggle="modal" data-target="#citasHoy" style="color:white">
+    <h4><span class="glyphicon glyphicon-list-alt"></span> &nbsp; &nbsp;Citas: <b>@citasHoyConteo</b></h4>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="citasHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:aquamarine">
+                <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-list-alt"></span> &nbsp; &nbsp;Citas generadas: <b>@citasHoyConteo</b></h3>
+            </div>
+            <div class="modal-body">
+                @{
+                    foreach (var item in sucursalesLista)
+                    {
+                        var elemento = (from e in db.Cita where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow select e).Count();
+
+                        if (elemento > 0)
+                        {
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-outline-warning boton-transparenteIndicador2 botonesGral col-md-4" data-toggle="modal" data-target="#episHoy" style="color:white">
+    <h4><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs: <b>@episHoyConteo</b></h4>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="episHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:aquamarine">
+                <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;EPIs digitalizados: <b>@episHoyConteo</b></h3>
+            </div>
+            <div class="modal-body">
+                @{
+                    foreach (var item in sucursalesLista)
+                    {
+                        var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.TipoTramite != "REVALORACIÓN" select e).Count();
+
+                        if (elemento > 0)
+                        {
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
+                    }
+                    if ((from e in db.Captura where e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.TipoTramite == "REVALORACIÓN" select e).Count() > 0)
+                    {
+                        <hr />
+                        <h3 class="text-primary">Revaloraciones:</h3>
+                        foreach (var item in sucursalesLista)
+                        {
+                            var elemento = (from e in db.Captura where e.Sucursal == item.Nombre && e.FechaExpdiente >= dateToday && e.FechaExpdiente < dateTomorrow && e.TipoTramite == "REVALORACIÓN" select e).Count();
+
+                            if (elemento > 0)
+                            {
+                                <h4><b>@item.Nombre:</b> @elemento</h4>
+                            }
+                        }
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!----------------------------------------------------------------------------------------------------------------------->
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-outline-warning boton-transparenteIndicador3 botonesGral col-md-4" data-toggle="modal" data-target="#dictamenesHoy" style="color:white">
+    <h4><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;EPIs sin IVA: <b>@episSinIVAConteo</b></h4>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="dictamenesHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:aquamarine">
+                <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;EPIs sin IVA: <b>@episSinIVAConteo</b></h3>
+            </div>
+            <div class="modal-body">
+                @{
+                    foreach (var item in sucursalesLista)
+                    {
+                        var elemento = (from c in db.Cita select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow && w.NoExpediente != null && w.Sucursal == item.Nombre &&
+            (w.ReferidoPor == "PABLO" || w.ReferidoPor == "ELIZABETH" || w.ReferidoPor == "LUIS VALENCIA" || w.ReferidoPor == "ROBERTO HERRERA" || w.ReferidoPor == "NATALY FRANCO")).Count();
+
+                        if (elemento > 0)
+                        {
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-outline-warning boton-transparenteIndicador4 botonesGral col-md-4" data-toggle="modal" data-target="#enProcesoHoy" style="color:white">
+    <h4><b>$</b> &nbsp; &nbsp;Dinero del día: <b>$@Convert.ToInt32(moneyNORMAL).ToString("###,###,###,###")</b></h4>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="enProcesoHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:gold">
+                <h3 class="modal-title" id="exampleModalLabel"><b>$</b> &nbsp; &nbsp;Dinero del día: <b>$@Convert.ToInt32(moneyNORMAL).ToString("###,###,###,###")</b></h3>
+            </div>
+            <div class="modal-body">
+                <h4><b>Dinero de gestores con IVA:</b> $@moneyTAXES.ToString("###,###,###,###")</h4>
+                <h4><b>Dinero de gestores sin IVA:</b> $@moneyWTAXES.ToString("###,###,###,###")</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-outline-warning boton-transparenteIndicador5 botonesGral col-md-4" data-toggle="modal" data-target="#pendientesHoy" style="color:white">
+    <h4><b>$</b> &nbsp; &nbsp;por Gestoría: <b>$@Convert.ToInt32(moneyTAXES + moneyWTAXES).ToString("###,###,###,###")</b></h4>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="pendientesHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:gold">
+                <h3><b>$</b> &nbsp; &nbsp;por Gestoría: <b>$@Convert.ToInt32(moneyTAXES + moneyWTAXES).ToString("###,###,###,###")</b></h3>
+            </div>
+            <div class="modal-body">
+                @{
+                    foreach (var item in sucursalesLista)
+                    {
+                        var elemento = (from e in db.Cita where e.Sucursal == item.Nombre && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.NoExpediente != null && e.CC == "GESTOR" select e).Count();
+
+                        if (elemento > 0)
+                        {
+                            <h4><b>@item.Nombre:</b> @elemento</h4>
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-outline-warning boton-transparenteIndicador6 botonesGral col-md-4" data-toggle="modal" data-target="#entregados" style="color:white">
+    <h4><span class="glyphicon glyphicon-user"></span> &nbsp; &nbsp;Recuento de Gestores</h4>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="entregados" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:aquamarine">
+                <h3 class="modal-title"><span class="glyphicon glyphicon-user"></span> &nbsp; &nbsp;Recuento de Gestores</h3>
+            </div>
+            <div class="modal-body">
+                @{
+                    foreach (var item in (from e in db.Referido where e.Tipo == "GESTOR" select e.Nombre))
+                    {
+                        int precio = 0;
+                        var elemento1 = (from e in db.Cita where e.ReferidoPor == item && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.NoExpediente != null select e);
+                        var elemento1Count = (from e in db.Cita where e.ReferidoPor == item && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.NoExpediente != null select e).Count();
+
+                        if (elemento1Count > 0)
+                        {
+                            if (item == "PABLO" || item == "ELIZABETH" || item == "LUIS VALENCIA" || item == "ROBERTO HERRERA" || item == "NATALY FRANCO")
+                            {
+                                foreach (var i in elemento1)
+                                {
+                                    if (i.TipoLicencia == "AEREO")
+                                    {
+                                        precio += 3000;
+                                    }
+                                    else
+                                    {
+                                        precio += 2380;
+                                    }
+                                }
+                                <h4 class="text-primary"><b>@item:</b> $@precio.ToString("###,###,###")</h4>
+                            }
+                            else
+                            {
+                                foreach (var i in elemento1)
+                                {
+                                    if (i.TipoLicencia == "AEREO")
+                                    {
+                                        precio += 3480;
+                                    }
+                                    else
+                                    {
+                                        precio += 2842;
+                                    }
+
+                                }
+                                <h4><b>@item:</b> $@precio.ToString("###,###,###")</h4>
+                            }
+
+
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    //var modelo = from m in db.Cita where m.CC == "GESTOR" select m;
+    var modelo = (from s in db.Cita where s.FechaCita >= dateToday && s.FechaCita < dateTomorrow && s.NoExpediente != null && s.CC == "GESTOR" select s).GroupBy(o => o.ReferidoPor);
+    var modeloCount = (from m in modelo select m).OrderByDescending(o => o.Count());
+
+    <div class="tablaScroll3" style="width:45%; display:inline-block; min-width:340px; margin:2%">
+        <br />
+        <h3 style="color:white">Gestores por Sucursal</h3>
+        <table class="table tablas table-responsive" style="color: #2F2D6B; width: 100%; min-width: 400px">
+            <thead>
+                <tr class="bg-primary">
+                    <th>                </th>
+                    <th>
+                        <h4>Gestor</h4>
+                    </th>
+                    <th>
+                        <h4>EPIs</h4>
+                    </th>
+                    <th>
+                        <h4>Sucursal</h4>
+                    </th>
+                </tr>
+            </thead>
+
+
+            @foreach (var item in modelo)
+            {
+                <tr>
+                    <td>@flag</td>
+                    <td>
+                        <b>@item.Key</b>
+                    </td>
+                    <td>
+                        @item.Count()
+                    </td>
+                    <td>
+                        @{
+                            string elemento = (from v in db.Cita where v.ReferidoPor == item.Key && v.FechaCita >= dateToday && v.FechaCita < dateTomorrow select v.Sucursal).FirstOrDefault();
+
+                            <b>@elemento</b>
+                        }
+                    </td>
+                </tr>
+                flag++;
+            }
+
+        </table>
+    </div>
+
+
+    //var modelo = from m in db.Cita where m.CC == "GESTOR" select m;
+    var referenciaOXXO = (from s in db.Cita where s.FechaReferencia >= dateToday && s.FechaReferencia < dateTomorrow && s.NoExpediente != null && s.TipoPago == "Referencia OXXO" select s).Count();
+    var referenciaOXXOConsulta = (from s in db.Cita where s.FechaReferencia >= dateToday && s.FechaReferencia < dateTomorrow && s.NoExpediente != null && s.TipoPago == "Referencia OXXO" select s);
+    var referenciaScotiabank = (from s in db.Cita where s.FechaReferencia >= dateToday && s.FechaReferencia < dateTomorrow && s.NoExpediente != null && s.TipoPago == "Referencia Scotiabank" select s).Count();
+    var referenciaScotiabankConsulta = (from s in db.Cita where s.FechaReferencia >= dateToday && s.FechaReferencia < dateTomorrow && s.NoExpediente != null && s.TipoPago == "Referencia Scotiabank" select s);
+    var referenciaBanBajio = (from s in db.Cita where s.FechaReferencia >= dateToday && s.FechaReferencia < dateTomorrow && s.NoExpediente != null && s.TipoPago == "Referencia BanBajío" select s).Count();
+    var referenciaBanBajioConsulta = (from s in db.Cita where s.FechaReferencia >= dateToday && s.FechaReferencia < dateTomorrow && s.NoExpediente != null && s.TipoPago == "Referencia BanBajío" select s);
+    var tarjeta = (from s in db.Cita where s.FechaReferencia >= dateToday && s.FechaReferencia < dateTomorrow && s.NoExpediente != null && s.TipoPago == "Pago con Tarjeta" select s).Count();
+    var tarjetaConsulta = (from s in db.Cita where s.FechaReferencia >= dateToday && s.FechaReferencia < dateTomorrow && s.NoExpediente != null && s.TipoPago == "Pago con Tarjeta" select s);
+    var transferenciaSB = (from s in db.Cita where s.FechaReferencia >= dateToday && s.FechaReferencia < dateTomorrow && s.NoExpediente != null && s.TipoPago == "Transferencia vía Scotiabank" select s).Count();
+    var transferenciaSBconsulta = (from s in db.Cita where s.FechaReferencia >= dateToday && s.FechaReferencia < dateTomorrow && s.NoExpediente != null && s.TipoPago == "Transferencia vía Scotiabank" select s);
+    var transferenciaBB = (from s in db.Cita where s.FechaReferencia >= dateToday && s.FechaReferencia < dateTomorrow && s.NoExpediente != null && s.TipoPago == "Transferencia vía BanBajío" select s).Count();
+    var transferenciaBBConsulta = (from s in db.Cita where s.FechaReferencia >= dateToday && s.FechaReferencia < dateTomorrow && s.NoExpediente != null && s.TipoPago == "Transferencia vía BanBajío" select s);
+
+    <div class="tablaScroll3" style="width:45%; display:inline-block; min-width:340px; margin:2%">
+        <br />
+        <h3 style="color:white">Gestores por Sucursal</h3>
+        <table class="table tablas table-responsive" style="color: #2F2D6B; width: 100%; min-width: 400px">
+            <thead>
+                <tr class="bg-primary">
+                    <th>
+                        <h4>Tipo de Pago</h4>
+                    </th>
+                    <th>
+                        <h4>Cantidad</h4>
+                    </th>
+                    <th>
+                        Saldo
+                    </th>
+                </tr>
+            </thead>
+
+            <tr>
+                <td>
+                    <b>Referencia OXXO</b>
+                </td>
+                <td>
+                    <span>@referenciaOXXO</span>
+                </td>
+                <td>
+                    @{
+                        foreach (var item in (from e in db.Referido where e.Tipo == "GESTOR" select e.Nombre))
+                        {
+                            var elemento1 = (from e in db.Cita where e.ReferidoPor == item && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.NoExpediente != null && e.TipoPago == "Referencia OXXO" select e);
+                            var elemento1Count = (from e in db.Cita where e.ReferidoPor == item && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.NoExpediente != null && e.TipoPago == "Referencia OXXO" select e).Count();
+
+                            if (elemento1Count > 0)
+                            {
+                                if (item == "PABLO" || item == "ELIZABETH" || item == "LUIS VALENCIA" || item == "ROBERTO HERRERA" || item == "NATALY FRANCO")
+                                {
+                                    foreach (var i in elemento1)
+                                    {
+                                        if (i.TipoLicencia == "AEREO")
+                                        {
+                                            saldoOXXO += 3000;
+                                        }
+                                        else
+                                        {
+                                            saldoOXXO += 2380;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (var i in elemento1)
+                                    {
+                                        if (i.TipoLicencia == "AEREO")
+                                        {
+                                            saldoOXXO += 3480;
+                                        }
+                                        else
+                                        {
+                                            saldoOXXO += 2842;
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    <span>$@saldoOXXO.ToString("###,###,###")</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <b>Referencia Scotiabank</b>
+                </td>
+                <td>
+                    <span>@referenciaScotiabank</span>
+                </td>
+                <td>
+                    @{
+                        foreach (var item in (from e in db.Referido where e.Tipo == "GESTOR" select e.Nombre))
+                        {
+                            var elemento1 = (from e in db.Cita where e.ReferidoPor == item && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.NoExpediente != null && e.TipoPago == "Referencia Scotiabank" select e);
+                            var elemento1Count = (from e in db.Cita where e.ReferidoPor == item && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.NoExpediente != null && e.TipoPago == "Referencia Scotiabank" select e).Count();
+
+                            if (elemento1Count > 0)
+                            {
+                                if (item == "PABLO" || item == "ELIZABETH" || item == "LUIS VALENCIA" || item == "ROBERTO HERRERA" || item == "NATALY FRANCO")
+                                {
+                                    foreach (var i in elemento1)
+                                    {
+                                        if (i.TipoLicencia == "AEREO")
+                                        {
+                                            saldoRefSB += 3000;
+                                        }
+                                        else
+                                        {
+                                            saldoRefSB += 2380;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (var i in elemento1)
+                                    {
+                                        if (i.TipoLicencia == "AEREO")
+                                        {
+                                            saldoRefSB += 3480;
+                                        }
+                                        else
+                                        {
+                                            saldoRefSB += 2842;
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    <span>$@saldoRefSB.ToString("###,###,###")</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <b>Referencia BanBajío</b>
+                </td>
+                <td>
+                    <span>@referenciaBanBajio</span>
+                </td>
+                <td>
+                    @{
+                        foreach (var item in (from e in db.Referido where e.Tipo == "GESTOR" select e.Nombre))
+                        {
+                            var elemento1 = (from e in db.Cita where e.ReferidoPor == item && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.NoExpediente != null && e.TipoPago == "Referencia BanBajío" select e);
+                            var elemento1Count = (from e in db.Cita where e.ReferidoPor == item && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.NoExpediente != null && e.TipoPago == "Referencia BanBajío" select e).Count();
+
+                            if (elemento1Count > 0)
+                            {
+                                if (item == "PABLO" || item == "ELIZABETH" || item == "LUIS VALENCIA" || item == "ROBERTO HERRERA" || item == "NATALY FRANCO")
+                                {
+                                    foreach (var i in elemento1)
+                                    {
+                                        if (i.TipoLicencia == "AEREO")
+                                        {
+                                            saldoRefBB += 3000;
+                                        }
+                                        else
+                                        {
+                                            saldoRefBB += 2380;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (var i in elemento1)
+                                    {
+                                        if (i.TipoLicencia == "AEREO")
+                                        {
+                                            saldoRefBB += 3480;
+                                        }
+                                        else
+                                        {
+                                            saldoRefBB += 2842;
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    <span>$@saldoRefBB.ToString("###,###,###")</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <b>Pago con Tarjeta</b>
+                </td>
+                <td>
+                    <span>@tarjeta</span>
+                </td>
+                <td>
+                    @{
+                        foreach (var item in (from e in db.Referido where e.Tipo == "GESTOR" select e.Nombre))
+                        {
+                            var elemento1 = (from e in db.Cita where e.ReferidoPor == item && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.NoExpediente != null && e.TipoPago == "Pago con Tarjeta" select e);
+                            var elemento1Count = (from e in db.Cita where e.ReferidoPor == item && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.NoExpediente != null && e.TipoPago == "Pago con Tarjeta" select e).Count();
+
+                            if (elemento1Count > 0)
+                            {
+                                if (item == "PABLO" || item == "ELIZABETH" || item == "LUIS VALENCIA" || item == "ROBERTO HERRERA" || item == "NATALY FRANCO")
+                                {
+                                    foreach (var i in elemento1)
+                                    {
+                                        if (i.TipoLicencia == "AEREO")
+                                        {
+                                            saldoTarjeta += 3000;
+                                        }
+                                        else
+                                        {
+                                            saldoTarjeta += 2380;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (var i in elemento1)
+                                    {
+                                        if (i.TipoLicencia == "AEREO")
+                                        {
+                                            saldoTarjeta += 3480;
+                                        }
+                                        else
+                                        {
+                                            saldoTarjeta += 2842;
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    <span>$@saldoTarjeta.ToString("###,###,###")</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <b>Transferencia vía Scotiabank</b>
+                </td>
+                <td>
+                    <span>@transferenciaSB</span>
+                </td>
+                <td>
+                    @{
+                        foreach (var item in (from e in db.Referido where e.Tipo == "GESTOR" select e.Nombre))
+                        {
+                            var elemento1 = (from e in db.Cita where e.ReferidoPor == item && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.NoExpediente != null && e.TipoPago == "Transferencia vía Scotiabank" select e);
+                            var elemento1Count = (from e in db.Cita where e.ReferidoPor == item && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.NoExpediente != null && e.TipoPago == "Transferencia vía Scotiabank" select e).Count();
+
+                            if (elemento1Count > 0)
+                            {
+                                if (item == "PABLO" || item == "ELIZABETH" || item == "LUIS VALENCIA" || item == "ROBERTO HERRERA" || item == "NATALY FRANCO")
+                                {
+                                    foreach (var i in elemento1)
+                                    {
+                                        if (i.TipoLicencia == "AEREO")
+                                        {
+                                            saldoTranSB += 3000;
+                                        }
+                                        else
+                                        {
+                                            saldoTranSB += 2380;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (var i in elemento1)
+                                    {
+                                        if (i.TipoLicencia == "AEREO")
+                                        {
+                                            saldoTranSB += 3480;
+                                        }
+                                        else
+                                        {
+                                            saldoTranSB += 2842;
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    <span>$@saldoTranSB.ToString("###,###,###")</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <b>Transferencia vía BanBajío</b>
+                </td>
+                <td>
+                    <span>@transferenciaBB</span>
+                </td>
+                <td>
+                    @{
+                        foreach (var item in (from e in db.Referido where e.Tipo == "GESTOR" select e.Nombre))
+                        {
+                            var elemento1 = (from e in db.Cita where e.ReferidoPor == item && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.NoExpediente != null && e.TipoPago == "Transferencia vía BanBajío" select e);
+                            var elemento1Count = (from e in db.Cita where e.ReferidoPor == item && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.NoExpediente != null && e.TipoPago == "Transferencia vía BanBajío" select e).Count();
+
+                            if (elemento1Count > 0)
+                            {
+                                if (item == "PABLO" || item == "ELIZABETH" || item == "LUIS VALENCIA" || item == "ROBERTO HERRERA" || item == "NATALY FRANCO")
+                                {
+                                    foreach (var i in elemento1)
+                                    {
+                                        if (i.TipoLicencia == "AEREO")
+                                        {
+                                            saldoTranBB += 3000;
+                                        }
+                                        else
+                                        {
+                                            saldoTranBB += 2380;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (var i in elemento1)
+                                    {
+                                        if (i.TipoLicencia == "AEREO")
+                                        {
+                                            saldoTranBB += 3480;
+                                        }
+                                        else
+                                        {
+                                            saldoTranBB += 2842;
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    <span>$@saldoTranBB.ToString("###,###,###")</span>
+                </td>
+            </tr>
+
+        </table>
+    </div>
+}
+
+
