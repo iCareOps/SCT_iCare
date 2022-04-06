@@ -1,0 +1,41 @@
+﻿@model SCT_iCare.Doctores
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<br />
+
+<h3 style="color:white" class="text-center">¿Quieres eliminar éste Doctor?</h3>
+<br />
+<br />
+<div>
+    <dl class="dl-horizontal labelGral">
+        <dt>
+            <h4>@Html.DisplayNameFor(model => model.Nombre)</h4>
+        </dt>
+
+        <dd class="labelInfo">
+            <h4>@Html.DisplayFor(model => model.Nombre)</h4>
+        </dd>
+
+        <dt>
+            <h4>Sucursal</h4>
+        </dt>
+
+        <dd class="labelInfo">
+            <h4>@Html.DisplayFor(model => model.Sucursales.Nombre)</h4>
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color enlaceSinBoton">
+            <input type="submit" value="Eliminar" class="btn btn-outline-warning boton-transparente botonesGral" /> |
+            @Html.ActionLink("Volver a Doctores", "Index")
+        </div>
+    }
+</div>

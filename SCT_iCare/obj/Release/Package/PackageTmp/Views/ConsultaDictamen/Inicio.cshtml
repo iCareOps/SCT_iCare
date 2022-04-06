@@ -1,0 +1,75 @@
+﻿
+@{
+    ViewBag.Title = "Facturación";
+
+    GMIEntities db = new GMIEntities();
+
+    var modelo = db.Paciente.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
+        .Select(S => new { id = S.N.idPaciente, S.N.Nombre, S.N.Telefono, S.M.NoExpediente }).ToList();
+
+    int idGestor = Convert.ToInt32(TempData["ID"]);
+
+}
+
+<br />
+<br />
+
+<h2 style="color:white; text-shadow:2px 2px 2px black">Bienvenido al sistema de consultas de dictámenes para transportistas</h2>
+<br />
+<body class="bg-primary bodyLogin" style="color:black">
+
+    <div class="form-horizontal col-sm-5" style="border-radius: 10px; background-color:rgb(255 255 255 / 0.90); box-shadow: 3px 3px 23px gray">
+        <br />
+        <h4><b>Ingrese al menos Número de Expediente y CURP para consultar el estatus de su trámite:</b></h4>
+        <h6>Consulta de dictámenes desde la fecha 2 de Agosto de 2021</h6>
+        <hr />
+        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ConsultaDictamen/Estatus")">
+            @Html.AntiForgeryToken()
+
+            <label for="recipient-name">Número de Expediente:</label>
+            <input type="text" class="form-control" id="numero" name="numero" required />
+            <input type="hidden" class="form-control" id="idGestor" name="idGestor" value="@idGestor"/>
+
+            <br />
+            <label for="recipient-name" class="col-form-label">Teléfono:</label>
+            <input type="text" class="form-control" pattern="[0-9]{10}" title="El formato de teléfono debe contener 10 números" id="telefono" name="telefono">
+
+            <br />
+            <label for="recipient-name" class="col-form-label">CURP:</label>
+            <input type="text" class="form-control" id="curp" name="curp" required>
+            <br />
+            <input type="submit" value="Enviar" class="btn btn-primary" style="width:100%" />
+            <br />
+            <br />
+
+        </form>
+    </div>
+
+</body>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    @if (TempData["Estatus"] == "No")
+    {
+        <script>
+    $('#exampleModal').modal('show');
+        </script>
+    }
+}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-group">
+                    <center><h2><label for="recipient-name" class="col-form-label text-danger">ERROR: No existe el usuario</label></h2></center>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

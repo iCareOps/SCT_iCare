@@ -1,0 +1,597 @@
+﻿@model IEnumerable<SCT_iCare.Paciente>
+
+@{
+    ViewBag.Title = "Ventas Alt";
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    GMIEntities db = new GMIEntities();
+    System.Web.Script.Serialization.JavaScriptSerializer js = new System.Web.Script.Serialization.JavaScriptSerializer();
+
+    var Recepcion = new int?();
+    var Hospital = "";
+    var idHospital = 0;
+    string Sucursal = null;
+    int idUser = 14;
+    string nombreUsuario = null;
+    string fila = "";
+    int registros;
+
+    int flag = 1; //contador de la tabla
+
+    DateTime start = DateTime.Now;
+    DateTime finish = DateTime.Now.AddDays(1);
+
+    int year = start.Year;
+    int month = start.Month;
+    int day = start.Day;
+
+    int year1 = finish.Year;
+    int month1 = finish.Month;
+    int day1 = finish.Day;
+
+    int tomorrorDay = day + 1;
+    DateTime thisDate = Convert.ToDateTime(ViewBag.Inicio); /*new DateTime(year, month, day);*/
+    DateTime tomorrowDate = Convert.ToDateTime(ViewBag.Final); /*new DateTime(year1, month1, day1);*/
+    string gestor = ViewBag.Gestor;
+    string estatus = ViewBag.Estatus;
+
+    var modelo = db.PacienteESP.Where(s => (s.FechaCaptura >= thisDate && s.FechaCaptura < tomorrowDate) /*&& s.EstatusCaptura == "Terminado"*/).OrderByDescending(o => o.FechaCaptura).OrderByDescending(o => o.CancelaComentario == "Urgente");
+
+    if (gestor != null)
+    {
+        modelo = db.PacienteESP.Where(s => (s.FechaCaptura >= thisDate && s.FechaCaptura < tomorrowDate) && s.ReferidoPor == gestor).OrderByDescending(o => o.FechaCaptura);
+
+        if (estatus != null)
+        {
+            modelo = db.PacienteESP.Where(s => (s.FechaCaptura >= thisDate && s.FechaCaptura < tomorrowDate) && s.ReferidoPor == gestor && s.EstatusCaptura == estatus).OrderByDescending(o => o.FechaCaptura);
+        }
+    }
+
+    if (estatus != null)
+    {
+        modelo = db.PacienteESP.Where(s => (s.FechaCaptura >= thisDate && s.FechaCaptura < tomorrowDate) && s.EstatusCaptura == estatus).OrderByDescending(o => o.FechaCaptura);
+
+        if (gestor != null)
+        {
+            modelo = db.PacienteESP.Where(s => (s.FechaCaptura >= thisDate && s.FechaCaptura < tomorrowDate) && s.ReferidoPor == gestor && s.EstatusCaptura == estatus).OrderByDescending(o => o.FechaCaptura);
+        }
+    }
+
+    int? idRol = 0;
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
+
+        Hospital = "GENERAL";
+        Sucursal = Hospital.ToString();
+
+        registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
+
+        //if (idUser != 14 && oUser.idRol != 2)
+        //{
+        //Recepcion = (from r in db.Recepcionista where r.idUsuario == idUser select r.idSucursal).FirstOrDefault();
+        //Hospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.Nombre).FirstOrDefault();
+        //idHospital = (from h in db.Sucursales where h.idSucursal == Recepcion select h.idSucursal).FirstOrDefault();
+        //Sucursal = Hospital.ToString();
+
+        //registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate && s.M.Sucursal == Sucursal).Count();
+
+        //}
+        //else
+        //{
+        //Hospital = "GENERAL";
+        //Sucursal = Hospital.ToString();
+
+        //registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaCita >= thisDate && s.M.FechaCita < tomorrowDate).Count();
+
+        //}
+    }
+
+
+
+}
+
+<br />
+<br />
+<h3 style="color:#AC9070" class="text-center">DICTÁMENES - <span style="color:white"><a style="text-decoration:none; color:white">@DateTime.Now.ToString("dd-MMMM-yyyy")</a></span></h3>
+@*<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>
+    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>*@
+<br />
+@if (ViewBag.Estado == 1)
+{
+    if (gestor != null)
+    {
+        <h5 style="color:darkgray">Mostrando dictámenes de: <span style="color:white">@ViewBag.Inicio.ToString("dd-MMMM-yyyy")</span> hasta <span style="color:white">@ViewBag.Final.ToString("dd-MMMM-yyyy")</span> del gestor <span style="color:white">@gestor</span></h5>
+    }
+    else
+    {
+        <h5 style="color:darkgray">Mostrando dictámenes de: <span style="color:white">@ViewBag.Inicio.ToString("dd-MMMM-yyyy")</span> hasta <span style="color:white">@ViewBag.Final.ToString("dd-MMMM-yyyy")</span></h5>
+    }
+
+}
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/VentasAlternativas")">
+    <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px; width:100%; border:2px solid white">
+
+        <select name="gestor" style="font-size:2vh" class="form-select">
+            @{
+                if (gestor != null)
+                {
+                    <option style="font-weight:bold" value="@gestor" selected>@gestor</option>
+                }
+                else
+                {
+                    <option style="font-weight:bold" value="" selected disabled>Seleccione un gestor</option>
+                }
+            }
+
+            @{
+                foreach (var referido in (from i in db.Referido where i.Tipo == "GESTOR ALT" orderby i.Nombre select i))
+                {
+                    <option style="font-weight:bold" value="@referido.Nombre">@referido.Nombre</option>
+                }
+            }
+        </select>
+        <select name="estatus" style="font-size:2vh" class="form-select">
+            @{
+                if (estatus != null)
+                {
+                    <option style="font-weight:bold" value="@estatus" selected>@estatus</option>
+                }
+                else
+                {
+                    <option style="font-weight:bold" value="" selected disabled>Estatus Dictamen</option>
+                }
+            }
+
+            <option style="font-weight:bold" value="Terminado">DICTAMINADOS</option>
+            <option style="font-weight:bold" value="Pausados">PENDIENTES</option>
+            <option style="font-weight:bold" value="En Proceso"> EN PROCESO</option>
+            <option style="font-weight:bold" value="Cancelado">CANCELADOS</option>
+        </select>
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+        <input type="date" class="form-control" min="2021-08-02" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+        <input type="date" class="form-control" name="final" @*max="@fechaMAX"*@ /> @*&nbsp; &nbsp;*@<br />
+        <input type="submit" class="btn btn-primary" value="Enviar" />
+        <a href="~/Dictamenes/VentasAlternativas"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+    </div>
+</form>
+
+<br />
+<div class="form-inline">
+    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Nueva Cita</button>
+</div>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Registrar cita previamente pagada</b></h3>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/CreateVentas")">
+                    @Html.AntiForgeryToken()
+                    <div class="form-inline">
+                        <label for="recipient-name" class="col-form-label">Cantidad de EPIs requeridos (Autotransporte, Marítimos y Ferroviarios):</label>
+                    </div>
+                    <div class="form-inline">
+                        <span class="">
+                            <button class="btn btn-info" id="menos" type="button"><b><span class="glyphicon glyphicon-minus"></span></b></button>
+                        </span>
+                        <input style="display:inline-block" type="number" class="form-control" id="contador" min="1" name="cantidad" placeholder="Ingresa una cantidad">
+                        <span class="">
+                            <button class="btn btn-info" id="mas" type="button"><b><span class="glyphicon glyphicon-plus"></span></b></button>
+                        </span>
+                        <br />
+                        <br />
+                    </div>
+                    <div class="form-inline">
+                        <label for="recipient-name" class="col-form-label">Cantidad de EPIs requeridos (Aéreos):</label>
+                    </div>
+                    <div class="form-inline">
+                        <span class="">
+                            <button class="btn btn-warning" id="menos0" type="button"><b><span class="glyphicon glyphicon-minus"></span></b></button>
+                        </span>
+                        <input style="display:inline-block" type="number" class="form-control" id="contador0" min="1" name="cantidadAereo" placeholder="Ingresa una cantidad">
+                        <span class="">
+                            <button class="btn btn-warning" id="mas0" type="button"><b><span class="glyphicon glyphicon-plus"></span></b></button>
+                        </span>
+                        <br />
+                        <br />
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Nombre del Paciente (o Gestor):</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required />
+                    </div>
+                    <input type="hidden" value="@nombreUsuario" name="usuario" />
+                    <div class="form-group" style="width:60%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Referido Por:</label>
+                        <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            <option value="NINGUNO">NINGUNO</option>
+                            <option disabled>----------GESTORES ALT----------</option>
+                            @{
+                                foreach (var referido in (from i in db.Referido where i.Tipo == "GESTOR ALT" orderby i.Nombre select i))
+                                {
+                                    <option style="font-weight:bold" value="@referido.idReferido">@referido.Nombre</option>
+                                }
+                            }
+                            <option disabled>---------IN SITU--------</option>
+                            @{
+                                foreach (var referido in (from i in db.Referido where i.Tipo == "IN SITU" orderby i.Nombre select i))
+                                {
+                                    <option style="font-weight:bold" value="@referido.idReferido">@referido.Nombre</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <input type="checkbox" name="pagoGestor" />
+                    <label for="recipient-name" class="col-form-label"><b style="color:black">Pendiente de pago por gestor</b></label>
+                    <div class="form-group" style="background-color:ghostwhite; padding:5px; border:solid 1px darkblue; border-radius:4px">
+                        <input type="checkbox" id="nombre" name="urgente" />
+                        <label for="recipient-name" class="col-form-label"> MARCAR COMO URGENTE</label>
+                        @{
+                            int? urgentes = (from i in db.UrgentesCount select i.Contador).FirstOrDefault();
+                            <br />
+                            <span class="text-danger" style="font-size:smaller">**Quedan <b>@urgentes</b> requisiciones de Dictámenes Urgentes para este mes. Si el número de creación de citas supera los @urgentes la requisición no será posible.</span>
+                        }
+                    </div>
+</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <input type="submit" value="Enviar" class="btn btn-primary" />
+            </div></form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var sumar = document.getElementById("mas");
+    var restar = document.getElementById("menos");
+    var contador = document.getElementById("contador");
+    var importe = document.getElementById("importe");
+    var valorBase = 5.20;
+    var prevValue;
+
+    function calcular() {
+        var value = contador.value;
+        var isValid = /^[1-9][0-9]*$/.test(value);
+
+        if (!isValid) {
+            contador.value = prevValue;
+        } else {
+            prevValue = value;
+        }
+
+        importe.value = Number.parseFloat(contador.value * valorBase).toFixed(2);
+    }
+
+    sumar.onclick = function () {
+        contador.value = Number(contador.value) + 1;
+        calcular();
+    };
+
+    restar.onclick = function () {
+        contador.value = Number(contador.value) - 1;
+        calcular();
+    };
+
+    contador.onchange = function () {
+        calcular();
+    };
+
+    contador.onkeyup = function () {
+        if (contador.value === "") {
+            return;
+        }
+        calcular();
+    };
+
+    calcular();
+</script>
+
+<script type="text/javascript">
+    var sumar0 = document.getElementById("mas0");
+    var restar0 = document.getElementById("menos0");
+    var contador0 = document.getElementById("contador0");
+    var importe0 = document.getElementById("importe0");
+    var valorBase0 = 5.20;
+    var prevValue0;
+
+    function calcular0() {
+        var value0 = contador0.value;
+        var isValid0 = /^[1-9][0-9]*$/.test(value0);
+
+        if (!isValid0) {
+            contador0.value = prevValue0;
+        } else {
+            prevValue0 = value0;
+        }
+
+        importe0.value = Number.parseFloat(contador0.value * valorBase0).toFixed(2);
+    }
+
+    sumar0.onclick = function () {
+        contador0.value = Number(contador0.value) + 1;
+        calcular0();
+    };
+
+    restar0.onclick = function () {
+        contador0.value = Number(contador0.value) - 1;
+        calcular0();
+    };
+
+    contador0.onchange = function () {
+        calcular0();
+    };
+
+    contador0.onkeyup = function () {
+        if (contador0.value === "") {
+            return;
+        }
+        calcular0();
+    };
+
+    calcular0();
+</script>
+
+@section scripts{
+
+    <script>
+        var input = document.getElementById("buscador");
+        input.addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("buscar").click();
+            }
+        });
+
+    </script>
+
+    <script>
+    $(function () {
+        $(".buscar").click(function () {
+            var url = "@Url.Action("Buscar", "Recepcion")";
+            var dato = $("#buscador").val();
+            var data = { dato: dato };
+
+            $.post(url, data).done(function (data) {
+                console.log(data);
+                let miResultado = "";
+                if ($.isEmptyObject(data)) {
+                    miResultado = "<h3>No se encontraron registros!!</h3>"
+                }
+                else {
+                    miResultado +=  "<tr class=\"bg-primary\"><th>Nombre</th><th>Sucursal</th><th>Tipo Tramite</th><th>Tipo Licencia</th><th>Estatus Dictamen</th><th>Fecha Cita</th><th></th></tr>"
+                    for (let i = 0; i < data.length; i++) {
+
+                        if (data[i].EstatusDictamen == null) {
+                            miResultado += "<tr style=\"border:1px solid gray\">" +
+                                "<td><b>" + data[i].Nombre + "</b></td>" +
+                                "<td><b>" + data[i].Sucursal + "</b></td>" +
+                                "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                "<td><b>" + data[i].TipoLicencia + "</b></td>" +
+                                "<td><b>Pendiente</b></td>" +
+                                "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                "</tr>"
+
+                        } else {
+                            miResultado += "<tr style=\"border:1px solid gray\">" +
+                                "<td><b>" + data[i].Nombre + "</b></td>" +
+                                "<td><b>" + data[i].Sucursal + "</b></td>" +
+                                "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                "<td><b>" + data[i].TipoLicencia + "</b></td>" +
+                                "<td><b>" + data[i].EstatusDictamen + "</b></td>" +
+                                "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                "</tr>"
+
+                        }
+
+                    }
+                }
+
+                $('#exampleModal5').modal('show');
+                document.getElementById("tablaEjemploSS").innerHTML = miResultado;
+
+            }).fail().always(function () {
+
+            });
+        });
+    });
+    </script>
+
+    @if (TempData["Link"] != null)
+    {
+        <script>
+            @*location.href='@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })';*@
+            window.open('@TempData["Link"]');
+        </script>
+    }
+}
+
+
+
+@if (modelo.FirstOrDefault() == null)
+{
+    <br />
+    <h1 style="color:white">No existen dictámenes generados en esta fecha</h1>
+}
+else
+{
+    <div class="tablaScroll">
+        <br />
+        <table class="table tablas" style="color: #2F2D6B">
+            <thead>
+                <tr class="bg-primary" style="border-top-color: black; font-size:smaller">
+                    <th>
+                    </th>
+
+                    <th>
+                        Nombre-EPI
+                    </th>
+
+                    <th>
+                        No. Exp.
+                    </th>
+                    @*@{
+                            if (idRol == 2)
+                            {
+                                <th>Sucursal</th>
+                            }
+                            else
+                            {
+                                <th>
+                                    Doctor
+                                </th>
+                            }
+                        }*@
+                    <th>
+                        Doctor
+                    </th>
+                    <th>
+                        Referido Por
+                    </th>
+
+                    <th>
+                        Tipo de Trámite
+                    </th>
+                    <th>
+                        FechaSolicitud
+                    </th>
+                    <th>
+                        Dictamen
+                    </th>
+                </tr>
+            </thead>
+
+
+            @foreach (var item in modelo)
+            {
+                
+                if (item.TipoTramite == "PRIMERA VEZ" && item.TipoLicencia != "AEREO")
+                {
+                    fila = "#BBDEFB";
+                }
+                else if (item.TipoTramite != "PRIMERA VEZ" && item.TipoLicencia == "AEREO")
+                {
+                    fila = "#D1C4E9";
+                }
+                else if (item.TipoTramite == "PRIMERA VEZ" && item.TipoLicencia == "AEREO")
+                {
+                    fila = "#9575CD";
+                }
+                else
+                {
+                    fila = "white";
+                }
+
+                <tr style="background-color:@fila">
+                    <td>
+                        @flag
+                    </td>
+
+                    <td>
+                        <b>@Html.DisplayFor(modelItem => item.Nombre) </b>
+                        @{ 
+                            if(item.CancelaComentario == "Urgente")
+                    {
+                                <br />
+                        <span style="font-size:x-small;color:red"><b>URGENTE!!</b></span>
+                    }
+                        }
+
+                        @if (item.Entregado != null)
+                        {
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        }
+                    </td>
+
+                    <td>
+                        <b>@Html.DisplayFor(modelItem => item.NoExpediente)</b>
+                    </td>
+                    @*@{
+                            if (idRol == 2)
+                            {
+                                <th>
+                                    @{
+                                        if (item.Doctor != null)
+                                        {
+                                            <span class="field-tip">
+                                                <b>@Html.DisplayFor(modelItem => item.Sucursal)</b>
+                                                <span class="tip-content">@item.Doctor</span>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <b>@Html.DisplayFor(modelItem => item.Sucursal)</b>
+                                        }
+                                    }
+
+                                </th>
+
+
+                            }
+                            else
+                            {
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Doctor)
+                                </td>
+                            }
+                        }*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Doctor)
+                    <td>
+                        <span class="field-tip">
+                            <b>@item.ReferidoPor</b>
+                            <span class="tip-content">
+                                <b>Realiza la cita: </b>@item.Usuario <br />
+                                <b>Referido por: </b>@item.ReferidoPor
+                            </span>
+                        </span>
+                    </td>
+                    <td>
+                        <b>@Html.DisplayFor(modelItem => item.TipoTramite)</b>
+                    </td>
+                    <td>
+                        <span style="font-size:smaller">@Convert.ToDateTime(item.FechaCita).ToString("dd-MMMM-yyyy")</span>
+                    </td>
+                    <td style="font-size: smaller">
+                        @{
+                            if (item.EstatusCaptura == "Terminado")
+                            {
+                                <a href=@Url.Action("DescargarPDF", "Dictamenes", new { id = item.idPacienteESP })><button class="btn btn-warning">Descargar</button></a>
+                            }
+                            else if (item.EstatusCaptura == "Cancelado")
+                            {
+                                <span style="color:darkslategrey; font-size:small">Cancelado</span>
+                            }
+                            else if (item.EstatusCaptura == "En Proceso")
+                            {
+                                <span style="color:darkslategrey; font-size:small">En Proceso</span>
+                            }
+                            else if (item.EstatusCaptura == "Pausado" || item.EstatusCaptura == null)
+                            {
+                                <span style="color:darkslategrey; font-size:small">Pendiente</span>
+                            }
+                        }
+
+                    </td>
+                </tr>
+
+                flag += 1;
+
+            }
+
+        </table>
+    </div>
+}
+
+
+

@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width" />
+    <title>Error</title>
+</head>
+<body style="background-color:black">
+    <hgroup>
+        <h1 style="color:white">Error.</h1>
+        <h2 style="color:white">Error al procesar la solicitud.</h2>
+    </hgroup>
+    <br />
+
+    @{
+        var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+        SCTiCareEntities1 db = new SCTiCareEntities1();
+
+        if (oUser != null)
+        {
+            switch (oUser.idRol)
+            {
+                case 5:
+                    ViewBag.Nombre = oUser.Nombre.ToString();
+                    @Html.ActionLink("Haga click para volver al Inicio", "Index", "Sucursales", null, new { style = "color:white; text-decoration: none" })
+                    break;
+                case 3:
+                    ViewBag.Nombre = oUser.Nombre.ToString();
+                    @Html.ActionLink("Haga click para volver al Inicio", "Index", "Recepcion", null, new { style = "color:white; text-decoration: none" })
+                    break;
+                case 4:
+                    ViewBag.Nombre = oUser.Nombre.ToString();
+                    @Html.ActionLink("Haga click para volver al Inicio", "Index", "Contabilidad", null, new { style = "color:white; text-decoration: none" })
+                    break;
+                case 6:
+                    ViewBag.Nombre = oUser.Nombre.ToString();
+                    @Html.ActionLink("Haga click para volver al Inicio", "Index", "SkeedaPK", null, new { style = "color:white; text-decoration: none" })
+                    break;
+                case 7:
+                    ViewBag.Nombre = oUser.Nombre.ToString();
+                    @Html.ActionLink("Haga click para volver al Inicio", "Captura", "EPIs", null, new { style = "color:white; text-decoration: none" })
+                    break;
+                case 8:
+                    ViewBag.Nombre = oUser.Nombre.ToString();
+                    @Html.ActionLink("Haga click para volver al Inicio", "Index", "CERTIFICADOes", null, new { style = "color:white; text-decoration: none" })
+                    break;
+
+                default:
+                    @Html.ActionLink("Haga click para volver al Inicio", "Login", "Inicio", null, new { style = "color:white; text-decoration: none" })
+                    break;
+            }
+        }
+        else
+        {
+
+        }
+    }
+
+    <br /><br /><br />
+    <img src="~/Images/GMI_no-bg.png" style="width:35%" />
+</body>
+</html>

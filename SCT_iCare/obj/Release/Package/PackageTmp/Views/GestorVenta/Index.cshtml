@@ -1,0 +1,1497 @@
+﻿@model IEnumerable<SCT_iCare.Paciente>
+
+@{
+    ViewBag.Title = "Index";
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    GMIEntities db = new GMIEntities();
+
+    string referenciaIndividual = "";
+    string referenciaIndividual2 = "";
+
+    var Recepcion = new int?();
+    var Hospital = "";
+    var idHospital = 0;
+    string Sucursal = null;
+    int idUser = 3;
+    string nombreUsuario = null;
+    string fila = "";
+    int registros;
+
+    int flag = 1; //contador de la tabla
+    int flag2 = 1; //contador de la tabla
+    int flagSaldo = 1;
+
+    DateTime start = DateTime.Now;
+    DateTime finish = DateTime.Now.AddDays(1);
+
+    int year = start.Year;
+    int month = start.Month;
+    int day = start.Day;
+
+    int year1 = finish.Year;
+    int month1 = finish.Month;
+    int day1 = finish.Day;
+
+
+    int tomorrorDay = day + 1;
+    DateTime thisDate = new DateTime(year, month, day);
+    DateTime tomorrowDate = new DateTime(year1, month1, day1);
+
+    var modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate)@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+int modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.Sucursal == Sucursal && s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate).Count()@*.OrderByDescending(o => new { o.M.TipoTramite,  }).OrderBy(r => r.M.EstatusPago)*@;
+
+var repetidas = (from r in db.Cita select r).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal == "Gestoría" && s.Asistencia == null).Select(s => new { s.Referencia }).Distinct().Count();
+var repetidasCitas = (from r in db.Cita select r).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.Canal == "Gestoría" && s.Asistencia == null).Select(s => new { s.Referencia }).Distinct().Count();
+
+
+
+if (oUser != null)
+{
+idUser = oUser.idUsuario;
+nombreUsuario = oUser.Nombre;
+
+
+Hospital = "GENERAL";
+Sucursal = Hospital.ToString();
+
+modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == oUser.Nombre || s.M.Canal == "Gestoría"));
+
+if (nombreUsuario == "Cristian Airaldi" || nombreUsuario == "Administrador")
+{
+modelo = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == oUser.Nombre || s.M.Canal == "Gestoría"));
+modeloCount = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m })
+.Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && (s.M.Recepcionista == oUser.Nombre || s.M.Canal == "Gestoría")).Count();
+
+}
+
+if (nombreUsuario == "Gestoría ASPA" || nombreUsuario == "Gestoría TAPO")
+{
+repetidas = (from r in db.Cita select r).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal == "Gestoría" && s.Asistencia == null && s.Recepcionista == nombreUsuario).Select(s => new { s.Referencia }).Distinct().Count();
+repetidasCitas = (from r in db.Cita select r).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.Canal == "Gestoría" && s.Asistencia == null && s.Recepcionista == nombreUsuario).Select(s => new { s.Referencia }).Distinct().Count();
+}
+
+registros = db.Paciente.Join(db.Cita, n => n.Folio, m => m.Folio, (n, m) => new { N = n, M = m }).Where(s => s.M.FechaReferencia >= thisDate && s.M.FechaReferencia < tomorrowDate && s.M.Recepcionista == oUser.Nombre).Count();
+}
+
+}
+
+<br />
+<br />
+@{
+    if (nombreUsuario != "Gestoría ASPA" && nombreUsuario != "Gestoría TAPO")
+    {
+        <h3 style="color:white" class="text-center">Gestoría</h3>
+    }
+    else
+    {
+        <h3 style="color:white" class="text-center">Empresas</h3>
+    }
+}
+
+@*<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>*@
+<div class="form-inline">
+    @*<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> Cita con Pago</button>*@
+    @{
+        if (nombreUsuario != "Gestoría ASPA" && nombreUsuario != "Gestoría TAPO")
+        {
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#saldo"><span class="glyphicon glyphicon-usd"></span> Añadir Saldo a Gestor</button>
+        }
+    }
+
+    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal2"><span class="glyphicon glyphicon-plus"></span> Crear Referecia de Pago</button>
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal3"><span class="glyphicon glyphicon-credit-card"></span> Pago con Tarjeta</button>&nbsp;&nbsp;&nbsp;
+
+    <div class="input-group pull-right">
+        <input type="text" class="form-control" id="buscador" name="dato" placeholder="Paciente o Expediente">
+        <span class="input-group-btn">
+            si
+            <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+        </span>
+    </div>
+</div>
+<br />
+
+@section scripts{
+
+    <script>
+        var input = document.getElementById("buscador");
+        input.addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("buscar").click();
+            }
+        });
+
+    </script>
+
+    <script>
+    $(function () {
+        $(".buscar").click(function () {
+            var url = "@Url.Action("Buscar", "Gestoria")";
+            var dato = $("#buscador").val();
+            var data = { dato: dato };
+
+            $.post(url, data).done(function (data) {
+                console.log(data);
+                let miResultado = "";
+                if ($.isEmptyObject(data)) {
+                    miResultado = "<h3>No se encontraron registros.</h3>"
+                }
+                else {
+                    miResultado += "<tr class=\"bg-primary\"><th>Nombre</th><th>Expediente</th><th>Email</th><th>Teléfono</th><th>Fecha Cita</th><th>Sucursal</th></tr>"
+                    for (let i = 0; i < data.length; i++) {
+                        miResultado += "<tr style=\"border:1px solid gray\">" +
+                            "<td><b>" + data[i].Nombre + "</b></td>" +
+                            "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                            "<td><b>" + data[i].Email + "</b></td>" +
+                            "<td><b>" + data[i].Telefono + "</b></td>" +
+                            "<td><b>" + data[i].FechaReferencia + "</b></td>" +
+                            "<td><b>" + data[i].Sucursal + "</b></td>" +
+                            "</tr>"
+                    }
+                }
+
+                $('#exampleModal10').modal('show');
+                document.getElementById("tablaEjemploSS").innerHTML = miResultado;
+
+            }).fail().always(function () {
+
+            });
+        });
+    });
+
+    </script>
+
+    @if (TempData["Link"] != null)
+    {
+        <script>
+            @*location.href='@Url.Action("AbrirEPI","EPIs", new { id = TempData["ID"] })';*@
+            window.open('@TempData["Link"]');
+        </script>
+    }
+
+
+    <script type="text/javascript">
+        var sumar3 = document.getElementById("mas3");
+        var restar3 = document.getElementById("menos3");
+        var contador3 = document.getElementById("contador3");
+        var importe3 = document.getElementById("importe3");
+        var valorBase3 = 5.20;
+        var prevValue3;
+
+        function calcular3() {
+            var value3 = contador3.value;
+            var isValid3 = /^[1-9][0-9]*$/.test(value3);
+
+            if (!isValid3) {
+                contador3.value = prevValue3;
+            } else {
+                prevValue3 = value3;
+            }
+
+            importe3.value = Number.parseFloat(contador3.value * valorBase3).toFixed(2);
+        }
+
+        sumar3.onclick = function () {
+            contador3.value = Number(contador3.value) + 1;
+            calcula3();
+        };
+
+        restar3.onclick = function () {
+            contador3.value = Number(contador3.value) - 1;
+            calcular3();
+        };
+
+        contador3.onchange = function () {
+            calcular3();
+        };
+
+        contador3.onkeyup = function () {
+            if (contador3.value === "") {
+                return;
+            }
+            calcular3();
+        };
+
+        calcular3();
+    </script>
+
+    <script type="text/javascript">
+        var sumar33 = document.getElementById("mas33");
+        var restar33 = document.getElementById("menos33");
+        var contador33 = document.getElementById("contador33");
+        var importe33 = document.getElementById("importe33");
+        var valorBase33 = 5.20;
+        var prevValue33;
+
+        function calcular33() {
+            var value33 = contador33.value;
+            var isValid33 = /^[1-9][0-9]*$/.test(value33);
+
+            if (!isValid33) {
+                contador33.value = prevValue33;
+            } else {
+                prevValue33 = value33;
+            }
+
+            importe33.value = Number.parseFloat(contador33.value * valorBase33).toFixed(2);
+        }
+
+        sumar33.onclick = function () {
+            contador33.value = Number(contador33.value) + 1;
+            calcular33();
+        };
+
+        restar33.onclick = function () {
+            contador33.value = Number(contador33.value) - 1;
+            calcular33();
+        };
+
+        contador33.onchange = function () {
+            calcular33();
+        };
+
+        contador33.onkeyup = function () {
+            if (contador33.value === "") {
+                return;
+            }
+            calcular33();
+        };
+
+        calcular33();
+    </script>
+
+
+}
+
+
+<div class="modal fade" id="exampleModal10" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body">
+                <div class="tablaScroll">
+                    <table class="table tablas table-responsive" id="tablaEjemploSS" style="color: #2F2D6B">
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="modal fade" id="saldo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Saldo a favor para Gestores</b></h3>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Gestoria/Saldos")">
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-group" style="width:60%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Seleccione un Gestor o Empresa:</label>
+                        <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select" required>
+                            <option selected disabled>SELECCIONAR</option>
+                            @{
+                                //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
+                                var referidosGestor = (from r in db.Referido where r.Tipo == "GESTOR" select r).OrderBy(o => o.Nombre);
+                                var referidosMD = (from r in db.Referido where r.Tipo == "MEDIOS DIGITALES" select r).OrderBy(o => o.Nombre);
+                                var referidosEmpresa = (from r in db.Referido where r.Tipo == "EMPRESA" select r).OrderBy(o => o.Nombre);
+                                var referidosOtro = (from r in db.Referido where r.Tipo == "OTRO" select r).OrderBy(o => o.Nombre);
+                                var referidosSindicato = (from r in db.Referido where r.Tipo == "SINDICATO" select r).OrderBy(o => o.Nombre);
+                                var referidosCallCenter = (from r in db.Referido where r.Tipo == "CALL CENTER" select r).OrderBy(o => o.Nombre);
+
+                                <option disabled>--------GESTORES--------</option>
+                                foreach (var item in referidosGestor)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+
+                                <option disabled>--------CALL CENTER--------</option>
+                                foreach (var item in referidosCallCenter)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------EMPRESAS--------</b></option>
+                                foreach (var item in referidosEmpresa)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------SINDICATOS--------</b></option>
+                                foreach (var item in referidosSindicato)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>----MEDIOS DIGITALES----</b></option>
+                                foreach (var item in referidosMD)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------OTROS--------</b></option>
+                                foreach (var item in referidosOtro)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Número de EPIs:</label>
+                        <input type="tel" class="form-control" id="telefono" name="epis" required>
+                    </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <input type="submit" value="Enviar" class="btn btn-primary" />
+            </div></form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Generar referencia de pago</b></h3>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Gestoria/Orden")">
+                    @Html.AntiForgeryToken()
+                    <div class="form-inline">
+                        <label for="recipient-name" class="col-form-label">Cantidad de EPIs requeridos (Autotransporte, Marítimos y Ferroviarios):</label>
+                    </div>
+                    <div class="form-inline">
+                        <span class="">
+                            <button class="btn btn-info" id="menos1" type="button"><b><span class="glyphicon glyphicon-minus"></span></b></button>
+                        </span>
+                        <input style="display:inline-block" type="number" class="form-control" id="contador1" min="1" name="cantidad" placeholder="Ingresa una cantidad">
+                        <span class="">
+                            <button class="btn btn-info" id="mas1" type="button"><b><span class="glyphicon glyphicon-plus"></span></b></button>
+                        </span>
+                        <br />
+                        <br />
+                    </div>
+                    <div class="form-inline">
+                        <label for="recipient-name" class="col-form-label">Cantidad de EPIs requeridos (Aéreos):</label>
+                    </div>
+                    <div class="form-inline">
+                        <span class="">
+                            <button class="btn btn-warning" id="menos11" type="button"><b><span class="glyphicon glyphicon-minus"></span></b></button>
+                        </span>
+                        <input style="display:inline-block" type="number" class="form-control" id="contador11" min="1" name="cantidadAereo" placeholder="Ingresa una cantidad">
+                        <span class="">
+                            <button class="btn btn-warning" id="mas11" type="button"><b><span class="glyphicon glyphicon-plus"></span></b></button>
+                        </span>
+                        <br />
+                        <br />
+                    </div>
+                    <input type="hidden" class="form-control" id="usuario" name="usuario" value="@oUser.Nombre">
+
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Teléfono:</label>
+                        <input type="tel" class="form-control" pattern="[0-9]{10}" title="El formato de teléfono debe contener 10 números" id="telefono" name="telefono" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
+                        <input type="date" class="form-control" id="fecha" name="fecha" required>
+                    </div>
+                    <div class="form-group" style="width:60%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                        <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            @{
+                                var sucursalesOption = from s in db.Sucursales select s.Nombre;
+                                foreach (var opcion in sucursalesOption)
+                                {
+                                    <option value="@opcion">@opcion</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group" style="width:60%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Referido Por:</label>
+                        <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select" required>
+                            <option selected disabled>SELECCIONAR</option>
+                            @{
+                                //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
+
+                                <option disabled>--------GESTORES--------</option>
+                                foreach (var item in referidosGestor)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+
+                                <option disabled>--------CALL CENTER--------</option>
+                                foreach (var item in referidosCallCenter)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------EMPRESAS--------</b></option>
+                                foreach (var item in referidosEmpresa)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------SINDICATOS--------</b></option>
+                                foreach (var item in referidosSindicato)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>----MEDIOS DIGITALES----</b></option>
+                                foreach (var item in referidosMD)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------OTROS--------</b></option>
+                                foreach (var item in referidosOtro)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <input type="submit" value="Enviar" class="btn btn-primary" />
+            </div></form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var sumar1 = document.getElementById("mas1");
+    var restar1 = document.getElementById("menos1");
+    var contador1 = document.getElementById("contador1");
+    var importe1 = document.getElementById("importe1");
+    var valorBase1 = 5.20;
+    var prevValue1;
+
+    function calcular1() {
+        var value1 = contador1.value;
+        var isValid1 = /^[1-9][0-9]*$/.test(value1);
+
+        if (!isValid1) {
+            contador1.value = prevValue1;
+        } else {
+            prevValue1 = value1;
+        }
+
+        importe1.value = Number.parseFloat(contador1.value * valorBase1).toFixed(2);
+    }
+
+    sumar1.onclick = function () {
+        contador1.value = Number(contador1.value) + 1;
+        calcular1();
+    };
+
+    restar1.onclick = function () {
+        contador1.value = Number(contador1.value) - 1;
+        calcular1();
+    };
+
+    contador1.onchange = function () {
+        calcular1();
+    };
+
+    contador1.onkeyup = function () {
+        if (contador1.value === "") {
+            return;
+        }
+        calcular1();
+    };
+
+    calcular1();
+</script>
+
+<script type="text/javascript">
+    var sumar11 = document.getElementById("mas11");
+    var restar11 = document.getElementById("menos11");
+    var contador11 = document.getElementById("contador11");
+    var importe11 = document.getElementById("importe11");
+    var valorBase11 = 5.20;
+    var prevValue11;
+
+    function calcular11() {
+        var value11 = contador11.value;
+        var isValid11 = /^[1-9][0-9]*$/.test(value11);
+
+        if (!isValid11) {
+            contador11.value = prevValue11;
+        } else {
+            prevValue11 = value11;
+        }
+
+        importe11.value = Number.parseFloat(contador11.value * valorBase11).toFixed(2);
+    }
+
+    sumar11.onclick = function () {
+        contador11.value = Number(contador11.value) + 1;
+        calcular11();
+    };
+
+    restar11.onclick = function () {
+        contador11.value = Number(contador11.value) - 1;
+        calcular11();
+    };
+
+    contador11.onchange = function () {
+        calcular11();
+    };
+
+    contador11.onkeyup = function () {
+        if (contador11.value === "") {
+            return;
+        }
+        calcular11();
+    };
+
+    calcular11();
+</script>
+
+
+<div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: orangered">
+                <h3 class="modal-title text-primary" id="exampleModalLabel" style="color:white"><b>Pago con Tarjeta</b></h3>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Gestoria/PagoTarjeta")">
+                    @Html.AntiForgeryToken()
+                    <div class="form-inline">
+                        <label for="recipient-name" class="col-form-label">Cantidad de EPIs requeridos (Autotransporte, Marítimos y Ferroviarios):</label>
+                    </div>
+                    <div class="form-inline">
+                        <span class="">
+                            <button class="btn btn-info" id="menos2" type="button"><b><span class="glyphicon glyphicon-minus"></span></b></button>
+                        </span>
+                        <input style="display:inline-block" type="number" class="form-control" id="contador2" min="1" name="cantidad" placeholder="Ingresa una cantidad">
+                        <span class="">
+                            <button class="btn btn-info" id="mas2" type="button"><b><span class="glyphicon glyphicon-plus"></span></b></button>
+                        </span>
+                        <br />
+                        <br />
+                    </div>
+                    <div class="form-inline">
+                        <label for="recipient-name" class="col-form-label">Cantidad de EPIs requeridos (Aéreos):</label>
+                    </div>
+                    <div class="form-inline">
+                        <span class="">
+                            <button class="btn btn-warning" id="menos22" type="button"><b><span class="glyphicon glyphicon-minus"></span></b></button>
+                        </span>
+                        <input style="display:inline-block" type="number" class="form-control" id="contador22" min="1" name="cantidadAereo" placeholder="Ingresa una cantidad">
+                        <span class="">
+                            <button class="btn btn-warning" id="mas22" type="button"><b><span class="glyphicon glyphicon-plus"></span></b></button>
+                        </span>
+                        <br />
+                        <br />
+                    </div>
+                    <input type="hidden" class="form-control" id="usuario" name="usuario" value="@oUser.Nombre">
+
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Teléfono:</label>
+                        <input type="tel" class="form-control" pattern="[0-9]{10}" title="El formato de teléfono debe contener 10 números" id="telefono" name="telefono" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label"><b>Terminación de Tarjeta (últimos 4 números):</b></label>
+                        <input type="number" maxlength="4" min="4" class="form-control" id="card" name="card" required>
+                    </div>
+                    <div class="form-group" style="width:60%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                        <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                            @{
+                                var sucursalesOption1 = from s in db.Sucursales select s.Nombre;
+                                foreach (var opcion in sucursalesOption1)
+                                {
+                                    <option value="@opcion">@opcion</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
+                        <input type="date" class="form-control" id="fecha" name="fecha" required>
+                    </div>
+                    <input type="hidden" name="usuario" asp-for="file" class="" required value="Call Center" />
+                    <div class="form-group" style="width:60%; min-width:320px">
+                        <label for="recipient-name" class="col-form-label">Referido Por:</label>
+                        <select name="referido" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select" required>
+                            <option selected disabled>SELECCIONAR</option>
+                            @{
+                                //var gestores2 = from g in db.Usuarios where g.idRol == 10 select g.Nombre;
+
+                                <option disabled>--------GESTORES--------</option>
+                                foreach (var item in referidosGestor)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+
+                                <option disabled>--------CALL CENTER--------</option>
+                                foreach (var item in referidosCallCenter)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------EMPRESAS--------</b></option>
+                                foreach (var item in referidosEmpresa)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------SINDICATOS--------</b></option>
+                                foreach (var item in referidosSindicato)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>----MEDIOS DIGITALES----</b></option>
+                                foreach (var item in referidosMD)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+
+                                <option disabled><b>--------OTROS--------</b></option>
+                                foreach (var item in referidosOtro)
+                                {
+                                    <option value="@item.idReferido">@item.Nombre</option>
+                                }
+                            }
+                        </select>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <input type="submit" value="Enviar" class="btn btn-primary" />
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var sumar2 = document.getElementById("mas2");
+    var restar2 = document.getElementById("menos2");
+    var contador2 = document.getElementById("contador2");
+    var importe2 = document.getElementById("importe2");
+    var valorBase2 = 5.20;
+    var prevValue2;
+
+    function calcular2() {
+        var value2 = contador2.value;
+        var isValid2 = /^[1-9][0-9]*$/.test(value2);
+
+        if (!isValid2) {
+            contador2.value = prevValue2;
+        } else {
+            prevValue2 = value2;
+        }
+
+        importe2.value = Number.parseFloat(contador2.value * valorBase2).toFixed(2);
+    }
+
+    sumar2.onclick = function () {
+        contador2.value = Number(contador2.value) + 1;
+        calcular2();
+    };
+
+    restar2.onclick = function () {
+        contador2.value = Number(contador2.value) - 1;
+        calcular2();
+    };
+
+    contador2.onchange = function () {
+        calcular2();
+    };
+
+    contador2.onkeyup = function () {
+        if (contador2.value === "") {
+            return;
+        }
+        calcular2();
+    };
+
+    calcular2();
+</script>
+
+<script type="text/javascript">
+    var sumar22 = document.getElementById("mas22");
+    var restar22 = document.getElementById("menos22");
+    var contador22 = document.getElementById("contador22");
+    var importe22 = document.getElementById("importe2");
+    var valorBase22 = 5.20;
+    var prevValue22;
+
+    function calcular22() {
+        var value22 = contador22.value;
+        var isValid22 = /^[1-9][0-9]*$/.test(value22);
+
+        if (!isValid22) {
+            contador22.value = prevValue22;
+        } else {
+            prevValue22 = value22;
+        }
+
+        importe22.value = Number.parseFloat(contador22.value * valorBase22).toFixed(2);
+    }
+
+    sumar22.onclick = function () {
+        contador22.value = Number(contador22.value) + 1;
+        calcular22();
+    };
+
+    restar22.onclick = function () {
+        contador22.value = Number(contador22.value) - 1;
+        calcular22();
+    };
+
+    contador22.onchange = function () {
+        calcular22();
+    };
+
+    contador22.onkeyup = function () {
+        if (contador22.value === "") {
+            return;
+        }
+        calcular22();
+    };
+
+    calcular22();
+</script>
+
+
+
+
+
+
+
+@*@if (modelo.FirstOrDefault() == null)
+    {
+        <h1 style="color:white">No existen citas el día de hoy!</h1>
+    }
+    else
+    {
+        var repetidas = (from r in db.Cita select r).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal != "SITIO").Select(s => new { s.Canal, s.Sucursal }).Distinct();
+        var grupo = from g in db.Cita group g by g.Referencia into i select new { };
+        var grupo2 = db.Cita.GroupBy(x => new { x.Referencia, x.Canal }).Count();
+
+        <div class="tablaScroll">
+            <table class="table tablas" style="color: #2F2D6B">
+                <thead>
+                    <tr style="background-color:#62E3C9">
+                        <th>
+                        </th>
+
+                        <th>
+                            Nombre del Gestor
+                        </th>
+                        <th>
+                            Sucursal
+                        </th>
+
+                        <th>
+                            Cantidad
+                        </th>
+                        <th>
+                            Referencia
+                        </th>
+                        <th>
+                            Estatus de EPIs
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+
+                @foreach (var item in grupo2)
+                {
+                    int conteo = (from c in db.Cita where c.Canal == item.Canal select c).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Sucursal == item.Sucursal).Count();
+
+                    <tr>
+                        <td>
+                            @flag
+                        </td>
+                        <td>
+                            <b>@item.Key.</b>
+                        </td>
+                        <td>
+                            @item.Sucursal
+                        </td>
+                        <td>
+                            <b>@conteo</b>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            @{
+                                var idPaciente = (from id in db.Cita select id).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Sucursal == item.Sucursal && s.Canal == item.Canal);
+
+                                int n = 0;
+
+                                foreach (var item1 in idPaciente)
+                                {
+                                    var estatus = (from c in db.Captura select c).Where(s => s.FechaExpdiente >= thisDate && s.FechaExpdiente < tomorrowDate && s.Sucursal == item.Sucursal && s.EstatusCaptura == "Terminado" && s.idPaciente == item1.idPaciente).FirstOrDefault();
+                                    if (estatus != null)
+                                    {
+                                        n++;
+                                    }
+                                }
+
+                                if (n == 0)
+                                {
+                                    <mark class="bg-warning">Pendientes</mark>
+                                }
+                                else if (n != conteo)
+                                {
+                                    <mark class="bg-info">Parcialmente Listos</mark>
+                                }
+                                else if (n == conteo)
+                                {
+                                    <mark class="bg-success">Todos Listos</mark>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+
+                    flag += 1;
+
+                }
+
+            </table>
+        </div>
+    }*@
+
+@if (modelo.FirstOrDefault() == null)
+{
+    <h1 style="color:white">No existen citas el día de hoy!</h1>
+}
+else
+{
+    var citas = (from c in db.Cita select c).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Canal == "Gestoría");
+
+    if (nombreUsuario == "Gestoría ASPA" || nombreUsuario == "Gestoría TAPO")
+    {
+        citas = (from c in db.Cita select c).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.Canal == "Gestoría" && s.Recepcionista == nombreUsuario);
+    }
+
+    <h3 style="color:white">REFERENCIAS CREADAS HOY: @repetidas</h3>
+    <div class="tablaScroll2">
+        <table class="table tablas" style="color: #2F2D6B">
+            <thead>
+                <tr style="background-color:#62E3C9; color:white">
+                    <th>
+                    </th>
+
+                    <th>
+                        Nombre del Gestor
+                    </th>
+                    <th>
+                        Sucursal
+                    </th>
+
+                    <th>
+                        Cantidad
+                    </th>
+                    <th>
+                        Referencia
+                    </th>
+                    <th>
+                        Estatus de EPIs
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+
+
+            @foreach (var item in citas)
+            {
+                //string modal = "";
+                //if (item.TipoPago != "Pago con Tarjeta")
+                //{
+                //    modal = "estatus_" + referenciaIndividual;
+                //}
+                //else
+                //{
+                //    modal = (item.idCita).ToString();
+                //}
+
+                if (referenciaIndividual == item.Referencia)
+                {
+                    continue;
+                }
+
+                referenciaIndividual = item.Referencia;
+
+                int referencias = (from r in db.Cita where r.Referencia == item.Referencia select r).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate).Count();
+
+
+
+                if (referencias > 1 || (nombreUsuario == "Gestoría ASPA" || nombreUsuario == "Gestoría TAPO"))
+                {
+                    <tr>
+                        <td>
+                            @flag
+                        </td>
+                        <td>
+                            <b>@item.ReferidoPor</b>
+                        </td>
+                        <td>
+                            @item.Sucursal
+                        </td>
+                        <td>
+                            <b>@referencias</b>
+                        </td>
+                        <td>
+                            @{
+                                if (item.TipoPago == "Pago con Tarjeta")
+                                {
+                                    <b><a href=@item.NoOrden target="_blank">Terminación: @referenciaIndividual</a></b>
+                                }
+                                else
+                                {
+                                    <b>@referenciaIndividual</b>
+                                }
+                            }
+                        </td>
+                        <td>
+                            <a data-toggle="modal" data-target="#estatus_@item.Referencia">
+                                @{
+                                    var idPaciente = (from id in db.Cita select id).Where(s => s.Referencia == referenciaIndividual && s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Sucursal == item.Sucursal && s.Canal == item.Canal);
+
+                                    int n = 0;
+
+                                    foreach (var item1 in idPaciente)
+                                    {
+                                        var estatus = (from c in db.Captura select c).Where(s => s.FechaExpdiente >= thisDate && s.FechaExpdiente < tomorrowDate && s.Sucursal == item.Sucursal && s.EstatusCaptura == "Terminado" && s.idPaciente == item1.idPaciente).FirstOrDefault();
+                                        if (estatus != null)
+                                        {
+                                            n++;
+                                        }
+                                    }
+
+                                    if (n == 0)
+                                    {
+                                        <mark class="bg-warning">Pendientes</mark>
+                                    }
+                                    else if (n != referencias)
+                                    {
+                                        <mark class="bg-info">Parcialmente Listos</mark>
+                                    }
+                                    else if (n == referencias)
+                                    {
+                                        <mark class="bg-success">Todos Listos</mark>
+                                    }
+                                }
+                            </a>
+                            @{int flag3 = 1; }
+                            <div class="modal fade" id="estatus_@item.Referencia" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h3 class="modal-title text-primary" id="exampleModalLabel"><b>@n de @referencias dictámenes listos</b></h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div>
+                                                @{
+                                                    //var dictamenes = (from d in db.Cita where d.Referencia == referenciaIndividual && d.FechaReferencia >= thisDate && d.FechaReferencia < tomorrowDate select d);
+
+                                                    var dictamenes = db.Cita.Join(db.Captura, o => o.idPaciente, m => m.idPaciente, (o, m) => new { O = o, M = m })
+                                                        .Where(r => (r.O.Referencia == referenciaIndividual && r.O.FechaReferencia >= thisDate && r.O.FechaReferencia < tomorrowDate && (r.M.EstatusCaptura == "Terminado" || r.M.EstatusCaptura == "Pausado" || r.M.EstatusCaptura == "Pendiente")))
+                                                        .Select(S => new
+                                                        {
+                                                            S.O.idPaciente,
+                                                            S.M.NombrePaciente,
+                                                            S.M.Doctor,
+                                                            S.M.EstatusCaptura,
+                                                            S.M.idCaptura
+                                                        });
+
+                                                    <table class="table tablas" style="color: #2F2D6B">
+                                                        <thead>
+                                                            <tr style="background-color:#62E3C9; color:white">
+                                                                <th>
+                                                                </th>
+
+                                                                <th>
+                                                                    Nombre
+                                                                </th>
+                                                                <th>
+                                                                    Doctor
+                                                                </th>
+
+                                                                <th>
+                                                                    Estatus Dictamen
+                                                                </th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+
+
+                                                        @foreach (var item3 in dictamenes)
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    @flag3
+                                                                </td>
+
+                                                                <td>
+                                                                    <b>@item3.NombrePaciente</b>
+                                                                </td>
+                                                                <td>
+                                                                    @item3.Doctor
+                                                                </td>
+
+                                                                <td>
+                                                                    @item3.EstatusCaptura
+                                                                </td>
+                                                                <td>
+                                                                    @{
+                                                                        if (item3.EstatusCaptura == "Terminado")
+                                                                        {
+                                                                            <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item3.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
+                                                                        }
+                                                                    }
+
+                                                                </td>
+                                                            </tr>
+
+                                                            flag3 += 1;
+                                                        }
+
+                                                    </table>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+
+                flag += 1;
+
+            }
+
+        </table>
+    </div>
+}
+
+@if (modelo.FirstOrDefault() == null)
+{
+    <h1 style="color:white">No existen citas el día de hoy!</h1>
+}
+else
+{
+    var citas = (from c in db.Cita select c).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.Canal == "Gestoría");
+
+    if (nombreUsuario == "Gestoría ASPA" || nombreUsuario == "Gestoría TAPO")
+    {
+        citas = (from c in db.Cita select c).Where(s => s.FechaCita >= thisDate && s.FechaCita < tomorrowDate && s.Canal == "Gestoría" && s.Recepcionista == nombreUsuario);
+    }
+
+    <h3 style="color:white">CITAS PARA HOY: @repetidasCitas</h3>
+    <div class="tablaScroll2">
+        <table class="table tablas" style="color: #2F2D6B">
+            <thead>
+                <tr style="background-color:#62E3C9; color:white">
+                    <th>
+                    </th>
+
+                    <th>
+                        Nombre del Gestor
+                    </th>
+                    <th>
+                        Sucursal
+                    </th>
+
+                    <th>
+                        Cantidad
+                    </th>
+                    <th>
+                        Referencia
+                    </th>
+                    <th>
+                        Estatus de EPIs
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+
+
+            @foreach (var item in citas)
+            {
+                if (referenciaIndividual2 == item.Referencia)
+                {
+                    continue;
+                }
+
+                referenciaIndividual2 = item.Referencia;
+
+                int referencias = (from r in db.Cita where r.Referencia == item.Referencia select r).Count();
+
+                if (referencias > 1 || (nombreUsuario == "Gestoría ASPA" || nombreUsuario == "Gestoría TAPO"))
+                {
+                    <tr>
+                        <td>
+                            @flag2
+                        </td>
+                        <td>
+                            <b>@item.ReferidoPor</b>
+                        </td>
+                        <td>
+                            @item.Sucursal
+                        </td>
+                        <td>
+                            <b>@referencias</b>
+                        </td>
+                        <td>
+                            @{
+                                if (item.TipoPago == "Pago con Tarjeta")
+                                {
+                                    <b><a href=@item.NoOrden target="_blank">Terminación: @referenciaIndividual2</a></b>
+                                }
+                                else
+                                {
+                                    <b>@referenciaIndividual2</b>
+                                }
+                            }
+                        </td>
+                        <td>
+                            <a data-toggle="modal" data-target="#estatus_@item.Referencia">
+                                @{
+                                    var idPaciente = (from id in db.Cita select id).Where(s => s.Referencia == referenciaIndividual2 && s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Sucursal == item.Sucursal && s.Canal == item.Canal);
+
+                                    int n = 0;
+
+                                    foreach (var item1 in idPaciente)
+                                    {
+                                        var estatus = (from c in db.Captura select c).Where(s => s.FechaExpdiente >= thisDate && s.FechaExpdiente < tomorrowDate && s.Sucursal == item.Sucursal && s.EstatusCaptura == "Terminado" && s.idPaciente == item1.idPaciente).FirstOrDefault();
+                                        if (estatus != null)
+                                        {
+                                            n++;
+                                        }
+                                    }
+
+                                    if (n == 0)
+                                    {
+                                        <mark class="bg-warning">Pendientes</mark>
+                                    }
+                                    else if (n != referencias)
+                                    {
+                                        <mark class="bg-info">Parcialmente Listos</mark>
+                                    }
+                                    else if (n == referencias)
+                                    {
+                                        <mark class="bg-success">Todos Listos</mark>
+                                    }
+                                }
+                            </a>
+                            @{int flag3 = 1; }
+                            <div class="modal fade" id="estatus_@item.Referencia" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h3 class="modal-title text-primary" id="exampleModalLabel"><b>@n de @referencias dictámenes listos</b></h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div>
+                                                @{
+                                                    //var dictamenes = (from d in db.Cita where d.Referencia == referenciaIndividual && d.FechaReferencia >= thisDate && d.FechaReferencia < tomorrowDate select d);
+
+                                                    var dictamenes = db.Cita.Join(db.Captura, o => o.idPaciente, m => m.idPaciente, (o, m) => new { O = o, M = m })
+                                                        .Where(r => (r.O.Referencia == referenciaIndividual2 && r.O.FechaReferencia >= thisDate && r.O.FechaReferencia < tomorrowDate && (r.M.EstatusCaptura == "Terminado" || r.M.EstatusCaptura == "Pausado" || r.M.EstatusCaptura == "Pendiente")))
+                                                        .Select(S => new
+                                                        {
+                                                            S.O.idPaciente,
+                                                            S.M.NombrePaciente,
+                                                            S.M.Doctor,
+                                                            S.M.EstatusCaptura,
+                                                            S.M.idCaptura
+                                                        });
+
+                                                    <table class="table tablas" style="color: #2F2D6B">
+                                                        <thead>
+                                                            <tr style="background-color:#62E3C9; color:white">
+                                                                <th>
+                                                                </th>
+
+                                                                <th>
+                                                                    Nombre
+                                                                </th>
+                                                                <th>
+                                                                    Doctor
+                                                                </th>
+
+                                                                <th>
+                                                                    Estatus Dictamen
+                                                                </th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+
+
+                                                        @foreach (var item3 in dictamenes)
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    @flag3
+                                                                </td>
+
+                                                                <td>
+                                                                    <b>@item3.NombrePaciente</b>
+                                                                </td>
+                                                                <td>
+                                                                    @item3.Doctor
+                                                                </td>
+
+                                                                <td>
+                                                                    @item3.EstatusCaptura
+                                                                </td>
+                                                                <td>
+                                                                    @{
+                                                                        if (item3.EstatusCaptura == "Terminado")
+                                                                        {
+                                                                            <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item3.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
+                                                                        }
+                                                                    }
+
+                                                                </td>
+                                                            </tr>
+
+                                                            flag3 += 1;
+                                                        }
+
+                                                    </table>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+
+                flag2 += 1;
+
+            }
+
+        </table>
+    </div>
+}
+
+@{
+    var saldoFavor = from i in db.Referido where i.Saldo > 0 select i;
+    var saldoFavorCount = (from i in db.Referido where i.Saldo > 0 select i).Count();
+
+    if (saldoFavorCount >= 1 && (nombreUsuario != "Gestoría ASPA" && nombreUsuario != "Gestoría TAPO"))
+    {
+        <div class="tablaScroll3" style="width:45%; display:inline-block; min-width:340px; margin:2%">
+            <br />
+            <h3 style="color:white">Saldo a Favor</h3>
+            <table class="table tablas table-responsive" style="color: #2F2D6B; width: 100%; min-width: 400px">
+                <thead>
+                    <tr class="bg-primary">
+                        <th>                </th>
+                        <th>
+                            <h4>Gestor</h4>
+                        </th>
+                        <th>
+                            <h4>EPIs Disponibles</h4>
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+
+                @foreach (var item in saldoFavor)
+                {
+                    <tr>
+                        <td>@flagSaldo</td>
+                        <td>
+                            <b>@item.Nombre</b>
+                        </td>
+                        <td>
+                            @item.Saldo
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                </button>
+
+                                <div class="dropdown-menu" style="padding:10px">
+                                    <a href="#" data-toggle="modal" data-target="#epis_@item.idReferido"><b>Usar EPIs</b></a>
+                                    <div class="dropdown-divider"></div>
+                                </div>
+                            </div>
+
+
+                            @*<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Gestoria/EPIsSaldo")">
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal fade" id="epis_@item.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Cuántos EPIs desea usar de <span class="text-danger">@item.Nombre</span>?</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form-group">
+                                                        <label for="recipient-name" class="col-form-label">¿Cual es el motivo?:</label>
+                                                        <input type="number" min="1" max="@item.Saldo" class="form-control" id="comentario" name="cantidad" required>
+                                                        <input type="hidden" name="id" value="@item.Nombre" />
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    <input type="submit" value="Enviar" class="btn btn-primary" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>*@
+
+                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Gestoria/CreateSaldo")">
+                                <div class="modal fade" id="epis_@item.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>¿Cuántos EPIs desea usar de <span class="text-danger">@item.Nombre</span>?</b></h3>
+                                            </div>
+                                            <div class="modal-body">
+
+                                                <div class="form-inline">
+                                                    <label for="recipient-name" class="col-form-label">Cantidad de EPIs requeridos (Autotransporte, Marítimos y Ferroviarios):</label>
+                                                </div>
+                                                <div class="form-inline">
+                                                    <span class="">
+                                                        <button class="btn btn-info" id="menos3" type="button"><b><span class="glyphicon glyphicon-minus"></span></b></button>
+                                                    </span>
+                                                    <input style="display:inline-block" type="number" class="form-control" id="contador3" min="1" name="cantidad" placeholder="Ingresa una cantidad">
+                                                    <span class="">
+                                                        <button class="btn btn-info" id="mas3" type="button"><b><span class="glyphicon glyphicon-plus"></span></b></button>
+                                                    </span>
+                                                    <br />
+                                                    <br />
+                                                </div>
+                                                <div class="form-inline">
+                                                    <label for="recipient-name" class="col-form-label">Cantidad de EPIs requeridos (Aéreos):</label>
+                                                </div>
+                                                <div class="form-inline">
+                                                    <span class="">
+                                                        <button class="btn btn-warning" id="menos33" type="button"><b><span class="glyphicon glyphicon-minus"></span></b></button>
+                                                    </span>
+                                                    <input style="display:inline-block" type="number" class="form-control" id="contador33" min="1" name="cantidadAereo" placeholder="Ingresa una cantidad">
+                                                    <span class="">
+                                                        <button class="btn btn-warning" id="mas33" type="button"><b><span class="glyphicon glyphicon-plus"></span></b></button>
+                                                    </span>
+                                                    <br />
+                                                    <br />
+                                                </div>
+
+                                                <input type="hidden" class="form-control" id="nombre" name="nombre" value="@item.Nombre" />
+                                                <input type="hidden" class="form-control" id="telefono" name="telefono" value="5555555555">
+                                                <input type="hidden" class="form-control" id="email" name="email" value="sin mail">
+                                                <input type="hidden" name="usuario" asp-for="file" class="" required value="@nombreUsuario" />
+                                                <input type="hidden" class="form-control" id="referencia" name="referencia" value="N/A">
+                                                <input type="hidden" class="form-control" id="referido" name="referido" value="@item.Nombre">
+
+                                                <div class="form-group" style="width:60%; min-width:320px">
+                                                    <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                                                    <select name="sucursal" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                        @{
+                                                            var sucursalesOption5 = from s in db.Sucursales select s.Nombre;
+                                                            foreach (var opcion in sucursalesOption5)
+                                                            {
+                                                                <option value="@opcion">@opcion</option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group" style="width:60%; min-width:320px">
+                                                    <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                                    <select name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                        <option value="Referencia OXXO">Referencia OXXO</option>
+                                                        <option value="Referencia Scotiabank">Referencia Scotiabank</option>
+                                                        <option value="Referencia BanBajío">Referencia BanBajío</option>
+                                                        <option value="Pago con Tarjeta">Pago con Tarjeta</option>
+                                                        <option value="Transferencia vía Scotiabank">Transferencia vía Scotiabank</option>
+                                                        <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="recipient-name" class="col-form-label">Fecha de Cita:</label>
+                                                    <input type="date" class="form-control" id="fecha" name="fecha" required>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                <input type="submit" value="Enviar" class="btn btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </td>
+                    </tr>
+                    flagSaldo++;
+                }
+
+            </table>
+        </div>
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

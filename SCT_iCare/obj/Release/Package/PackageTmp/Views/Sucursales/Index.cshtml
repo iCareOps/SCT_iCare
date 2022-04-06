@@ -1,0 +1,95 @@
+﻿@model IEnumerable<SCT_iCare.Sucursales>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<br />
+
+<br />
+
+<h3 style="color:white" class="text-center">Sucursales</h3>
+
+<br />
+
+<a href="#"><button type="button" style="color:white" class="btn btn-outline-warning boton-transparenteExcel botonesGral" data-toggle="modal" data-target="#modalCiudad"><span class="glyphicon glyphicon-plus"></span>&nbsp; Agregar Ciudad</button></a>
+<a href="~/Sucursales/Create"><button type="button" style="color:white" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal"><span class="glyphicon glyphicon-plus"></span>&nbsp; Agregar Sucursal</button></a>
+<a href="~/Doctores/Index"><button type="button" style="color:white" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal"><span class="glyphicon glyphicon-user"></span> &nbsp;Doctores</button></a>
+<a href="~/Usuarios/Index"><button type="button" style="color:white" class="btn btn-outline-warning boton-transparente botonesGral" data-toggle="modal" data-target="#registrerModal"><span class="glyphicon glyphicon-user"></span> &nbsp;Usuarios</button></a>
+
+<!-- Modal para digitalización completa-->
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Sucursales/AgregarCiudad")">
+    @Html.AntiForgeryToken()
+    <div class="modal fade" id="modalCiudad" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Agregar Ciudad</b></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Ciudad:</label>
+                        <input type="text" class="form-control" id="nombre" name="ciudad">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Estado:</label>
+                        <input type="text" class="form-control" id="telefono" name="estado">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<br />
+<div class="tablaScroll">
+    <table class="table tablas table-responsive" style="color: #2F2D6B">
+        <thead>
+            <tr class="bg-primary">
+                <th>
+                    @Html.DisplayNameFor(model => model.Nombre)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Calle)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Colonia)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Ciudades.Ciudad)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <b>@Html.DisplayFor(modelItem => item.Nombre)</b>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Calle)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Colonia)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Ciudades.Ciudad)
+                </td>
+                <td>
+                    @Html.ActionLink("Editar", "Edit", new { id = item.idSucursal }) |
+                    @Html.ActionLink("Detalles", "Details", new { id = item.idSucursal }) |
+                    @Html.ActionLink("Eliminar", "Delete", new { id = item.idSucursal })
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>
+

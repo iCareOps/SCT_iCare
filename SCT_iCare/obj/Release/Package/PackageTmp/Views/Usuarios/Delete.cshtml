@@ -1,0 +1,59 @@
+﻿@model SCT_iCare.Usuarios
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<br />
+
+<h3 style="color:white">¿Quieres eliminar éste Usuario?</h3>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal labelGral">
+        <dt>
+            <h4>@Html.DisplayNameFor(model => model.Nombre)</h4>
+        </dt>
+
+        <dd class="labelInfo">
+            <h4>@Html.DisplayFor(model => model.Nombre)</h4>
+        </dd>
+
+        <dt>
+            <h4>@Html.DisplayNameFor(model => model.Email)</h4>
+        </dt>
+
+        <dd class="labelInfo">
+            <h4>@Html.DisplayFor(model => model.Email)</h4>
+        </dd>
+
+        @*<dt>
+                @Html.DisplayNameFor(model => model.Password)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Password)
+            </dd>*@
+
+        <dt>
+            <h4>@Html.DisplayNameFor(model => model.Roles.Nombre)</h4>
+        </dt>
+
+        <dd class="labelInfo">
+            <h4>@Html.DisplayFor(model => model.Roles.Nombre)</h4>
+        </dd>
+
+    </dl>
+
+    <br />
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color enlaceSinBoton">
+            <input type="submit" value="Eliminar" class="btn btn-outline-warning boton-transparente botonesGral" /> |
+            @Html.ActionLink("Volver a Usuarios", "Index")
+        </div>
+    }
+</div>

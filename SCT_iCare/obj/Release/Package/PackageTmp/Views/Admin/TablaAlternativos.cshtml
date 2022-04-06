@@ -1,0 +1,338 @@
+﻿
+@{
+    ViewBag.Title = "TablaAlternativos";
+
+    GMIEntities db = new GMIEntities();
+
+    var doctores = db.Doctores.OrderBy(o => o.Nombre);
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    int flag = 1;
+
+    int diaCorrienteHeader = 1;
+    int diaCorrienteRow = 1;
+    int diaCorrienteFooter = 1;
+
+    int diaMes = DateTime.Today.Day;
+
+    int episTotal = 0;
+    int pausaTotal = 0;
+    int dictamenTotal = 0;
+
+    int episTotalTOTAL = 0;
+    int pausaTotalTOTAL = 0;
+    int dictamenTotalTOTAL = 0;
+
+    int episTotalFooter = 0;
+    int pausaTotalFooter = 0;
+    int dictamenTotalFooter = 0;
+}
+
+<html>
+
+<head>
+
+    <LINK REL=StyleSheet HREF="~/Estilos CSS/TablaAcumuladoALT.css" TYPE="text/css" MEDIA=screen>
+
+    <meta charset="utf-8">
+
+    <br />
+    <h2 style="color:white">Tablas Alternativos</h2>
+    <br />
+
+</head>
+
+<body>
+
+    <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/TablaAlternativos")">
+        <div>
+
+            <select name="gestor" style="font-size:2vh" class="form-control">
+                <option>Seleccionar</option>
+                <option value="Diarias">METAS DIARIAS</option>
+                <option value="Semanales">METAS SEMANALES</option>
+                <option value="Sucursales">SUCURSALES</option>
+                @*<option value="CallCenter">CALL CENTER</option>
+        <option value="Gestores">GESTORES</option>*@
+                <option value="Alternativos">ACUMULADO ALT</option>
+                <option value="Comparacion">COMPARACIÓN</option>
+                <option value="Doctores">DOCTORES</option>
+                @{
+                    if (oUser.Nombre == "Jesús Zenteno" || oUser.Nombre == "Jorge Rodriguez" || oUser.Nombre == "Administrador")
+                    {
+                        <option disabled>-------------------------</option>
+                        <option value="Metas">ACTUALIZAR METAS</option>
+                        <option value="Precios">ACTUALIZAR PRECIOS</option>
+                    }
+                }
+            </select>
+            @*<input type="month" class="form-control" />*@
+            <input type="submit" class="btn btn-info" value="Enviar" />
+        </div>
+    </form>
+
+
+    <div class="page-container">
+        <div class="table-container">
+            <table class="table-cebra a">
+                <thead>
+                    <tr>
+                        <th class="sticky" id="CeldaSmall">
+                            <b>DOCTORES</b>
+                        </th>
+                        <th class="sticky2" colspan="3">
+                            <b>TOTAL</b>
+                        </th>
+
+                        @{
+
+
+                            while (diaCorrienteHeader <= diaMes)
+                            {
+                                DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteHeader);
+                                string fechaString = fecha.ToString("dd-MM-yy");
+                                <td class="sticky6" colspan="3">
+                                    @fechaString
+                                </td>
+                                diaCorrienteHeader++;
+
+                            }
+
+                            diaCorrienteHeader = 1;
+                        }
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td class="sticky" id="Especial"></td>
+
+                        <td class="sticky2">
+                            <b>EPIS</b>
+                        </td>
+                        <td class="sticky3">
+                            <b>REALIZADOS</b>
+                        </td>
+                        <td class="sticky4">
+                            <b>PAUSADOS</b>
+                        </td>
+
+                        @{
+
+
+                            while (diaCorrienteHeader <= diaMes)
+                            {
+                                <td>
+                                    <b>EPIS</b>
+                                </td>
+                                <td>
+                                    <b>REALIZADOS</b>
+                                </td>
+                                <td>
+                                    <b>PAUSADOS</b>
+                                </td>
+                                diaCorrienteHeader++;
+                            }
+                        }
+                    </tr>
+
+
+                    @foreach (var item in doctores)
+                    {
+                        DateTime mes = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                        DateTime mes1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month + 1, 1);
+                        int noNulos = (from i in db.PacienteESP where i.Doctor == item.Nombre && (i.FechaCaptura >= mes && i.FechaCaptura < mes1) select i).Count();
+
+                        if (noNulos != 0)
+                        {
+                            <tr>
+
+                                <td class="sticky" id="Especial">
+                                    <b>@item.Nombre</b>
+                                </td>
+
+                                @{
+
+
+                                    while (diaCorrienteRow <= diaMes)
+                                    {
+                                        DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
+                                        DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
+
+
+                                        int epis = (from i in db.PacienteESP where i.Doctor == item.Nombre && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 select i).Count();
+                                        int pausa = (from i in db.PacienteESP where i.Doctor == item.Nombre && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
+                                        int dictamen = (from i in db.PacienteESP where i.Doctor == item.Nombre && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
+
+                                        episTotal += epis;
+                                        pausaTotal += pausa;
+                                        dictamenTotal += dictamen;
+
+                                        diaCorrienteRow++;
+
+                                    }
+
+                                    diaCorrienteRow = 1;
+                                }
+
+                                <td class="sticky2" id="Grisaseo">
+                                    <b>@episTotal</b>
+                                </td>
+                                <td class="sticky3" id="Grisaseo">
+                                    <b>@dictamenTotal</b>
+                                </td>
+                                <td class="sticky4" id="Grisaseo">
+                                    <b>@pausaTotal</b>
+                                </td>
+
+                                @{
+                                    episTotal = 0;
+                                    pausaTotal = 0;
+                                    dictamenTotal = 0;
+                                }
+
+                                @{
+
+
+                                    while (diaCorrienteRow <= diaMes)
+                                    {
+                                        DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow);
+                                        DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteRow).AddDays(1);
+
+
+                                        int epis = (from i in db.PacienteESP where i.Doctor == item.Nombre && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 select i).Count();
+                                        int pausa = (from i in db.PacienteESP where i.Doctor == item.Nombre && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
+                                        int dictamen = (from i in db.PacienteESP where i.Doctor == item.Nombre && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
+
+                                        episTotal += epis;
+                                        pausaTotal += pausa;
+                                        dictamenTotal += dictamen;
+
+                                        <td>
+                                            @epis
+                                        </td>
+                                        <td>
+                                            @dictamen
+                                        </td>
+                                        <td>
+                                            @pausa
+                                        </td>
+                                        diaCorrienteRow++;
+
+
+
+                                    }
+
+                                    episTotalTOTAL += episTotal;
+                                    pausaTotalTOTAL += pausaTotal;
+                                    dictamenTotalTOTAL += dictamenTotal;
+
+                                    diaCorrienteRow = 1;
+                                }
+
+                                @{
+                                    episTotal = 0;
+                                    pausaTotal = 0;
+                                    dictamenTotal = 0;
+
+
+                                }
+
+                            </tr>
+                        }
+
+
+
+                        flag += 1;
+
+                    }
+
+                    <tr>
+                        <td class="sticky" id="Especial" style="border-bottom: 0px">
+                            <b>TOTALES</b>
+                        </td>
+                        <td class="sticky2" id="Grisaseo" style="border-bottom: 0px">
+                            <b>@episTotalTOTAL</b>
+                        </td>
+                        <td class="sticky3" id="Grisaseo" style="border-bottom: 0px">
+                            <b>@dictamenTotalTOTAL</b>
+                        </td>
+                        <td class="sticky4" id="Grisaseo" style="border-bottom: 0px">
+                            <b>@pausaTotalTOTAL</b>
+                        </td>
+
+                        @{
+
+                            while (diaCorrienteFooter <= diaMes)
+                            {
+                                DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteFooter);
+                                DateTime fecha1 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorrienteFooter).AddDays(1);
+
+                                foreach (var sucursal in doctores)
+                                {
+
+
+                                    int epis = (from i in db.PacienteESP where i.Doctor == sucursal.Nombre && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 select i).Count();
+                                    int pausa = (from i in db.PacienteESP where i.Doctor == sucursal.Nombre && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 && i.EstatusCaptura == "Pausado" select i).Count();
+                                    int dictamen = (from i in db.PacienteESP where i.Doctor == sucursal.Nombre && i.FechaCaptura >= fecha && i.FechaCaptura < fecha1 && i.EstatusCaptura == "Terminado" select i).Count();
+
+                                    episTotal += epis;
+                                    pausaTotal += pausa;
+                                    dictamenTotal += dictamen;
+
+                                    episTotalFooter += episTotal;
+                                    pausaTotalFooter += pausaTotal;
+                                    dictamenTotalFooter += dictamenTotal;
+
+                                    episTotal = 0;
+                                    pausaTotal = 0;
+                                    dictamenTotal = 0;
+                                }
+
+
+
+                                <td style="border-bottom: 0px">
+                                    @episTotalFooter
+                                </td>
+                                <td style="border-bottom: 0px">
+                                    @dictamenTotalFooter
+                                </td>
+                                <td style="border-bottom: 0px">
+                                    @pausaTotalFooter
+                                </td>
+
+                                episTotalFooter = 0;
+                                pausaTotalFooter = 0;
+                                dictamenTotalFooter = 0;
+
+                                diaCorrienteFooter++;
+
+                            }
+
+                            episTotal = 0;
+                            pausaTotal = 0;
+                            dictamenTotal = 0;
+
+                            flag += 1;
+
+                        }
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
+
+

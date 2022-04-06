@@ -1,0 +1,666 @@
+﻿
+@{
+    ViewBag.Title = "AUDIOLOGÍA";
+
+    GMIEntities db = new GMIEntities();
+
+    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+                <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+                <style>
+                    .toggle.ios, .toggle-on.ios, .toggle-off.ios {
+                        border-radius: 20rem;
+                        background-color: white;
+                    }
+
+                        .toggle.ios .toggle-handle {
+                            border-radius: 20rem;
+                            background-color: white;
+                        }
+                </style>
+}
+
+<br />
+<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Examen Audiología: </span>@nombrePaciente </h3>
+<br />
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Audiologia")" style="display:inline-block; margin:0.5%">
+
+    <div>
+        <label style="color:white">1. ¿Padece alguna de las siguientes patologías?: </label><br />
+        <select class="form-select" aria-label="Default select example" name="patologia">
+            <option selected disabled>Selecciona una opción</option>
+            <option value="NORMAL">NORMAL</option>
+            <option value="Media unilateral/severa contralateral">Hipoacusia media unilateral con Hipoacusia severa contralateral</option>
+            <option value="Hipoacusia severa o profunda bilateral">Hipoacusia severa o profunda bilateral</option>
+        </select>
+    </div>
+
+    <br />
+
+    <div class="form-group">
+        <label style="color:white">2. Interpretación de las Gráficas: </label><br />
+        <input type="checkbox" id="derechorp" name="graficas" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="ALTERADO" data-off="NORMAL">
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">3. Nota Médica: </label><br />
+        <input type="checkbox" id="derechorp" name="nota" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="ALTERADO" data-off="NORMAL">
+    </div>
+    <br />
+    <input type="hidden" value="@idPaciente" name="id" />
+    @*<input type="submit" class="btn btn-success" value="Guardar Examen" />*@
+
+    <br />
+
+    <div class="row">
+        <div style="display:inline-block" class="col-xs-12 col-sm-6">
+            <h3 style="color:white">OIDO DERECHO</h3>
+            <h6 style="color:gold">Frecuencia en HZ</h6>
+            <table class="tablas2 table">
+                <thead>
+                    <tr style="color:white; height:10px; line-height:10px; min-height:10px; max-height:10px">
+                        <th>dB</th>
+                        <th>125</th>
+                        <th>250</th>
+                        <th>500</th>
+                        <th>1000</th>
+                        <th>2000</th>
+                        <th>4000</th>
+                        <th>8000</th>
+                    </tr>
+                </thead>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">-10</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-10" name="D125" required /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-10" name="D250" required /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-10" name="D500" required /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-10" name="D1000" required /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-10" name="D2000" required /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-10" name="D4000" required /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-10" name="D8000" required /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">-5</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-5" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-5" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-5" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-5" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-5" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-5" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-5" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">0</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="0" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="0" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="0" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="0" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="0" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="0" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="0" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">5</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="5" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="5" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="5" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="5" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="5" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="5" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="5" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">10</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="10" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="10" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="10" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="10" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="10" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="10" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="10" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">15</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="15" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="15" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="15" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="15" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="15" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="15" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="15" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">20</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="20" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="20" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="20" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="20" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="20" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="20" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="20" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">25</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="25" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="25" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="25" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="25" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="25" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="25" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="25" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">30</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="30" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="30" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="30" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="30" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="30" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="30" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="30" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">35</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="35" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="35" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="35" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="35" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="35" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="35" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="35" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom: 1px solid black">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">40</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="40" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="40" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="40" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="40" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="40" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="40" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="40" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">45</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="45" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="45" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="45" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="45" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="45" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="45" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="45" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">50</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="50" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="50" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="50" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="50" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="50" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="50" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="50" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">55</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="55" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="55" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="55" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="55" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="55" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="55" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="55" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">60</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="60" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="60" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="60" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="60" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="60" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="60" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="60" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">65</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="65" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="65" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="65" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="65" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="65" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="65" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="65" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">70</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="70" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="70" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="70" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="70" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="70" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="70" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="70" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">75</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="75" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="75" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="75" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="75" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="75" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="75" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="75" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">80</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="80" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="80" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="80" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="80" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="80" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="80" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="80" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">85</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="85" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="85" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="85" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="85" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="85" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="85" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="85" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">90</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="90" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="90" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="90" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="90" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="90" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="90" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="90" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">95</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="95" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="95" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="95" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="95" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="95" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="95" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="95" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">100</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="100" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="100" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="100" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="100" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="100" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="100" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="100" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">105</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="105" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="105" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="105" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="105" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="105" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="105" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="105" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">110</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="110" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="110" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="110" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="110" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="110" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="110" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="110" name="D8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">115</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="115" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="115" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="115" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="115" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="115" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="115" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="115" name="D8000" /></td>
+                </tr>
+                <tr>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">120</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="120" name="D125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="120" name="D250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="120" name="D500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="120" name="D1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="120" name="D2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="120" name="D4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="120" name="D8000" /></td>
+                </tr>
+            </table>
+        </div>
+        <div style="display:inline-block" class="col-xs-12 col-sm-6">
+            <h3 style="color:white">OIDO IZQUIERDO</h3>
+            <h6 style="color:gold">Frecuencia en HZ</h6>
+            <table class="tablas2 table">
+                <thead>
+                    <tr style="color:white; height:10px; line-height:10px; min-height:10px; max-height:10px">
+                        <th>dB</th>
+                        <th>125</th>
+                        <th>250</th>
+                        <th>500</th>
+                        <th>1000</th>
+                        <th>2000</th>
+                        <th>4000</th>
+                        <th>8000</th>
+                    </tr>
+                </thead>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">-10</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-10" name="I125" required/></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-10" name="I250" required /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-10" name="I500" required /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-10" name="I1000" required /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-10" name="I2000" required /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-10" name="I4000" required /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-10" name="I8000" required /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">-5</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-5" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-5" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-5" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-5" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-5" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-5" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="-5" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">0</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="0" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="0" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="0" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="0" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="0" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="0" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="0" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">5</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="5" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="5" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="5" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="5" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="5" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="5" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="5" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">10</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="10" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="10" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="10" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="10" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="10" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="10" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="10" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">15</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="15" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="15" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="15" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="15" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="15" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="15" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="15" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">20</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="20" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="20" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="20" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="20" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="20" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="20" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="20" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">25</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="25" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="25" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="25" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="25" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="25" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="25" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="25" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">30</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="30" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="30" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="30" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="30" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="30" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="30" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="30" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">35</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="35" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="35" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="35" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="35" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="35" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="35" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="35" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom: 1px solid black">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">40</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="40" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="40" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="40" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="40" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="40" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="40" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="40" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">45</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="45" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="45" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="45" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="45" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="45" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="45" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="45" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">50</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="50" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="50" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="50" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="50" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="50" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="50" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="50" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">55</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="55" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="55" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="55" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="55" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="55" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="55" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="55" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">60</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="60" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="60" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="60" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="60" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="60" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="60" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="60" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">65</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="65" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="65" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="65" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="65" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="65" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="65" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="65" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">70</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="70" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="70" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="70" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="70" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="70" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="70" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="70" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">75</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="75" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="75" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="75" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="75" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="75" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="75" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="75" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">80</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="80" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="80" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="80" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="80" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="80" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="80" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="80" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">85</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="85" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="85" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="85" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="85" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="85" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="85" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="85" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">90</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="90" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="90" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="90" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="90" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="90" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="90" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="90" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">95</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="95" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="95" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="95" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="95" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="95" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="95" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="95" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">100</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="100" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="100" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="100" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="100" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="100" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="100" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="100" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">105</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="105" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="105" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="105" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="105" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="105" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="105" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="105" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">110</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="110" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="110" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="110" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="110" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="110" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="110" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="110" name="I8000" /></td>
+                </tr>
+                <tr style="border-bottom:0.1px solid lightblue">
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">115</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="115" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="115" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="115" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="115" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="115" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="115" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="115" name="I8000" /></td>
+                </tr>
+                <tr>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important">120</td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="120" name="I125" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="120" name="I250" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="120" name="I500" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="120" name="I1000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="120" name="I2000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="120" name="I4000" /></td>
+                    <td style="padding-top:0 !important; padding-bottom: 0 !important"><input type="radio" value="120" name="I8000" /></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+
+    <br />
+
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmacion">Guardar Examen</button>
+
+    <div class="modal fade" id="confirmacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>¿Desea guardar lo datos del examen médico?</b></h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input type="submit" class="btn btn-success" value="Guardar Examen" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>
+<br />
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
+    <input type="hidden" value="@idPaciente" name="id" />
+    <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />
+</form>
+
+
+

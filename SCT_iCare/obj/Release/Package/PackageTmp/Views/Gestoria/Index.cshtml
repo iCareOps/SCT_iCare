@@ -1,0 +1,175 @@
+﻿@model IEnumerable<SCT_iCare.Paciente>
+
+@{
+    ViewBag.Title = "Index";
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    GMIEntities db = new GMIEntities();
+
+    var Recepcion = new int?();
+    var Hospital = "";
+    var idHospital = 0;
+    string Sucursal = null;
+    int idUser = 3;
+    string nombreUsuario = null;
+    string fila = "";
+    int registros;
+
+    int flag = 1; //contador de la tabla
+
+    DateTime start = DateTime.Now;
+    DateTime finish = DateTime.Now.AddDays(1);
+
+    int year = start.Year;
+    int month = start.Month;
+    int day = start.Day;
+
+    int year1 = finish.Year;
+    int month1 = finish.Month;
+    int day1 = finish.Day;
+
+    int tomorrorDay = day + 1;
+    DateTime thisDate = new DateTime(year, month, day);
+    DateTime tomorrowDate = new DateTime(year1, month1, day1);
+
+    var modelo = (from m in db.Cita select m).Take(15);/*.Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate);*/
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+
+        if(nombreUsuario == "Gestoría General")
+        {
+            modelo = (from m in db.Cita select m).Take(15);/*.Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate);*/
+        }
+    }
+}
+
+<br />
+<br />
+<h3 style="color:white" class="text-center">Gestoría</h3>
+
+<div class="modal fade" id="exampleModal10" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body">
+                <div class="tablaScroll">
+                    <table class="table tablas table-responsive" id="tablaEjemploSS" style="color: #2F2D6B">
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<br />
+
+@if (modelo.FirstOrDefault() == null)
+{
+    <h1 style="color:white">No existen citas el día de hoy!</h1>
+}
+else
+{
+    var repetidas = (from r in db.Cita select r).Select(s => new { s.Canal, s.Sucursal, s.FechaReferencia }).Where(s => /*s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate &&*/ s.Canal != "SITIO").Select(s => new { s.Canal, s.Sucursal } ).Distinct().Take(15);
+
+    <div class="tablaScroll">
+        <table class="table tablas" style="color: #2F2D6B">
+            <thead>
+                <tr style="background-color:#62E3C9">
+                    <th>
+                    </th>
+
+                    <th>
+                        Nombre del Gestor
+                    </th>
+                    <th>
+                        Sucursal
+                    </th>
+
+                    <th>
+                        Cantidad
+                    </th>
+                    <th>
+                        Referencia
+                    </th>
+                    <th>
+                        Estatus de EPIs
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            
+
+            @foreach (var item in repetidas)
+            {
+                int conteo = (from c in db.Cita where c.Canal == item.Canal select c).Where(s => /*s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate &&*/ s.Sucursal == item.Sucursal).Take(15).Count();
+
+                <tr>
+                    <td>
+                        @flag
+                    </td>
+                    <td>
+                        <b>@item.Canal</b>
+                    </td>
+                    <td>
+                        @item.Sucursal
+                    </td>
+                    <td>
+                        <b>@conteo</b>
+                    </td>
+                    <td>
+
+                    </td>
+                    <td>
+                        @{ 
+                            var idPaciente = (from id in db.Cita select id).Where(s => s.FechaReferencia >= thisDate && s.FechaReferencia < tomorrowDate && s.Sucursal == item.Sucursal && s.Canal == item.Canal);
+
+                            int n = 0;
+
+                            foreach(var item1 in idPaciente)
+                            {
+                                var estatus = (from c in db.Captura select c).Where(s => s.FechaExpdiente >= thisDate && s.FechaExpdiente < tomorrowDate && s.Sucursal == item.Sucursal && s.EstatusCaptura == "Terminado" && s.idPaciente == item1.idPaciente).FirstOrDefault();
+                                if (estatus != null)
+                                {
+                                    n++;
+                                }
+                            }
+
+                            if(n == 0)
+                    {
+                        <mark class="bg-warning">Pendientes</mark>
+                            }
+                            else if(n != conteo)
+                    {
+                        <mark class="bg-info">Parcialmente Listos</mark>
+                    }
+                    else if (n == conteo)
+                    {
+                        <mark class="bg-success">Todos Listos</mark>
+                    }
+                        }
+                    </td>
+                </tr>
+
+                flag += 1;
+
+                            }
+
+        </table>
+    </div>
+}
+
+
+
+
+
+

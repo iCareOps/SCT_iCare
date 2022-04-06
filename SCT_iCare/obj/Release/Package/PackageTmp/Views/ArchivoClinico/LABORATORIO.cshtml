@@ -1,0 +1,54 @@
+﻿
+@{
+    ViewBag.Title = "LABORATORIO";
+    GMIEntities db = new GMIEntities();
+
+    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+}
+
+<br />
+<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Examen Laboratorio: </span>@nombrePaciente </h3>
+<br />
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Laboratorio")" style="display:inline-block; margin:0.5%">
+
+    <div class="form-group">
+        <label style="color:white">1. Glucosa:</label>
+        <input class="form-control" type="tel" id="glucosa" name="glucosa" placeholder="" required>
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">2. Hemoglobina Glucosilada:</label>
+        <input class="form-control" type="number" id="hemoglobinag" name="hemoglobina" placeholder="">
+        <label style="color:goldenrod; font-size:xx-small">SOLO SI ESTÁ EN AYUNO</label>
+    </div>
+
+    <br />
+
+    <input type="hidden" value="@idPaciente" name="id" />
+    @*<input type="submit" class="btn btn-success" value="Guardar Examen" />*@
+
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmacion">Guardar Examen</button>
+
+    <div class="modal fade" id="confirmacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>¿Desea guardar lo datos del examen médico?</b></h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input type="submit" class="btn btn-success" value="Guardar Examen" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>
+<br />
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
+    <input type="hidden" value="@idPaciente" name="id" />
+    <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />
+</form>

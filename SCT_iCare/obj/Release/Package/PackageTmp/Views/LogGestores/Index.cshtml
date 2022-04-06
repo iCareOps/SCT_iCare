@@ -1,0 +1,146 @@
+﻿
+@{
+    ViewBag.Title = "Captura";
+
+    GMIEntities db = new GMIEntities();
+
+    DateTime start = DateTime.Now;
+    //DateTime startDay = Convert.ToDateTime(start.Day);
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    string nombreUsuario = null;
+    int idUser = 0;
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+    }
+
+
+
+    string parameter = ViewBag.Parameter;
+    DateTime rango = Convert.ToDateTime(ViewBag.Fecha);
+
+
+    int year = start.Year;
+    int month = start.Month;
+    int day = start.Day;
+    int tomorrorDay = day + 1;
+    DateTime thisDate = Convert.ToDateTime(ViewBag.Inicio);
+    DateTime tomorrowDate = Convert.ToDateTime(ViewBag.Final);
+
+
+    int flag = 1; //contador de la tabla
+
+}
+
+<br />
+<br />
+@*<h5 style="color:white" class="text-right">@fecha</h5>*@
+<h3 style="color:white" class="text-center">Registro de Movimientos en Gestoría</h3>
+@if (ViewBag.Estado == 1)
+{
+    <h5 style="color:darkgray">Mostrando resultados de <span style="color:white">@ViewBag.Inicio.ToString("dd-MMMM-yyyy")</span> hasta <span style="color:white">@ViewBag.Final.ToString("dd-MMMM-yyyy")</span></h5>
+}
+
+        <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Captura")">
+            <div style="display:inline-block; padding:10px; background-color:gainsboro; border-radius: 5px">
+                <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+                <input type="date" class="form-control" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+                <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
+                <input type="submit" class="btn btn-primary" value="Enviar" />
+                <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+            </div>
+            <div class="input-group pull-right">
+                <input type="text" class="form-control" id="buscador" name="dato" placeholder="Paciente o Expediente">
+                <span class="input-group-btn">
+                    <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                </span>
+            </div>
+        </form>
+        <br />
+
+}
+
+
+        <div class="tablaScroll">
+            <table class="table tablas table-hover table-responsive" id="tablaEjemplo" style="color: #2F2D6B">
+                <thead>
+                    <tr class="bg-primary">
+                        <th></th>
+                        <th>
+                            Nombre del Usuario
+                        </th>
+                        <th>
+                            Inicio de Sesión
+                        </th>
+                        <th>
+                            Movimiento
+                        </th>
+                    </tr>
+                </thead>
+                
+                @{
+                    var idInicio = db.log_InicioGestor.ToList();
+
+                    int n = 0;
+                    int flagGestor = 1;
+                    foreach (var item in idInicio)
+                    {
+                        var movimientos = from m in db.log_Movimientos where m.idLogInicioGestor == item.idLogInicioGestor select m;
+
+                        var contadorMovimientos = (from m in db.log_Movimientos where m.idLogInicioGestor == item.idLogInicioGestor select m).Count();
+
+                        if (contadorMovimientos == 0)
+                        {
+                            <tr>
+                                <td>@flagGestor</td>
+                                <td><b>@item.NombreUsuario</b></td>
+                                <td><b>@item.InicioSesion</b></td>
+                                <td><i>Solo inició sesión</i></td>
+                            </tr>
+                        }
+                        else
+                        {
+                            int flagMov = 1;
+                            foreach (var item2 in movimientos)
+                            {
+                                if (n == 0)
+                                {
+                                    <tr>
+                                        <td rowspan="@contadorMovimientos">@flagGestor</td>
+                                        <td rowspan="@contadorMovimientos"><b>@item.NombreUsuario</b></td>
+                                        <td rowspan="@contadorMovimientos"><b>@item.InicioSesion</b></td>
+                                        <td>@flagMov - @item2.Movimiento</td>
+                                    </tr>
+                                    flagMov++;
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td>@flagMov - @item2.Movimiento</td>
+                                    </tr>
+                                    flagMov++;
+                                }
+                                n++;
+                            }
+                        }
+
+                        if (n == contadorMovimientos)
+                        {
+                            n = 0;
+                        }
+                        flagGestor++;
+                    }
+                }
+
+            </table>
+        </div>
+
+
+}
+
+

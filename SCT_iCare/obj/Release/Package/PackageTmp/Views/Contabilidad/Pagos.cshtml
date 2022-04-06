@@ -1,0 +1,309 @@
+﻿
+@{
+    ViewBag.Title = "Pagos";
+
+    GMIEntities db = new GMIEntities();
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    DateTime fecha1 = new DateTime(2022, 03, 01); 
+    DateTime fecha2 = DateTime.Today.AddDays(1);
+
+    if (ViewBag.FechaInicio != null)
+    {
+        fecha1 = Convert.ToDateTime(ViewBag.FechaInicio);
+    }
+
+    if (ViewBag.FechaFinal != null)
+    {
+        fecha2 = Convert.ToDateTime(ViewBag.FechaFinal);
+        fecha2 = fecha2.AddDays(1);
+    }
+
+    int deuda = 0;
+    int saldo = 0;
+    int pago = 0;
+
+}
+
+<br />
+<h2 style="color: white">Pagos</h2>
+<br />
+
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Pagos")">
+    <div>
+
+        @{
+
+            DateTime ViewBagFechaInicio = Convert.ToDateTime(ViewBag.fechaInicio);
+            var SetFechaInicio = ViewBagFechaInicio.Date.ToString("yyyy-MM-dd");
+
+            if (ViewBag.fechaInicio != null)
+            {
+
+                <input type="date" name="fechaInicio" class="form-control" value="@SetFechaInicio" style="width: 160px;" />
+
+            }
+
+            else
+
+            {
+
+                <input type="date" name="fechaInicio" class="form-control" value="" style="width: 160px;" />
+
+            }
+
+        }
+
+        @{
+
+            DateTime ViewBagFechaFinal = Convert.ToDateTime(ViewBag.fechaFinal);
+            var SetFechaFinal = ViewBagFechaFinal.Date.ToString("yyyy-MM-dd");
+
+            if (ViewBag.fechaFinal != null)
+            {
+
+                <input type="date" name="fechaFinal" class="form-control" value="@SetFechaFinal" style="width: 160px;" />
+
+            }
+
+            else
+
+            {
+
+                <input type="date" name="fechaFinal" class="form-control" value="" style="width: 160px;" />
+
+            }
+
+        }
+
+
+
+        <input type="submit" class="btn btn-info" value="Enviar" />
+        <a href="~/Contabilidad/Pagos"><button type="button" class="btn btn-success">Limpiar</button></a>
+
+    </div>
+
+
+</form>
+
+
+<br />
+<div class="tablaScroll" style="min-height: 300px; max-height:450px">
+    <table class="table  table-hover tablas table-bordered" style="color: #2F2D6B">
+        <thead style="color:white">
+            <tr>
+                <th>Gestor/Canal</th>
+                <th>EPIs Totales</th>
+                <th>Deuda</th>
+                <th>Pago</th>
+                <th>Saldo</th>
+                <th>Estatus</th>
+                <th></th>
+            </tr>
+        </thead>
+        @foreach (var item in db.Referido.OrderBy(o => o.Tipo).ThenBy(o => o.Nombre))
+        {
+            int gestoresNoNullos = (from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i).Count();
+
+            if (gestoresNoNullos != 0)
+            {
+    <tr>
+        <td>
+            <b>@item.Nombre</b><span style="font-size:xx-small"> @item.Tipo</span>
+        </td>
+        @{
+            int deudaGestor = (from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i).Count();
+
+            deuda = item.PrecioNormalconIVA == null ? deudaGestor * Convert.ToInt32(item.PrecioNormal) : deudaGestor * Convert.ToInt32(item.PrecioNormalconIVA);
+
+            if (item.Deuda == null)
+            {
+                if (deudaGestor != 0)
+                {
+                    <td><span>@deudaGestor</span></td>
+                    <td><span>$@deuda.ToString("###,###,###,###")</span></td>
+                }
+                else
+                {
+                    <td><span>@deudaGestor</span></td>
+                    <td><span>-----</span></td>
+                }
+            }
+            else
+            {
+                deuda = Convert.ToInt32(item.Deuda);
+                if (deudaGestor != 0)
+                {
+                    <td><span>@deudaGestor</span></td>
+                    <td><span>$@Convert.ToInt32(item.Deuda).ToString("###,###,###,###")</span></td>
+                }
+                else
+                {
+                    <td><span>@deudaGestor</span></td>
+                    <td><span>-----</span></td>
+                }
+            }
+
+
+        }
+        <td>
+            @{
+                int pagoGestor = (from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.TipoPago != "Pendiente de Pago" && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i).Count();
+
+                pago = item.PrecioNormalconIVA == null ? pagoGestor * Convert.ToInt32(item.PrecioNormal) : pagoGestor * Convert.ToInt32(item.PrecioNormalconIVA);
+
+                if (pagoGestor != 0)
+                {
+                    <span>$@pago.ToString("###,###,###,###")</span>
+                }
+                else
+                {
+                    <span>-----</span>
+                }
+            }
+        </td>
+        <td>
+            @{
+                int saldoGestor = (from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.TipoPago == "Pendiente de Pago" && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i).Count();
+
+                saldo = item.PrecioNormalconIVA == null ? saldoGestor * Convert.ToInt32(item.PrecioNormal) : saldoGestor * Convert.ToInt32(item.PrecioNormalconIVA);
+
+                if (saldoGestor != 0)
+                {
+                    if (saldo < 0)
+                    {
+                        <span><b>+$@saldo.ToString("###,###,###,###")</b></span>
+
+                            if (item.PrecioNormalconIVA != null)
+                            {
+                                var episDisponibles = saldo / Convert.ToInt32(item.PrecioNormalconIVA);
+                                <span style="font-size: xx-small">( @episDisponibles epis)</span>
+                            }
+                            else
+                            {
+                                var episDisponibles = saldo / Convert.ToInt32(item.PrecioNormal);
+                                <span style="font-size: xx-small">( @episDisponibles epis)</span>
+                            }
+                    }
+                    else
+                    {
+                        <span>$@saldo.ToString("###,###,###,###")</span>
+                    }
+
+                }
+                else
+                {
+                    <span>$0.00</span>
+                }
+            }
+        </td>
+        <td>
+            @{
+                var estatus = from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.TipoPago == "Pendiente de Pago" && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i;
+
+                string texto = "";
+
+                foreach (var i in estatus)
+                {
+                    if (i.FechaCita < DateTime.Today.AddDays(-30))
+                    {
+                        texto = "text-danger";
+                        break;
+                    }
+                    else if (i.FechaCita < DateTime.Today.AddDays(-15))
+                    {
+                        texto = "text-warning";
+                        break;
+                    }
+                    else
+                    {
+                        texto = "text-success";
+                        break;
+                    }
+                }
+                <div style="width:2px;"></div>
+                <span class="@texto">•</span>
+            }
+        </td>
+        <td>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                </button>
+
+                <div class="dropdown-menu" style="padding:10px">
+                    <a href="#" data-toggle="modal" data-target="#Deuda_@item.idReferido"><b>Ingresar Deuda</b></a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" data-toggle="modal" data-target="#Efectivo_@item.idReferido"><b>Ingresar Efectivo</b></a>
+                    <div class="dropdown-divider"></div>
+                </div>
+
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Deuda")">
+                    @Html.AntiForgeryToken()
+                    <div class="modal fade" id="Deuda_@item.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea agregar una cantidad de DEUDA a @item.Nombre?</b></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group" style="width:60%; min-width:320px">
+                                        <label for="recipient-name" class="col-form-label">Cantidad:</label>
+                                        <input type="tel" class="form-control" name="deuda" />
+                                        <input type="hidden" value="@item.idReferido" class="form-control" name="id" />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Efectivo")">
+                    @Html.AntiForgeryToken()
+                    <div class="modal fade" id="Efectivo_@item.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea ingresar EFECTIVO a @item.Nombre?</b></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group" style="width:60%; min-width:320px">
+                                        <label for="recipient-name" class="col-form-label">Cantidad:</label>
+                                        <input type="tel" class="form-control" name="efectivo" />
+                                        <input type="hidden" value="@item.idReferido" class="form-control" name="id" />
+                                        <input type="hidden" value="@fecha1" class="form-control" name="fecha1" />
+                                        <input type="hidden" value="@fecha2" class="form-control" name="fecha2" />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+                
+
+        </td>
+    </tr>
+            }
+        }
+    </table>
+</div>
+
+@*<option value="Referencia OXXO">Referencia OXXO</option>
+<option value="Referencía BanBajío">Referencía BanBajío</option>
+<option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+<option value="BanCoppel TLS">BanCoppel TLS</option>
+<option value="BanCoppel LC">BanCoppel LC</option>
+<option value="Banco Azteca TLS">Banco Azteca TLS</option>
+<option value="Banco Azteca LC">Banco Azteca LC</option>
+<option value="Cuenta Externa">Cuenta Externa</option>
+<option value="Pendiente de Pago">Pendiente de Pago</option>*@
+

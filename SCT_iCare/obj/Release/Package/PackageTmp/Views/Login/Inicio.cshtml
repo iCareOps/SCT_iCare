@@ -1,0 +1,69 @@
+﻿@model SCT_iCare.Usuarios
+
+@{
+    ViewBag.Title = "Login";
+    Layout = null;
+}
+
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+<head>
+    <title>Medicina GMI</title>
+    <link rel="icon" href="~/GMI.ico" />
+</head>
+
+@{ 
+    string body = "";
+
+    if (ViewBag.Error != null)
+    {
+        body = "alert('ERROR: El usuario o la contraseña no son correctos!' o EXPIRO EL TIEMPO DE SESION)";
+    }
+    else
+    {
+        body = "";
+    }
+}
+
+<body class="bodyLogin" onload="@body;">
+    <div class="container formularioLogin">
+        <div class="row">
+            <div class="">
+                <div>
+                    <form action="@Url.Content("~/Login/Inicio")" asp-controller="Login" id="Login" method="post">
+                        <div class="form-group" style="width: 100%">
+                            <img src="~/Images/GA.png" class="imagenLogin" />
+                        </div>
+                        <br />
+                        <div class="form-group" style="width: 100%">
+                            <label><h5>Email:</h5></label>
+                            <input type="text" asp-for="email" class="form-control inputLogin" name="User" /> @*@Html.TextBox("Email")*@
+                        </div>
+                        <div class="form-group" style="width: 100%">
+                            <label><h5>Contraseña:</h5></label>
+                            <input type="password" asp-for="password" class="form-control inputLogin" name="Pass" /> @*@Html.TextBox("Password")*@
+                        </div>
+                        <br />
+                        <div class="form-group" style="width: 100%">
+                            <br />
+                            <input type="submit" asp-for="ingresar" class="form-control btn btn-primary inputLogin" value="Sign In" />
+                            @*<button class="btn btn-primary botones">@Html.ActionLink("Sign In", "Ingresar", "Login")</button>*@
+                        </div>
+                    </form>
+                    @*<form action="@Url.Content("~/Login/Login")" asp-controller="Login" id="Login" method="post">
+                            <div class="form-group col-md-12">
+                                @{
+                                    string User = "callcenter@icareops.com";
+                                    string Pass = "Pass_2021!";
+                                }
+                                <input type="text" asp-for="email" class="form-control inputLogin" name="User" /> @User
+                                <input type="password" asp-for="password" class="form-control inputLogin" name="Pass" style="display:none" /> @Pass
+                                <input type="submit" asp-for="ingresar" class="form-control btn btn-primary inputLogin" value="Sign In" />
+                                <a href="~/CallCenter/GetRecepcion"><button class="btn btn-default botonesGral btnCC"><span class="text-info glyphicon glyphicon-earphone"></span> <span class="text-info">Call Center</span></button></a>
+                            </div>
+                        </form>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

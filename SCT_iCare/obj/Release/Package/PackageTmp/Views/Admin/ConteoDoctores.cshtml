@@ -1,0 +1,239 @@
+﻿@*XLSX*@
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+
+@using PagedList.Mvc;
+@model PagedList.IPagedList<SCT_iCare.Doctores2>
+@{
+    ViewBag.Title = "ConteoDoctores";
+
+    GMIEntities db = new GMIEntities();
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    var doctores = db.Doctores2.OrderByDescending(o => o.idDoctor2);
+    int? numeroDoctores = doctores.Count();
+
+    int flag = 1;
+
+    int diaCorrienteHeader = 1;
+    int diaCorrienteRow = 1;
+    int diaCorrienteFooter = 1;
+
+    int diaMes = DateTime.Today.Day;
+
+    int? MES = Convert.ToInt32(TempData["MES"]);
+    int? ANIO = Convert.ToInt32(TempData["AÑO"]);
+    DateTime? FECHA = Convert.ToDateTime(TempData["FECHA"]);
+
+    if (MES != 0)
+    {
+        diaMes = Convert.ToInt32(Convert.ToDateTime(FECHA).AddMonths(1).AddDays(-1).Day);
+    }
+    else
+    {
+        MES = DateTime.Today.Month;
+        ANIO = DateTime.Today.Year;
+        FECHA = DateTime.Today;
+    }
+
+    int episTotal = 0;
+    int pausaTotal = 0;
+    int dictamenTotal = 0;
+
+
+    int episTotalTOTAL = 0;
+    int pausaTotalTOTAL = 0;
+    int dictamenTotalTOTAL = 0;
+
+    int episTotalFooter = 0;
+    int pausaTotalFooter = 0;
+    int dictamenTotalFooter = 0;
+}
+<br />
+<h2 style="color:white">Conteo por Doctor</h2>
+<br />
+
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/ConteoDoctores")">
+    <div>
+        <select name="gestor" style="font-size:2vh" class="form-control">
+            <option>Seleccionar</option>
+            <option value="Diarias">METAS DIARIAS</option>
+            <option value="Semanales">METAS SEMANALES</option>
+            <option value="Sucursales">SUCURSALES</option>
+            @*<option value="CallCenter">CALL CENTER</option>
+        <option value="Gestores">GESTORES</option>*@
+            <option value="Alternativos">ACUMULADO ALT</option>
+            <option value="Comparacion">COMPARACIÓN</option>
+            <option value="Doctores">DOCTORES</option>
+            @{
+                if (oUser.Nombre == "Jesús Zenteno" || oUser.Nombre == "Jorge Rodriguez" || oUser.Nombre == "Administrador")
+                {
+                    <option disabled>-------------------------</option>
+                    <option value="Metas">ACTUALIZAR METAS</option>
+                    <option value="Precios">ACTUALIZAR PRECIOS</option>
+                }
+            }
+        </select>
+        <select name="grupo" style="font-size:2vh" class="form-control">
+            <option>Seleccionar grupo</option>
+            <option value="todos">TODOS</option>
+            @{
+                foreach (var item in db.Doctores2.Select(s => s.Grupo).Distinct())
+                {
+                    <option value="@item">@item</option>
+                }
+            }
+        </select>
+        <input type="month" class="form-control" name="mes" />
+        <input type="submit" class="btn btn-info" value="Enviar" />
+    </div>
+</form>
+
+<br />
+<div>
+    <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
+</div>
+
+<br />
+
+<script>
+
+    function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('tbl_exporttable_to_xls');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+            XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+            XLSX.writeFile(wb, fn || ('Conteo Doctores.' + (type || 'xlsx')));
+    }
+
+</script>
+
+<div class="tablaScroll">
+    <br />
+    <table id="tbl_exporttable_to_xls" class="table  table-bordered table-hover tablas" style="color: #2F2D6B">
+        <thead>
+            <tr class="bg-primary" style="border-top-color: black; font-size:smaller">
+                <th>
+                    <b>DOCTOR</b>
+                </th>
+                <th>
+                    Grupo
+                </th>
+                <th style="text-align:center">
+                    TOTAL
+                </th>
+
+                @{
+
+
+                    while (diaCorrienteHeader <= diaMes)
+                    {
+                        DateTime fecha = new DateTime(Convert.ToInt32(ANIO), Convert.ToInt32(MES), diaCorrienteHeader);
+                        string fechaString = fecha.ToString("dd");
+                        <th style="text-align:center" id="hidden">
+                            @fechaString
+                        </th>
+                        diaCorrienteHeader++;
+
+                    }
+
+                    diaCorrienteHeader = 1;
+                }
+            </tr>
+        </thead>
+
+
+        @foreach (var item in Model)
+        {
+
+            <tr @*style="border-top-color: black; border-top-width:2px"*@>
+
+                <td class="bg-info" style="border-top-color:  dimgray; border-top-width:1.1px">
+                    <b>@item.NombreDoctor</b>
+                </td>
+                <td class="bg-info" style="border-top-color:  dimgray; border-top-width:1.1px">
+                    <b>@item.Grupo</b>
+                </td>
+
+                @{
+
+
+                    while (diaCorrienteRow <= diaMes)
+                    {
+                        DateTime fecha = new DateTime(Convert.ToInt32(ANIO), Convert.ToInt32(MES), diaCorrienteRow);
+                        DateTime fecha1 = new DateTime(Convert.ToInt32(ANIO), Convert.ToInt32(MES), diaCorrienteRow).AddDays(1);
+
+
+                        var epis = (from i in db.ConteoDoctores2 where i.Doctor == item.NombreDoctor && i.Fecha >= fecha && i.Fecha < fecha1 select i.Citas).FirstOrDefault();
+
+                        episTotal += Convert.ToInt32(epis);
+
+                        diaCorrienteRow++;
+
+                    }
+
+                    episTotalTOTAL += episTotal;
+
+                    diaCorrienteRow = 1;
+                }
+
+                <td style="background-color: whitesmoke;border-top-color:  dimgray; border-top-width:1.1px; text-align: center; border-left-color:  dimgray; border-left-width:1.1px;">
+                    <b>@episTotal</b>
+                </td>
+
+                @{
+
+
+                    while (diaCorrienteRow <= diaMes)
+                    {
+                        DateTime fecha = new DateTime(Convert.ToInt32(ANIO), Convert.ToInt32(MES), diaCorrienteRow);
+                        DateTime fecha1 = new DateTime(Convert.ToInt32(ANIO), Convert.ToInt32(MES), diaCorrienteRow).AddDays(1);
+
+
+                        var epis = (from i in db.ConteoDoctores2 where i.Doctor == item.NombreDoctor && i.Fecha >= fecha && i.Fecha < fecha1 select i.Citas).FirstOrDefault();
+
+                        episTotal += Convert.ToInt32(epis);
+
+                        <td style="border-left-color:  dimgray; border-left-width:1.2px;border-top-color:  dimgray; border-top-width:1.1px; text-align: center" id="hidden">
+                            @epis
+                        </td>
+                        diaCorrienteRow++;
+
+                    }
+
+                    diaCorrienteRow = 1;
+                }
+
+                @{
+                    episTotal = 0;
+                }
+
+            </tr>
+
+            flag += 1;
+
+        }
+
+    </table>
+</div>
+
+@using (Html.BeginForm("ConteoDoctores", "Admin", FormMethod.Post))
+{
+    <p>
+        <h5 class="labelGral">
+            Mostrando: <select name="PageSize" id="PageSize" onchange="this.form.submit();">
+                <option @if ((int)ViewBag.PageSize == 10) { @Html.Raw("selected") } value="10">10</option>
+                <option @if ((int)ViewBag.PageSize == 20) { @Html.Raw("selected") } value="20">20</option>
+                <option @if ((int)ViewBag.PageSize == 50) { @Html.Raw("selected") } value="50">50</option>
+                <option @if ((int)ViewBag.PageSize == numeroDoctores) { @Html.Raw("selected") } value="@numeroDoctores">TODOS</option>
+            </select> registros
+            <input type="hidden" value="@FECHA" name="mes" />
+            <input type="hidden" value="@ViewBag.Grupo" name="grupo" />
+        </h5>
+    </p>
+}
+
+<h5 class="labelGral">Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount. Elementos totales: @Model.TotalItemCount</h5>
+
+@Html.PagedListPager(Model, page => Url.Action("ConteoDoctores", "Admin", new { page, pageSize = ViewBag.PageSize, mes = FECHA }))
+

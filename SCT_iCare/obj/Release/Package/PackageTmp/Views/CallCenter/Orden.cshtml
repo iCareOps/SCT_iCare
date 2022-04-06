@@ -1,0 +1,220 @@
+﻿@model conekta.Order
+
+@{
+    ViewBag.Title = "Details";
+
+    string referenciaSB = ViewBag.ReferenciaSB;
+
+    conekta.Order orden = new conekta.Order().find(ViewBag.Orden);
+
+    System.Web.Script.Serialization.JavaScriptSerializer js = new System.Web.Script.Serialization.JavaScriptSerializer();
+    BarcodeLib.Barcode bc = new BarcodeLib.Barcode();
+
+    string metodo = ViewBag.Metodo;
+
+    int cantidadAuto = ViewBag.AUTO;
+
+    int cantidadAereo = ViewBag.AEREO;
+
+    int precio = ViewBag.Precio;
+
+}
+<br />
+
+        <h3 style="color:white" class="text-center">Detalles de la Referencia</h3>
+        <br />
+
+        <div class="col-md-6" style="min-width:400px">
+            <dl class="dl-horizontal labelGral">
+                <dt>
+                    <h4>Nombre:</h4>
+                </dt>
+
+                <dd class="labelInfo">
+                    <h4>@orden.customer_info.name</h4>
+                </dd>
+
+                <dt>
+                    <h4>Email:</h4>
+                </dt>
+
+                <dd class="labelInfo">
+                    <h4>@orden.customer_info.email</h4>
+                </dd>
+
+                <dt>
+                    <h4>Teléfono:</h4>
+                </dt>
+
+                <dd class="labelInfo">
+                    <h4>@orden.customer_info.phone</h4>
+                </dd>
+
+                <dt>
+                    <h4>Fecha de Solicitud:</h4>
+                </dt>
+                @{
+                    double ticks = double.Parse(orden.created_at);
+                    TimeSpan time = TimeSpan.FromSeconds(ticks);
+                    DateTime startdate = new DateTime(1969, 12, 31, 19, 00, 000) + time;
+                }
+                <dd class="labelInfo">
+                    <h4>@startdate</h4>
+                </dd>
+
+                <dt>
+                    <h4>Fecha de Expiración:</h4>
+                </dt>
+
+                <dd class="labelInfo">
+                    @{
+                        dynamic datosCargo3 = js.Deserialize<dynamic>(orden.charges.data[0].ToString());
+
+                        double ticks1 = double.Parse(Convert.ToString(datosCargo3["payment_method"]["expires_at"]));
+                        TimeSpan time1 = TimeSpan.FromSeconds(ticks1);
+                        DateTime fechaExp = new DateTime(1969, 12, 31, 19, 00, 000) + time1;
+
+                    }
+                    <h4>@fechaExp</h4>
+                </dd>
+
+                <dt>
+                    <h4>Consultorio asignado:</h4>
+                </dt>
+
+                <dd class="labelInfo">
+                    @{
+                        dynamic datosCargo1 = js.Deserialize<dynamic>(orden.line_items.data[0].ToString());
+                        string producto = datosCargo1["name"];
+                    }
+                    <h4>@producto</h4>
+                </dd>
+
+                <dt>
+                    <h4>Precio:</h4>
+                </dt>
+
+                <dd class="labelInfo">
+                    <h4>$ @precio .00</h4>
+                </dd>
+
+                @*<dt>
+                <h4>No. Referencia:</h4>
+            </dt>
+
+            <dd class="labelInfo">
+                @{
+                    dynamic datosCargo2 = js.Deserialize<dynamic>(orden.charges.data[0].ToString());
+
+                    string referencia = datosCargo2["payment_method"]["reference"].ToString();
+                }
+                <h4>@referencia</h4>
+            </dd>*@
+                <dt>
+                    <h4>Cantidad de EPIs:</h4>
+                </dt>
+
+                <dd class="labelInfo">
+                    @if (cantidadAereo != null && cantidadAuto != null)
+                    {
+                        <h4> @(cantidadAuto + cantidadAereo) (@cantidadAereo Aéreos)</h4>
+                    }
+                </dd>
+
+                <dt>
+                    <h4>No Orden</h4>
+                </dt>
+
+                <dd class="labelInfo">
+                    <h4>@orden.id</h4>
+                </dd>
+            </dl>
+
+            <br />
+
+            <div class="form-group ">
+                <div class="col-md-offset-2 col-md-10">
+                    <a href="~/CallCenter/Index"><button class="btn btn-outline-warning boton-transparente botonesGral">Listo</button></a>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-md-6" style="min-width:450px; max-width:450px">
+            <div style="background-color:white; width:100%; border-radius:8px; padding:5px" class="row">
+                <div class="col-xs-12">
+                    <br />
+                    @*<div class="col-xs-5"><img src="~/Images/oxxopay_brand.png" style="width:100%" /></div>*@
+                    <div class="col-xs-12">
+                        <h5 style="color:gray; font-size: 100%"><b>MONTO A PAGAR:</b></h5>
+                        <h3 style="color:black"><b>$@precio.00 MXN</b></h3>
+                        @*<h6 style="font-size:70%"><i>Oxxo cobrará una comisión adicional al momento de realizar el pago.</i></h6>*@
+                        <h6 style="font-size:70%">
+                            <i>
+                                A continuación se muestran los números de referencia para pagar en los establecimientos correspondientes:
+                            </i>
+                        </h6>
+                    </div>
+                </div>
+                
+                @{
+                    dynamic datosCargo2 = js.Deserialize<dynamic>(orden.charges.data[0].ToString());
+
+                    string referencia = datosCargo2["payment_method"]["reference"].ToString();
+                }
+            <div class="col-xs-12">
+                <div class="col-xs-12">
+                    @if (precio < 10000)
+                    {
+                        <img src="~/Images/oxxopay_brand.png" class="col-xs-4" />
+                        @*<div class="col-xs-12" style="color:gray"><h5><b>REFERENCIA</b></h5></div>*@
+                        <div class="col-xs-12" style="color:black; border:solid gray; border-radius:6px; background-color:aliceblue; text-align:center"><h4><b>@referencia</b></h4></div>
+                        <div class="col-xs-12">
+                            <div style="font-style:italic">
+                                <h6 style="font-size:70%" class="instrucciones">1. Acude a la tienda OXXO más cercana</h6>
+                                <h6 style="font-size:70%" class="instrucciones">2. Indica en caja que quieres realizar un pago de OXXO Pay</h6>
+                                <h6 style="font-size:70%" class="instrucciones">3. Dicta al cajero el número de referencia</h6>
+                                <h6 style="font-size:70%" class="instrucciones">4. Realiza el pago correspondiente</h6>
+                            </div>
+                            <br />
+                        </div>
+                    }
+
+                    <img src="~/Images/ban-bajio.png" class="col-xs-4" />
+                    @*<div class="col-xs-12" style="color:gray"><h5><b>REFERENCIA</b></h5></div>*@
+                    <div class="col-xs-12" style="color:black; border:solid gray; border-radius:6px; background-color:aliceblue; text-align:center"><h4><b>@referencia</b></h4></div>
+                    <div class="col-xs-12">
+                        <div style="font-style:italic">
+                            <h6 style="font-size:70%" class="instrucciones">Beneficiario: <b>GRUPO GA SA DE CV</b></h6>
+                            <h6 style="font-size:70%" class="instrucciones">Cuenta: <b>0317797130201</b></h6>
+                            <h6 style="font-size:70%" class="instrucciones">CLABE: <b>030180900025910628</b></h6>
+                            <h6 style="font-size:70%" class="instrucciones">Dicta al cajero  los 14 dígitos que se generaron <b>específicamente para esta transacción</b></h6>
+                            <h6 style="font-size:70%" class="instrucciones">Recuerda que esta transacción es <b>única</b> y sólo puede ser usada para el número de EPIs solicitados</h6>
+                        </div>
+                        <br />
+                    </div>
+                    @*<img src="~/Images/scotiabank.png" class="col-xs-4" hidden/>*@
+                    <!--@{
+    //var referenciaSB = new string(referencia.Reverse().Take(10).Reverse().ToArray());
+                        }-->
+                    @*<div class="col-xs-12" style="color:gray"><h5><b>REFERENCIA</b></h5></div>*@
+                    @*<div class="col-xs-12" style="color:black; border:solid gray; border-radius:6px; background-color:aliceblue; text-align:center" hidden><h4><b>@referenciaSB</b></h4></div>*@
+
+                    @*<div class="col-xs-12" hidden>
+                        <div style="font-style:italic">
+                            <h6 style="font-size:70%" class="instrucciones">Beneficiario: <b>GRUPO GA SA DE CV</b></h6>
+                            <h6 style="font-size:70%" class="instrucciones">Cuenta: <b>00105467808</b></h6>
+                            <h6 style="font-size:70%" class="instrucciones">CLABE: <b>044180001054678088</b></h6>
+                            <h6 style="font-size:70%" class="instrucciones">Dicta al cajero  los 14 dígitos que se generaron <b>específicamente para esta transacción</b></h6>
+                            <h6 style="font-size:70%" class="instrucciones">Recuerda que esta transacción es <b>única</b> y sólo puede ser usada para el número de EPIs solicitados</h6>
+                        </div>
+                        <br />
+                    </div>*@
+                </div>
+                @*<p style="text-align:center">_______________________________________</p>*@
+
+            </div>
+
+        </div>
+    
+

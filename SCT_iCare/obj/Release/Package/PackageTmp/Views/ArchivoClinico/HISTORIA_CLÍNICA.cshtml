@@ -1,0 +1,196 @@
+﻿
+@{
+    ViewBag.Title = "HISTORIA_CLÍNICA";
+    GMIEntities db = new GMIEntities();
+
+    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+    <style>
+        .toggle.ios, .toggle-on.ios, .toggle-off.ios {
+            border-radius: 20rem;
+            background-color: white;
+        }
+
+            .toggle.ios .toggle-handle {
+                border-radius: 20rem;
+                background-color: white;
+            }
+    </style>
+}
+
+<br />
+<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Antecedentes Heredofamiliares: </span>@nombrePaciente </h3>
+<br />
+
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" href="#" style="text-decoration:none; color:goldenrod"><b>HEREDOFAMILIARES</b></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">No Patológicos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Patológicos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Aparatos y Sistemas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" style="text-decoration:none; color:goldenrod">Exploración Física</a>
+    </li>
+</ul>
+
+<br />
+
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Heredofamiliares")" style="display:inline-block; margin:0.5%">
+
+    <script type="text/javascript">
+        function madrenovive() {
+            element_m = document.getElementById("content_m");
+            check_m = document.getElementById("esp_madre_vive");
+            disabled_m = document.getElementById("required_madre");
+
+            if (check_m.checked) {
+                element_m.style.display = 'none';
+                disabled_m.disabled = true
+            }
+            else {
+                element_m.style.display = 'block';
+                disabled_m.disabled = false
+            }
+        }
+    </script>
+
+    <div class="form-group">
+        <label style="color:white">1. ¿Madre Vive? </label><br />
+        <input type="checkbox" id="esp_madre_vive" onchange="javascript: madrenovive()" data-toggle="toggle" checked data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="madrevive">
+    </div>
+
+    <div class="form-group" id="content_m" style="display: none;">
+        <label style="color:white">Especificar causa de defuncion</label><br />
+        <textarea id="required_madre" name="esp_madrevive" required disabled></textarea>
+    </div>
+
+    <script type="text/javascript">
+        function padrenovive() {
+            element_p = document.getElementById("content_p");
+            check_p = document.getElementById("esp_padre_vive");
+            disabled_p = document.getElementById("required_padre");
+
+            if (check_p.checked) {
+                element_p.style.display = 'none';
+                disabled_p.disabled = true
+            }
+            else {
+                element_p.style.display = 'block';
+                disabled_p.disabled = false
+            }
+        }
+    </script>
+
+    <div class="form-group">
+        <label style="color:white">2. ¿Padre Vive? </label><br />
+        <input type="checkbox" id="esp_padre_vive" onchange="javascript: padrenovive()" data-toggle="toggle" checked data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="padrevive">
+    </div>
+
+    <div class="form-group" id="content_p" style="display: none;">
+        <label style="color:white">Especificar causa de defuncion</label><br />
+        <textarea id="required_padre" name="esp_padrevive" required disabled></textarea>
+    </div>
+
+    <script type="text/javascript">
+        function hermanosnovive() {
+            element_h = document.getElementById("content_h");
+            check_h = document.getElementById("esp_hermanos_vive");
+            disabled_h = document.getElementById("required_hermanos");
+
+            if (check_h.checked) {
+                element_h.style.display = 'none';
+                disabled_h.disabled = true
+            }
+            else {
+                element_h.style.display = 'block';
+                disabled_h.disabled = false
+            }
+        }
+    </script>
+
+    <div class="form-group">
+        <label style="color:white">3. ¿Hermanos Viven? </label><br />
+        <input type="checkbox" id="esp_hermanos_vive" onchange="javascript: hermanosnovive()" data-toggle="toggle" checked data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="hermanosviven">
+    </div>
+
+    <div class="form-group" id="content_h" style="display: none;">
+        <label style="color:white">Especificar causa de defuncion</label><br />
+        <textarea id="required_hermanos" name="esp_hermanosviven" required disabled></textarea>
+    </div>
+
+    <div class="form-group">
+        <label style="color:white">4. ¿Alguien de su familia : Mamá, Papá, Hermanos o Abuelos padece de una enfermedad grave? </label><br />
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="familiagrave">
+    </div>
+    <div class="form-group">
+        <label style="color:white">5. Diabetes Mellitus </label><br />
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="diabetes">
+    </div>
+    <div class="form-group">
+        <label style="color:white">6. Hipertensión Arterial </label><br />
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="arterial">
+    </div>
+    <div class="form-group">
+        <label style="color:white">7. Obesidad </label><br />
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="obesidad">
+    </div>
+    <div class="form-group">
+        <label style="color:white">8. Cardiopatía Isquémica </label><br />
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="isquemica">
+    </div>
+    <div class="form-group">
+        <label style="color:white">9. Enfermedad Vascular Cerebral</label><br />
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="cerebral">
+    </div>
+    <div class="form-group">
+        <label style="color:white">10. Infarto Agudo Miocardio</label><br />
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="miocardio">
+    </div>
+    <div class="form-group">
+        <label style="color:white">11. Patología de Tiroides</label><br />
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="tiroides">
+    </div>
+    <div class="form-group">
+        <label style="color:white">12. Enfermedades Neoplasicas</label><br />
+        <input type="checkbox" data-toggle="toggle" data-onstyle="outline-white" data-offstyle="outline-white" data-style="ios" data-on="Si" data-off="No" name="neoplasticas">
+    </div>
+    <br />
+
+    <input type="hidden" value="@idPaciente" name="id" />
+    @*<input type="submit" class="btn btn-success" value="Guardar Examen" />*@
+
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmacion">Guardar Examen</button>
+
+    <div class="modal fade" id="confirmacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>¿Desea guardar lo datos del examen médico?</b></h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input type="submit" class="btn btn-success" value="Guardar Examen" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<br />
+<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Index")" style="display:inline-block; margin:0.5%">
+    <input type="hidden" value="@idPaciente" name="id" />
+    <input type="submit" class="btn btn-info" value="Regresar a Carrusel" />
+</form>
+

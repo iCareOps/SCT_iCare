@@ -1,0 +1,342 @@
+﻿
+@model IEnumerable<SCT_iCare.Cita>
+
+@{
+    ViewBag.Title = "Captura";
+
+    GMIEntities db = new GMIEntities();
+
+    DateTime start = DateTime.Now;
+    //DateTime startDay = Convert.ToDateTime(start.Day);
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    string nombreUsuario = null;
+    int idUser = 0;
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+    }
+
+
+    string parameter = ViewBag.Parameter;
+    DateTime rango = Convert.ToDateTime(ViewBag.Fecha);
+
+
+    DateTime thisDate = new DateTime(2021, 01, 01);
+    DateTime tomorrowDate = new DateTime(3000, 01, 01);
+
+    string fecha = DateTime.Now.ToString("dd-MMMM-yyyy");
+
+    string fila = "";
+    int flag = 1;
+    int distict = 0;
+
+    DateTime inicio = Convert.ToDateTime(ViewBag.Inicio);
+    DateTime final = Convert.ToDateTime(ViewBag.Final);
+
+    int oxxo = (from o in db.Cita where (o.TipoPago == "Referencia OXXO" && o.TipoPago == "REFERENCIA OXXO") && o.EstatusPago == "Pagado" && o.FechaReferencia >= inicio && o.FechaReferencia < final select o.Referencia).Distinct().Count();
+    int scotia = (from o in db.Cita where (o.TipoPago == "Referencia Scotiabank" || o.TipoPago == "Transferencia vía ScotiaBank") && o.EstatusPago == "Pagado" && o.FechaReferencia >= inicio && o.FechaReferencia < final select o.Referencia).Distinct().Count();
+    int banbajio = (from o in db.Cita where (o.TipoPago == "Referencia BanBajío" || o.TipoPago == "Transferencia vía BanBajío") && o.EstatusPago == "Pagado" && o.FechaReferencia >= inicio && o.FechaReferencia < final select o.Referencia).Distinct().Count();
+    int pending = (from o in db.Cita where (o.EstatusPago == "pending_payment" || o.EstatusPago == "Pendiente") && o.FechaReferencia >= inicio && o.FechaReferencia < final select o.Referencia).Distinct().Count();
+    int transacciones = (from o in db.Cita where o.EstatusPago == "Pagado" select o.Referencia).Distinct().Count();
+
+}
+
+<br />
+<br />
+<h3 style="color:white" class="text-center">Conciliación &nbsp; &nbsp; &nbsp;<span class="h4" style="color:#AC9070"><b>@fecha</b></span></h3>
+@if (ViewBag.Estado == 1)
+{
+    <h5 style="color:darkgray" >Mostrando resultados de <span style="color:white">@ViewBag.Inicio.ToString("dd-MMMM-yyyy")</span> hasta <span style="color:white">@ViewBag.Final.ToString("dd-MMMM-yyyy")</span></h5>
+}
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Conciliacion/Index")">
+    <div style="display:inline-block; padding:10px; background-color:gainsboro; border-radius: 5px">
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+        <input type="date" class="form-control" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+        <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
+        <input type="submit" class="btn btn-primary" value="Enviar" />
+        <a href="~/Conciliacion/Index"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+    </div>
+    <div class="input-group pull-right">
+        <input type="text" class="form-control" id="buscador" name="dato" placeholder="No. Referencia">
+        <span class="input-group-btn">
+            <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+        </span>
+    </div>
+</form>
+<br />
+
+
+    <button type="button" class="btn btn-outline-warning boton-transparenteAzul botonesGral"><span class="glyphicon glyphicon-search"></span> Transacciones: <b>@transacciones</b></button>
+    <button type="button" class="btn btn-outline-warning boton-transparentePendiente botonesGral"><span class="glyphicon glyphicon-time"></span> Pendientes: <b>@pending</b></button>
+    <button type="button" class="btn btn-outline-warning boton-transparenteExcel botonesGral"><span class="glyphicon glyphicon-ok"></span> Pagadas OXXO: <b>@oxxo</b></button>
+    <button type="button" class="btn btn-outline-warning boton-transparenteExcel botonesGral"><span class="glyphicon glyphicon-ok"></span> Pagadas ScotiaBank: <b>@scotia</b></button>
+    <button type="button" class="btn btn-outline-warning boton-transparenteExcel botonesGral"><span class="glyphicon glyphicon-ok"></span> Pagadas BanBajío: <b>@banbajio</b></button>
+
+
+<br />
+<br />
+
+@section scripts{
+
+    <script>
+        var input = document.getElementById("buscador");
+        input.addEventListener("keydown", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("buscar").click();
+            }
+        });
+
+    </script>
+
+    <script>
+    $(function () {
+        $(".buscar").click(function () {
+            var url = "@Url.Action("Buscar", "Conciliacion")";
+            var dato = $("#buscador").val();
+            var data = { dato: dato };
+
+            $.post(url, data).done(function (data) {
+                console.log(data);
+                let miResultado = "";
+                if ($.isEmptyObject(data)) {
+                    miResultado = "<h3>No se encontraron registros!!</h3>"
+                }
+                else {
+                    for (let i = 0; i < data.length; i++) {
+
+                        if (data[i].Canal1 == "SITIO") {
+                            miResultado +=
+                            "<p>Nombre: <b>" + data[i].Nombre + "</b></p>" +
+                            "<p>Referencia: <b>" + data[i].Referencia + "</b></p>" +
+                            "<p>Tipo de Pago: <b>" + data[i].TipoPago + "</b></p>" +
+                            "<p>Fecha de Pago: <b>" + data[i].FechaReferencia + "</b></p>" +
+                            "<p>Estatus de Pago: <b>" + data[i].EstatusPago + "</b></p>"
+                            break;
+                        }
+                        else
+                        {
+                            miResultado +=
+                            "<p>Nombre: <b>" + data[i].Canal1 + "</b></p>" +
+                            "<p>Referencia: <b>" + data[i].Referencia + "</b></p>" +
+                            "<p>Tipo de Pago: <b>" + data[i].TipoPago + "</b></p>" +
+                            "<p>Fecha de Pago: <b>" + data[i].FechaReferencia + "</b></p>" +
+                            "<p>Estatus de Pago: <b>" + data[i].EstatusPago + "</b></p>"
+                            break;
+                        }
+                    }
+                }
+
+                $('#exampleModal5').modal('show');
+                document.getElementById("cuerpo").innerHTML = miResultado;
+
+            }).fail().always(function () {
+
+            });
+        });
+    });
+    </script>
+}
+
+<div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body" id="cuerpo">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="tablaScroll">
+    <table class="table tablas table-hover" id="tablaEjemplo" style="color: #2F2D6B">
+        <thead>
+            <tr class="bg-primary">
+                <th></th>
+                <th>
+                    Paciente o Géstor
+                </th>
+                <th>
+                    Cantidad EPIs
+                </th>
+                <th>
+                    Sucursal
+                </th>
+                <th>
+                    Referencia
+                </th>
+                <th>
+                    Tipo Pago
+                </th>
+                <th>
+                    Fecha
+                </th>
+                <th>
+                    Estatus Pago
+                </th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        
+
+        @foreach (var item in Model)
+        {
+            var cantidad = (from c in db.Cita where c.Referencia == item.Referencia select c).Count();
+            if (cantidad > 1)
+            {
+                distict += 1;
+                if (distict == 1)
+                {
+                    <tr>
+                        <td>
+                            @flag
+                        </td>
+                        <td>
+                            <mark style="background-color:aqua">@Html.DisplayFor(modelItem => item.Canal)</mark>
+                        </td>
+
+                        <td class="text-center">
+                            @cantidad
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Sucursal)
+                        </td>
+                        <td>
+                            <b>@Html.DisplayFor(modelItem => item.Referencia)</b>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TipoPago)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FechaReferencia)
+                        </td>
+                        <td>
+                            @{
+                                if (item.EstatusPago == "Pagado" || item.EstatusPago == "paid")
+                                {
+                                    <b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">Pagado</mark></b>
+                                }
+                                else if (item.EstatusPago == "pending_payment" || item.EstatusPago == "Pendiente")
+                                {
+                                    <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Pendiente</mark></b>
+                                }
+                            }
+                        </td>
+                        <td></td>
+                    </tr>
+                }
+
+                if (distict == cantidad)
+                {
+                    distict = 0;
+                }
+
+            }
+            else
+            {
+                <tr>
+                    <td>
+                        @flag
+                    </td>
+                    <td>
+                        @{
+                            var nombre = (from n in db.Paciente where n.idPaciente == item.idPaciente select n.Nombre).FirstOrDefault();
+                            <b>@nombre</b>
+                        }
+                    </td>
+
+                    <td class="text-center">
+                        1
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Sucursal)
+                    </td>
+                    <td>
+                        <b>@Html.DisplayFor(modelItem => item.Referencia)</b>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TipoPago)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FechaReferencia)
+                    </td>
+                    <td>
+                        @{
+                            if (item.EstatusPago == "Pagado" || item.EstatusPago == "paid")
+                            {
+                                <b><mark style="background-color: #41F51A; padding:5px; border-radius:10px">Pagado</mark></b>
+                            }
+                            else if (item.EstatusPago == "pending_payment" || item.EstatusPago == "Pendiente")
+                            {
+                                <b><mark style="background-color: #FFFF00; padding:5px; border-radius:10px">Pendiente</mark></b>
+                            }
+                        }
+                    </td>
+                    <td></td>
+                </tr>
+            }
+
+            @*<tr>
+                    <td>
+                        @{
+                            var nombre = (from n in db.Paciente where n.idPaciente == item.idPaciente select n.Nombre).FirstOrDefault();
+                            <b>@nombre</b>
+                        }
+                    </td>
+                    <td>
+                        <b>@Html.DisplayFor(modelItem => item.EstatusPago)</b>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FechaReferencia)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TipoPago)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Referencia)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Sucursal)
+                    </td>
+                    <td></td>
+                </tr>*@
+
+            flag += 1;
+        }
+
+    </table>
+</div>
+
+<br />
+<br />
+
+@*@using (Html.BeginForm("Index", "Conciliacion", FormMethod.Post))
+    {
+        <p>
+            <h5 class="labelGral">
+                Mostrando: <select name="PageSize" id="PageSize" onchange="this.form.submit();">
+                    <option @if ((int)ViewBag.PageSize == 10) { @Html.Raw("selected") } value="10">10</option>
+                    <option @if ((int)ViewBag.PageSize == 20) { @Html.Raw("selected") } value="20">20</option>
+                    <option @if ((int)ViewBag.PageSize == 50) { @Html.Raw("selected") } value="50">50</option>
+                    <option @if ((int)ViewBag.PageSize == 100) { @Html.Raw("selected") } value="100">100</option>
+                </select> registros
+            </h5>
+        </p>
+    }
+
+    <h5 class="labelGral">Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount. Elementos totales: @Model.TotalItemCount</h5>
+
+    @Html.PagedListPager(Model, page => Url.Action("Index", "Conciliacion", new { page, pageSize = ViewBag.PageSize }))*@
+

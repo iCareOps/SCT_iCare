@@ -1,0 +1,712 @@
+﻿@*XLSX*@
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+﻿
+@{
+    ViewBag.Title = "Administrador";
+
+    GMIEntities db = new GMIEntities();
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    string nombreUsuario = null;
+    int idUser = 0;
+    int? idRol = 0;
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
+    }
+
+    var sucursalesLista = from s in db.Sucursales select s;
+
+    DateTime dateToday = new DateTime();
+    DateTime dateTomorrow = new DateTime();
+
+    dateToday = Convert.ToDateTime(ViewBag.Inicio);
+    dateTomorrow = Convert.ToDateTime(ViewBag.Final);
+
+    var episTotal = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow);
+    int episTotalConteo = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow).Count();
+
+    var episHoy = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow);
+    int episHoyConteo = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow).Count();
+
+    var dictaminados = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow && w.EstatusCaptura == "Terminado");
+    int dictaminadosCount = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow && w.EstatusCaptura == "Terminado").Count();
+
+    var pendientes = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow && (w.EstatusCaptura == "Pendiente" || w.EstatusCaptura == null));
+    int pendientesCount = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow && (w.EstatusCaptura == "Pendiente" || w.EstatusCaptura == null)).Count();
+
+    var pausados = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow && w.EstatusCaptura == "Pausado");
+    int pausadosCount = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow && w.EstatusCaptura == "Pausado").Count();
+
+    var enProceso = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow && w.EstatusCaptura == "En Proceso");
+    int enProcesoCount = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow && w.EstatusCaptura == "En Proceso").Count();
+
+    DateTime mesInicio = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+    DateTime mesFinal = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddDays(-1);
+
+    var mes = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= mesInicio && w.FechaCaptura < mesFinal);
+    int mesCount = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= mesInicio && w.FechaCaptura < mesFinal).Count();
+
+    var gestor = (from i in db.PacienteESP where i.FechaCaptura >= dateToday && i.FechaCaptura < dateTomorrow select i.ReferidoPor).Distinct();
+    var gestor2 = (from i in db.PacienteESP where i.FechaCaptura >= mesInicio && i.FechaCaptura < mesFinal select i.ReferidoPor).Distinct();
+
+    int flag = 1;
+
+}
+<br />
+
+<h3 style="color:white" class="text-center"><span style="color:#AC9070">Bienvenido</span> @nombreUsuario </h3>
+
+<br />
+@if (ViewBag.Estado == 1)
+{
+    <h5 style="color:darkgray">Mostrando resultados de: <span style="color:white">@ViewBag.Inicio.ToString("dd-MMMM-yyyy")</span> hasta <span style="color:white">@Convert.ToDateTime(ViewBag.Final).AddDays(-1).ToString("dd-MMMM-yyyy")</span></h5>
+}
+@*<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/Index")">
+        <div style="display:inline-block; padding:10px; background-color:gainsboro; border-radius: 5px">
+            <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+            <input type="date" class="form-control" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+            <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
+            <input type="submit" class="btn btn-primary" value="Enviar" />
+            <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+        </div>
+        <div class="input-group pull-right">
+            <input type="text" class="form-control" id="buscador" name="dato" placeholder="Paciente o Expediente">
+            <span class="input-group-btn">
+                <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+        </div>
+    </form>*@
+
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Dictamenes/Dashboard")">
+    <div style="display:inline-block; padding:15px; background-color:gainsboro; border-radius: 5px">
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Desde:</label>
+        <input type="date" class="form-control" min="2021-08-02" name="inicio" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        <label for="recipient-name" style="color:navy" class="col-form-label text-primary">Hasta:</label>
+        <input type="date" class="form-control" name="final" /> &nbsp; &nbsp;
+        <input type="submit" class="btn btn-primary" value="Enviar" />
+        <a href="~/EPIs/Captura"><button type="button" class="btn btn-success">Limpiar Consulta</button></a>
+    </div>
+
+    <div class="col-lg-3" id="barras" style="margin: 10px 0 0 10px; display:inline-grid">
+        <div class="input-group">
+            <input type="text" class="form-control input-g" id="buscador" name="dato" placeholder="Paciente o Expediente">
+            <span class="input-group-btn">
+                <button class="btn btn-info buscar" id="buscar" type="button"><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+        </div>
+    </div>
+</form>
+
+<br />
+<br />
+
+
+@section scripts{
+
+    <script>
+        var input = document.getElementById("buscador");
+        input.addEventListener("keydown", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("buscar").click();
+            }
+        });
+
+    </script>
+
+    <script>
+    $(function () {
+        $(".buscar").click(function () {
+            var url = "@Url.Action("Buscar", "Dictamenes")";
+            var dato = $("#buscador").val();
+            var data = { dato: dato };
+
+            $.post(url, data).done(function (data) {
+                console.log(data);
+                let miResultado = "";
+                if ($.isEmptyObject(data)) {
+                    miResultado = "<h3>No se encontraron registros!!</h3>"
+                }
+                else {
+                    miResultado +=  "<thead><tr class=\"bg-primary \"><th>Nombre</th><th>CURP</th><th>NoExpediente</th><th>Tipo Trámite</th><th>Fecha</th><th>Datos</th><th>Estatus</th><th></th></tr></thead>"
+                    for (let i = 0; i < data.length; i++) {
+
+                        if (data[i].EstatusCaptura == null) {
+                            if (data[i].Estatura == null || data[i].Doctor == null || data[i].Metra == null || data[i].Genero == null || data[i].CURP == null || data[i].NoExpediente == null) {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><span class=\"field-tip field-tip3\"><b><mark style=\"background-color: #FFFF00; padding: 5px; border-radius: 7px\">Incompletos</b></mark><span class=\"tip-content\">" +
+                                    "<b>CURP: </b><span>" + data[i].CURP + "</span><br/>" +
+                                    "<b>NoExpediente: </b><span>" + data[i].NoExpediente + "</span><br/>" +
+                                    "<b>Metra: </b><span>" + data[i].Metra + "</span><br/>" +
+                                    "<b>Género: </b><span>" + data[i].Genero + "</span><br/>" +
+                                    "<b>Estatura: </b><span>" + data[i].Estatura + "</span><br/>" +
+                                    "<b>Doctor: </b><span>" + data[i].Doctor + "</span><br/>" +
+                                    "</span ></span ></td > " +
+                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "</tr>"
+                            } else {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "</tr>"
+                            }
+
+
+                        } else {
+                            if (data[i].Estatura == null && data[i].Doctor == null && data[i].Metra == null && data[i].Genero == null && data[i].CURP == null && data[i].NoExpediente == null) {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><span class=\"field-tip field-tip3\"><b><mark style=\"background-color: #FFFF00; padding: 5px; border-radius: 7px\">Incompletos</b></mark><span class=\"tip-content\">" +
+                                    "<b>CURP: </b><span>" + data[i].CURP + "</span><br/>" +
+                                    "<b>NoExpediente: </b><span>" + data[i].NoExpediente + "</span><br/>" +
+                                    "<b>Metra: </b><span>" + data[i].Metra + "</span><br/>" +
+                                    "<b>Género: </b><span>" + data[i].Genero + "</span><br/>" +
+                                    "<b>Estatura: </b><span>" + data[i].Estatura + "</span><br/>" +
+                                    "<b>Doctor: </b><span>" + data[i].Doctor + "</span><br/>" +
+                                    "</span ></span ></td > " +
+                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "</tr>"
+                            } else {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "</tr>"
+                            }
+
+                        }
+
+                    }
+                }
+
+                $('#exampleModal5').modal('show');
+                document.getElementById("tablaEjemploSS").innerHTML = miResultado;
+
+            }).fail().always(function () {
+
+            });
+        });
+    });
+    </script>
+
+    @if (TempData["ID"] != null)
+    {
+        <script>
+            window.open('@Url.Action("AbrirEPI", "EPIs", new { id = TempData["ID"] })');
+        </script>
+    }
+
+}
+
+<div class="modal fade" id="exampleModal10" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width:70%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body">
+                <div class="tablaScroll">
+                    <table class="table tablas table-responsive" id="tablaEjemplo" style="color: #2F2D6B">
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-outline-warning boton-transparenteIndicador1 botonesGral col-md-4" data-toggle="modal" data-target="#citasHoy" style="color:white">
+    <h4><span class="glyphicon glyphicon-list-alt"></span> &nbsp; &nbsp;EPIs: <b>@episTotalConteo</b></h4>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="citasHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:aquamarine">
+                <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-list-alt"></span> &nbsp; &nbsp;EPIs Generados: <b>@episTotalConteo</b></h3>
+            </div>
+            <div class="modal-body">
+                @{
+
+                    foreach (var item in gestor)
+                    {
+                        string nombreGestor = item.ToString();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow select e).Count();
+
+                        <h4><b>@item:</b> @elemento</h4>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-outline-warning boton-transparenteIndicador2 botonesGral col-md-4" data-toggle="modal" data-target="#episHoy" style="color:white">
+    <h4><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;Dictaminados: <b>@dictaminadosCount</b></h4>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="episHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:aquamarine">
+                <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-duplicate"></span> &nbsp; &nbsp;Dictaminados: <b>@dictaminadosCount</b></h3>
+            </div>
+            <div class="modal-body">
+                @{
+
+                    foreach (var item in gestor)
+                    {
+                        string nombreGestor = item.ToString();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusCaptura == "Terminado" select e).Count();
+
+                        <h4><b>@item:</b> @elemento</h4>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-outline-warning boton-transparenteIndicador3 botonesGral col-md-4" data-toggle="modal" data-target="#dictamenesHoy" style="color:white">
+    <h4><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;En Proceso: <b>@enProcesoCount</b></h4>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="dictamenesHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:aquamarine">
+                <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;EPIs en Proceso: <b>@enProcesoCount</b></h3>
+            </div>
+            <div class="modal-body">
+                @{
+
+                    foreach (var item in gestor)
+                    {
+                        string nombreGestor = item.ToString();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusCaptura == "En Proceso" select e).Count();
+
+                        <h4><b>@item:</b> @elemento</h4>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-outline-warning boton-transparenteIndicador4 botonesGral col-md-4" data-toggle="modal" data-target="#enProcesoHoy" style="color:white">
+    <h4><span class="glyphicon glyphicon-copy"></span> &nbsp; &nbsp;Dictámenes Pendientes: <b>@pendientesCount</b></h4>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="enProcesoHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:gold">
+                <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-copy"></span> &nbsp; &nbsp;Dictámenes Pendientes: <b>@pendientesCount</b></h3>
+            </div>
+            <div class="modal-body">
+                @{
+
+                    foreach (var item in gestor)
+                    {
+                        string nombreGestor = item.ToString();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusCaptura == null select e).Count();
+
+                        <h4><b>@item:</b> @elemento</h4>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-outline-warning boton-transparenteIndicador5 botonesGral col-md-4" data-toggle="modal" data-target="#pendientesHoy" style="color:white">
+    <h4><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;Dictámenes Pausados: <b>@pausadosCount</b></h4>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="pendientesHoy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:crimson">
+                <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;Dictámenes Pausados: <b>@pausadosCount</b></h3>
+            </div>
+            <div class="modal-body">
+                @{
+
+                    foreach (var item in gestor2)
+                    {
+                        string nombreGestor = item.ToString();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusCaptura == "Pausado" select e).Count();
+
+                        <h4><b>@item:</b> @elemento</h4>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-outline-warning boton-transparenteIndicador5 botonesGral col-md-4" data-toggle="modal" data-target="#mes" style="color:white">
+    <h4><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;Epis de <b style="color:chartreuse">@DateTime.Now.ToString("MMMM")</b>: <b>@mesCount</b></h4>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="mes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:aqua">
+                <h3 class="modal-title" id="exampleModalLabel"><span class="glyphicon glyphicon-file"></span> &nbsp; &nbsp;Epis de <b>@DateTime.Now.ToString("MMMM")</b>: <b>@mesCount</b></h3>
+            </div>
+            <div class="modal-body">
+                @{
+
+                    foreach (var item in gestor2)
+                    {
+                        string nombreGestor = item.ToString();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= mesInicio && e.FechaCita < mesFinal select e).Count();
+
+                        <h4><b>@item:</b> @elemento</h4>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<br />
+<br />
+<br />
+
+<button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
+
+<div>
+    <br />
+</div>
+
+
+@if (episHoy.FirstOrDefault() == null)
+{
+    <br />
+    <h1 style="color:white">No existen citas registradas el día de hoy</h1>
+}
+else
+{
+    <div class="tablaScroll">
+        <table class="table tablas" style="color: #2F2D6B">
+            <thead>
+                <tr class="bg-primary" style="border-top-color: black; font-size:smaller">
+                    <th>
+                    </th>
+
+                    <th>
+                        Nombre-EPI
+                    </th>
+
+                    <th>
+                        Referido Por
+                    </th>
+
+                    <th>
+                        Estatus
+                    </th>
+
+                    <th>
+                        Solicitante
+                    </th>
+
+                    <th>
+                        RealizaCita
+                    </th>
+
+                </tr>
+            </thead>
+
+
+            @foreach (var item in episHoy)
+            {
+                <tr>
+                    <td>
+                        @flag
+                    </td>
+
+                    <td>
+                        <b>@Html.DisplayFor(modelItem => item.Nombre) </b>
+                    </td>
+
+                    <td>
+                        <b>@item.ReferidoPor</b>
+                    </td>
+
+                    <th>
+                        @{
+                            if (item.EstatusCaptura == null)
+                            {
+                                <mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Pendiente</mark>
+
+                            }
+                            else
+                            {
+                                if (item.EstatusCaptura == "En Proceso")
+                                {
+                                    <b><mark style="background-color: dodgerblue; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>
+                                }
+                                else if (item.EstatusCaptura == "Pausado")
+                                {
+                                    <b><mark style="background-color: darkorange; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>
+                                    @*<b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>*@
+                                }
+                                else if (item.EstatusCaptura == "Terminado")
+                                {
+                                    <a href=@Url.Action("DescargarPDF", "Dictamenes", new { id = item.idPacienteESP })><b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b></a>
+                                    @*<b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>*@
+                                }
+                            }
+                        }
+
+                    </th>
+                    <th style="font-size:smaller">
+                        @item.Solicita
+                    </th>
+
+                    <th style="font-size:smaller">
+                        @item.Usuario
+                    </th>
+                </tr>
+
+                flag += 1;
+
+            }
+
+        </table>
+    </div>
+}
+
+<div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width:70%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="exampleModalLabel"><b>Resultado de la búsqueda:</b></h3>
+            </div>
+            <div class="modal-body" id="">
+                <div class="tablaScroll">
+                    <table class="table table-hover tablas table-responsive" id="tablaEjemploSS" style="color: #2F2D6B">
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@*Tabla invisible*@
+
+@if (episHoy.FirstOrDefault() == null)
+{
+    <h1 style="color:white; display: none">No existen citas registradas el día de hoy</h1>
+}
+else
+{
+    <div class="tablaScroll" style="display: none">
+        <table id="tbl_exporttable_to_xls" class="table tablas" style="color: #2F2D6B">
+            <thead>
+                <tr class="bg-primary" style="border-top-color: black; font-size:smaller">
+
+                    <th>
+                        Nombre-EPI
+                    </th>
+
+                    <th>
+                        CURP
+                    </th>
+
+                    <th>
+                        No. Expediente
+                    </th>
+
+                    <th>
+                        Tipo Tramite
+                    </th>
+
+                    <th>
+                        Tipo Licencia
+                    </th>
+
+                    <th>
+                        Doctor
+                    </th>
+
+                    <th>
+                        Usuario
+                    </th>
+
+                    <th>
+                        Referido por
+                    </th>
+
+                    <th>
+                        Estatus Captura
+                    </th>
+
+                    <th>
+                        Capturista
+                    </th>
+
+                    <th>
+                        Canal Tipo
+                    </th>
+
+                    <th>
+                        Fecha Cap
+                    </th>
+
+                </tr>
+            </thead>
+
+
+            @foreach (var item in episHoy)
+            {
+                <tr>
+                    <td>
+                        <b>@item.Nombre</b>
+                    </td>
+
+                    <td>
+                        <b>@item.CURP</b>
+                    </td>
+
+                    <td>
+                        <b>@item.NoExpediente</b>
+                    </td>
+
+                    <td>
+                        <b>@item.TipoTramite</b>
+                    </td>
+
+                    <td>
+                        <b>@item.TipoLicencia</b>
+                    </td>
+
+                    <td>
+                        <b>@item.Doctor</b>
+                    </td>
+
+                    <td>
+                        <b>@item.Usuario</b>
+                    </td>
+
+                    <td>
+                        <b>@item.ReferidoPor</b>
+                    </td>
+
+                    <td>
+                        @{
+                            if (item.EstatusCaptura == null)
+                            {
+                                <mark style="background-color: #FFFF00; padding:5px; border-radius:7px">Pendiente</mark>
+
+                            }
+                            else
+                            {
+                                if (item.EstatusCaptura == "En Proceso")
+                                {
+                                    <b><mark style="background-color: dodgerblue; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>
+                                }
+                                else if (item.EstatusCaptura == "Pausado")
+                                {
+                                    <b><mark style="background-color: darkorange; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>
+                                    @*<b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>*@
+                                }
+                                else if (item.EstatusCaptura == "Terminado")
+                                {
+                                    <a href=@Url.Action("DescargarPDF", "Dictamenes", new { id = item.idPacienteESP })><b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b></a>
+                                    @*<b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>*@
+                                }
+                            }
+                        }
+
+                    </td>
+                    <td style="font-size:smaller">
+                        @item.Capturista
+                    </td>
+
+                    <td style="font-size:smaller">
+                        @item.CanalTipo
+                    </td>
+
+                    <td>
+                        <b>@item.FechaCaptura</b>
+                    </td>
+
+                </tr>
+
+                flag += 1;
+
+            }
+
+        </table>
+    </div>
+}
+
+<script>
+
+        function ExportToExcel(type, fn, dl) {
+            var elt = document.getElementById('tbl_exporttable_to_xls');
+            var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+            return dl ?
+                XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+                XLSX.writeFile(wb, fn || ('Reporte del @ViewBag.Inicio.ToString("dd-MMMM-yyyy") al @Convert.ToDateTime(ViewBag.Final).AddDays(-1).ToString("dd-MMMM-yyyy").' + (type || 'xlsx')));
+        }
+
+</script>
+

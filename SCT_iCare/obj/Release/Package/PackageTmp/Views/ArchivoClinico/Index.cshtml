@@ -1,0 +1,639 @@
+﻿
+@{
+
+    ViewBag.Title = "Index";
+
+    GMIEntities db = new GMIEntities();
+
+    DateTime start = DateTime.Now;
+    //DateTime startDay = Convert.ToDateTime(start.Day);
+
+    var oUser = (Usuarios)HttpContext.Current.Session["User"];
+
+    string nombreUsuario = null;
+    int idUser = 0;
+    int? idRol = 0;
+
+    int idPaciente = Convert.ToInt32(ViewBag.idPaciente);
+
+    if (oUser != null)
+    {
+        idUser = oUser.idUsuario;
+        nombreUsuario = oUser.Nombre;
+        idRol = oUser.idRol;
+    }
+
+    var nombrePaciente = (from d in db.Paciente where d.idPaciente == idPaciente select d.Nombre).FirstOrDefault();
+    var expedientePaciente = (from d in db.Cita where d.idPaciente == idPaciente select d.NoExpediente).FirstOrDefault();
+}
+
+<!--<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - GMI</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope&display=swap" rel="stylesheet">
+    <link rel="icon" href="~/GMI.ico" />
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
+
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+    <link href="~/Content/Chart.min.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+<body style="background-color: white">
+    <br />
+    <h3 class="text-center text-primary">Carrusel Médico</h3>
+    <br />-->
+
+    @*<div style="width:100%">
+            <center>
+                @{
+                    var modulos = from m in db.DoctorModulo where m.idUsuario == idUser select m.idModulo;
+
+                    foreach (var item in modulos)
+                    {
+                        var nombreModulo = (from n in db.Modulos where n.idModulo == item select n.Nombre).FirstOrDefault();
+
+                        <button class="btn btn-info" style="width:25vw; height:25vw; margin:0.5%; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%">@nombreModulo</button>
+                    }
+                }
+            </center>
+        </div>*@
+
+    <!--<div style="width:100%">
+        <center>
+            
+        </center>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#aparicion1').fadeIn(1000);
+            $('#aparicion2').fadeIn(1000);
+            $('#aparicion3').fadeIn(1000);
+            $('#aparicion4').fadeIn(1000);
+            $('#aparicion5').fadeIn(1000);
+            $('#aparicion6').fadeIn(1000);
+            $('#aparicion7').fadeIn(1000);
+            $('#aparicion8').fadeIn(1000);
+            $('#aparicion9').fadeIn(1000);
+        });
+    </script>
+
+
+</body>-->
+
+<br />
+<h3 class="text-center" style="color:white"><span style="color:darkgoldenrod">Carrusel Médico de: </span>@nombrePaciente (No. Expediente <b>@expedientePaciente</b>)</h3>
+<br />
+
+@*<div style="width:100%">
+        <center>
+            @{
+                var modulos = from m in db.DoctorModulo where m.idUsuario == idUser select m.idModulo;
+
+                foreach (var item in modulos)
+                {
+                    var nombreModulo = (from n in db.Modulos where n.idModulo == item select n.Nombre).FirstOrDefault();
+
+                    <button class="btn btn-info" style="width:25vw; height:25vw; margin:0.5%; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%">@nombreModulo</button>
+                }
+            }
+        </center>
+    </div>*@
+
+<div style="width:100%">
+    <center>
+        @{
+
+            int contador = 1;
+
+
+            foreach (var item in (from i in db.Modulos where i.idModulo <= 8 select i))
+            {
+
+                string aparecer = "aparicion" + contador.ToString();
+                var modulo = (from m in db.Modulos where m.idModulo == item.idModulo select m.idModulo).FirstOrDefault();
+                if ((from i in db.DoctorModulo where i.idUsuario == idUser && i.idModulo == modulo select i).FirstOrDefault() == null && idRol == 12)
+                {
+                    <button class="btn " style="width:25vw; height:25vw; margin:0.5%; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer disabled>@item.Nombre</button>
+                }
+                else
+                {
+                    var dictamenConsulta = (from d in db.CarruselMedico
+                                            where
+               d.Fin_Audiologia != null &&
+               d.Fin_Cardiologia != null &&
+               d.Fin_HistoriaClinica != null &&
+               d.Fin_Laboratorio != null &&
+               d.Fin_Odontologia != null &&
+               d.Fin_Oftalmologia != null &&
+               d.Fin_SignosVitales != null &&
+               d.idPaciente == idPaciente
+                                            orderby d.idCarruselMedico descending
+                                            select d).FirstOrDefault();
+
+                    if (item.Nombre == "DICTAMEN")
+                    {
+                        if (dictamenConsulta != null)
+                        {
+                            var dictaminado = (from d in db.EPI_DictamenAptitud where d.idPaciente == idPaciente orderby d.idDictamenAptitud descending select d).FirstOrDefault();
+
+                            if (dictaminado == null)
+                            {
+                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#dictamen" style="width:25vw; margin:0.5%; height:25vw; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer>DICTAMEN</button>
+
+                                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Dictamen")">
+                                    <div class="modal fade" id="dictamen" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Estás a punto de iniciar el proceso de Dictaminación de:</b></h4>
+                                                </div>
+                                                <div class="modal-body" id="">
+                                                    @{
+                                                        var paciente = (from p in db.Paciente where p.idPaciente == idPaciente orderby p.idPaciente descending select p).FirstOrDefault();
+                                                        var cita = (from p in db.Cita where p.idPaciente == idPaciente orderby p.idCita descending select p).FirstOrDefault();
+
+                                                        <h4 style="text-align:left">Nombre: <span class="text-primary">@paciente.Nombre</span></h4>
+                                                        <h4 style="text-align:left">No. de Expediente: <span class="text-primary">@cita.NoExpediente</span></h4>
+                                                        <h4 style="text-align:left">CURP: <span class="text-primary">@paciente.CURP</span></h4>
+                                                        <h4 style="text-align:left">Folio: <span class="text-primary">@paciente.Folio</span></h4>
+                                                        <h4 style="text-align:left">Tipo de Licencia: <span class="text-primary">@cita.TipoLicencia</span></h4>
+                                                        <h4 style="text-align:left">Tipo de Trámite: <span class="text-primary">@cita.TipoTramite</span></h4>
+                                                        <input type="hidden" name="id" value=@idPaciente />
+                                                    }
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    <input type="submit" name="accion" class="btn btn-success" value="Confirmar" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            }
+                            else
+                            {
+                                if (dictaminado.Aptitud == "APTO")
+                                {
+                                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#dictaminado" style="width:25vw; margin:0.5%; height:25vw; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer>DICTAMEN</button>
+
+
+                                    <div class="modal fade" id="dictaminado" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Paciente dictaminado con éxito:</b></h4>
+                                                </div>
+                                                <div class="modal-body" id="">
+                                                    @{
+                                                        var paciente = (from p in db.Paciente where p.idPaciente == idPaciente orderby p.idPaciente descending select p).FirstOrDefault();
+                                                        var cita = (from p in db.Cita where p.idPaciente == idPaciente orderby p.idCita descending select p).FirstOrDefault();
+                                                        var revisionDictamen = (from p in db.EPI_DictamenAptitud where p.idPaciente == idPaciente orderby p.idDictamenAptitud descending select p).FirstOrDefault();
+
+                                                        <h4 style="text-align:left">Nombre: <span class="text-primary">@paciente.Nombre</span></h4>
+                                                        <h4 style="text-align:left">No. de Expediente: <span class="text-primary">@cita.NoExpediente</span></h4>
+                                                        <h4 style="text-align:left">CURP: <span class="text-primary">@paciente.CURP</span></h4>
+                                                        <h4 style="text-align:left">Folio: <span class="text-primary">@paciente.Folio</span></h4>
+                                                        <h4 style="text-align:left">Tipo de Licencia: <span class="text-primary">@cita.TipoLicencia</span></h4>
+                                                        <h4 style="text-align:left">Tipo de Trámite: <span class="text-primary">@cita.TipoTramite</span></h4>
+                                                        <h3 style="text-align:left">Aptitud: <span class="text-success">@revisionDictamen.Aptitud</span></h3>
+
+                                                    }
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                }
+                                else
+                                {
+
+                                    var expedienteRevaloracion = (from i in db.ExpedienteRevaloracion where i.idPaciente == idPaciente orderby i.idExpedienteRevaloracion descending select i).FirstOrDefault();
+
+                                    if (expedienteRevaloracion == null)
+                                    {
+                                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#revaloradoSin" style="width:25vw; margin:0.5%; height:25vw; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer>DICTAMEN</button>
+
+                                        <div class="modal fade" id="revaloradoSin" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title text-primary" style="text-align:left" id="exampleModalLabel"><b>El paciente se encuentra en <span class="text-warning">REVALORACIÓN</span>.</b></h4>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#revalorado" style="width:25vw; margin:0.5%; height:25vw; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer>DICTAMEN</button>
+
+                                        <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Guardar_Dictamen")">
+                                            <div class="modal fade" id="revalorado" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title text-primary" style="text-align:left" id="exampleModalLabel"><b>Paciente dictaminado como <span class="text-danger">NO APTO</span>. ¿Desea cambiar el estatus de Aptitud?</b></h4>
+                                                        </div>
+                                                        <div class="modal-body" id="">
+                                                            @{
+                                                                var paciente = (from p in db.Paciente where p.idPaciente == idPaciente orderby p.idPaciente descending select p).FirstOrDefault();
+                                                                var cita = (from p in db.Cita where p.idPaciente == idPaciente orderby p.idCita descending select p).FirstOrDefault();
+                                                                var revisionDictamen = (from p in db.EPI_DictamenAptitud where p.idPaciente == idPaciente orderby p.idDictamenAptitud descending select p).FirstOrDefault();
+
+                                                                <h4 style="text-align:left">Nombre: <span class="text-primary">@paciente.Nombre</span></h4>
+                                                                <h4 style="text-align:left">No. de Expediente: <span class="text-primary">@cita.NoExpediente</span></h4>
+                                                                <h4 style="text-align:left">CURP: <span class="text-primary">@paciente.CURP</span></h4>
+                                                                <h4 style="text-align:left">Folio: <span class="text-primary">@paciente.Folio</span></h4>
+                                                                <h4 style="text-align:left">Tipo de Licencia: <span class="text-primary">@cita.TipoLicencia</span></h4>
+                                                                <h4 style="text-align:left">Tipo de Trámite: <span class="text-primary">@cita.TipoTramite</span></h4>
+                                                                <h3 style="text-align:left">Aptitud: <span class="text-danger">@revisionDictamen.Aptitud</span></h3>
+
+                                                                <input type="hidden" name="id" value=@idPaciente />
+                                                                <br />
+                                                                <div class="form-group" style="align-items:flex-start">
+                                                                    <h4 style="text-align:left">Nota Médica:</h4>
+                                                                    <textarea class="form-control pull-left" id="email" name="nota" placeholder="@revisionDictamen.NotaMedica" required></textarea>
+                                                                </div>
+
+                                                                <br />
+                                                                <br />
+                                                                <br />
+                                                            }
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <input type="submit" name="accion" class="btn btn-danger" value="Revalorado NO APTO" />
+                                                            <input type="submit" name="accion" class="btn btn-success" value="Revalorado APTO" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    }
+
+
+                                }
+                            }
+
+
+
+                            @*<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/Dictamen")" style="display:inline-block; margin:0.5%">
+                                <input type="hidden" value="@idPaciente" name="id" />
+                                <input type="submit" class="btn btn-success" style="width:25vw; height:25vw; margin:0.5%; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer value="@item.Nombre" />
+                            </form>*@
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-success" style="width:25vw; height:25vw; margin:0.5%; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer data-toggle="modal" data-target="#carrusel1">DICTAMEN</button>
+
+                            <div class="modal fade" id="carrusel1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Faltan exámenes por concluir</b></h4>
+                                        </div>
+                                        <div class="modal-body" id="">
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        string nombreModulo = item.Nombre;
+
+                        if (nombreModulo == "SIGNOS VITALES")
+                        {
+                            nombreModulo = "SIGNOS_VITALES";
+                        }
+                        else if (nombreModulo == "HISTORIA CLÍNICA")
+                        {
+                            nombreModulo = "HISTORIA_CLÍNICA";
+                        }
+
+                        string moduloTabla = item.Nombre;
+                        var consultaCompleta = (from c in db.CarruselMedico where c.InicioCarrusel != null && c.idPaciente == idPaciente select c).FirstOrDefault();
+
+                        if (item.Nombre == "SIGNOS VITALES")
+                        {
+                            consultaCompleta = (from c in db.CarruselMedico where c.Fin_SignosVitales != null && c.idPaciente == idPaciente select c).FirstOrDefault();
+                        }
+                        else if (item.Nombre == "AUDIOLOGÍA")
+                        {
+                            consultaCompleta = (from c in db.CarruselMedico where c.Fin_Audiologia != null && c.idPaciente == idPaciente select c).FirstOrDefault();
+                        }
+                        else if (item.Nombre == "OFTALMOLOGÍA")
+                        {
+                            consultaCompleta = (from c in db.CarruselMedico where c.Fin_Oftalmologia != null && c.idPaciente == idPaciente select c).FirstOrDefault();
+                        }
+                        else if (item.Nombre == "ODONTOLOGÍA")
+                        {
+                            consultaCompleta = (from c in db.CarruselMedico where c.Fin_Odontologia != null && c.idPaciente == idPaciente select c).FirstOrDefault();
+                        }
+                        else if (item.Nombre == "LABORATORIO")
+                        {
+                            consultaCompleta = (from c in db.CarruselMedico where c.Fin_Laboratorio != null && c.idPaciente == idPaciente select c).FirstOrDefault();
+                        }
+                        else if (item.Nombre == "HISTORIA CLÍNICA")
+                        {
+                            consultaCompleta = (from c in db.CarruselMedico where c.Fin_HistoriaClinica != null && c.idPaciente == idPaciente select c).FirstOrDefault();
+                        }
+                        else if (item.Nombre == "CARDIOLOGÍA")
+                        {
+                            consultaCompleta = (from c in db.CarruselMedico where c.Fin_Cardiologia != null && c.idPaciente == idPaciente select c).FirstOrDefault();
+                        }
+                        else if (item.Nombre == "DICTAMEN")
+                        {
+                            consultaCompleta = (from d in db.CarruselMedico
+                                                where
+                       d.Fin_Audiologia != null &&
+                       d.Fin_Cardiologia != null &&
+                       d.Fin_HistoriaClinica != null &&
+                       d.Fin_Laboratorio != null &&
+                       d.Fin_Odontologia != null &&
+                       d.Fin_Oftalmologia != null &&
+                       d.Fin_SignosVitales != null &&
+                       d.idPaciente == idPaciente
+                                                orderby d.idCarruselMedico descending
+                                                select d).FirstOrDefault();
+                        }
+
+                        if (consultaCompleta != null)
+                        {
+
+                            <button type="button" class="btn btn-info" style="width:25vw; height:25vw; margin:0.5%; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer data-toggle="modal" data-target="#carrusel_@idPaciente@nombreModulo">@item.Nombre <span style="color:gold">(COMPLETO)</span></button>
+
+                            <div class="modal fade" id="carrusel_@idPaciente@nombreModulo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            @{
+                                                string nombrePacienteModal = (from n in db.Paciente where n.idPaciente == idPaciente select n.Nombre).FirstOrDefault();
+                                                <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Datos del examen @item.Nombre para @nombrePacienteModal</b></h4>
+                                            }
+
+                                        </div>
+                                        <div class="modal-body" id="">
+                                            @{
+                                                if (item.Nombre == "SIGNOS VITALES")
+                                                {
+                                                    var consulta = (from c in db.EPI_SignosVitales where c.idPaciente == idPaciente orderby c.idSignosVitales descending select c).FirstOrDefault();
+                                                    <h4 style="text-align:left"><b>Presion Arterial Sistólica: </b><span class="text-primary"> @consulta.Sistolica</span></h4>
+                                                    <h4 style="text-align:left"><b>Presion Arterial Diastólica: </b><span class="text-primary"> @consulta.Diastolica</span></h4>
+                                                    <h4 style="text-align:left"><b>Frecuencia Cardiaca: </b><span class="text-primary"> @consulta.Cardiaca</span></h4>
+                                                    <h4 style="text-align:left"><b>Frecuencia Respiratoria: </b><span class="text-primary"> @consulta.Respiratoria</span></h4>
+                                                    <h4 style="text-align:left"><b>Temperatura: </b><span class="text-primary"> @consulta.Temperatura °</span></h4>
+                                                    <h4 style="text-align:left"><b>Peso: </b><span class="text-primary"> @consulta.Peso kgs</span></h4>
+                                                    <h4 style="text-align:left"><b>Estatura: </b><span class="text-primary"> @consulta.Estatura cms</span></h4>
+                                                    <h4 style="text-align:left"><b>IMC: </b><span class="text-primary"> @consulta.IMC</span></h4>
+                                                    <h4 style="text-align:left"><b>Cintura: </b><span class="text-primary"> @consulta.Cintura cms</span></h4>
+                                                    <h4 style="text-align:left"><b>Cuello: </b><span class="text-primary"> @consulta.Cuello cms</span></h4>
+                                                    <h4 style="text-align:left"><b>% de Grasa: </b><span class="text-primary"> @consulta.Grasa %</span></h4>
+                                                }
+                                                else if (item.Nombre == "CARDIOLOGÍA")
+                                                {
+                                                    var consulta = (from c in db.EPI_Cardiologia where c.idPaciente == idPaciente orderby c.idCardiologia descending select c).FirstOrDefault();
+                                                    <h4 style="text-align:left"><b>Ritmo: </b><span class="text-primary"> @consulta.Ritmo</span></h4>
+                                                    <h4 style="text-align:left"><b>Frecuencia: </b><span class="text-primary"> @consulta.Frecuencia</span></h4>
+                                                    <h4 style="text-align:left"><b>Eje: </b><span class="text-primary"> @consulta.Eje</span></h4>
+                                                    <h4 style="text-align:left"><b>Intervalo PR: </b><span class="text-primary"> @consulta.PR</span></h4>
+                                                    <h4 style="text-align:left"><b>Intervalo QT: </b><span class="text-primary"> @consulta.QT</span></h4>
+                                                    <h4 style="text-align:left"><b>Intervalo QRS: </b><span class="text-primary"> @consulta.QRS</span></h4>
+                                                    <h4 style="text-align:left"><b>Onda P: </b><span class="text-primary"> @consulta.OndaP</span></h4>
+                                                    <h4 style="text-align:left"><b>Onda T: </b><span class="text-primary"> @consulta.OndaT</span></h4>
+                                                }
+                                                else if (item.Nombre == "OFTALMOLOGÍA")
+                                                {
+                                                    var consulta = (from c in db.Epi_Oftalmologia where c.idPaciente == idPaciente orderby c.idOftalmologia descending select c).FirstOrDefault();
+                                                    <h4 style="text-align:left"><b>Agudeza Visual Cercana (Derecho): </b><span class="text-primary"> @consulta.DerechoAVC</span></h4>
+                                                    <h4 style="text-align:left"><b>Agudeza Visual Media (Derecho): </b><span class="text-primary"> @consulta.DerechoAVM</span></h4>
+                                                    <h4 style="text-align:left"><b>Agudeza Visual Lejana (Derecho): </b><span class="text-primary"> @consulta.DerechoAVL</span></h4>
+                                                    <h4 style="text-align:left"><b>Agudeza Visual Cercana (Izquierdo): </b><span class="text-primary"> @consulta.IzquierdoAVC</span></h4>
+                                                    <h4 style="text-align:left"><b>Agudeza Visual Media (Izquierdo): </b><span class="text-primary"> @consulta.IzquierdoAVM</span></h4>
+                                                    <h4 style="text-align:left"><b>Agudeza Visual Lejana (Izquierdo): </b><span class="text-primary"> @consulta.IzquierdoAVL</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Utiliza lentes para corregir su agudeza visual?: </b><span class="text-primary"> @consulta.AgudezaVisual</span></h4>
+                                                    <h4 style="text-align:left"><b>Sentida de Profundidad o Estereopsis: </b><span class="text-primary"> @consulta.Estereopsis</span></h4>
+                                                    <h4 style="text-align:left"><b>Presencia de carta de no accidentes: </b><span class="text-primary"> @consulta.CartaAccidentes</span></h4>
+                                                    <h4 style="text-align:left"><b>Campo Visual: </b><span class="text-primary"> @consulta.CampoVisual</span></h4>
+                                                    <h4 style="text-align:left"><b>Movimientos Oculares: </b><span class="text-primary"> @consulta.MovimientosOculares</span></h4>
+                                                    <h4 style="text-align:left"><b>Ojo derecho Reflejos Pupilares: </b><span class="text-primary"> @consulta.DerechoRP</span></h4>
+                                                    <h4 style="text-align:left"><b>Ojo izquierdo Reflejos Pupilares: </b><span class="text-primary"> @consulta.IzquierdoRP</span></h4>
+                                                    if (consulta.Cromatica == "Deuteranop")
+                                                    {
+                                                        <h4 style="text-align:left"><b>Tensión de Visión Cromática: </b><span class="text-primary"> Deuteranopia con carta de no accidentes y desempeño</span></h4>
+                                                    }
+                                                    else if (consulta.Cromatica == "Ir a SCT")
+                                                    {
+                                                        <h4 style="text-align:left"><b>Tensión de Visión Cromática: </b><span class="text-primary"> Deuteranopia con carta de no accidentes y sin carta de desempeño (Ir a SCT)</span></h4>
+                                                    }
+                                                    else if (consulta.Cromatica == "Protanopia")
+                                                    {
+                                                        <h4 style="text-align:left"><b>Tensión de Visión Cromática: </b><span class="text-primary"> Protanopia (No apto)</span></h4>
+                                                    }
+                                                    else
+                                                    {
+                                                        <h4 style="text-align:left"><b>Tensión de Visión Cromática: </b><span class="text-primary"> @consulta.Cromatica</span></h4>
+                                                    }
+
+                                                }
+                                                else if (item.Nombre == "AUDIOLOGÍA")
+                                                {
+                                                    var consulta = (from c in db.EPI_Audiologia where c.idPaciente == idPaciente orderby c.idAudiologia descending select c).FirstOrDefault();
+                                                    <h4 style="text-align:left"><b>¿Padece alguna patología?: </b><span class="text-primary"> @consulta.Patologia</span></h4>
+                                                    <h4 style="text-align:left"><b>Interpretación de las gráficas: </b><span class="text-primary"> @consulta.Grafica</span></h4>
+                                                    <h4 style="text-align:left"><b>Notra Médica: </b><span class="text-primary"> @consulta.NotaMedica</span></h4>
+                                                }
+                                                else if (item.Nombre == "LABORATORIO")
+                                                {
+                                                    var consulta = (from c in db.EPI_Laboratorio where c.idPaciente == idPaciente orderby c.idLaboratorio descending select c).FirstOrDefault();
+                                                    <h4 style="text-align:left"><b>Glucosa: </b><span class="text-primary"> @consulta.Glucosa</span></h4>
+                                                    if (consulta.HemoglobinaGlucosilada != "0")
+                                                    {
+                                                        <h4 style="text-align:left"><b>Hemoglobina Glucosilada: </b><span class="text-primary"> @consulta.HemoglobinaGlucosilada</span></h4>
+                                                    }
+
+                                                }
+                                                else if (item.Nombre == "HISTORIA CLÍNICA")
+                                                {
+                                                    var revision1 = (from r in db.EPI_A_Heredofamiliares where r.idPaciente == idPaciente orderby r.idHeredofamiliares descending select r).FirstOrDefault();
+                                                    var revision2 = (from r in db.EPI_A_NoPatologicos where r.idPaciente == idPaciente orderby r.idNoPatologicos descending select r).FirstOrDefault();
+                                                    var revision3 = (from r in db.EPI_A_Patologicos where r.idPaciente == idPaciente orderby r.idPatologicos descending select r).FirstOrDefault();
+                                                    var revision4 = (from r in db.EPI_AparatosSistemas where r.idPaciente == idPaciente orderby r.idAparatosSistemas descending select r).FirstOrDefault();
+                                                    var revision5 = (from r in db.EPI_ExploracionFisica where r.idPaciente == idPaciente orderby r.idExploracionFisica descending select r).FirstOrDefault();
+
+                                                    <h3 class="text-info" style="text-align:left">Antecedentes Heredofamiliares</h3>
+                                                    <h4 style="text-align:left"><b>¿Madre Vive?: </b><span class="text-primary"> @revision1.MadreVive</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Padre Vive?: </b><span class="text-primary"> @revision1.PadreVive</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Hermanos Viven?: </b><span class="text-primary"> @revision1.HermanosViven</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Alguien de su familia padece una enfermedad grave?: </b><span class="text-primary"> @revision1.FamiliaGrave</span></h4>
+                                                    <h4 style="text-align:left"><b>Diabetes Melitus: </b><span class="text-primary"> @revision1.Diabetes</span></h4>
+                                                    <h4 style="text-align:left"><b>Hipertensión Arterial: </b><span class="text-primary"> @revision1.Hipertension</span></h4>
+                                                    <h4 style="text-align:left"><b>Obesidad: </b><span class="text-primary"> @revision1.Obesidad</span></h4>
+                                                    <h4 style="text-align:left"><b>Cardiopatía Isquémica: </b><span class="text-primary"> @revision1.Cardiopatia</span></h4>
+                                                    <h4 style="text-align:left"><b>Enfermedad vascular cerebral: </b><span class="text-primary"> @revision1.VascularCerebral</span></h4>
+                                                    <h4 style="text-align:left"><b>Infarto Agudo al Miocardio: </b><span class="text-primary"> @revision1.Infarto</span></h4>
+                                                    <h4 style="text-align:left"><b>Patología de Tiroides: </b><span class="text-primary"> @revision1.Tiroides</span></h4>
+                                                    <h4 style="text-align:left"><b>Enfermedades Neoplásticas: </b><span class="text-primary"> @revision1.Neoplasticas</span></h4>
+                                                    <hr />
+                                                    <h3 class="text-info" style="text-align:left">Antecedentes Personales No Patológicos</h3>
+                                                    <h4 style="text-align:left"><b>Vacunas completas: </b><span class="text-primary"> @revision2.VacunasCompletas</span></h4>
+                                                    <h4 style="text-align:left"><b>Estado Civil: </b><span class="text-primary"> @revision2.EstadoCivil</span></h4>
+                                                    <h4 style="text-align:left"><b>Religión: </b><span class="text-primary"> @revision2.Religion</span></h4>
+                                                    <h4 style="text-align:left"><b>Escolaridad: </b><span class="text-primary"> @revision2.Escolaridad</span></h4>
+                                                    <h4 style="text-align:left"><b>Número de hijos: </b><span class="text-primary"> @revision2.Hijos</span></h4>
+                                                    <hr />
+                                                    <h3 class="text-info" style="text-align:left">Antecedentes Personales Patológicos</h3>
+                                                    <h4 style="text-align:left"><b>¿Nació con alguna enfermedad congénita?: </b><span class="text-primary"> @revision3.EnfermedadCongenita</span></h4>
+                                                    <h4 style="text-align:left"><b>Historia de Alergias: </b><span class="text-primary"> @revision3.Alergias</span></h4>
+                                                    <h4 style="text-align:left"><b>Transtornos de la memoria: </b><span class="text-primary"> @revision3.TranstornoMemoria</span></h4>
+                                                    <h4 style="text-align:left"><b>Historia de enfermedad pulmonar obstructiva crónica: </b><span class="text-primary"> @revision3.Pulmonar</span></h4>
+                                                    <h4 style="text-align:left"><b>Antecedentes Quirúrgicos: </b><span class="text-primary"> @revision3.Quirurgicos</span></h4>
+                                                    <h4 style="text-align:left"><b>Antecedentes Transfuncionales: </b><span class="text-primary"> @revision3.Transfuncionales</span></h4>
+                                                    <h4 style="text-align:left"><b>Padece Diabetes: </b><span class="text-primary"> @revision3.Diabetes</span></h4>
+                                                    <h4 style="text-align:left"><b>Antecedentes de Traumatismo: </b><span class="text-primary"> @revision3.Traumatismo</span></h4>
+                                                    <h4 style="text-align:left"><b>Padece Crisis Convulsivas: </b><span class="text-primary"> @revision3.Convulsivas</span></h4>
+                                                    <h4 style="text-align:left"><b>Antecedentes Oncológicos: </b><span class="text-primary"> @revision3.Oncologicos</span></h4>
+                                                    <h4 style="text-align:left"><b>Antecedentes de Cardiopatias: </b><span class="text-primary"> @revision3.Cardiopatias</span></h4>
+                                                    <h4 style="text-align:left"><b>Padece de Hipertensión: </b><span class="text-primary"> @revision3.Hipertension</span></h4>
+                                                    <h4 style="text-align:left"><b>Consume Bebidas Alcohólicas: </b><span class="text-primary"> @revision3.Alcoholismo</span></h4>
+                                                    <h4 style="text-align:left"><b>Fuma: </b><span class="text-primary"> @revision3.Fuma</span></h4>
+                                                    <h4 style="text-align:left"><b>Consume Drogas: </b><span class="text-primary"> @revision3.Drogas</span></h4>
+                                                    <hr />
+                                                    <h3 class="text-info" style="text-align:left">Interrogatorio por Aparatos y Sistemas</h3>
+                                                    <h4 style="text-align:left"><b>¿Tiene algún síntoma?: </b><span class="text-primary"> @revision4.Sintoma</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración en la vista?: </b><span class="text-primary"> @revision4.AlteracionVista</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Utiliza lentes?: </b><span class="text-primary"> @revision4.Lentes</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración en la audición?: </b><span class="text-primary"> @revision4.Audicion</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Utiliza aparato auditivo?: </b><span class="text-primary"> @revision4.Auditivo</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración en la nariz?: </b><span class="text-primary"> @revision4.Nariz</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración en la boca o el gusto?: </b><span class="text-primary"> @revision4.Gusto</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración cardiaca?: </b><span class="text-primary"> @revision4.Cardiaca</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración respiratoria?: </b><span class="text-primary"> @revision4.Respiratoria</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración endocrinológica?: </b><span class="text-primary"> @revision4.Endocrinologica</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración urinaria?: </b><span class="text-primary"> @revision4.Urinaria</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración en las venas?: </b><span class="text-primary"> @revision4.Venas</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración intestinal?: </b><span class="text-primary"> @revision4.Intestinal</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración de cáncer en la sangre?: </b><span class="text-primary"> @revision4.CancerSangre</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración en las articulaciones?: </b><span class="text-primary"> @revision4.Articulaciones</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración del sueño?: </b><span class="text-primary"> @revision4.Suenio</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración con apnea del sueño?: </b><span class="text-primary"> @revision4.Apnea</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración neurológica?: </b><span class="text-primary"> @revision4.Neurologica</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración en la cabeza o cuello?: </b><span class="text-primary"> @revision4.CabezaCuello</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración en el abdomen?: </b><span class="text-primary"> @revision4.Abdomen</span></h4>
+                                                    <h4 style="text-align:left"><b>¿Tiene alguna alteración en las extremidades?: </b><span class="text-primary"> @revision4.Extremidades</span></h4>
+                                                    <hr />
+                                                    <h3 class="text-info" style="text-align:left">Exploración Física</h3>
+                                                    <h4 style="text-align:left"><b>Test de Romberg: </b><span class="text-primary"> @revision5.Romberg</span></h4>
+                                                    <h4 style="text-align:left"><b>Punta Nariz: </b><span class="text-primary"> @revision5.PuntaNariz</span></h4>
+                                                    <h4 style="text-align:left"><b>Estrabismo: </b><span class="text-primary"> @revision5.Estrabismo</span></h4>
+                                                    <h4 style="text-align:left"><b>Soplo: </b><span class="text-primary"> @revision5.Soplo</span></h4>
+                                                    <h4 style="text-align:left"><b>Amputaciones: </b><span class="text-primary"> @revision5.Amputaciones</span></h4>
+                                                    <h4 style="text-align:left"><b>Prótesis: </b><span class="text-primary"> @revision5.Protesis</span></h4>
+
+                                                }
+                                                else if (item.Nombre == "ODONTOLOGÍA")
+                                                {
+                                                    var consulta = (from c in db.EPI_SignosVitales where c.idPaciente == idPaciente orderby c.idSignosVitales descending select c).FirstOrDefault();
+                                                }
+                                            }
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            @*<button class="btn btn-info" style="width:25vw; height:25vw; margin:0.5%; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer>@item.Nombre</button>*@
+                            @*<form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/"+nombreModulo)" style="display:inline-block; margin:0.5%">
+                                <input type="hidden" value="@idPaciente" name="id" />
+                                <input type="submit" class="btn btn-info" style="width:25vw; height:25vw; margin:0.5%; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer value="@item.Nombre" />
+                            </form>*@
+
+                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#examen_@nombreModulo" style="width:25vw; margin:0.5%; height:25vw; max-width: 200px; max-height:200px; white-space:normal; font-size: 75%;display:none" id=@aparecer>@item.Nombre</button>
+
+                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/ArchivoClinico/"+nombreModulo)" style="display:inline-block">
+                                <div class="modal fade" id="examen_@nombreModulo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document" @*style="width:60%; min-width:300px"*@>
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title text-primary" id="exampleModalLabel"><b>Estás a punto de iniciar el examen <span class="text-danger">@nombreModulo</span> de:</b></h4>
+                                            </div>
+                                            <div class="modal-body" id="">
+                                                @{
+                                                    var paciente = (from p in db.Paciente where p.idPaciente == idPaciente orderby p.idPaciente descending select p).FirstOrDefault();
+                                                    var cita = (from p in db.Cita where p.idPaciente == idPaciente orderby p.idCita descending select p).FirstOrDefault();
+
+                                                    <h4 style="text-align:left">Nombre: <span class="text-primary">@paciente.Nombre</span></h4>
+                                                    <h4 style="text-align:left">No. de Expediente: <span class="text-primary">@cita.NoExpediente</span></h4>
+                                                    <h4 style="text-align:left">CURP: <span class="text-primary">@paciente.CURP</span></h4>
+                                                    <h4 style="text-align:left">Folio: <span class="text-primary">@paciente.Folio</span></h4>
+                                                    <h4 style="text-align:left">Tipo de Licencia: <span class="text-primary">@cita.TipoLicencia</span></h4>
+                                                    <h4 style="text-align:left">Tipo de Trámite: <span class="text-primary">@cita.TipoTramite</span></h4>
+                                                    <input type="hidden" name="id" value=@idPaciente />
+                                                }
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                <input type="submit" name="accion" class="btn btn-success" value="Confirmar" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                        }
+                    }
+                }
+
+                contador++;
+            }
+        }
+        <br />
+        <br />
+        <div class="enlaceSinBoton">
+            <h4>@Html.ActionLink("<< Volver a Inicio", "Recepcion")</h4>
+        </div>
+    </center>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#aparicion1').fadeIn(700);
+        $('#aparicion2').fadeIn(700);
+        $('#aparicion3').fadeIn(700);
+        $('#aparicion4').fadeIn(700);
+        $('#aparicion5').fadeIn(700);
+        $('#aparicion6').fadeIn(700);
+        $('#aparicion7').fadeIn(700);
+        $('#aparicion8').fadeIn(700);
+        $('#aparicion9').fadeIn(700);
+    });
+</script>
+
+
+
