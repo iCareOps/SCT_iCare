@@ -141,7 +141,7 @@
 <h2 style="color: white">Conciliación</h2>
 <br />
 
-<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Index")">
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Conciliados")">
     <div>
 
         <select name="sucursal" style="font-size: 1.5vh; width: 120px" class="form-control">
@@ -308,7 +308,7 @@
         var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
         return dl ?
             XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
-            XLSX.writeFile(wb, fn || ('@nombreExcel' + ' @Convert.ToDateTime(fechaInicio).ToString("dd-MM-yy").' + (type || 'xlsx')));
+            XLSX.writeFile(wb, fn || ('@nombreExcel' + ' del @Convert.ToDateTime(fechaInicio).ToString("dd-MM-yy")' + ' al @Convert.ToDateTime(fechaFinal).AddDays(-1).ToString("dd-MM-yy").' + (type || 'xlsx')));
     }
 
 </script>

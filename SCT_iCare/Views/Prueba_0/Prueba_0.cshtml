@@ -1,0 +1,48 @@
+﻿
+@{
+    ViewBag.Title = "Prueba_0";
+
+    GMIEntities db = new GMIEntities();
+
+    var pilinPolin = db.Referido.OrderBy(o => o.idReferido);
+
+}
+
+
+<br>
+<br>
+
+@{ 
+    var sv = (from r in pilinPolin where r.idReferido == 1 select r).FirstOrDefault();
+}
+
+<h3 style="color:white"> @sv.Nombre </h3>
+
+<table class="table tablas" style="color: #2F2D6B">
+
+    <tr>
+
+        <th style="text-align:center">idReferido</th>
+        <th>Nombre</th>
+        <th>Tipo</th>
+        <th>Precio Normal</th>
+        <th>Precio Normal con IVA</th>
+    </tr>
+
+    @{ foreach (var n in pilinPolin)
+        {
+
+        <tr style="background-color:darkgrey">
+
+            <td style="text-align:center">@n.idReferido</td>
+            <td>@n.Nombre</td>
+            <td>@n.Tipo</td>
+            <td>@n.PrecioNormal</td>
+            <td>@n.PrecioNormalconIVA</td>
+        </tr>
+        }
+
+
+    }
+
+</table>
