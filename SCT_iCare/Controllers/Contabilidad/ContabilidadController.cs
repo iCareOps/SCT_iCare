@@ -202,18 +202,21 @@ namespace SCT_iCare.Controllers.Contabilidad
             return RedirectToAction("Index", new { fechaInicio = fechaInicio, fechaFinal = fechaFinal, sucursal = sucursal, cuenta = cuenta2, canal = canal, referido = idGestor });
         }
 
-        public ActionResult AbrirTicket(int? id)
-        {
-            if (id != null)
-            {
-                TempData["ID"] = id;
-                return RedirectToAction("Index");
+        public ActionResult AbrirTicket(int? idTicket, string cuenta, string canal, string sucursal, string tiporeferido, string pago,
+            DateTime? fechaInicio, DateTime? fechaFinal)
+        {                                          
+            if (idTicket != null)
+            {                
+                TempData["ID"] = idTicket;
+                return RedirectToAction("Index", new { fechaInicio = fechaInicio, fechaFinal = fechaFinal, sucursal = sucursal, cuenta = cuenta, canal = canal, referido = referido });
             }
             else
             {
                 TempData["ID"] = null;
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { fechaInicio = fechaInicio, fechaFinal = fechaFinal, sucursal = sucursal, cuenta = cuenta, canal = canal, referido = referido });
             }
+
+
         }
 
         public ActionResult AbrirTicket2(int id)
