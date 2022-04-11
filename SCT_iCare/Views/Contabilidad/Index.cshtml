@@ -224,6 +224,7 @@
             <option value="BanCoppel LC">BanCoppel LC</option>
             <option value="Banco Azteca TLS">Banco Azteca TLS</option>
             <option value="Banco Azteca LC">Banco Azteca LC</option>
+            <option value="Banorte">Banorte</option>
             <option value="Cuenta Externa">Cuenta Externa</option>
             <option value="Pendiente de Pago">Pendiente de Pago</option>
             <option value="">TODOS</option>
@@ -587,12 +588,50 @@
                                                     <label for="recipient-name" class="col-form-label">Doctor:</label>
                                                     <b>@item.A.M.Doctor</b><br />
                                                     <input type="hidden" name="fechaInicio" value="@fechaInicio" />
-                                                    <input type="hidden" name="fechaFinal" value="@SetFechaFinal" />
+
+                                                    @{
+
+                                                        if (ViewBag.fechafinal != null)
+                                                        {
+
+                                                            <input type="hidden" name="fechaFinal" value="@SetFechaFinal" />
+
+                                                        }
+
+                                                        else
+                                                        {
+
+                                                            <input type="hidden" name="fechaFinal" value="@fechaInicio" />
+
+
+                                                        }
+
+                                                    }
                                                     <input type="hidden" name="cuenta" value="@cuenta" />
                                                     <input type="hidden" name="canal" value="@canal" />
                                                     <input type="hidden" name="sucursal" value="@sucursal" />
-                                                    <input type="hidden" name="tiporeferido" value="@referido" />
-                                                    <input type="hidden" name="tipoPago" value="@pago" />
+                                                    @{
+                                                        if (ViewBag.Pago == "" || ViewBag.Pago == null)
+                                                        {
+                                                            <input type="hidden" name="pago" value="" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="hidden" name="pago" value="@pago" />
+                                                        }
+                                                    }
+
+                                                    @{
+                                                        if (idReferido == 0)
+                                                        {
+                                                            <input type="hidden" name="tiporeferido" value="" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="hidden" name="tiporeferido" value="@idReferido" />
+                                                        }
+                                                    }
+                                                    <input type="hidden" name="tipopago" value="@pago" />
 
                                                     @{
                                                         var consultaTicket = (from i in db.Tickets where i.idPaciente == item.A.M.idPaciente select i.idTicket).FirstOrDefault();

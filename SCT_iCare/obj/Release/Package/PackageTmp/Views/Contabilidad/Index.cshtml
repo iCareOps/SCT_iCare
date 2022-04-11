@@ -294,7 +294,9 @@
 
 
         <input type="submit" class="btn btn-info" value="Enviar" />
-        <a href="~/Contabilidad/Index"><button type="button" class="btn btn-success">Limpiar</button></a>
+        <a href="~/Contabilidad/Index">
+            <span type="button" class="btn btn-success">Limpiar</span>
+        </a>
 
     </div>
 
@@ -308,15 +310,18 @@
         var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
         return dl ?
             XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
-            XLSX.writeFile(wb, fn || ('@nombreExcel' + ' @Convert.ToDateTime(fechaInicio).ToString("dd-MM-yy").' + (type || 'xlsx')));
+            XLSX.writeFile(wb, fn || ('@nombreExcel' + ' del @Convert.ToDateTime(fechaInicio).ToString("dd-MM-yy")' + ' al @Convert.ToDateTime(fechaFinal).AddDays(-1).ToString("dd-MM-yy").' + (type || 'xlsx')));
     }
 
 </script>
 
 |   <div>
     <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
-    <a href="~/Contabilidad/Conciliados"><button class="btn btn-info">Ir a Conciliados</button></a>
+    <a href="~/Contabilidad/Conciliados">
+        <span class="btn btn-info">Ir a Conciliados</span>
+    </a>
 </div>
+
 
 <br />
 <div class="tablaScroll" style="min-height: 1000px">
@@ -486,14 +491,16 @@
                                     </button>
 
                                     <div class="dropdown-menu" style="padding:10px">
-                                        @{
-                                            var consultaTicket = (from i in db.Tickets where i.idPaciente == item.A.M.idPaciente select i.idTicket).FirstOrDefault();
+                                        @*@{
+                                                var consultaTicket = (from i in db.Tickets where i.idPaciente == item.A.M.idPaciente select i.idTicket).FirstOrDefault();
 
-                                            if (consultaTicket != 0)
-                                            {
-                                                <b>@Html.ActionLink("Ticket de Pago", "AbrirTicket", new { id = consultaTicket }, new { style = "color: crimson; text-decoration: none" })</b>
-                                            }
-                                        }
+                                                if (consultaTicket != 0)
+                                                {
+                                                    <b>@Html.ActionLink("Ticket de Pago", "AbrirTicket", new { id = consultaTicket }, new { style = "color: crimson; text-decoration: none" })</b>
+                                                }
+                                            }*@
+                                        <a href="#" data-toggle="modal" data-target="#Prueba_@item.A.M.idCita"><b style="color:red">Abrir Ticket</b></a>
+                                        <div class="dropdown-divider"></div>
                                         <a href="#" data-toggle="modal" data-target="#Efectivo_@item.A.M.idCita"><b>Bancos</b></a>
                                         <div class="dropdown-divider"></div>
                                         <a href="#" data-toggle="modal" data-target="#Conekta_@item.A.M.idCita"><b>Conekta</b></a>
@@ -503,20 +510,21 @@
                                         <a href="#" data-toggle="modal" data-target="#CXC_@item.A.M.idCita"><b>CuentasXCobrar</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#Corporativo_@item.A.M.idCita"><b>Corporativo</b></a>
-                    <div class="dropdown-divider"></div>*@
+                                            <div class="dropdown-divider"></div>*@
                                         <a href="#" data-toggle="modal" data-target="#Aclaracion_@item.A.M.idCita"><b>Aclaracion</b></a>
                                         <div class="dropdown-divider"></div>
                                         <a href="#" data-toggle="modal" data-target="#Devoluciones_@item.A.M.idCita"><b>Devoluciones</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#CONCILIADO_@item.A.M.idPaciente"><b>CONCILIADO</b></a>
-                    <div class="dropdown-divider"></div>*@
-
+                                            <div class="dropdown-divider"></div>*@
                                     </div>
                                 }
+
                                 else if (item.A.M.Conciliado != null)
                                 {
                                     <b style="font-size:x-small">CONCILIADO </b><span class="glyphicon glyphicon-ok" style="font-size:x-small"></span>
                                 }
+
                                 else
                                 {
                                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -524,14 +532,16 @@
                                     </button>
 
                                     <div class="dropdown-menu" style="padding:10px">
-                                        @{
-                                            var consultaTicket = (from i in db.Tickets where i.idPaciente == item.A.M.idPaciente select i.idTicket).FirstOrDefault();
+                                        @*@{
+                                                var consultaTicket = (from i in db.Tickets where i.idPaciente == item.A.M.idPaciente select i.idTicket).FirstOrDefault();
 
-                                            if (consultaTicket != 0)
-                                            {
-                                                <b>@Html.ActionLink("Ticket de Pago", "AbrirTicket", new { id = consultaTicket }, new { style = "color: crimson; text-decoration: none" })</b>
-                                            }
-                                        }
+                                                if (consultaTicket != 0)
+                                                {
+                                                    <b>@Html.ActionLink("Ticket de Pago", "AbrirTicket", new { id = consultaTicket }, new { style = "color: crimson; text-decoration: none" })</b>
+                                                }
+                                            }*@
+                                        <a href="#" data-toggle="modal" data-target="#Prueba_@item.A.M.idCita"><b>Prueba</b></a>
+                                        <div class="dropdown-divider"></div>
                                         <a href="#" data-toggle="modal" data-target="#Efectivo_@item.A.M.idCita"><b>Bancos</b></a>
                                         <div class="dropdown-divider"></div>
                                         <a href="#" data-toggle="modal" data-target="#Conekta_@item.A.M.idCita"><b>Conekta</b></a>
@@ -541,17 +551,67 @@
                                         <a href="#" data-toggle="modal" data-target="#CXC_@item.A.M.idCita"><b>CuentasXCobrar</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#Corporativo_@item.A.M.idCita"><b>Corporativo</b></a>
-                    <div class="dropdown-divider"></div>*@
+                                            <div class="dropdown-divider"></div>*@
                                         <a href="#" data-toggle="modal" data-target="#Aclaracion_@item.A.M.idCita"><b>Aclaracion</b></a>
                                         <div class="dropdown-divider"></div>
                                         <a href="#" data-toggle="modal" data-target="#Devoluciones_@item.A.M.idCita"><b>Devoluciones</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#CONCILIADO_@item.A.M.idPaciente"><b>CONCILIADO</b></a>
-                    <div class="dropdown-divider"></div>*@
+                                            <div class="dropdown-divider"></div>*@
 
                                     </div>
                                 }
                             }
+
+                            <!-- Ticket de Pago -->
+                            <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/AbrirTicket")">
+                                @Html.AntiForgeryToken()
+                                <div class="modal fade" id="Prueba_@item.A.M.idCita" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="exampleModalLabel"><b>Informacion del Paciente</b></h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group" style="width:60%; min-width:320px">
+                                                    <label for="recipient-name" class="col-form-label">Nombre:</label>
+                                                    <b>@item.A.N.Nombre</b><br />
+                                                    <label for="recipient-name" class="col-form-label">CURP:</label>
+                                                    <b>@item.A.N.CURP</b><br />
+                                                    <label for="recipient-name" class="col-form-label">NoExpediente:</label>
+                                                    <b>@item.A.M.NoExpediente</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha:</label>
+                                                    <b>@Convert.ToDateTime(item.A.M.FechaReferencia).ToString("dd-MMMM-yyyy")</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                                                    <b>@item.A.M.Sucursal</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Doctor:</label>
+                                                    <b>@item.A.M.Doctor</b><br />
+                                                    <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                    <input type="hidden" name="fechaFinal" value="@SetFechaFinal" />
+                                                    <input type="hidden" name="cuenta" value="@cuenta" />
+                                                    <input type="hidden" name="canal" value="@canal" />
+                                                    <input type="hidden" name="sucursal" value="@sucursal" />
+                                                    <input type="hidden" name="tiporeferido" value="@referido" />
+                                                    <input type="hidden" name="tipoPago" value="@pago" />
+
+                                                    @{
+                                                        var consultaTicket = (from i in db.Tickets where i.idPaciente == item.A.M.idPaciente select i.idTicket).FirstOrDefault();
+
+                                                        if (consultaTicket != 0)
+                                                        {
+                                                            <input type="hidden" name="idTicket" value="@consultaTicket" />
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                <input type="submit" value="Abrir Ticket" class="btn " style="background-color:red; color:aliceblue" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
 
                             <!-- Efectivo -->
                             <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuenta")">
@@ -809,64 +869,64 @@
 
                             <!-- Efectivo -->
                             @*<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuenta")">
-            @Html.AntiForgeryToken()
-            <div class="modal fade" id="Corporativo_@item.A.M.idCita" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title" id="exampleModalLabel"><b>¿Está seguro de mandar los datos de esta venta a CORPORATIVO?</b></h4>
-                        </div>
-                        <div class="modal-body">
-                            <input type="hidden" name="id" value="@item.A.M.idCita" />
-                            <input type="hidden" name="cuenta" value="CORPORATIVO" />
-                            <div class="form-group" style="width:60%; min-width:320px">
-                                <label for="recipient-name" class="col-form-label">Nombre:</label>
-                                <b>@item.A.N.Nombre</b><br />
-                                <label for="recipient-name" class="col-form-label">CURP:</label>
-                                <b>@item.A.N.CURP</b><br />
-                                <label for="recipient-name" class="col-form-label">NoExpediente:</label>
-                                <b>@item.A.M.NoExpediente</b><br />
-                                <label for="recipient-name" class="col-form-label">Fecha:</label>
-                                <b>@Convert.ToDateTime(item.A.M.FechaReferencia).ToString("dd-MMMM-yyyy")</b><br />
-                                <label for="recipient-name" class="col-form-label">Sucursal:</label>
-                                <b>@item.A.M.Sucursal</b><br />
-                                <label for="recipient-name" class="col-form-label">Doctor:</label>
-                                <b>@item.A.M.Doctor</b><br />
-                                <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
-                                <select required name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                    <option selected disabled>Seleccionar</option>
-                                    <option value="Referencia OXXO">Referencia OXXO</option>
-                                    <option value="Referencía BanBajío">Referencía BanBajío</option>
-                                    <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
-                                    <option value="Banorte">Banorte</option>
-                                    <option value="BanCoppel TLS">BanCoppel TLS</option>
-                                    <option value="BanCoppel LC">BanCoppel LC</option>
-                                    <option value="Banco Azteca TLS">Banco Azteca TLS</option>
-                                    <option value="Banco Azteca LC">Banco Azteca LC</option>
-                                    <option value="Cuenta Externa">Cuenta Externa</option>
-                                    <option value="Pendiente de Pago">Pendiente de Pago</option>
-                                </select>
-                                <br />
-                                <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
-                                <input type="date" class="form-control" name="fechaContable" />
-                                <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
-                                <input type="text" class="form-control" name="comentario" />
-                                <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                <input type="hidden" name="fechaInicio" value="@fechaInicio" />
-                                <input type="hidden" name="fechaFinal" value="@fechaFinal" />
-                                <input type="hidden" name="cuenta2" value="@cuenta" />
-                                <input type="hidden" name="canal" value="@canal" />
-                                <input type="hidden" name="sucursal" value="@sucursal" />
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <input type="submit" value="Guardar" class="btn btn-primary" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>*@
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal fade" id="Corporativo_@item.A.M.idCita" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Está seguro de mandar los datos de esta venta a CORPORATIVO?</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="id" value="@item.A.M.idCita" />
+                                                    <input type="hidden" name="cuenta" value="CORPORATIVO" />
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="col-form-label">Nombre:</label>
+                                                        <b>@item.A.N.Nombre</b><br />
+                                                        <label for="recipient-name" class="col-form-label">CURP:</label>
+                                                        <b>@item.A.N.CURP</b><br />
+                                                        <label for="recipient-name" class="col-form-label">NoExpediente:</label>
+                                                        <b>@item.A.M.NoExpediente</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Fecha:</label>
+                                                        <b>@Convert.ToDateTime(item.A.M.FechaReferencia).ToString("dd-MMMM-yyyy")</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                                                        <b>@item.A.M.Sucursal</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Doctor:</label>
+                                                        <b>@item.A.M.Doctor</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                                        <select required name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                            <option selected disabled>Seleccionar</option>
+                                                            <option value="Referencia OXXO">Referencia OXXO</option>
+                                                            <option value="Referencía BanBajío">Referencía BanBajío</option>
+                                                            <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                                                            <option value="Banorte">Banorte</option>
+                                                            <option value="BanCoppel TLS">BanCoppel TLS</option>
+                                                            <option value="BanCoppel LC">BanCoppel LC</option>
+                                                            <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                            <option value="Banco Azteca LC">Banco Azteca LC</option>
+                                                            <option value="Cuenta Externa">Cuenta Externa</option>
+                                                            <option value="Pendiente de Pago">Pendiente de Pago</option>
+                                                        </select>
+                                                        <br />
+                                                        <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
+                                                        <input type="date" class="form-control" name="fechaContable" />
+                                                        <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
+                                                        <input type="text" class="form-control" name="comentario" />
+                                                        <input type="hidden" name="usuario" value="@oUser.Nombre" />
+                                                        <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                        <input type="hidden" name="fechaFinal" value="@fechaFinal" />
+                                                        <input type="hidden" name="cuenta2" value="@cuenta" />
+                                                        <input type="hidden" name="canal" value="@canal" />
+                                                        <input type="hidden" name="sucursal" value="@sucursal" />
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>*@
 
                             <!-- Efectivo -->
                             <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuenta")">
@@ -991,47 +1051,47 @@
                             </form>
 
                             @*<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuenta")">
-            @Html.AntiForgeryToken()
-            <div class="modal fade" id="CONCILIADO_@item.A.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title" id="exampleModalLabel"><b>¿Ha conciliado este pago?</b></h4>
-                        </div>
-                        <div class="modal-body">
-                            <input type="hidden" name="id" value="@item.A.M.idCita" />
-                            <input type="hidden" name="cuenta" value="CONCILIADO" />
-                            <div class="form-group" style="width:60%; min-width:320px">
-                                <label for="recipient-name" class="col-form-label">Nombre:</label>
-                                <b>@item.A.N.Nombre</b><br />
-                                <label for="recipient-name" class="col-form-label">CURP:</label>
-                                <b>@item.A.N.CURP</b><br />
-                                <label for="recipient-name" class="col-form-label">NoExpediente:</label>
-                                <b>@item.A.M.NoExpediente</b><br />
-                                <label for="recipient-name" class="col-form-label">Fecha:</label>
-                                <b>@Convert.ToDateTime(item.A.M.FechaReferencia).ToString("dd-MMMM-yyyy")</b><br />
-                                <label for="recipient-name" class="col-form-label">Doctor:</label>
-                                <b>@item.A.M.Doctor</b><br />
-                                <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal fade" id="CONCILIADO_@item.A.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Ha conciliado este pago?</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="id" value="@item.A.M.idCita" />
+                                                    <input type="hidden" name="cuenta" value="CONCILIADO" />
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="col-form-label">Nombre:</label>
+                                                        <b>@item.A.N.Nombre</b><br />
+                                                        <label for="recipient-name" class="col-form-label">CURP:</label>
+                                                        <b>@item.A.N.CURP</b><br />
+                                                        <label for="recipient-name" class="col-form-label">NoExpediente:</label>
+                                                        <b>@item.A.M.NoExpediente</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Fecha:</label>
+                                                        <b>@Convert.ToDateTime(item.A.M.FechaReferencia).ToString("dd-MMMM-yyyy")</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Doctor:</label>
+                                                        <b>@item.A.M.Doctor</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
 
-                                <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
-                                <input type="text" class="form-control" name="comentario" />
-                                <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                <input type="hidden" name="fechaInicio" value="@fechaInicio" />
-                                <input type="hidden" name="fechaFinal" value="@fechaFinal" />
-                                <input type="hidden" name="cuenta2" value="@cuenta" />
-                                <input type="hidden" name="canal" value="@canal" />
-                                <input type="hidden" name="sucursal" value="@sucursal" />
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <input type="submit" value="Guardar" class="btn btn-primary" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>*@
+                                                        <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
+                                                        <input type="text" class="form-control" name="comentario" />
+                                                        <input type="hidden" name="usuario" value="@oUser.Nombre" />
+                                                        <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                        <input type="hidden" name="fechaFinal" value="@fechaFinal" />
+                                                        <input type="hidden" name="cuenta2" value="@cuenta" />
+                                                        <input type="hidden" name="canal" value="@canal" />
+                                                        <input type="hidden" name="sucursal" value="@sucursal" />
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>*@
 
                         </div>
 
@@ -1071,7 +1131,7 @@
                                         }
                                     </span>
                                 </span>
-                                            }
+                            }
                         }
                     </td>
 
@@ -1161,13 +1221,13 @@
                                         <a href="#" data-toggle="modal" data-target="#CXC_@item.idPacienteESP"><b>CuentasXCobrar</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#Corporativo_@item.A.M.idCita"><b>Corporativo</b></a>
-                    <div class="dropdown-divider"></div>*@
+                                            <div class="dropdown-divider"></div>*@
                                         <a href="#" data-toggle="modal" data-target="#Aclaracion_@item.idPacienteESP"><b>Aclaracion</b></a>
                                         <div class="dropdown-divider"></div>
                                         <a href="#" data-toggle="modal" data-target="#Devoluciones_@item.idPacienteESP"><b>Devoluciones</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#CONCILIADO_@item.A.M.idPaciente"><b>CONCILIADO</b></a>
-                    <div class="dropdown-divider"></div>*@
+                                            <div class="dropdown-divider"></div>*@
 
                                     </div>
                                 }
@@ -1191,13 +1251,13 @@
                                         <a href="#" data-toggle="modal" data-target="#CXC_@item.idPacienteESP"><b>CuentasXCobrar</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#Corporativo_@item.A.M.idCita"><b>Corporativo</b></a>
-                    <div class="dropdown-divider"></div>*@
+                                            <div class="dropdown-divider"></div>*@
                                         <a href="#" data-toggle="modal" data-target="#Aclaracion_@item.idPacienteESP"><b>Aclaracion</b></a>
                                         <div class="dropdown-divider"></div>
                                         <a href="#" data-toggle="modal" data-target="#Devoluciones_@item.idPacienteESP"><b>Devoluciones</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#CONCILIADO_@item.A.M.idPaciente"><b>CONCILIADO</b></a>
-                    <div class="dropdown-divider"></div>*@
+                                            <div class="dropdown-divider"></div>*@
 
                                     </div>
                                 }
@@ -1443,62 +1503,62 @@
 
                             <!-- Efectivo -->
                             @*<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuentaALT")">
-            @Html.AntiForgeryToken()
-            <div class="modal fade" id="Corporativo1_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title" id="exampleModalLabel"><b>¿Está seguro de mandar los datos de esta venta a CORPORATIVO?</b></h4>
-                        </div>
-                        <div class="modal-body">
-                            <input type="hidden" name="id" value="@item.idPacienteESP" />
-                            <input type="hidden" name="cuenta" value="CORPORATIVO" />
-                            <div class="form-group" style="width:60%; min-width:320px">
-                                <label for="recipient-name" class="col-form-label">Nombre:</label>
-                                <b>@item.Nombre</b><br />
-                                <label for="recipient-name" class="col-form-label">CURP:</label>
-                                <b>@item.CURP</b><br />
-                                <label for="recipient-name" class="col-form-label">NoExpediente:</label>
-                                <b>@item.NoExpediente</b><br />
-                                <label for="recipient-name" class="col-form-label">Fecha:</label>
-                                <b>@Convert.ToDateTime(item.FechaCaptura).ToString("dd-MMMM-yyyy")</b><br />
-                                <label for="recipient-name" class="col-form-label">Doctor:</label>
-                                <b>@item.Doctor</b><br />
-                                <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
-                                <select required name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                    <option selected disabled>Seleccionar</option>
-                                    <option value="Referencia OXXO">Referencia OXXO</option>
-                                    <option value="Referencía BanBajío">Referencía BanBajío</option>
-                                    <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
-                                    <option value="Banorte">Banorte</option>
-                                    <option value="BanCoppel TLS">BanCoppel TLS</option>
-                                    <option value="BanCoppel LC">BanCoppel LC</option>
-                                    <option value="Banco Azteca TLS">Banco Azteca TLS</option>
-                                    <option value="Banco Azteca LC">Banco Azteca LC</option>
-                                    <option value="Cuenta Externa">Cuenta Externa</option>
-                                    <option value="Pendiente de Pago">Pendiente de Pago</option>
-                                </select>
-                                <br />
-                                <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
-                                <input type="date" class="form-control" name="fechaContable" />
-                                <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
-                                <input type="text" class="form-control" name="comentario" />
-                                <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                <input type="hidden" name="fechaInicio" value="@fechaInicio" />
-                                <input type="hidden" name="fechaFinal" value="@fechaFinal" />
-                                <input type="hidden" name="cuenta2" value="@cuenta" />
-                                <input type="hidden" name="canal" value="@canal" />
-                                <input type="hidden" name="sucursal" value="@sucursal" />
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <input type="submit" value="Enviar" class="btn btn-primary" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>*@
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal fade" id="Corporativo1_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Está seguro de mandar los datos de esta venta a CORPORATIVO?</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="id" value="@item.idPacienteESP" />
+                                                    <input type="hidden" name="cuenta" value="CORPORATIVO" />
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="col-form-label">Nombre:</label>
+                                                        <b>@item.Nombre</b><br />
+                                                        <label for="recipient-name" class="col-form-label">CURP:</label>
+                                                        <b>@item.CURP</b><br />
+                                                        <label for="recipient-name" class="col-form-label">NoExpediente:</label>
+                                                        <b>@item.NoExpediente</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Fecha:</label>
+                                                        <b>@Convert.ToDateTime(item.FechaCaptura).ToString("dd-MMMM-yyyy")</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Doctor:</label>
+                                                        <b>@item.Doctor</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                                        <select required name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                                            <option selected disabled>Seleccionar</option>
+                                                            <option value="Referencia OXXO">Referencia OXXO</option>
+                                                            <option value="Referencía BanBajío">Referencía BanBajío</option>
+                                                            <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                                                            <option value="Banorte">Banorte</option>
+                                                            <option value="BanCoppel TLS">BanCoppel TLS</option>
+                                                            <option value="BanCoppel LC">BanCoppel LC</option>
+                                                            <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                                            <option value="Banco Azteca LC">Banco Azteca LC</option>
+                                                            <option value="Cuenta Externa">Cuenta Externa</option>
+                                                            <option value="Pendiente de Pago">Pendiente de Pago</option>
+                                                        </select>
+                                                        <br />
+                                                        <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
+                                                        <input type="date" class="form-control" name="fechaContable" />
+                                                        <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
+                                                        <input type="text" class="form-control" name="comentario" />
+                                                        <input type="hidden" name="usuario" value="@oUser.Nombre" />
+                                                        <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                        <input type="hidden" name="fechaFinal" value="@fechaFinal" />
+                                                        <input type="hidden" name="cuenta2" value="@cuenta" />
+                                                        <input type="hidden" name="canal" value="@canal" />
+                                                        <input type="hidden" name="sucursal" value="@sucursal" />
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    <input type="submit" value="Enviar" class="btn btn-primary" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>*@
 
                             <!-- Efectivo -->
                             <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuentaALT")">
@@ -1619,47 +1679,47 @@
 
 
                             @*<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuentaALT")">
-            @Html.AntiForgeryToken()
-            <div class="modal fade" id="Devoluciones1_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title" id="exampleModalLabel"><b>¿Ha conciliado este pago?</b></h4>
-                        </div>
-                        <div class="modal-body">
-                            <input type="hidden" name="id" value="@item.idPacienteESP" />
-                            <input type="hidden" name="cuenta" value="CONCILIADO" />
-                            <div class="form-group" style="width:60%; min-width:320px">
-                                <label for="recipient-name" class="col-form-label">Nombre:</label>
-                                <b>@item.Nombre</b><br />
-                                <label for="recipient-name" class="col-form-label">CURP:</label>
-                                <b>@item.CURP</b><br />
-                                <label for="recipient-name" class="col-form-label">NoExpediente:</label>
-                                <b>@item.NoExpediente</b><br />
-                                <label for="recipient-name" class="col-form-label">Fecha:</label>
-                                <b>@Convert.ToDateTime(item.FechaCaptura).ToString("dd-MMMM-yyyy")</b><br />
-                                <label for="recipient-name" class="col-form-label">Doctor:</label>
-                                <b>@item.Doctor</b><br />
-                                <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal fade" id="Devoluciones1_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Ha conciliado este pago?</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="id" value="@item.idPacienteESP" />
+                                                    <input type="hidden" name="cuenta" value="CONCILIADO" />
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="col-form-label">Nombre:</label>
+                                                        <b>@item.Nombre</b><br />
+                                                        <label for="recipient-name" class="col-form-label">CURP:</label>
+                                                        <b>@item.CURP</b><br />
+                                                        <label for="recipient-name" class="col-form-label">NoExpediente:</label>
+                                                        <b>@item.NoExpediente</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Fecha:</label>
+                                                        <b>@Convert.ToDateTime(item.FechaCaptura).ToString("dd-MMMM-yyyy")</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Doctor:</label>
+                                                        <b>@item.Doctor</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
 
-                                <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
-                                <input type="text" class="form-control" name="comentario" />
-                                <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                <input type="hidden" name="fechaInicio" value="@fechaInicio" />
-                                <input type="hidden" name="fechaFinal" value="@fechaFinal" />
-                                <input type="hidden" name="cuenta2" value="@cuenta" />
-                                <input type="hidden" name="canal" value="@canal" />
-                                <input type="hidden" name="sucursal" value="@sucursal" />
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <input type="submit" value="Guardar" class="btn btn-primary" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>*@
+                                                        <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
+                                                        <input type="text" class="form-control" name="comentario" />
+                                                        <input type="hidden" name="usuario" value="@oUser.Nombre" />
+                                                        <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                                        <input type="hidden" name="fechaFinal" value="@fechaFinal" />
+                                                        <input type="hidden" name="cuenta2" value="@cuenta" />
+                                                        <input type="hidden" name="canal" value="@canal" />
+                                                        <input type="hidden" name="sucursal" value="@sucursal" />
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>*@
 
                         </div>
 
@@ -1913,7 +1973,7 @@
     @if (TempData["ID"] != null)
     {
         <script>
-            window.open('@Url.Action("AbrirTicket2","Contabilidad", new { id = TempData["ID"] })');
+                window.open('@Url.Action("AbrirTicket2","Contabilidad", new { id = TempData["ID"] })');
         </script>
     }
 }
