@@ -75,7 +75,7 @@ namespace SCT_iCare.Controllers.Contabilidad
 
         public ActionResult Conciliados(string canal, string cuenta, string sucursal, DateTime? fechaInicio, DateTime? fechaFinal, string tipoPago, int? referido)
         {
-            var Referido = db.Referido.Find(referido);
+             var Referido = db.Referido.Find(referido);
 
             if (sucursal == "" || sucursal == null)
             {
@@ -123,15 +123,6 @@ namespace SCT_iCare.Controllers.Contabilidad
                 ViewBag.Referido = Referido.Nombre;
                 ViewBag.idReferido = Referido.idReferido;
             }
-
-            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
-            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
-
-            return View();
-        }
-
-        public ActionResult Conciliacion(DateTime? fechaInicio, DateTime? fechaFinal)
-        {
 
             ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
             ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
@@ -214,6 +205,23 @@ namespace SCT_iCare.Controllers.Contabilidad
             {
                 TempData["ID"] = null;
                 return RedirectToAction("Index", new { fechaInicio = fechaInicio, fechaFinal = fechaFinal, sucursal = sucursal, cuenta = cuenta, canal = canal, referido = tiporeferido, tipopago = tipopago });
+            }
+
+
+        }
+        //Abrir ticket vista conciliados
+        public ActionResult AbrirTicketC(int? idTicket, string cuenta, string canal, string sucursal, string tiporeferido, string tipopago,
+        DateTime? fechaInicio, DateTime? fechaFinal)
+        {
+            if (idTicket != null)
+            {
+                TempData["ID"] = idTicket;
+                return RedirectToAction("Conciliados", new { fechaInicio = fechaInicio, fechaFinal = fechaFinal, sucursal = sucursal, cuenta = cuenta, canal = canal, referido = tiporeferido, tipopago = tipopago });
+            }
+            else
+            {
+                TempData["ID"] = null;
+                return RedirectToAction("Conciliados", new { fechaInicio = fechaInicio, fechaFinal = fechaFinal, sucursal = sucursal, cuenta = cuenta, canal = canal, referido = tiporeferido, tipopago = tipopago });
             }
 
 
