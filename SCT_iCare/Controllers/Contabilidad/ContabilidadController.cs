@@ -130,6 +130,17 @@ namespace SCT_iCare.Controllers.Contabilidad
             return View();
         }
 
+
+        ///Conciliacion
+        public ActionResult Conciliacion(DateTime? fechaInicio, DateTime? fechaFinal)
+        {
+
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
+
+            return View();
+        }
+
         public ActionResult Pagos(DateTime? fechaInicio, DateTime? fechaFinal)
         {
 
