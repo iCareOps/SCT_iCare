@@ -20,6 +20,7 @@
     }
 
     int dinero = 0;
+    int cuenta = 0;
 
     int totalFooterEPIS = 0;
     int totalFooterConekta = 0;
@@ -107,6 +108,9 @@
                     EPIs
                 </th>
                 <th style="text-align:center">
+                    CAJA
+                </th>
+                <th style="text-align:center">
                     @Html.ActionLink("Conekta", "Index", new { tipoPago = "OXXO", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
                 </th>
                 <th style="text-align:center">
@@ -144,13 +148,33 @@
                     <td style="text-align:center">
                         @{
                             int epis = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
-                                Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
-                                w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN").Count();
+                            Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                            w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN").Count();
 
                             totalFooterEPIS += epis;
                         }
-                        <span><b>@epis</b></span>
+                        <span>@Html.ActionLink(epis.ToString(), "Conciliados", new { sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+
                     </td>
+
+                    @*//Caja*@
+                    <td style="text-align:center">
+                        @{
+                            int Cuenta = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                            Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                            w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN").Count();
+
+                            int CuentaR = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                            Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                            w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" && w.N.Conciliado != null).Count();
+
+                            cuenta = Cuenta - CuentaR;
+                        }
+
+                        <span>@Html.ActionLink(cuenta.ToString(), "Index", new { sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+
+                    </td>
+
                     <td style="text-align:center">
                         @{
                             int conekta = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
@@ -161,19 +185,25 @@
                             totalFooterConekta += conekta;
                         }
                         <span>@Html.ActionLink(conekta.ToString(), "Index", new { tipoPago = "OXXO", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
-                        
+
                     </td>
                     <td style="text-align:center">
                         @{
-                            int bajio = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                            int rbajio = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
                                 Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
                                 w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
-                                (w.N.TipoPago == "Referencia BanBajío" || w.N.TipoPago == "Transferencia vía BanBajío")).Count();
+                                w.N.TipoPago == "Referencía BanBajío").Count();
 
-                            totalFooterBajio += bajio;
+                            int tbajio = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                (w.N.TipoPago == "Transferencia vía BanBajío")).Count();
+
+                            totalFooterBajio = tbajio + rbajio;
                         }
-                        <span>@Html.ActionLink(bajio.ToString(), "Index", new { tipoPago = "BanBajío", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                        <span>@Html.ActionLink(totalFooterBajio.ToString(), "Conciliados", new { tipoPago = "Transferencia vía BanBajío", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
                     </td>
+
                     <td style="text-align:center">
                         @{
                             int banorte = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
