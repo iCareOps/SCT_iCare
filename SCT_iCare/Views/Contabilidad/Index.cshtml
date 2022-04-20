@@ -17,6 +17,7 @@
     string pago = "";
     string referido = "";
     string tipoReferido = "";
+    string conciliado = null;
 
     string nombreExcel = "Conciliacion";
 
@@ -34,22 +35,62 @@
     var modelo = db.Paciente.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
         Join(db.Captura, a => a.M.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
         Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B.EstatusCaptura == "Terminado" && s.A.M.Asistencia == null
-        && s.A.M.Asistencia == null && s.A.M.TipoTramite != "REVALORACIÓN" && s.A.M.Conciliado == null).OrderBy(o => o.A.M.Cuenta);
+        && s.A.M.Asistencia == null && s.A.M.TipoTramite != "REVALORACIÓN").OrderBy(o => o.A.M.Cuenta);
 
 
     var modelo1 = db.PacienteESP.
         Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido) && s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.EstatusCaptura == "Terminado"
-        && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null && s.Conciliado == null).OrderBy(o => o.Cuenta);
+        && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null).OrderBy(o => o.Cuenta);
 
 
     var modeloExcel = db.Paciente.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
         Join(db.Captura, a => a.M.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
         Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B.EstatusCaptura == "Terminado" && s.A.M.Asistencia == null
-        && s.A.M.Asistencia == null && s.A.M.TipoTramite != "REVALORACIÓN" && s.A.M.Conciliado == null).OrderBy(o => o.A.M.Cuenta);
+        && s.A.M.Asistencia == null && s.A.M.TipoTramite != "REVALORACIÓN").OrderBy(o => o.A.M.Cuenta);
 
     var modeloExcel1 = db.PacienteESP.
         Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido) && s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.EstatusCaptura == "Terminado"
-        && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null && s.Conciliado == null).OrderBy(o => o.Cuenta);
+        && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null).OrderBy(o => o.Cuenta);
+
+    if (ViewBag.Conciliado == "CONCILIADOS")
+    {
+        conciliado = ViewBag.Conciliado;
+
+        nombreExcel += "-" + conciliado;
+
+        modelo = modelo.Where(w => w.A.M.Conciliado != null).OrderBy(o => o.A.M.Cuenta);
+        modelo1 = modelo1.Where(w => w.Conciliado != null).OrderBy(o => o.Cuenta);
+        modeloExcel = modeloExcel.Where(w => w.A.M.Conciliado != null).OrderBy(o => o.A.M.Cuenta);
+        modeloExcel1 = modeloExcel1.Where(w => w.Conciliado != null).OrderBy(o => o.Cuenta);
+
+    }
+
+    else if (ViewBag.Conciliado == "NO CONCILIADOS")
+    {
+        conciliado = ViewBag.Conciliado;
+
+        nombreExcel += "-" + conciliado;
+
+        modelo = modelo.Where(w => w.A.M.Conciliado == null).OrderBy(o => o.A.M.Cuenta);
+        modelo1 = modelo1.Where(w => w.Conciliado == null).OrderBy(o => o.Cuenta);
+        modeloExcel = modeloExcel.Where(w => w.A.M.Conciliado == null).OrderBy(o => o.A.M.Cuenta);
+        modeloExcel1 = modeloExcel1.Where(w => w.Conciliado == null).OrderBy(o => o.Cuenta);
+
+    }
+
+    else
+
+    {
+        conciliado = ViewBag.Conciliado;
+
+        nombreExcel += "-" + conciliado;
+
+        modelo = modelo.OrderBy(o => o.A.M.Cuenta);
+        modelo1 = modelo1.OrderBy(o => o.Cuenta);
+        modeloExcel = modeloExcel.OrderBy(o => o.A.M.Cuenta);
+        modeloExcel1 = modeloExcel1.OrderBy(o => o.Cuenta);
+
+    }
 
     if (ViewBag.Sucursal != "")
     {
@@ -76,7 +117,7 @@
         modeloExcel1 = modeloExcel1.Where(w => w.CanalTipo.Contains(canal)).OrderBy(o => o.Cuenta);
     }
 
-    if (ViewBag.Pago != "")
+    if (ViewBag.Pago != "" && ViewBag.Pago != "BAJIO")
     {
         pago = ViewBag.Pago;
 
@@ -86,6 +127,18 @@
         modelo1 = modelo1.Where(w => w.TipoPago.Contains(pago)).OrderBy(o => o.Cuenta);
         modeloExcel = modeloExcel.Where(w => w.A.M.TipoPago.Contains(pago)).OrderBy(o => o.A.M.Cuenta);
         modeloExcel1 = modeloExcel1.Where(w => w.TipoPago.Contains(pago)).OrderBy(o => o.Cuenta);
+    }
+
+    else if (ViewBag.Pago == "BAJIO")
+    {
+        pago = ViewBag.Pago;
+
+        nombreExcel += "-" + pago;
+
+        modelo = modelo.Where(w => (w.A.M.TipoPago == "Referencia BanBajío" || w.A.M.TipoPago == "Referencía BanBajío" || w.A.M.TipoPago == "Transferencia vía BanBajío")).OrderBy(o => o.A.M.Cuenta);
+        modelo1 = modelo1.Where(w => (w.TipoPago == "Referencia BanBajío" || w.TipoPago == "Referencía BanBajío" || w.TipoPago == "Transferencia vía BanBajío")).OrderBy(o => o.Cuenta);
+        modeloExcel = modeloExcel.Where(w => (w.A.M.TipoPago == "Referencia BanBajío" || w.A.M.TipoPago == "Referencía BanBajío" || w.A.M.TipoPago == "Transferencia vía BanBajío")).OrderBy(o => o.A.M.Cuenta);
+        modeloExcel1 = modeloExcel1.Where(w => (w.TipoPago == "Referencia BanBajío" || w.TipoPago == "Referencía BanBajío" || w.TipoPago == "Transferencia vía BanBajío")).OrderBy(o => o.Cuenta);
     }
 
     int idReferido = ViewBag.idReferido;
@@ -143,8 +196,24 @@
 
 <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Index")">
     <div>
+        <select name="Conciliadooo" style="font-size: 1.5vh; width: 125px" class="form-control">
+            @{
+                if (ViewBag.Conciliado == "" || ViewBag.Conciliado == null)
+                {
+                    <option value="">EPIS GENERAL</option>
+                }
+                else
+                {
+                    <option value="@conciliado">@conciliado</option>
+                }
+                <option value="CONCILIADOS">EPIS CONCILIADOS</option>
+                <option value="NO CONCILIADOS">EPIS NO CONCILIADOS</option>
+                <option value="">TODOS</option>
+            }
 
-        <select name="sucursal" style="font-size: 1.5vh; width: 120px" class="form-control">
+        </select>
+
+        <select name="sucursal" style="font-size: 1.5vh; width: 110px" class="form-control">
             @{
                 if (ViewBag.Sucursal == "")
                 {
@@ -165,7 +234,7 @@
             <option value="">TODOS</option>
         </select>
 
-        <select name="cuenta" style="font-size: 1.5vh; width: 110px" class="form-control">
+        <select name="cuenta" style="font-size: 1.5vh; width: 100px" class="form-control">
             @{
                 if (ViewBag.Cuenta == null || ViewBag.Cuenta == "")
                 {
@@ -186,7 +255,7 @@
             <option value="">TODOS</option>
         </select>
 
-        <select name="canal" style="font-size:1.5vh; width: 110px" class="form-control">
+        <select name="canal" style="font-size:1.5vh; width: 100px" class="form-control">
             @{
                 if (ViewBag.Canal == "")
                 {
@@ -206,7 +275,7 @@
             <option value="">TODOS</option>
         </select>
 
-        <select name="tipoPago" style="font-size: 1.5vh; width: 150px" class="form-control">
+        <select name="tipoPago" style="font-size: 1.5vh; width: 120px" class="form-control">
             @{
                 if (ViewBag.Pago == "" || ViewBag.Pago == null)
                 {
@@ -218,8 +287,7 @@
                 }
             }
             <option value="Referencia OXXO">Referencia OXXO</option>
-            <option value="Referencía BanBajío">Referencía BanBajío</option>
-            <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+            <option value="BAJIO">Bajio</option>
             <option value="BanCoppel TLS">BanCoppel TLS</option>
             <option value="BanCoppel LC">BanCoppel LC</option>
             <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -230,7 +298,7 @@
             <option value="">TODOS</option>
         </select>
 
-        <select name="referido" style="font-size: 1.5vh; width: 150px" class="form-control">
+        <select name="referido" style="font-size: 1.5vh; width: 130px" class="form-control">
             @{
                 if (ViewBag.Referido == "" || ViewBag.Referido == null)
                 {
@@ -256,7 +324,7 @@
             if (ViewBag.fechaInicio != null)
             {
 
-                <input type="date" name="fechaInicio" class="form-control" value="@SetFechaInicio" style="width: 160px;" />
+                <input type="date" name="fechaInicio" class="form-control" value="@SetFechaInicio" style="width: 140px;" />
 
             }
 
@@ -264,7 +332,7 @@
 
             {
 
-                <input type="date" name="fechaInicio" class="form-control" value="" style="width: 160px;" />
+                <input type="date" name="fechaInicio" class="form-control" value="" style="width: 140px;" />
 
             }
 
@@ -278,7 +346,7 @@
             if (ViewBag.fechaFinal != null)
             {
 
-                <input type="date" name="fechaFinal" class="form-control" value="@SetFechaFinal" style="width: 160px;" />
+                <input type="date" name="fechaFinal" class="form-control" value="@SetFechaFinal" style="width: 140px;" />
 
             }
 
@@ -286,7 +354,7 @@
 
             {
 
-                <input type="date" name="fechaFinal" class="form-control" value="" style="width: 160px;" />
+                <input type="date" name="fechaFinal" class="form-control" value="" style="width: 140px;" />
 
             }
 
@@ -321,6 +389,9 @@
     <a href="~/Contabilidad/Conciliados">
         <span class="btn btn-info">Ir a Conciliados</span>
     </a>
+    @*<a href="~/Contabilidad/Conciliacion">
+        <span class="btn btn-info">Ir a Resumen</span>
+    </a>*@
 </div>
 
 
@@ -429,7 +500,7 @@
                             {
                                 <span>Conekta</span>
                             }
-                            else if (item.A.M.TipoPago == "Referencia BanBajío" || item.A.M.TipoPago == "Transferencia vía BanBajío")
+                            else if (item.A.M.TipoPago == "Referencía BanBajío" || item.A.M.TipoPago == "Transferencia vía BanBajío" || item.A.M.TipoPago == "Referencia BanBajío")
                             {
                                 <span>BanBajío</span>
                             }
@@ -652,7 +723,7 @@
                                 </div>
                             </form>
 
-                            <!-- Bancos -->
+                            <!-- Efectivo -->
                             <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuenta")">
                                 @Html.AntiForgeryToken()
                                 <div class="modal fade" id="Efectivo_@item.A.M.idCita" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -1353,19 +1424,19 @@
                                     </button>
 
                                     <div class="dropdown-menu" style="padding:10px">
-                                        <a href="#" data-toggle="modal" data-target="#Efectivo_@item.idPacienteESP"><b>Bancos</b></a>
+                                        <a href="#" data-toggle="modal" data-target="#Efectivo1_@item.idPacienteESP"><b>Bancos</b></a>
                                         <div class="dropdown-divider"></div>
-                                        <a href="#" data-toggle="modal" data-target="#Conekta_@item.idPacienteESP"><b>Conekta</b></a>
+                                        <a href="#" data-toggle="modal" data-target="#Conekta1_@item.idPacienteESP"><b>Conekta</b></a>
                                         <div class="dropdown-divider"></div>
-                                        <a href="#" data-toggle="modal" data-target="#Anticipos_@item.idPacienteESP"><b>Anticipos</b></a>
+                                        <a href="#" data-toggle="modal" data-target="#Anticipos1_@item.idPacienteESP"><b>Anticipos</b></a>
                                         <div class="dropdown-divider"></div>
-                                        <a href="#" data-toggle="modal" data-target="#CXC_@item.idPacienteESP"><b>CuentasXCobrar</b></a>
+                                        <a href="#" data-toggle="modal" data-target="#CXC1_@item.idPacienteESP"><b>CuentasXCobrar</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#Corporativo_@item.A.M.idCita"><b>Corporativo</b></a>
                                             <div class="dropdown-divider"></div>*@
-                                        <a href="#" data-toggle="modal" data-target="#Aclaracion_@item.idPacienteESP"><b>Aclaracion</b></a>
+                                        <a href="#" data-toggle="modal" data-target="#Aclaracion1_@item.idPacienteESP"><b>Aclaracion</b></a>
                                         <div class="dropdown-divider"></div>
-                                        <a href="#" data-toggle="modal" data-target="#Devoluciones_@item.idPacienteESP"><b>Devoluciones</b></a>
+                                        <a href="#" data-toggle="modal" data-target="#Devoluciones1_@item.idPacienteESP"><b>Devoluciones</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#CONCILIADO_@item.A.M.idPaciente"><b>CONCILIADO</b></a>
                                             <div class="dropdown-divider"></div>*@
@@ -1383,19 +1454,19 @@
                                     </button>
 
                                     <div class="dropdown-menu" style="padding:10px">
-                                        <a href="#" data-toggle="modal" data-target="#Efectivo_@item.idPacienteESP"><b>Bancos</b></a>
+                                        <a href="#" data-toggle="modal" data-target="#Efectivo1_@item.idPacienteESP"><b>Bancos</b></a>
                                         <div class="dropdown-divider"></div>
-                                        <a href="#" data-toggle="modal" data-target="#Conekta_@item.idPacienteESP"><b>Conekta</b></a>
+                                        <a href="#" data-toggle="modal" data-target="#Conekta1_@item.idPacienteESP"><b>Conekta</b></a>
                                         <div class="dropdown-divider"></div>
-                                        <a href="#" data-toggle="modal" data-target="#Anticipos_@item.idPacienteESP"><b>Anticipos</b></a>
+                                        <a href="#" data-toggle="modal" data-target="#Anticipos1_@item.idPacienteESP"><b>Anticipos</b></a>
                                         <div class="dropdown-divider"></div>
-                                        <a href="#" data-toggle="modal" data-target="#CXC_@item.idPacienteESP"><b>CuentasXCobrar</b></a>
+                                        <a href="#" data-toggle="modal" data-target="#CXC1_@item.idPacienteESP"><b>CuentasXCobrar</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#Corporativo_@item.A.M.idCita"><b>Corporativo</b></a>
                                             <div class="dropdown-divider"></div>*@
-                                        <a href="#" data-toggle="modal" data-target="#Aclaracion_@item.idPacienteESP"><b>Aclaracion</b></a>
+                                        <a href="#" data-toggle="modal" data-target="#Aclaracion1_@item.idPacienteESP"><b>Aclaracion</b></a>
                                         <div class="dropdown-divider"></div>
-                                        <a href="#" data-toggle="modal" data-target="#Devoluciones_@item.idPacienteESP"><b>Devoluciones</b></a>
+                                        <a href="#" data-toggle="modal" data-target="#Devoluciones1_@item.idPacienteESP"><b>Devoluciones</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#CONCILIADO_@item.A.M.idPaciente"><b>CONCILIADO</b></a>
                                             <div class="dropdown-divider"></div>*@
@@ -1948,7 +2019,7 @@
                             {
                                 <span>Conekta</span>
                             }
-                            else if (item.A.M.TipoPago == "Referencia BanBajío" || item.A.M.TipoPago == "Transferencia vía BanBajío")
+                            else if (item.A.M.TipoPago == "Referencía BanBajío" || item.A.M.TipoPago == "Transferencia vía BanBajío" || item.A.M.TipoPago == "Referencia BanBajío")
                             {
                                 <span>BanBajío</span>
                             }
@@ -1959,7 +2030,7 @@
                         }
                     </td>
                     <td>
-                        @Convert.ToDateTime(item.A.M.FechaCita).AddDays(1).ToString("dd-MMMM-yyyy")
+                        @Convert.ToDateTime(item.A.M.FechaCita).ToString("dd-MMMM-yyyy")
                     </td>
                     <td>
                         @if (item.A.M.FechaContable == null)
@@ -1968,7 +2039,7 @@
                         }
                         else
                         {
-                            @Convert.ToDateTime(item.A.M.FechaContable).AddDays(1).ToString("dd-MM-yy")
+                            @Convert.ToDateTime(item.A.M.FechaContable).ToString("dd-MM-yy")
                         }
                     </td>
                     <td>
@@ -2044,7 +2115,7 @@
                         @item.TipoPago
                     </td>
                     <td>
-                        @Convert.ToDateTime(item.FechaCaptura).AddDays(1).ToString("dd-MMMM-yyyy")
+                        @Convert.ToDateTime(item.FechaCaptura).ToString("dd-MMMM-yyyy")
                     </td>
                     <td>
                         @if (item.FechaContable == null)
@@ -2053,7 +2124,7 @@
                         }
                         else
                         {
-                            @Convert.ToDateTime(item.FechaContable).AddDays(1).ToString("dd-MM-yy")
+                            @Convert.ToDateTime(item.FechaContable).ToString("dd-MM-yy")
                         }
                     </td>
                     <td>

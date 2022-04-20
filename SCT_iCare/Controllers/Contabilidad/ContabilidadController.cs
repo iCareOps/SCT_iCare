@@ -16,9 +16,18 @@ namespace SCT_iCare.Controllers.Contabilidad
     {
         GMIEntities db = new GMIEntities();
         // GET: Maqueta
-        public ActionResult Index(string canal, string cuenta, string sucursal, DateTime? fechaInicio, DateTime? fechaFinal, string tipoPago, int? referido)
+        public ActionResult Index(string canal, string cuenta, string sucursal, DateTime? fechaInicio, DateTime? fechaFinal, string tipoPago, int? referido, string conciliadooo)
         {
             var Referido = db.Referido.Find(referido);
+
+            if (conciliadooo == "" || conciliadooo == null)
+            {
+                ViewBag.Conciliado = "";
+            }
+            else
+            {
+                ViewBag.Conciliado = conciliadooo;
+            }
 
             if (sucursal == "" || sucursal == null)
             {
