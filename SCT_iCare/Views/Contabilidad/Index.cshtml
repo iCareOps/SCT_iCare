@@ -52,6 +52,75 @@
         Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido) && s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.EstatusCaptura == "Terminado"
         && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null).OrderBy(o => o.Cuenta);
 
+
+    //QUERY PARA BOTONES
+
+    if (ViewBag.Conciliados == true)
+    {
+        modelo = db.Paciente.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+    Join(db.Captura, a => a.M.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
+    Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B.EstatusCaptura == "Terminado" && s.A.M.Asistencia == null
+    && s.A.M.Asistencia == null && s.A.M.TipoTramite != "REVALORACIÓN" && s.A.M.Conciliado != null).OrderBy(o => o.A.M.Cuenta);
+
+
+        modelo1 = db.PacienteESP.
+           Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido) && s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.EstatusCaptura == "Terminado"
+           && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null && s.Conciliado != null).OrderBy(o => o.Cuenta);
+
+
+        modeloExcel = db.Paciente.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+           Join(db.Captura, a => a.M.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
+           Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B.EstatusCaptura == "Terminado" && s.A.M.Asistencia == null
+           && s.A.M.Asistencia == null && s.A.M.TipoTramite != "REVALORACIÓN" && s.A.M.Conciliado != null).OrderBy(o => o.A.M.Cuenta);
+
+        modeloExcel1 = db.PacienteESP.
+           Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido) && s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.EstatusCaptura == "Terminado"
+           && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null && s.Conciliado != null).OrderBy(o => o.Cuenta);
+
+    }
+    else if (ViewBag.NoConciliados == true)
+    {
+        modelo = db.Paciente.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+Join(db.Captura, a => a.M.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
+Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B.EstatusCaptura == "Terminado" && s.A.M.Asistencia == null
+&& s.A.M.Asistencia == null && s.A.M.TipoTramite != "REVALORACIÓN" && s.A.M.Conciliado == null).OrderBy(o => o.A.M.Cuenta);
+
+
+        modelo1 = db.PacienteESP.
+           Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido) && s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.EstatusCaptura == "Terminado"
+           && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null && s.Conciliado == null).OrderBy(o => o.Cuenta);
+
+
+        modeloExcel = db.Paciente.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+           Join(db.Captura, a => a.M.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
+           Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B.EstatusCaptura == "Terminado" && s.A.M.Asistencia == null
+           && s.A.M.Asistencia == null && s.A.M.TipoTramite != "REVALORACIÓN" && s.A.M.Conciliado == null).OrderBy(o => o.A.M.Cuenta);
+
+        modeloExcel1 = db.PacienteESP.
+           Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido) && s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.EstatusCaptura == "Terminado"
+           && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null && s.Conciliado == null).OrderBy(o => o.Cuenta);
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //FILTRO CONCILIADOS Y NO CONCILIADOS
+
     if (ViewBag.Conciliado == "CONCILIADOS")
     {
         conciliado = ViewBag.Conciliado;
@@ -91,6 +160,8 @@
         modeloExcel1 = modeloExcel1.OrderBy(o => o.Cuenta);
 
     }
+
+
 
     if (ViewBag.Sucursal != "")
     {
@@ -196,7 +267,7 @@
 
 <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Index")">
     <div>
-        <select name="Conciliadooo" style="font-size: 1.5vh; width: 125px" class="form-control">
+        <select name="Conciliadooo" style="font-size: 1.5vh; width: 125px" class="btn btn-info dropdown-toggle">
             @{
                 if (ViewBag.Conciliado == "" || ViewBag.Conciliado == null)
                 {
@@ -208,7 +279,7 @@
                 }
                 <option value="CONCILIADOS">EPIS CONCILIADOS</option>
                 <option value="NO CONCILIADOS">EPIS NO CONCILIADOS</option>
-                <option value="">TODOS</option>
+                <option class="dropdown-item" value="">TODOS</option>
             }
 
         </select>
@@ -384,20 +455,30 @@
 
 </script>
 
+
+
+
+
 |   <div>
     <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
-    <a href="~/Contabilidad/Conciliados">
-        <span class="btn btn-info">Ir a Conciliados</span>
-    </a>
-    @*<a href="~/Contabilidad/Conciliacion">
-        <span class="btn btn-info">Ir a Resumen</span>
-    </a>*@
+
+    @*<button style="background-color:cadetblue" class="btn btn-info dropdown-toggle" onclick="" id="IdBotonUno">General</button>*@
+    <a style="background-color:Highlight" class="btn btn-info dropdown-toggle" href="/Contabilidad/Index">General</a>
+    @*<button style="background-color:Highlight" class="btn btn-info dropdown-toggle" onclick="" id="IdBotonDos">Conciliados</button>*@
+    <a style="background-color:forestgreen" class="btn btn-info dropdown-toggle" href="/Contabilidad/Index/1">Conciliados</a>
+    @*<button style="background-color:red" class="btn btn-info dropdown-toggle" onclick="" id="IdBotonTres">No conciliados</button>*@
+    <a style="background-color:red" class="btn btn-info dropdown-toggle" href="/Contabilidad/Index/2">No conciliados</a>
+    @*<a href="~/Contabilidad/Conciliados">*@
+    <!--<span class="btn btn-info">Ir a Conciliados</span>-->
+    @*</a>*@
+
+
 </div>
 
 
 <br />
 <div class="tablaScroll" style="min-height: 1000px">
-    <table class="table  table-hover tablas" style="color: #2F2D6B">
+    <table class="table  table-hover tablas" style="color: #000000">
         <thead style="color:white">
             <tr>
                 <th></th>
@@ -469,7 +550,8 @@
                         }
                     </td>
                     <td style="font-size:smaller">
-                        @item.A.M.Sucursal
+                        @*@item.A.M.Sucursal*@
+                        <b><mark style="background; padding:5px; border-radius:7px"><span class=""></span>   @item.A.M.Sucursal </mark></b>
                     </td>
                     <td style="font-size:smaller">
                         @item.A.M.Referencia
@@ -486,6 +568,7 @@
                         @{
                             if (item.A.M.Cuenta == null)
                             {
+                                @*<b><mark style="background-color: turquoise; padding:5px; border-radius:7px">Caja</mark></b>*@
                                 <span>Caja</span>
                             }
                             else
@@ -520,11 +603,12 @@
                     <td>
                         @if (item.A.M.FechaContable == null)
                         {
-                            <span>------</span>
+                            <span><mark style="background-color: #FFFF00; padding:5px; border-radius:7px">---------</mark></span>
                         }
                         else
                         {
                             @Convert.ToDateTime(item.A.M.FechaContable).ToString("dd-MM-yy")
+                          
                         }
                     </td>
                     <td>
@@ -556,7 +640,7 @@
 
                             @{
 
-                                if (oUser.idRol == 2 || oUser.Nombre == "José Luis Mora")
+                                if (oUser.idRol == 2 || oUser.Nombre == "José Luis Mora" || oUser.Nombre == "Jessica Bustos" || oUser.Nombre == "Teresa Lozano " || oUser.Nombre == "Ramon Reyna")
                                 {
                                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>

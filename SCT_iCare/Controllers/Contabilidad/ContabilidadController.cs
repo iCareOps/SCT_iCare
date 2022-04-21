@@ -16,9 +16,9 @@ namespace SCT_iCare.Controllers.Contabilidad
     {
         GMIEntities db = new GMIEntities();
         // GET: Maqueta
-        public ActionResult Index(string canal, string cuenta, string sucursal, DateTime? fechaInicio, DateTime? fechaFinal, string tipoPago, int? referido, string conciliadooo)
-        {
-            var Referido = db.Referido.Find(referido);
+        public ActionResult Index(string canal, string cuenta, string sucursal, DateTime? fechaInicio, DateTime? fechaFinal, string tipoPago, int? referido, string conciliadooo, int? id)
+        {//id nos indica si es 1 son Conciliados y si es 2 son NoConciliados
+                var Referido = db.Referido.Find(referido);
 
             if (conciliadooo == "" || conciliadooo == null)
             {
@@ -75,6 +75,21 @@ namespace SCT_iCare.Controllers.Contabilidad
                 ViewBag.Referido = Referido.Nombre;
                 ViewBag.idReferido = Referido.idReferido;
             }
+
+            if (id != null)
+            {
+                if (id == 1)
+                {
+                    ViewBag.Conciliados = true;
+                }
+                else if (id == 2)
+                {
+                    ViewBag.NoConciliados = true;
+
+                }
+
+            }
+
 
             ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
             ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;

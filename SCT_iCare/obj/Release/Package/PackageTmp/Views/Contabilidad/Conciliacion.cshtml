@@ -159,7 +159,7 @@
 
                             totalFooterEPIS += epis;
                         }
-                        <span>@Html.ActionLink(epis.ToString(), "Conciliados", new { sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                        <span>@Html.ActionLink(epis.ToString(), "Index", new { sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
 
                     </td>
 
@@ -178,7 +178,7 @@
                             totalFooterCuenta += CuentaP;
                         }
 
-                        <span>@Html.ActionLink(CuentaP.ToString(), "Index", new { sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                        <span>@Html.ActionLink(CuentaP.ToString(), "Index", new { sucursal = item.Nombre, conciliadooo = "NO CONCILIADOS", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
 
                     </td>
 
@@ -193,7 +193,7 @@
                             totalFooterBancos += Banco;
                         }
 
-                        <span>@Html.ActionLink(Banco.ToString(), "Index", new { sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                        <span>@Html.ActionLink(Banco.ToString(), "Index", new { sucursal = item.Nombre, conciliadooo = "CONCILIADOS", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
 
                     </td>
 
@@ -217,7 +217,7 @@
                             int rbajio = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
                                 Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
                                 w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
-                                w.N.TipoPago == "Referencía BanBajío").Count();
+                                (w.N.TipoPago == "Referencía BanBajío" || w.N.TipoPago == "Referencia BanBajío")).Count();
 
                             int tbajio = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
                                 Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
@@ -227,7 +227,7 @@
                             int BajioP = tbajio + rbajio;
                             totalFooterBajio += BajioP;
                         }
-                        <span>@Html.ActionLink(BajioP.ToString(), "Conciliados", new { tipoPago = "Transferencia vía BanBajío", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                        <span>@Html.ActionLink(BajioP.ToString(), "Index", new { tipoPago = "BAJIO", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
                     </td>
 
                     @*//Banorte*@
@@ -386,7 +386,7 @@
                         @{
                             int bajio = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
                                 w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
-                                w.TipoPago == "Referencía BanBajío").Count();
+                                (w.TipoPago == "Referencía BanBajío" || w.TipoPago == "Referencia BanBajío")).Count();
 
                             int bajioR = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
                                 w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
@@ -666,7 +666,7 @@
                             var bajio = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
                                             Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
                                             w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
-                                            (w.N.TipoPago == "Referencia BanBajío" || w.N.TipoPago == "Transferencia vía BanBajío"));
+                                            (w.N.TipoPago == "Referencía BanBajío" || w.N.TipoPago == "Transferencia vía BanBajío" || w.N.TipoPago == "Referencia BanBajío"));
 
                             foreach (var i in bajio)
                             {
@@ -1115,7 +1115,7 @@
 
                             var bajio = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
                                 w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
-                                (w.TipoPago == "Referencia BanBajío" || w.TipoPago == "Transferencia vía BanBajío"));
+                                (w.TipoPago == "Referencía BanBajío" || w.TipoPago == "Transferencia vía BanBajío" || w.TipoPago == "Referencia BanBajío"));
 
                             foreach (var i in bajio)
                             {
