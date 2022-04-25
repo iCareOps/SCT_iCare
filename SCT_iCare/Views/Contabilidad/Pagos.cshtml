@@ -5,7 +5,7 @@
     GMIEntities db = new GMIEntities();
     var oUser = (Usuarios)HttpContext.Current.Session["User"];
 
-    DateTime fecha1 = new DateTime(2022, 03, 01); 
+    DateTime fecha1 = new DateTime(2022, 03, 01);
     DateTime fecha2 = DateTime.Today.AddDays(1);
 
     if (ViewBag.FechaInicio != null)
@@ -17,13 +17,73 @@
     {
         fecha2 = Convert.ToDateTime(ViewBag.FechaFinal);
         fecha2 = fecha2.AddDays(1);
+
     }
+
+    DateTime fechaInicio = DateTime.Today;
+    DateTime fechaFinal = DateTime.Today.AddDays(1);
 
     int deuda = 0;
     int saldo = 0;
     int pago = 0;
+    string canal = "";
+    string referido = "";
+    string tipoReferido = "";
+
+    string nombreExcel = "Conciliacion";
+
+    if (ViewBag.FechaInicio != null)
+    {
+        fechaInicio = Convert.ToDateTime(ViewBag.FechaInicio);
+    }
+
+    if (ViewBag.FechaFinal != null)
+    {
+        fechaFinal = Convert.ToDateTime(ViewBag.FechaFinal);
+        fechaFinal = fechaFinal.AddDays(1);
+    }
+
+
+    var modelo = db.Paciente.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+        Join(db.Captura, a => a.M.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
+        Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B.EstatusCaptura == "Terminado" && s.A.M.Asistencia == null
+        && s.A.M.Asistencia == null && s.A.M.TipoTramite != "REVALORACIÓN").OrderBy(o => o.A.M.Cuenta);
+
+
+    var modelo1 = db.PacienteESP.
+        Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido) && s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.EstatusCaptura == "Terminado"
+        && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null).OrderBy(o => o.Cuenta);
+
+
+    var modeloExcel = db.Paciente.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+        Join(db.Captura, a => a.M.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
+        Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B.EstatusCaptura == "Terminado" && s.A.M.Asistencia == null
+        && s.A.M.Asistencia == null && s.A.M.TipoTramite != "REVALORACIÓN").OrderBy(o => o.A.M.Cuenta);
+
+    var modeloExcel1 = db.PacienteESP.
+        Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido) && s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.EstatusCaptura == "Terminado"
+        && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null).OrderBy(o => o.Cuenta);
+
+
+
+
+
+    if (ViewBag.Canal != "")
+    {
+        canal = ViewBag.Canal;
+
+        nombreExcel += "-" + canal;
+
+        modelo = modelo.Where(w => w.A.M.CanalTipo.Contains(canal)).OrderBy(o => o.A.M.Cuenta);
+        modelo1 = modelo1.Where(w => w.CanalTipo.Contains(canal)).OrderBy(o => o.Cuenta);
+        modeloExcel = modeloExcel.Where(w => w.A.M.CanalTipo.Contains(canal)).OrderBy(o => o.A.M.Cuenta);
+        modeloExcel1 = modeloExcel1.Where(w => w.CanalTipo.Contains(canal)).OrderBy(o => o.Cuenta);
+    }
 
 }
+
+
+
 
 <br />
 <h2 style="color: white">Pagos</h2>
@@ -31,6 +91,27 @@
 
 <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Pagos")">
     <div>
+
+        <select name="canal" style="font-size:1.5vh; width: 100px" class="form-control">
+            @{
+                if (ViewBag.Canal == "")
+                {
+                    <option value="">CANAL</option>
+                }
+                else
+                {
+                    <option value="@canal">@canal.ToUpper()</option>
+                }
+            }
+            @{
+                foreach (var item in db.Canales)
+                {
+                    <option value="@item.NombreCanal">@item.NombreCanal</option>
+                }
+            }
+            <option value="">TODOS</option>
+        </select>
+
 
         @{
 
@@ -80,7 +161,7 @@
 
         <input type="submit" class="btn btn-info" value="Enviar" />
         <a href="~/Contabilidad/Pagos">
-        <span type="button" class="btn btn-success">Limpiar</span>
+            <span type="button" class="btn btn-success">Limpiar</span>
         </a>
 
     </div>
@@ -120,10 +201,10 @@
 
             if (item.Deuda == null)
             {
-                if (deudaGestor != 0)
+                if (deudaGestor != 0 )
                 {
                     <td><span>@deudaGestor</span></td>
-                    <td><span>$@deuda.ToString("###,###,###,###")</span></td>
+                    <td ><span> $@deuda.ToString("###,###,###,###")</span></td>
                 }
                 else
                 {

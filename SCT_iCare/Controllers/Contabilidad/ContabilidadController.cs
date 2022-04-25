@@ -165,8 +165,16 @@ namespace SCT_iCare.Controllers.Contabilidad
             return View();
         }
 
-        public ActionResult Pagos(DateTime? fechaInicio, DateTime? fechaFinal)
+        public ActionResult Pagos(string canal, DateTime? fechaInicio, DateTime? fechaFinal)
         {
+            if (canal == "" || canal == null)
+            {
+                ViewBag.Canal = "";
+            }
+            else
+            {
+                ViewBag.Canal = canal;
+            }
 
             ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
             ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
