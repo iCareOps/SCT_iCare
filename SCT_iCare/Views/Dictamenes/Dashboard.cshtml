@@ -27,8 +27,8 @@
     dateToday = Convert.ToDateTime(ViewBag.Inicio);
     dateTomorrow = Convert.ToDateTime(ViewBag.Final);
 
-    var episTotal = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow);
-    int episTotalConteo = (from c in db.PacienteESP select c).Where(w => w.FechaCita >= dateToday && w.FechaCita < dateTomorrow).Count();
+    var episTotal = (from c in db.PacienteESP select c).Where(w => (w.FechaCita >= dateToday || w.FechaCaptura >= dateToday) && w.FechaCita < dateTomorrow);
+    int episTotalConteo = (from c in db.PacienteESP select c).Where(w => (w.FechaCita >= dateToday || w.FechaCaptura >= dateToday) && w.FechaCita < dateTomorrow).Count();
 
     var episHoy = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow);
     int episHoyConteo = (from c in db.PacienteESP select c).Where(w => w.FechaCaptura >= dateToday && w.FechaCaptura < dateTomorrow).Count();
@@ -186,7 +186,7 @@
                                     "</span ></span ></td > " +
                                     "<td><b>Sin Iniciar</b></td>" +
                                     "</tr>"
-                            } else {
+                            } else if (data[i].EstatusCaptura == "Terminado") {
                                 miResultado += "<tr style=\"border:1px solid gray\">" +
                                     "<td><b>" + data[i].Nombre + "</b></td>" +
                                     "<td><b>" + data[i].CURP + "</b></td>" +
@@ -194,7 +194,27 @@
                                     "<td><b>" + data[i].TipoTramite + "</b></td>" +
                                     "<td><b>" + data[i].FechaCita + "</b></td>" +
                                     "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
-                                    "<td><b>Sin Iniciar</b></td>" +
+                                    "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">" + data[i].EstatusCaptura + "</b></td>" +
+                                    "</tr>"
+                            } else if (data[i].EstatusCaptura == "Pendiente" || data[i].EstatusCaptura == null || data[i].EstatusCaptura == "Pausado") {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                    "<td><b><mark style=\"background-color: darkorange; padding: 5px; border-radius: 7px\">" + data[i].EstatusCaptura + "</b></td>" +
+                                    "</tr>"
+                            } else if (data[i].EstatusCaptura == "Cancelado") {
+                                miResultado += "<tr style=\"border:1px solid gray\">" +
+                                    "<td><b>" + data[i].Nombre + "</b></td>" +
+                                    "<td><b>" + data[i].CURP + "</b></td>" +
+                                    "<td><b>" + data[i].NoExpediente + "</b></td>" +
+                                    "<td><b>" + data[i].TipoTramite + "</b></td>" +
+                                    "<td><b>" + data[i].FechaCita + "</b></td>" +
+                                    "<td><b><mark style=\"background-color: #41F51A; padding: 5px; border-radius: 7px\">Completos</b></mark></td>" +
+                                    "<td><b><mark style=\"background-color: red; padding: 5px; border-radius: 7px\">" + data[i].EstatusCaptura + "</b></td>" +
                                     "</tr>"
                             }
 
@@ -261,7 +281,7 @@
                     foreach (var item in gestor)
                     {
                         string nombreGestor = item.ToString();
-                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow select e).Count();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && (e.FechaCita >= dateToday || e.FechaCaptura >= dateToday) && e.FechaCita < dateTomorrow && e.EstatusCaptura != "Cancelado" select e).Count();
 
                         <h4><b>@item:</b> @elemento</h4>
                     }
@@ -290,7 +310,7 @@
                     foreach (var item in gestor)
                     {
                         string nombreGestor = item.ToString();
-                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusCaptura == "Terminado" select e).Count();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && (e.FechaCita >= dateToday || e.FechaCaptura >= dateToday) && e.FechaCita < dateTomorrow && e.EstatusCaptura == "Terminado" select e).Count();
 
                         <h4><b>@item:</b> @elemento</h4>
                     }
@@ -320,7 +340,7 @@
                     foreach (var item in gestor)
                     {
                         string nombreGestor = item.ToString();
-                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusCaptura == "En Proceso" select e).Count();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && (e.FechaCita >= dateToday || e.FechaCaptura >= dateToday) && e.FechaCita < dateTomorrow && e.EstatusCaptura == "En Proceso" select e).Count();
 
                         <h4><b>@item:</b> @elemento</h4>
                     }
@@ -350,7 +370,7 @@
                     foreach (var item in gestor)
                     {
                         string nombreGestor = item.ToString();
-                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusCaptura == null select e).Count();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && (e.FechaCita >= dateToday || e.FechaCaptura >= dateToday) && e.FechaCita < dateTomorrow && e.EstatusCaptura == null select e).Count();
 
                         <h4><b>@item:</b> @elemento</h4>
                     }
@@ -379,7 +399,7 @@
                     foreach (var item in gestor2)
                     {
                         string nombreGestor = item.ToString();
-                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusCaptura == "Pausado" select e).Count();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && (e.FechaCita >= dateToday || e.FechaCaptura >= dateToday) && e.FechaCita < dateTomorrow && e.EstatusCaptura == "Pausado" select e).Count();
 
                         <h4><b>@item:</b> @elemento</h4>
                     }
@@ -501,6 +521,11 @@ else
                                 else if (item.EstatusCaptura == "Pausado")
                                 {
                                     <b><mark style="background-color: darkorange; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>
+                                    @*<b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>*@
+                                }
+                                else if (item.EstatusCaptura == "Cancelado")
+                                {
+                                    <b><mark style="background-color: red; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>
                                     @*<b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>*@
                                 }
                                 else if (item.EstatusCaptura == "Terminado")
@@ -665,6 +690,11 @@ else
                                 else if (item.EstatusCaptura == "Pausado")
                                 {
                                     <b><mark style="background-color: darkorange; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>
+                                    @*<b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>*@
+                                }
+                                else if (item.EstatusCaptura == "Cancelado")
+                                {
+                                    <b><mark style="background-color: red; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>
                                     @*<b><mark style="background-color: #41F51A; padding:5px; border-radius:7px">@item.EstatusCaptura</mark></b>*@
                                 }
                                 else if (item.EstatusCaptura == "Terminado")

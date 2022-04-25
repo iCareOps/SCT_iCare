@@ -261,7 +261,7 @@
                     foreach (var item in gestor)
                     {
                         string nombreGestor = item.ToString();
-                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow select e).Count();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && (e.FechaCita >= dateToday || e.FechaCaptura >= dateToday) && e.FechaCita < dateTomorrow select e).Count();
 
                         <h4><b>@item:</b> @elemento</h4>
                     }
@@ -290,7 +290,7 @@
                     foreach (var item in gestor)
                     {
                         string nombreGestor = item.ToString();
-                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusCaptura == "Terminado" select e).Count();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && (e.FechaCita >= dateToday || e.FechaCaptura >= dateToday) && e.FechaCita < dateTomorrow && e.EstatusCaptura == "Terminado" select e).Count();
 
                         <h4><b>@item:</b> @elemento</h4>
                     }
@@ -320,7 +320,7 @@
                     foreach (var item in gestor)
                     {
                         string nombreGestor = item.ToString();
-                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusCaptura == "En Proceso" select e).Count();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && (e.FechaCita >= dateToday || e.FechaCaptura >= dateToday) && e.FechaCita < dateTomorrow && e.EstatusCaptura == "En Proceso" select e).Count();
 
                         <h4><b>@item:</b> @elemento</h4>
                     }
@@ -350,7 +350,7 @@
                     foreach (var item in gestor)
                     {
                         string nombreGestor = item.ToString();
-                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusCaptura == null select e).Count();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && (e.FechaCita >= dateToday || e.FechaCaptura >= dateToday) && e.FechaCita < dateTomorrow && e.EstatusCaptura == null select e).Count();
 
                         <h4><b>@item:</b> @elemento</h4>
                     }
@@ -379,7 +379,7 @@
                     foreach (var item in gestor2)
                     {
                         string nombreGestor = item.ToString();
-                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && e.FechaCita >= dateToday && e.FechaCita < dateTomorrow && e.EstatusCaptura == "Pausado" select e).Count();
+                        var elemento = (from e in db.PacienteESP where e.ReferidoPor == nombreGestor && (e.FechaCita >= dateToday || e.FechaCaptura >= dateToday) && e.FechaCita < dateTomorrow && e.EstatusCaptura == "Pausado" select e).Count();
 
                         <h4><b>@item:</b> @elemento</h4>
                     }
