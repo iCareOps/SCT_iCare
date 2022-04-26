@@ -154,8 +154,16 @@ namespace SCT_iCare.Controllers.Login
                     switch (oUser.idRol)
                     {
                         case 2:
-                            ViewBag.Nombre = oUser.Nombre.ToString();
-                            return Redirect("~/Admin/TablaComparacion");
+                            if (oUser.Nombre == "Jesús Zenteno")
+                            {
+                                ViewBag.Nombre = oUser.Nombre.ToString();
+                                return Redirect("~/Admin/Index");
+                            }
+                            else
+                            {
+                                ViewBag.Nombre = oUser.Nombre.ToString();
+                                return Redirect("~/Admin/TablaComparacion");
+                            }                            
                         case 1:
                             ViewBag.Nombre = oUser.Nombre.ToString();
                             return Redirect("~/CallCenter/Index");
