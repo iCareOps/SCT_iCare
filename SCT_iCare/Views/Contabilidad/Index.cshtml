@@ -32,6 +32,8 @@
         fechaFinal = fechaFinal.AddDays(1);
     }
 
+    //Query TABLA
+
     var modelo = db.Paciente.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
         Join(db.Captura, a => a.M.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
         Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B.EstatusCaptura == "Terminado" && s.A.M.Asistencia == null
@@ -102,21 +104,6 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
 
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     //FILTRO CONCILIADOS Y NO CONCILIADOS

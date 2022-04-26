@@ -165,14 +165,48 @@ namespace SCT_iCare.Controllers.Contabilidad
             return View();
         }
 
-        public ActionResult Pagos(DateTime? fechaInicio, DateTime? fechaFinal)
+        public ActionResult Pagos(string canal, DateTime? fechaInicio, DateTime? fechaFinal, string cuenta, string tipoPago, string sucursal, int? referido, int? id)
         {
+            var Referido = db.Referido.Find(referido);
+            if (canal == "" || canal == null)
+            {
+                ViewBag.Canal = "";
+            }
+            else
+            {
+                ViewBag.Canal = canal;
+            
 
-            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
-            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
+                if (canal == "" || canal == null)
+                {
+                    ViewBag.Canal = "";
+                }
+                else
+                {
+                    ViewBag.Canal = canal;
+                }
 
+
+                if (referido == null)
+                {
+                    ViewBag.Referido = "";
+                    ViewBag.idReferido = 0;
+                }
+                else
+                {
+                    ViewBag.Referido = Referido.Nombre;
+                    ViewBag.idReferido = Referido.idReferido;
+                }
+
+
+                ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+                ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
+
+                
+            }
             return View();
         }
+
 
         public ActionResult CambiarCuenta(int? id, string cuenta, string cuenta2, string comentario, string usuario, string canal, string sucursal, 
             DateTime? fechaInicio, DateTime? fechaFinal, DateTime? fechaContable, string pago, int? idGestor)
@@ -271,11 +305,23 @@ namespace SCT_iCare.Controllers.Contabilidad
             return File(bytesBinary, "application/pdf");
         }
 
-        public ActionResult Deuda(int? id, string deuda)
+        public ActionResult Deuda(int? id, string deuda, string canal)
         {
             var gestor = db.Referido.Find(id);
 
             gestor.Deuda = deuda != null ? deuda : null;
+
+            //variables para filtro
+            if (canal == "" || canal == null)
+            {
+                ViewBag.Canal = "";
+            }
+            else
+            {
+                ViewBag.Canal = canal;
+            }
+
+
 
             if (ModelState.IsValid)
             {
@@ -286,11 +332,22 @@ namespace SCT_iCare.Controllers.Contabilidad
             return Redirect("Pagos");
         }
 
-        public ActionResult Efectivo(int? id, string efectivo, DateTime? fecha1, DateTime? fecha2)
+        public ActionResult Efectivo(int? id, string efectivo, DateTime? fecha1, DateTime? fecha2, string canal, string cuenta, string sucursal, string tipoPago, int? referido)
         {
             var gestor = db.Referido.Find(id);
 
             gestor.Efectivo = efectivo != null ? efectivo : null;
+            //variables para filtro
+            if (canal == "" || canal == null)
+            {
+                ViewBag.Canal = "";
+            }
+            else
+            {
+                ViewBag.Canal = canal;
+            }
+
+
 
             if (ModelState.IsValid)
             {
