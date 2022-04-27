@@ -6,7 +6,7 @@
     var oUser = (Usuarios)HttpContext.Current.Session["User"];
 
     DateTime fecha1 = new DateTime(2022, 03, 01);
-    DateTime fecha2 = DateTime.Today.AddDays(1);
+    DateTime fecha2 = DateTime.Today;
 
     if (ViewBag.FechaInicio != null)
     {
@@ -16,7 +16,7 @@
     if (ViewBag.FechaFinal != null)
     {
         fecha2 = Convert.ToDateTime(ViewBag.FechaFinal);
-        fecha2 = fecha2.AddDays(1);
+        fecha2 = fecha2;
 
     }
 
@@ -33,7 +33,7 @@
     string cuenta = null;
 
 
-    
+
 
     if (ViewBag.FechaInicio != null)
     {
@@ -46,7 +46,7 @@
         fechaFinal = fechaFinal.AddDays(1);
     }
 
-
+    //QUERYS TABLA REGISTROS
 
     var modelo = db.Paciente.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
           Join(db.Captura, a => a.M.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
@@ -69,9 +69,43 @@
         && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null).OrderBy(o => o.Cuenta);
 
 
+    //QUERYS FILTROS
 
-  
+    if (ViewBag.Canal != "")
+    {
+        canal = ViewBag.Canal;
+
+        modelo = modelo.Where(w => w.A.M.CanalTipo.Contains(canal)).OrderBy(o => o.A.M.Cuenta);
+        modelo1 = modelo1.Where(w => w.CanalTipo.Contains(canal)).OrderBy(o => o.Cuenta);
+        modeloExcel = modeloExcel.Where(w => w.A.M.CanalTipo.Contains(canal)).OrderBy(o => o.A.M.Cuenta);
+        modeloExcel1 = modeloExcel1.Where(w => w.CanalTipo.Contains(canal)).OrderBy(o => o.Cuenta);
+    }
+
+
+
+
+    //int idReferido = ViewBag.idReferido;
+
+    //if (ViewBag.Referido != "" && ViewBag.idReferido != 0)
+    //{
+    //    referido = ViewBag.Referido;
+
+    //    modelo = modelo.Where(w => w.A.M.ReferidoPor.Contains(referido)).OrderBy(o => o.A.M.Cuenta);
+    //    modelo1 = modelo1.Where(w => w.ReferidoPor.Contains(referido)).OrderBy(o => o.Cuenta);
+    //    modeloExcel = modeloExcel.Where(w => w.A.M.ReferidoPor.Contains(referido)).OrderBy(o => o.A.M.Cuenta);
+    //    modeloExcel1 = modeloExcel1.Where(w => w.ReferidoPor.Contains(referido)).OrderBy(o => o.Cuenta);
+
+    //    var Tipo = (from i in db.Referido where i.idReferido == idReferido select i).FirstOrDefault();
+    //    tipoReferido = Tipo.Tipo;
+
+
+
+
+    //}
 }
+
+
+
 
 
 
@@ -350,6 +384,9 @@
                     <div class="dropdown-divider"></div>
                 </div>
 
+                @*ALERT INGRESAR DEUDA*@
+
+
                 <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Deuda")">
                     @Html.AntiForgeryToken()
                     <div class="modal fade" id="Deuda_@item.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -360,6 +397,16 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="form-group" style="width:60%; min-width:320px">
+                                        <label for="recipient-name" class="col-form-label">Gestor/Canal:</label>
+                                        <b>@item.Nombre</b><br />
+                                        <label for="recipient-name" class="col-form-label">Fecha Cita:</label>
+                                        <b>@Convert.ToDateTime(fecha1).ToString("dd-MMMM-yyyy")</b><br />
+                                        <label for="recipient-name" class="col-form-label">Fecha Ingreso Pago:</label>
+                                        <b>@Convert.ToDateTime(fecha2).ToString("dd-MMMM-yyyy")</b><br />
+                                        <label for="recipient-name" class="col-form-label">Precio EPIs:</label>
+                                        <b>@item.PrecioNormal</b><br />
+                                        <label for="recipient-name" class="col-form-label"> Numero de Pagos del Gestor:</label>
+                                        <b>@pagoGestor</b><br />
                                         <label for="recipient-name" class="col-form-label">Cantidad:</label>
                                         <input type="tel" class="form-control" name="deuda" />
                                         <input type="hidden" value="@item.idReferido" class="form-control" name="id" />
@@ -374,6 +421,9 @@
                     </div>
                 </form>
 
+
+                @*ALERT INGRESAR EFECTIVO*@
+
                 <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Efectivo")">
                     @Html.AntiForgeryToken()
                     <div class="modal fade" id="Efectivo_@item.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -384,6 +434,15 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="form-group" style="width:60%; min-width:320px">
+                                        <label for="recipient-name" class="col-form-label">Gestor/Canal:</label>
+                                        <b>@item.Nombre</b><br />
+                                        <label for="recipient-name" class="col-form-label">Fecha Cita:</label>
+                                        <b>@Convert.ToDateTime(fecha1).ToString("dd-MMMM-yyyy")</b><br />
+                                      
+                                        <label for="recipient-name" class="col-form-label">Precio EPIs:</label>
+                                        <b>@item.PrecioNormal</b><br />
+                                        <label for="recipient-name" class="col-form-label"> Numero de Pagos del Gestor:</label>
+                                        <b>@pagoGestor</b><br />
                                         <label for="recipient-name" class="col-form-label">Cantidad:</label>
                                         <input type="tel" class="form-control" name="efectivo" />
                                         <input type="hidden" value="@item.idReferido" class="form-control" name="id" />

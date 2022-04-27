@@ -168,6 +168,7 @@ namespace SCT_iCare.Controllers.Contabilidad
         public ActionResult Pagos(string canal, DateTime? fechaInicio, DateTime? fechaFinal, string cuenta, string tipoPago, string sucursal, int? referido, int? id)
         {
             var Referido = db.Referido.Find(referido);
+
             if (canal == "" || canal == null)
             {
                 ViewBag.Canal = "";
