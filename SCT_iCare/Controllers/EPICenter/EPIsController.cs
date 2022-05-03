@@ -144,7 +144,7 @@ namespace SCT_iCare.Controllers.EPICenter
             }
         }
 
-        public ActionResult EditExpedienteEC(int? id, string usuario/*[Bind(Include = "idEPI,NombrePaciente,BytesArchivo,NoFolio,TipoEPI,Estatus,FechaExpediente,InicioCaptura,FinalCaptura,Doctor,Sucursal,Usuario,Dictamen")] EPI ePI*/)
+        public ActionResult EditExpedienteEC(int? id, string precioEpis, string usuario/*[Bind(Include = "idEPI,NombrePaciente,BytesArchivo,NoFolio,TipoEPI,Estatus,FechaExpediente,InicioCaptura,FinalCaptura,Doctor,Sucursal,Usuario,Dictamen")] EPI ePI*/)
         {
             Captura captura = db.Captura.Find(id);
 
@@ -157,10 +157,11 @@ namespace SCT_iCare.Controllers.EPICenter
             captura.EstatusCaptura = "En captura...";
             captura.InicioCaptura = DateTime.Now;
             captura.Capturista = usuario;
+            captura.PrecioEpi = Convert.ToString(precioEpis);
 
             var expediente = (from e in db.Expedientes where e.idPaciente == captura.idPaciente select e).FirstOrDefault();
 
-            var bytesBinary = expediente.Expediente;
+            var bytesBinary = expediente.Expediente;            
 
             if (ModelState.IsValid)
             {

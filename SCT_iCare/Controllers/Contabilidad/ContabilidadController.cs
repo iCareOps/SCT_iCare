@@ -169,6 +169,17 @@ namespace SCT_iCare.Controllers.Contabilidad
         {
             var Referido = db.Referido.Find(referido);
 
+
+            if (sucursal == "" || sucursal == null)
+            {
+                ViewBag.Sucursal = "";
+            }
+            else
+            {
+                ViewBag.Sucursal = sucursal;
+            }
+
+
             if (canal == "" || canal == null)
             {
                 ViewBag.Canal = "";
@@ -176,35 +187,45 @@ namespace SCT_iCare.Controllers.Contabilidad
             else
             {
                 ViewBag.Canal = canal;
-            
-
-                if (canal == "" || canal == null)
-                {
-                    ViewBag.Canal = "";
-                }
-                else
-                {
-                    ViewBag.Canal = canal;
-                }
-
-
-                if (referido == null)
-                {
-                    ViewBag.Referido = "";
-                    ViewBag.idReferido = 0;
-                }
-                else
-                {
-                    ViewBag.Referido = Referido.Nombre;
-                    ViewBag.idReferido = Referido.idReferido;
-                }
-
-
-                ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
-                ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
-
-                
             }
+
+
+            if (cuenta == "" || cuenta == null)
+            {
+                ViewBag.Cuenta = "";
+            }
+            else
+            {
+                ViewBag.Cuenta = cuenta;
+            }
+
+
+            if (tipoPago == "" || tipoPago == null)
+            {
+                ViewBag.Pago = "";
+            }
+            else
+            {
+                ViewBag.Pago = tipoPago;
+            }
+
+
+            if (referido == null)
+            {
+                ViewBag.Referido = "";
+                ViewBag.idReferido = 0;
+            }
+            else
+            {
+                ViewBag.Referido = Referido.Nombre;
+                ViewBag.idReferido = Referido.idReferido;
+            }
+
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
+
+
+
             return View();
         }
 
@@ -348,8 +369,6 @@ namespace SCT_iCare.Controllers.Contabilidad
                 ViewBag.Canal = canal;
             }
 
-
-
             if (ModelState.IsValid)
             {
                 db.Entry(gestor).State = EntityState.Modified;
@@ -382,6 +401,19 @@ namespace SCT_iCare.Controllers.Contabilidad
                     db.Entry(cita).State = EntityState.Modified;
                     db.SaveChanges();
                 }
+            }
+
+            return Redirect("Pagos");
+        }
+
+        public ActionResult EditarEfectivo(int? id, int efectivo, string usuario)
+        {
+            Referido referido = db.Referido.Find(id);
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(referido).State = EntityState.Modified;
+                db.SaveChanges();
             }
 
             return Redirect("Pagos");

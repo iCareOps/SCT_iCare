@@ -5,67 +5,97 @@
     GMIEntities db = new GMIEntities();
     var oUser = (Usuarios)HttpContext.Current.Session["User"];
 
-    DateTime fecha1 = new DateTime(2022, 03, 01);
-    DateTime fecha2 = DateTime.Today;
 
-    if (ViewBag.FechaInicio != null)
-    {
-        fecha1 = Convert.ToDateTime(ViewBag.FechaInicio);
-    }
+    //Fecha del mes.
 
-    if (ViewBag.FechaFinal != null)
-    {
-        fecha2 = Convert.ToDateTime(ViewBag.FechaFinal);
-        fecha2 = fecha2;
+    int inicioMes = 1;
 
-    }
+    int diaMes = DateTime.Today.Day;
+    int MES = DateTime.Today.Month;
+    int ANIO = DateTime.Today.Year;
+
+    DateTime FECHAI = new DateTime(Convert.ToInt32(ANIO), Convert.ToInt32(MES), inicioMes);
+    DateTime FECHAF = new DateTime(Convert.ToInt32(ANIO), Convert.ToInt32(MES), diaMes);
+    DateTime FECHAFS = new DateTime(Convert.ToInt32(ANIO), Convert.ToInt32(MES), diaMes);
 
     DateTime fechaInicio = DateTime.Today;
-    DateTime fechaFinal = DateTime.Today.AddDays(1);
+    DateTime fechaFinal = DateTime.Today;
 
     int deuda = 0;
+    int deudaAereos = 0;
+    int deudaTotal = 0;
+    int deuda1 = 0;
+    int deudaAereos1 = 0;
+    int deudaTotal1 = 0;
     int saldo = 0;
     int pago = 0;
+    int pagoAereos = 0;
+    int pagoTotal = 0;
+    int pago1 = 0;
+    int pagoAereos1 = 0;
+    int pagoTotal1 = 0;
     string canal = "";
     string referido = "";
     string tipoReferido = "";
-    string sucursal = "";
-    string cuenta = null;
-
-
+    string filtroMes = "";
 
 
     if (ViewBag.FechaInicio != null)
     {
         fechaInicio = Convert.ToDateTime(ViewBag.FechaInicio);
+        DateTime parset = fechaInicio.AddMonths(1).AddDays(-1);
+
+        fechaFinal = parset;
+        FECHAF = fechaFinal;
+        FECHAFS = FECHAF;
+    }
+
+    else
+    {
+
+        fechaInicio = FECHAI;
+        fechaFinal = FECHAF;
+        FECHAFS = FECHAF;
+        fechaFinal = fechaFinal.AddDays(1);
+
     }
 
     if (ViewBag.FechaFinal != null)
     {
         fechaFinal = Convert.ToDateTime(ViewBag.FechaFinal);
+        FECHAFS = fechaFinal;
         fechaFinal = fechaFinal.AddDays(1);
+    }
+
+    else
+    {
+
+        fechaFinal = FECHAF;
+        FECHAFS = FECHAF;
+        fechaFinal = fechaFinal.AddDays(1);
+
     }
 
     //QUERYS TABLA REGISTROS
 
     var modelo = db.Paciente.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
-          Join(db.Captura, a => a.M.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
-          Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B.EstatusCaptura == "Terminado" && s.A.M.Asistencia == null
-          && s.A.M.Asistencia == null && s.A.M.TipoTramite != "REVALORACIÓN").OrderBy(o => o.A.M.Cuenta);
+  Join(db.Captura, a => a.M.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
+  Where(s => s.B.EstatusCaptura == "Terminado" && s.A.M.Asistencia == null
+  && s.A.M.Asistencia == null && s.A.M.TipoTramite != "REVALORACIÓN").OrderBy(o => o.A.M.Cuenta);
 
 
     var modelo1 = db.PacienteESP.
-        Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido) && s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.EstatusCaptura == "Terminado"
+        Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido) && s.EstatusCaptura == "Terminado"
         && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null).OrderBy(o => o.Cuenta);
 
 
     var modeloExcel = db.Paciente.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
         Join(db.Captura, a => a.M.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
-        Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B.EstatusCaptura == "Terminado" && s.A.M.Asistencia == null
+        Where(s => s.B.EstatusCaptura == "Terminado" && s.A.M.Asistencia == null
         && s.A.M.Asistencia == null && s.A.M.TipoTramite != "REVALORACIÓN").OrderBy(o => o.A.M.Cuenta);
 
     var modeloExcel1 = db.PacienteESP.
-        Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido) && s.FechaCaptura >= fechaInicio && s.FechaCaptura < fechaFinal && s.EstatusCaptura == "Terminado"
+        Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido) && s.EstatusCaptura == "Terminado"
         && s.TipoTramite != "REVALORACIÓN" && s.Asistencia == null).OrderBy(o => o.Cuenta);
 
 
@@ -82,8 +112,6 @@
     }
 
 
-
-
     //int idReferido = ViewBag.idReferido;
 
     //if (ViewBag.Referido != "" && ViewBag.idReferido != 0)
@@ -97,26 +125,20 @@
 
     //    var Tipo = (from i in db.Referido where i.idReferido == idReferido select i).FirstOrDefault();
     //    tipoReferido = Tipo.Tipo;
-
-
-
-
     //}
+
 }
-
-
-
-
 
 
 <br />
 <h2 style="color: white">Control Pagos</h2>
+<h5 style="color: white">Resultados del día @fechaInicio.ToString("dd-MMMM-yyyy") al día @FECHAFS.ToString("dd-MMMM-yyyy")</h5>
 <br />
 
 <form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Pagos")">
     <div>
 
-       
+
 
         <select name="canal" style="font-size:1.5vh; width: 100px" class="form-control">
             @{
@@ -138,7 +160,7 @@
             <option value="">TODOS</option>
         </select>
 
-     
+
 
         <select name="referido" style="font-size: 1.5vh; width: 130px" class="form-control">
             @{
@@ -160,7 +182,60 @@
 
 
 
+
+
+        @*FILTROS DE FECHA POR MES*@
+
         @{
+
+            DateTime ViewBagFechaInicio = Convert.ToDateTime(ViewBag.fechaInicio);
+            var SetFechaInicio = ViewBagFechaInicio.Date.ToString("yyyy-MM");
+
+            if (ViewBag.fechaInicio != null)
+            {
+
+                <input type="month" name="fechaInicio" class="form-control" value="@SetFechaInicio" style="width: 160px;" />
+
+            }
+
+            else
+
+            {
+
+                <input type="month" name="fechaInicio" class="form-control" value="" style="width: 160px;" />
+
+            }
+
+        }
+
+        @{
+
+            DateTime ViewBagFechaFinal = Convert.ToDateTime(ViewBag.fechaFinal);
+            var SetFechaFinal = ViewBagFechaFinal.Date.ToString("yyyy-MM-dd");
+
+            if (ViewBag.fechaFinal != null)
+            {
+
+                <input type="hidden" name="fechaFinal" class="form-control" value="@SetFechaFinal" style="width: 160px;"/>
+
+            }
+
+            else
+
+            {
+
+                <input type="hidden" name="fechaFinal" class="form-control" value="" style="width: 160px;"/>
+
+            }
+
+        }
+
+
+
+
+
+        @*FILTROS DE FECHA POR DIA*@
+        @*@{
 
             DateTime ViewBagFechaInicio = Convert.ToDateTime(ViewBag.fechaInicio);
             var SetFechaInicio = ViewBagFechaInicio.Date.ToString("yyyy-MM-dd");
@@ -202,11 +277,10 @@
 
             }
 
-        }
-
-
+        }*@
 
         <input type="submit" class="btn btn-info" value="Enviar" />
+
         <a href="~/Contabilidad/Pagos">
             <span type="button" class="btn btn-success">Limpiar</span>
         </a>
@@ -224,257 +298,864 @@
             <tr>
                 <th>Gestor/Canal</th>
                 <th>EPIs Totales</th>
-                <th>Deuda</th>
-                <th>Pagos Realizados</th>
+                <th>Importe</th>
+                <th>Pago</th>
                 <th>Saldo</th>
                 <th>Estatus</th>
                 <th></th>
             </tr>
         </thead>
-        @foreach (var item in db.Referido.OrderBy(o => o.Tipo).ThenBy(o => o.Nombre))
-        {
-            int gestoresNoNullos = (from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i).Count();
 
-            if (gestoresNoNullos != 0)
-            {
-    <tr>
-        <td>
-            <b>@item.Nombre</b><span style="font-size:xx-small"> @item.Tipo</span>
-        </td>
+        @*AQUI EMPIEZA LA TABLA DE EPIS ALTERNATIVOS*@
         @{
-            int deudaGestor = (from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i).Count();
-
-            deuda = item.PrecioNormalconIVA == null ? deudaGestor * Convert.ToInt32(item.PrecioNormal) : deudaGestor * Convert.ToInt32(item.PrecioNormalconIVA);
-
-
-
-
-            if (item.Deuda == null)
+            foreach (var itemd in db.Referido.OrderBy(o => o.Orden).ThenBy(o => o.Tipo).ThenBy(o => o.Nombre))
             {
-                if (deudaGestor != 0)
+                int gestoresNoNullosAlt = (from i in modelo1 where i.CanalTipo == itemd.Tipo && i.ReferidoPor == itemd.Nombre && i.EstatusCaptura == "Terminado" && i.FechaCita >= fechaInicio && i.FechaCita < fechaFinal select i).Count();
+
+                if (gestoresNoNullosAlt != 0)
                 {
-                    <td><span>@deudaGestor</span></td>
-                    <td><span> $@deuda.ToString("###,###,###,###")</span></td>
+
+                    <tr>
+                        <td>
+                            <b>@itemd.Nombre</b><span style="font-size:xx-small"> @itemd.Tipo</span>
+                        </td>
+
+                        @{
+                            //NUMERO DE EPIS NO AEREOS DENTRO DEL RANGO DE FECHA
+                            int deudaGestor = (from i in modelo1 where i.CanalTipo == itemd.Tipo && i.ReferidoPor == itemd.Nombre && i.EstatusCaptura == "Terminado" && i.TipoLicencia != "AEREO" && i.FechaCita >= fechaInicio && i.FechaCita < fechaFinal select i).Count();
+
+                            //NUMERO DE EPIS AEREOS DENTRO DEL RANGO DE FECHA
+                            int deudaGestorAereo = (from i in modelo1 where i.CanalTipo == itemd.Tipo && i.ReferidoPor == itemd.Nombre && i.EstatusCaptura == "Terminado" && i.TipoLicencia == "AEREO" && i.FechaCita >= fechaInicio && i.FechaCita < fechaFinal select i).Count();
+
+                            //NUMERO DE EPIS TOTALES, AEREOS Y NO AEREOS DENTRO DEL RANGO DE FECHA
+                            int deudaGestorTotal = deudaGestor + deudaGestorAereo;
+
+
+                            //NUMERO DE EPIS NO AEREOS FUERA DEL RANGO DE FECHA
+                            int deudaGestor1 = (from i in modelo1 where i.CanalTipo == itemd.Tipo && i.ReferidoPor == itemd.Nombre && i.EstatusCaptura == "Terminado" && i.TipoLicencia != "AEREO" select i).Count();
+
+                            //NUMERO DE EPIS AEREOS FUERA DEL RANGO DE FECHA
+                            int deudaGestorAereo1 = (from i in modelo1 where i.CanalTipo == itemd.Tipo && i.ReferidoPor == itemd.Nombre && i.EstatusCaptura == "Terminado" && i.TipoLicencia == "AEREO" select i).Count();
+
+                            //NUMERO DE EPIS TOTALES, AEREOS Y NO AEREOS FUERA DEL RANGO DE FECHA
+                            int deudaGestorTotal1 = deudaGestor1 + deudaGestorAereo1;
+
+
+                            //DINERO DE EPIS NO AEREOS DENTRO DEL RANGO DE FECHA
+                            deuda = itemd.PrecioNormalconIVA == null || itemd.PrecioNormalconIVA == "0" ? deudaGestor * Convert.ToInt32(itemd.PrecioNormal) : deudaGestor * Convert.ToInt32(itemd.PrecioNormalconIVA);
+
+                            //DINERO DE EPIS AEREOS DENTRO DEL RANGO DE FECHA
+
+                            if (itemd.PrecioAereo == null || itemd.PrecioAereo == "0")
+                            {
+                                deudaAereos = deudaGestorAereo * 3480;
+                            }
+
+                            else
+                            {
+                                deudaAereos = deudaGestorAereo * Convert.ToInt32(itemd.PrecioAereo);
+                            }
+
+                            //DINERO DE EPIS TOTALES, AEREOS Y NO AEREOS DENTRO DEL RANGO DE FECHA
+                            deudaTotal = deuda + deudaAereos;
+
+
+                            //DINERO DE EPIS NO AEREOS FUERA DEL RANGO DE FECHA
+                            deuda1 = itemd.PrecioNormalconIVA == null || itemd.PrecioNormalconIVA == "0" ? deudaGestor1 * Convert.ToInt32(itemd.PrecioNormal) : deudaGestor1 * Convert.ToInt32(itemd.PrecioNormalconIVA);
+
+                            //DINERO DE EPIS AEREOS FUERA DEL RANGO DE FECHA
+
+                            if (itemd.PrecioAereo != null || itemd.PrecioAereo != "0")
+                            {
+                                deudaAereos1 = deudaGestorAereo1 * 3480;
+                            }
+
+                            else
+                            {
+                                deudaAereos1 = deudaGestorAereo1 * Convert.ToInt32(itemd.PrecioAereo);
+                            }
+
+                            //DINERO DE EPIS TOTALES, AEREOS Y NO AEREOS FUERA DEL RANGO DE FECHA
+                            deudaTotal1 = deuda1 + deudaAereos1;
+
+                            if (deudaGestorAereo != 0)
+                            {
+                                deudaTotal = deuda + deudaAereos;
+                                deudaTotal1 = deuda1 + deudaAereos1;
+                                <td>
+                                    <span class="field-tip">
+                                        <b>@deudaGestorTotal</b>
+                                        <span class="tip-content">
+                                            @{
+
+                                                if (deudaGestor != 0)
+                                                {
+                                                    if (itemd.PrecioNormalconIVA != "0" && itemd.PrecioNormalconIVA != null)
+                                                    {
+                                                        <span><b>No. Epis: @deudaGestor</b></span><br />
+                                                        <span>Precio de epi con IVA: $@itemd.PrecioNormalconIVA</span><br />
+                                                    }
+
+                                                    else
+                                                    {
+                                                        <span><b>No. Epis: @deudaGestor</b></span><br />
+                                                        <span>Precio de epi sin IVA: $@itemd.PrecioNormal</span><br />
+                                                    }
+
+                                                }
+
+                                            }
+                                            @{
+                                                if (deudaGestorAereo != 0)
+                                                {
+
+                                                    if (itemd.PrecioAereo == null || itemd.PrecioAereo == "0")
+                                                    {
+                                                        <span><b>No. Epis AEREOS: @deudaGestorAereo</b></span><br />
+                                                        <span>Precio de epi: $3480</span><br />
+                                                    }
+
+                                                    else
+                                                    {
+                                                        <span><b>No. Epis AEREOS: @deudaGestorAereo</b></span><br />
+                                                        <span>Precio de epi: $@itemd.PrecioAereo</span><br />
+                                                    }
+
+                                                }
+
+                                            }
+                                        </span>
+                                    </span>
+                                </td>
+                                <td><span> $@deudaTotal.ToString("###,###,###,###")</span></td>
+
+                            }
+
+                            else
+                            {
+
+                                <td>
+                                    <span class="field-tip">
+                                        <b>@deudaGestorTotal</b>
+                                        <span class="tip-content">
+                                            <span><b>No. Epis: @deudaGestor</b></span><br />
+                                            @{
+                                                if (itemd.PrecioNormalconIVA != "0" && itemd.PrecioNormalconIVA != null)
+                                                {
+                                                    <span>Precio de epi con IVA: $@itemd.PrecioNormalconIVA</span><br />
+                                                }
+
+                                                else
+                                                {
+                                                    <span>Precio de epi sin IVA: $@itemd.PrecioNormal</span><br />
+                                                }
+                                            }
+                                            @{
+                                                if (deudaGestorAereo != 0)
+                                                {
+
+                                                    if (itemd.PrecioAereo == null || itemd.PrecioAereo == "0")
+                                                    {
+                                                        <span><b>No. Epis AEREOS: @deudaGestorAereo</b></span><br />
+                                                        <span>Precio de epi: $3480</span><br />
+                                                    }
+
+                                                    else
+                                                    {
+                                                        <span><b>No. Epis AEREOS: @deudaGestorAereo</b></span><br />
+                                                        <span>Precio de epi: $@itemd.PrecioAereo</span><br />
+                                                    }
+
+                                                }
+
+                                            }
+                                        </span>
+                                    </span>
+                                </td>
+                                <td><span> $@deudaTotal.ToString("###,###,###,###")</span></td>
+
+                            }
+
+                        }
+
+                        <td>
+
+                            @{
+
+                                //NUMERO DE EPIS NO AEREOS DENTRO DEL RANGO DE FECHA
+                                int pagoGestor = (from i in modelo1 where i.CanalTipo == itemd.Tipo && i.ReferidoPor == itemd.Nombre && i.EstatusCaptura == "Terminado" && i.TipoLicencia != "AEREO" && i.Conciliado != null && (i.Cuenta == "CONEKTA" || i.Cuenta == "BANCOS") && i.FechaCita >= fechaInicio && i.FechaCita < fechaFinal select i).Count();
+
+                                //NUMERO DE EPIS AEREOS DENTRO DEL RANGO DE FECHA
+                                int pagoGestorAereo = (from i in modelo1 where i.CanalTipo == itemd.Tipo && i.ReferidoPor == itemd.Nombre && i.EstatusCaptura == "Terminado" && i.TipoLicencia == "AEREO" && i.Conciliado != null && (i.Cuenta == "CONEKTA" || i.Cuenta == "BANCOS") && i.FechaCita >= fechaInicio && i.FechaCita < fechaFinal select i).Count();
+
+                                //NUMERO DE EPIS TOTALES, AEREOS Y NO AEREOS DENTRO DEL RANGO DE FECHA
+                                int pagoGestorTotal = pagoGestor + pagoGestorAereo;
+
+
+                                //NUMERO DE EPIS NO AEREOS FUERA DEL RANGO DE FECHA
+                                int pagoGestor1 = (from i in modelo1 where i.CanalTipo == itemd.Tipo && i.ReferidoPor == itemd.Nombre && i.EstatusCaptura == "Terminado" && i.TipoLicencia != "AEREO" && i.Conciliado != null && (i.Cuenta == "CONEKTA" || i.Cuenta == "BANCOS") select i).Count();
+
+                                //NUMERO DE EPIS AEREOS FUERA DEL RANGO DE FECHA
+                                int pagoGestorrAereo1 = (from i in modelo1 where i.CanalTipo == itemd.Tipo && i.ReferidoPor == itemd.Nombre && i.EstatusCaptura == "Terminado" && i.TipoLicencia == "AEREO" && i.Conciliado != null && (i.Cuenta == "CONEKTA" || i.Cuenta == "BANCOS") select i).Count();
+
+                                //NUMERO DE EPIS TOTALES, AEREOS Y NO AEREOS FUERA DEL RANGO DE FECHA
+                                int pagoGestorTotal1 = pagoGestor1 + pagoGestorrAereo1;
+
+
+                                //DINERO DE EPIS NO AEREOS DENTRO DEL RANGO DE FECHA
+                                pago = itemd.PrecioNormalconIVA == null ? pagoGestor * Convert.ToInt32(itemd.PrecioNormal) : pagoGestor * Convert.ToInt32(itemd.PrecioNormalconIVA);
+
+                                //DINERO DE EPIS AEREOS DENTRO DEL RANGO DE FECHA
+                                pagoAereos = pagoGestorAereo * Convert.ToInt32(itemd.PrecioAereo);
+
+                                //DINERO DE EPIS TOTALES, AEREOS Y NO AEREOS DENTRO DEL RANGO DE FECHA
+                                pagoTotal = pago + pagoAereos;
+
+
+                                //DINERO DE EPIS NO AEREOS FUERA DEL RANGO DE FECHA
+                                pago1 = itemd.PrecioNormalconIVA == null ? pagoGestor1 * Convert.ToInt32(itemd.PrecioNormal) : pagoGestor1 * Convert.ToInt32(itemd.PrecioNormalconIVA);
+
+                                //DINERO DE EPIS AEREOS FUERA DEL RANGO DE FECHA
+                                pagoAereos1 = pagoGestorrAereo1 * Convert.ToInt32(itemd.PrecioAereo);
+
+                                //DINERO DE EPIS TOTALES, AEREOS Y NO AEREOS FUERA DEL RANGO DE FECHA
+                                pagoTotal1 = pago1 + pagoGestorrAereo1;
+
+
+                                if (itemd.Tipo == "MEDIOS DIGITALES" || itemd.Tipo == "CALL CENTER" || itemd.Tipo == "OTRO")
+                                {
+
+                                    pago = deudaTotal;
+                                    <span>$@pago.ToString("###,###,###,###")</span>
+
+                                }
+
+                                else
+                                {
+
+                                    if (pagoGestorTotal != 0)
+                                    {
+
+                                        <span>$@pagoTotal.ToString("###,###,###,###")</span>
+                                    }
+
+                                    else
+                                    {
+                                        <span>$</span>
+                                        <span>-----</span>
+                                    }
+
+                                }
+
+                            }
+                        </td>
+                        <td>
+
+                            @{
+                                saldo = pagoTotal - deudaTotal;
+
+                                if (itemd.Tipo == "MEDIOS DIGITALES" || itemd.Tipo == "CALL CENTER" || itemd.Tipo == "OTRO")
+                                {
+
+                                    saldo = 0;
+
+                                    <span>$@saldo.ToString("###,###,###,###")</span>
+
+                                }
+
+                                else
+                                {
+
+                                    <span>$@saldo.ToString("###,###,###,###")</span>
+
+                                }
+                            }
+
+                        </td>
+                        <td>
+
+                            @{
+                                var estatus = from i in db.PacienteESP where i.CanalTipo == itemd.Tipo && i.ReferidoPor == itemd.Nombre && i.TipoPago == "Pendiente de Pago" && i.FechaCita >= fechaInicio && i.FechaCita < fechaFinal select i;
+
+                                string texto = "";
+
+                                foreach (var i in estatus)
+                                {
+                                    if (i.FechaCita < DateTime.Today.AddDays(-30))
+                                    {
+                                        texto = "text-danger";
+                                        break;
+                                    }
+                                    else if (i.FechaCita < DateTime.Today.AddDays(-15))
+                                    {
+                                        texto = "text-warning";
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        texto = "text-success";
+                                        break;
+                                    }
+                                }
+
+                                <div style="width:2px;"></div>
+                                <span class="@texto">•</span>
+
+                            }
+
+                        </td>
+
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                </button>
+
+                                <div class="dropdown-menu" style="padding:10px">
+                                    <a href="#" data-toggle="modal" data-target="#Deuda_@itemd.idReferido"><b>Ingresar Deuda</b></a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="#" data-toggle="modal" data-target="#Efectivo_@itemd.idReferido"><b>Ingresar Pago</b></a>
+                                    <div class="dropdown-divider"></div>
+                                </div>
+
+                                @*ALERT INGRESAR DEUDA*@
+
+
+                                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Deuda")">
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal fade" id="Deuda_@itemd.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea agregar una cantidad de DEUDA a @itemd.Nombre?</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="col-form-label">Gestor/Canal:</label>
+                                                        <b>@itemd.Nombre</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Fecha Cita:</label>
+                                                        <b>@Convert.ToDateTime(fechaInicio).ToString("dd-MMMM-yyyy")</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Fecha Ingreso Pago:</label>
+                                                        <b>@Convert.ToDateTime(fechaFinal).ToString("dd-MMMM-yyyy")</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Precio EPIs:</label>
+                                                        <b>@itemd.PrecioNormal</b><br />
+                                                        <label for="recipient-name" class="col-form-label"> Numero de Pagos del Gestor:</label>
+                                                        <b>@Convert.ToInt32(pago)</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Cantidad:</label>
+                                                        <input type="tel" class="form-control" name="deuda" />
+                                                        <input type="hidden" value="@itemd.idReferido" class="form-control" name="id" />
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
+
+                                @*ALERT INGRESAR EFECTIVO*@
+
+                                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/EditarEfectivo")">
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal fade" id="Efectivo_@itemd.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea ingresar PAGO a @itemd.Nombre?</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="col-form-label">Gestor/Canal:</label>
+                                                        <b>@itemd.Nombre</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Fecha Cita:</label>
+                                                        <b>@Convert.ToDateTime(fechaInicio).ToString("dd-MMMM-yyyy")</b><br />
+
+                                                        <label for="recipient-name" class="col-form-label">Precio de EPIs:</label>
+                                                        <b>$@itemd.PrecioNormal</b><br />
+                                                        <label for="recipient-name" class="col-form-label"> Pagos del Gestor:</label>
+                                                        <b>$@pago</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Cantidad:</label>
+                                                        <input type="tel" class="form-control" name="efectivo" />
+                                                        <input type="hidden" value="@itemd.idReferido" class="form-control" name="id" />
+                                                        <input type="hidden" value="@fechaInicio" class="form-control" name="fecha1" />
+                                                        <input type="hidden" value="@fechaFinal" class="form-control" name="fecha2" />
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </td>
+
+                    </tr>
                 }
-                else
-                {
-                    <td><span>@deudaGestor</span></td>
-                    <td><span>-----</span></td>
-                }
+
             }
-            else
+        }
+
+
+        @*AQUI EMPIEZA LA PARTE DE LA TABLA DE LOS EPIS NORMALES*@
+        @{
+
+            foreach (var item in db.Referido.OrderBy(o => o.Orden).ThenBy(o => o.Tipo).ThenBy(o => o.Nombre))
             {
-                deuda = Convert.ToInt32(item.Deuda);
-                if (deudaGestor != 0)
+                int gestoresNoNullos = (from i in modelo where i.A.M.CanalTipo == item.Tipo && i.A.M.ReferidoPor == item.Nombre && i.B.EstatusCaptura == "Terminado" && i.A.M.FechaCita >= fechaInicio && i.A.M.FechaCita < fechaFinal select i).Count();
+
+                if (gestoresNoNullos != 0)
                 {
-                    <td><span>@deudaGestor</span></td>
-                    <td><span>$@Convert.ToInt32(item.Deuda).ToString("###,###,###,###")</span></td>
-                }
-                else
-                {
-                    <td><span>@deudaGestor</span></td>
-                    <td><span>-----</span></td>
-                }
-            }
+                    <tr>
+                        <td>
+                            <b>@item.Nombre</b><span style="font-size:xx-small"> @item.Tipo</span>
+                        </td>
+                        @{
+                            //NUMERO DE EPIS NO AEREOS DENTRO DEL RANGO DE FECHA
+                            int deudaGestor = (from i in modelo where i.A.M.CanalTipo == item.Tipo && i.A.M.ReferidoPor == item.Nombre && i.B.EstatusCaptura == "Terminado" && i.A.M.TipoLicencia != "AEREO" && i.A.M.FechaCita >= fechaInicio && i.A.M.FechaCita < fechaFinal select i).Count();
+
+                            //NUMERO DE EPIS AEREOS DENTRO DEL RANGO DE FECHA
+                            int deudaGestorAereo = (from i in modelo where i.A.M.CanalTipo == item.Tipo && i.A.M.ReferidoPor == item.Nombre && i.B.EstatusCaptura == "Terminado" && i.A.M.TipoLicencia == "AEREO" && i.A.M.FechaCita >= fechaInicio && i.A.M.FechaCita < fechaFinal select i).Count();
+
+                            //NUMERO DE EPIS TOTALES, AEREOS Y NO AEREOS DENTRO DEL RANGO DE FECHA
+                            int deudaGestorTotal = deudaGestor + deudaGestorAereo;
 
 
-        }
-        <td>
-            @{
-                int pagoGestor = (from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.TipoPago != "Pendiente de Pago" && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i).Count();
+                            //NUMERO DE EPIS NO AEREOS FUERA DEL RANGO DE FECHA
+                            int deudaGestor1 = (from i in modelo where i.A.M.CanalTipo == item.Tipo && i.A.M.ReferidoPor == item.Nombre && i.B.EstatusCaptura == "Terminado" && i.A.M.TipoLicencia != "AEREO" select i).Count();
 
-                pago = item.PrecioNormalconIVA == null ? pagoGestor * Convert.ToInt32(item.PrecioNormal) : pagoGestor * Convert.ToInt32(item.PrecioNormalconIVA);
+                            //NUMERO DE EPIS AEREOS FUERA DEL RANGO DE FECHA
+                            int deudaGestorAereo1 = (from i in modelo where i.A.M.CanalTipo == item.Tipo && i.A.M.ReferidoPor == item.Nombre && i.B.EstatusCaptura == "Terminado" && i.A.M.TipoLicencia == "AEREO" select i).Count();
 
-                if (pagoGestor != 0)
-                {
-                    <span>$@pago.ToString("###,###,###,###")</span>
-                }
-                else
-                {
-                    <span>@pagoGestor</span>
-                    <span>-----</span>
-                }
+                            //NUMERO DE EPIS TOTALES, AEREOS Y NO AEREOS FUERA DEL RANGO DE FECHA
+                            int deudaGestorTotal1 = deudaGestor1 + deudaGestorAereo1;
 
 
+                            //DINERO DE EPIS NO AEREOS DENTRO DEL RANGO DE FECHA
+                            deuda = item.PrecioNormalconIVA == null || item.PrecioNormalconIVA == "0" ? deudaGestor * Convert.ToInt32(item.PrecioNormal) : deudaGestor * Convert.ToInt32(item.PrecioNormalconIVA);
 
-            }
-        </td>
-        <td>
-            @{
-                int saldoGestor = (from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.TipoPago == "Pendiente de Pago" && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i).Count();
+                            //DINERO DE EPIS AEREOS DENTRO DEL RANGO DE FECHA
 
-                saldo = item.PrecioNormalconIVA == null ? saldoGestor * Convert.ToInt32(item.PrecioNormal) : saldoGestor * Convert.ToInt32(item.PrecioNormalconIVA);
+                            if (item.PrecioAereo == null || item.PrecioAereo == "0")
+                            {
+                                deudaAereos = deudaGestorAereo * 3480;
+                            }
 
-                if (saldoGestor != 0)
-                {
-                    if (saldo < 0)
-                    {
-                        <span><b>+$@saldo.ToString("###,###,###,###")</b></span>
+                            else
+                            {
+                                deudaAereos = deudaGestorAereo * Convert.ToInt32(item.PrecioAereo);
+                            }
 
-                        if (item.PrecioNormalconIVA != null)
-                        {
-                            var episDisponibles = saldo / Convert.ToInt32(item.PrecioNormalconIVA);
-                            <span style="font-size: xx-small">( @episDisponibles epis)</span>
+                            //DINERO DE EPIS TOTALES, AEREOS Y NO AEREOS DENTRO DEL RANGO DE FECHA
+                            deudaTotal = deuda + deudaAereos;
+
+
+                            //DINERO DE EPIS NO AEREOS FUERA DEL RANGO DE FECHA
+                            deuda1 = item.PrecioNormalconIVA == null || item.PrecioNormalconIVA == "0" ? deudaGestor1 * Convert.ToInt32(item.PrecioNormal) : deudaGestor1 * Convert.ToInt32(item.PrecioNormalconIVA);
+
+                            //DINERO DE EPIS AEREOS FUERA DEL RANGO DE FECHA
+
+                            if (item.PrecioAereo != null || item.PrecioAereo != "0")
+                            {
+                                deudaAereos1 = deudaGestorAereo1 * 3480;
+                            }
+
+                            else
+                            {
+                                deudaAereos1 = deudaGestorAereo1 * Convert.ToInt32(item.PrecioAereo);
+                            }
+
+                            //DINERO DE EPIS TOTALES, AEREOS Y NO AEREOS FUERA DEL RANGO DE FECHA
+                            deudaTotal1 = deuda1 + deudaAereos1;
+
+                            if (deudaGestorAereo != 0)
+                            {
+                                deudaTotal = deuda + deudaAereos;
+                                deudaTotal1 = deuda1 + deudaAereos1;
+                                <td>
+                                    <span class="field-tip">
+                                        <b>@deudaGestorTotal</b>
+                                        <span class="tip-content">
+                                            @{
+
+                                                if (deudaGestor != 0)
+                                                {
+                                                    if (item.PrecioNormalconIVA != "0" && item.PrecioNormalconIVA != null)
+                                                    {
+                                                        <span><b>No. Epis: @deudaGestor</b></span><br />
+                                                        <span>Precio de epi con IVA: $@item.PrecioNormalconIVA</span><br />
+                                                    }
+
+                                                    else
+                                                    {
+                                                        <span><b>No. Epis: @deudaGestor</b></span><br />
+                                                        <span>Precio de epi sin IVA: $@item.PrecioNormal</span><br />
+                                                    }
+
+                                                }
+
+                                            }
+                                            @{
+                                                if (deudaGestorAereo != 0)
+                                                {
+
+                                                    if (item.PrecioAereo == null || item.PrecioAereo == "0")
+                                                    {
+                                                        <span><b>No. Epis AEREOS: @deudaGestorAereo</b></span><br />
+                                                        <span>Precio de epi: $3480</span><br />
+                                                    }
+
+                                                    else
+                                                    {
+                                                        <span><b>No. Epis AEREOS: @deudaGestorAereo</b></span><br />
+                                                        <span>Precio de epi: $@item.PrecioAereo</span><br />
+                                                    }
+
+                                                }
+
+                                            }
+                                        </span>
+                                    </span>
+                                </td>
+                                <td><span> $@deudaTotal.ToString("###,###,###,###")</span></td>
+
+                            }
+
+                            else
+                            {
+
+                                <td>
+                                    <span class="field-tip">
+                                        <b>@deudaGestorTotal</b>
+                                        <span class="tip-content">
+                                            <span><b>No. Epis: @deudaGestor</b></span><br />
+                                            @{
+                                                if (item.PrecioNormalconIVA != "0" && item.PrecioNormalconIVA != null)
+                                                {
+                                                    <span>Precio de epi con IVA: $@item.PrecioNormalconIVA</span><br />
+                                                }
+
+                                                else
+                                                {
+                                                    <span>Precio de epi sin IVA: $@item.PrecioNormal</span><br />
+                                                }
+                                            }
+                                            @{
+                                                if (deudaGestorAereo != 0)
+                                                {
+
+                                                    if (item.PrecioAereo == null || item.PrecioAereo == "0")
+                                                    {
+                                                        <span><b>No. Epis AEREOS: @deudaGestorAereo</b></span><br />
+                                                        <span>Precio de epi: $3480</span><br />
+                                                    }
+
+                                                    else
+                                                    {
+                                                        <span><b>No. Epis AEREOS: @deudaGestorAereo</b></span><br />
+                                                        <span>Precio de epi: $@item.PrecioAereo</span><br />
+                                                    }
+
+                                                }
+
+                                            }
+                                        </span>
+                                    </span>
+                                </td>
+                                <td><span> $@deudaTotal.ToString("###,###,###,###")</span></td>
+
+                            }
+
                         }
-                        else
-                        {
-                            var episDisponibles = saldo / Convert.ToInt32(item.PrecioNormal);
-                            <span style="font-size: xx-small">( @episDisponibles epis)</span>
-                        }
-                    }
-                    else
-                    {
-                        <span>$@saldo.ToString("###,###,###,###")</span>
-                    }
 
-                }
-                else
-                {
-                    <span>$0.00</span>
-                }
-            }
-        </td>
-        <td>
-            @{
-                var estatus = from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.TipoPago == "Pendiente de Pago" && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i;
+                        <td>
 
-                string texto = "";
+                            @{
 
-                foreach (var i in estatus)
-                {
-                    if (i.FechaCita < DateTime.Today.AddDays(-30))
-                    {
-                        texto = "text-danger";
-                        break;
-                    }
-                    else if (i.FechaCita < DateTime.Today.AddDays(-15))
-                    {
-                        texto = "text-warning";
-                        break;
-                    }
-                    else
-                    {
-                        texto = "text-success";
-                        break;
-                    }
-                }
+                                //NUMERO DE EPIS NO AEREOS DENTRO DEL RANGO DE FECHA
+                                int pagoGestor = (from i in modelo where i.A.M.CanalTipo == item.Tipo && i.A.M.ReferidoPor == item.Nombre && i.B.EstatusCaptura == "Terminado" && i.A.M.TipoLicencia != "AEREO" && i.A.M.Conciliado != null && (i.A.M.Cuenta == "CONEKTA" || i.A.M.Cuenta == "BANCOS") && i.A.M.FechaCita >= fechaInicio && i.A.M.FechaCita < fechaFinal select i).Count();
+
+                                //NUMERO DE EPIS AEREOS DENTRO DEL RANGO DE FECHA
+                                int pagoGestorAereo = (from i in modelo where i.A.M.CanalTipo == item.Tipo && i.A.M.ReferidoPor == item.Nombre && i.B.EstatusCaptura == "Terminado" && i.A.M.TipoLicencia == "AEREO" && i.A.M.Conciliado != null && (i.A.M.Cuenta == "CONEKTA" || i.A.M.Cuenta == "BANCOS") && i.A.M.FechaCita >= fechaInicio && i.A.M.FechaCita < fechaFinal select i).Count();
+
+                                //NUMERO DE EPIS TOTALES, AEREOS Y NO AEREOS DENTRO DEL RANGO DE FECHA
+                                int pagoGestorTotal = pagoGestor + pagoGestorAereo;
 
 
+                                //NUMERO DE EPIS NO AEREOS FUERA DEL RANGO DE FECHA
+                                int pagoGestor1 = (from i in modelo where i.A.M.CanalTipo == item.Tipo && i.A.M.ReferidoPor == item.Nombre && i.B.EstatusCaptura == "Terminado" && i.A.M.TipoLicencia != "AEREO" && i.A.M.Conciliado != null && (i.A.M.Cuenta == "CONEKTA" || i.A.M.Cuenta == "BANCOS") select i).Count();
+
+                                //NUMERO DE EPIS AEREOS FUERA DEL RANGO DE FECHA
+                                int pagoGestorrAereo1 = (from i in modelo where i.A.M.CanalTipo == item.Tipo && i.A.M.ReferidoPor == item.Nombre && i.B.EstatusCaptura == "Terminado" && i.A.M.TipoLicencia == "AEREO" && i.A.M.Conciliado != null && (i.A.M.Cuenta == "CONEKTA" || i.A.M.Cuenta == "BANCOS") select i).Count();
+
+                                //NUMERO DE EPIS TOTALES, AEREOS Y NO AEREOS FUERA DEL RANGO DE FECHA
+                                int pagoGestorTotal1 = pagoGestor1 + pagoGestorrAereo1;
 
 
-                <div style="width:2px;"></div>
-                <span class="@texto">•</span>
+                                //DINERO DE EPIS NO AEREOS DENTRO DEL RANGO DE FECHA
+                                pago = item.PrecioNormalconIVA == null ? pagoGestor * Convert.ToInt32(item.PrecioNormal) : pagoGestor * Convert.ToInt32(item.PrecioNormalconIVA);
 
-            }
-        </td>
+                                //DINERO DE EPIS AEREOS DENTRO DEL RANGO DE FECHA
+                                pagoAereos = pagoGestorAereo * Convert.ToInt32(item.PrecioAereo);
 
-    
-
-
-        <td>
-            <div class="btn-group">
-                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
-                </button>
-
-                <div class="dropdown-menu" style="padding:10px">
-                    <a href="#" data-toggle="modal" data-target="#Deuda_@item.idReferido"><b>Ingresar Deuda</b></a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" data-toggle="modal" data-target="#Efectivo_@item.idReferido"><b>Ingresar Efectivo</b></a>
-                    <div class="dropdown-divider"></div>
-                </div>
-
-                @*ALERT INGRESAR DEUDA*@
+                                //DINERO DE EPIS TOTALES, AEREOS Y NO AEREOS DENTRO DEL RANGO DE FECHA
+                                pagoTotal = pago + pagoAereos;
 
 
-                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Deuda")">
-                    @Html.AntiForgeryToken()
-                    <div class="modal fade" id="Deuda_@item.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea agregar una cantidad de DEUDA a @item.Nombre?</b></h4>
+                                //DINERO DE EPIS NO AEREOS FUERA DEL RANGO DE FECHA
+                                pago1 = item.PrecioNormalconIVA == null ? pagoGestor1 * Convert.ToInt32(item.PrecioNormal) : pagoGestor1 * Convert.ToInt32(item.PrecioNormalconIVA);
+
+                                //DINERO DE EPIS AEREOS FUERA DEL RANGO DE FECHA
+                                pagoAereos1 = pagoGestorrAereo1 * Convert.ToInt32(item.PrecioAereo);
+
+                                //DINERO DE EPIS TOTALES, AEREOS Y NO AEREOS FUERA DEL RANGO DE FECHA
+                                pagoTotal1 = pago1 + pagoGestorrAereo1;
+
+
+                                if (item.Tipo == "MEDIOS DIGITALES" || item.Tipo == "CALL CENTER" || item.Tipo == "OTRO")
+                                {
+
+                                    pago = deudaTotal;
+                                    <span>$@pago.ToString("###,###,###,###")</span>
+
+                                }
+
+                                else
+                                {
+
+                                    if (pagoGestorTotal != 0)
+                                    {
+
+                                        <span>$@pagoTotal.ToString("###,###,###,###")</span>
+                                    }
+
+                                    else
+                                    {
+                                        <span>$</span>
+                                        <span>-----</span>
+                                    }
+
+                                }
+
+                            }
+
+                            @*@{
+                                int pagoGestor = (from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.TipoPago != "Pendiente de Pago" && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i).Count();
+
+                                pago = item.PrecioNormalconIVA == null ? pagoGestor * Convert.ToInt32(item.PrecioNormal) : pagoGestor * Convert.ToInt32(item.PrecioNormalconIVA);
+
+                                if (pagoGestor != 0)
+                                {
+                                    <span>$@pago.ToString("###,###,###,###")</span>
+                                }
+                                else
+                                {
+                                    <span>@pagoGestor</span>
+                                    <span>-----</span>
+                                }
+
+                            }*@
+
+                        </td>
+                        <td>
+
+                            @{
+                                saldo = pagoTotal - deudaTotal;
+
+                                if (item.Tipo == "MEDIOS DIGITALES" || item.Tipo == "CALL CENTER" || item.Tipo == "OTRO")
+                                {
+
+                                    saldo = 0;
+
+                                    <span>$@saldo.ToString("###,###,###,###")</span>
+
+                                }
+
+                                else
+                                {
+
+                                    <span>$@saldo.ToString("###,###,###,###")</span>
+
+                                }
+
+
+                            }
+
+
+                            @*@{
+                                int saldoGestor = (from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.TipoPago == "Pendiente de Pago" && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i).Count();
+
+                                saldo = item.PrecioNormalconIVA == null ? saldoGestor * Convert.ToInt32(item.PrecioNormal) : saldoGestor * Convert.ToInt32(item.PrecioNormalconIVA);
+
+                                if (saldoGestor != 0)
+                                {
+                                    if (saldo < 0)
+                                    {
+                                        <span><b>+$@saldo.ToString("###,###,###,###")</b></span>
+
+                                        if (item.PrecioNormalconIVA != null)
+                                        {
+                                            var episDisponibles = saldo / Convert.ToInt32(item.PrecioNormalconIVA);
+                                            <span style="font-size: xx-small">( @episDisponibles epis)</span>
+                                        }
+                                        else
+                                        {
+                                            var episDisponibles = saldo / Convert.ToInt32(item.PrecioNormal);
+                                            <span style="font-size: xx-small">( @episDisponibles epis)</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>$@saldo.ToString("###,###,###,###")</span>
+                                    }
+
+                                }
+                                else
+                                {
+                                    <span>$0.00</span>
+                                }
+                            }*@
+
+                        </td>
+                        <td>
+
+                            @{
+                                var estatus = from i in db.Cita where i.CanalTipo == item.Tipo && i.ReferidoPor == item.Nombre && i.TipoPago == "Pendiente de Pago" && i.FechaCita >= fechaInicio && i.FechaCita < fechaFinal select i;
+
+                                string texto = "";
+
+                                foreach (var i in estatus)
+                                {
+                                    if (i.FechaCita < DateTime.Today.AddDays(-30))
+                                    {
+                                        texto = "text-danger";
+                                        break;
+                                    }
+                                    else if (i.FechaCita < DateTime.Today.AddDays(-15))
+                                    {
+                                        texto = "text-warning";
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        texto = "text-success";
+                                        break;
+                                    }
+                                }
+
+                                <div style="width:2px;"></div>
+                                <span class="@texto">•</span>
+
+                            }
+
+                        </td>
+
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                </button>
+
+                                <div class="dropdown-menu" style="padding:10px">
+                                    <a href="#" data-toggle="modal" data-target="#Deuda_@item.idReferido"><b>Ingresar Deuda</b></a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="#" data-toggle="modal" data-target="#Efectivo_@item.idReferido"><b>Ingresar Pago</b></a>
+                                    <div class="dropdown-divider"></div>
                                 </div>
-                                <div class="modal-body">
-                                    <div class="form-group" style="width:60%; min-width:320px">
-                                        <label for="recipient-name" class="col-form-label">Gestor/Canal:</label>
-                                        <b>@item.Nombre</b><br />
-                                        <label for="recipient-name" class="col-form-label">Fecha Cita:</label>
-                                        <b>@Convert.ToDateTime(fecha1).ToString("dd-MMMM-yyyy")</b><br />
-                                        <label for="recipient-name" class="col-form-label">Fecha Ingreso Pago:</label>
-                                        <b>@Convert.ToDateTime(fecha2).ToString("dd-MMMM-yyyy")</b><br />
-                                        <label for="recipient-name" class="col-form-label">Precio EPIs:</label>
-                                        <b>@item.PrecioNormal</b><br />
-                                        <label for="recipient-name" class="col-form-label"> Numero de Pagos del Gestor:</label>
-                                        <b>@pagoGestor</b><br />
-                                        <label for="recipient-name" class="col-form-label">Cantidad:</label>
-                                        <input type="tel" class="form-control" name="deuda" />
-                                        <input type="hidden" value="@item.idReferido" class="form-control" name="id" />
+
+                                @*ALERT INGRESAR DEUDA*@
+
+
+                                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Deuda")">
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal fade" id="Deuda_@item.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea agregar una cantidad de DEUDA a @item.Nombre?</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="col-form-label">Gestor/Canal:</label>
+                                                        <b>@item.Nombre</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Fecha Cita:</label>
+                                                        <b>@Convert.ToDateTime(fechaInicio).ToString("dd-MMMM-yyyy")</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Fecha Ingreso Pago:</label>
+                                                        <b>@Convert.ToDateTime(fechaFinal).ToString("dd-MMMM-yyyy")</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Precio EPIs:</label>
+                                                        <b>@item.PrecioNormal</b><br />
+                                                        <label for="recipient-name" class="col-form-label"> Numero de Pagos del Gestor:</label>
+                                                        <b>@Convert.ToInt32(pago)</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Cantidad:</label>
+                                                        <input type="tel" class="form-control" name="deuda" />
+                                                        <input type="hidden" value="@item.idReferido" class="form-control" name="id" />
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                    <input type="submit" value="Guardar" class="btn btn-primary" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+                                </form>
 
 
-                @*ALERT INGRESAR EFECTIVO*@
+                                @*ALERT INGRESAR EFECTIVO*@
 
-                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Efectivo")">
-                    @Html.AntiForgeryToken()
-                    <div class="modal fade" id="Efectivo_@item.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea ingresar EFECTIVO a @item.Nombre?</b></h4>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="form-group" style="width:60%; min-width:320px">
-                                        <label for="recipient-name" class="col-form-label">Gestor/Canal:</label>
-                                        <b>@item.Nombre</b><br />
-                                        <label for="recipient-name" class="col-form-label">Fecha Cita:</label>
-                                        <b>@Convert.ToDateTime(fecha1).ToString("dd-MMMM-yyyy")</b><br />
-                                      
-                                        <label for="recipient-name" class="col-form-label">Precio EPIs:</label>
-                                        <b>@item.PrecioNormal</b><br />
-                                        <label for="recipient-name" class="col-form-label"> Numero de Pagos del Gestor:</label>
-                                        <b>@pagoGestor</b><br />
-                                        <label for="recipient-name" class="col-form-label">Cantidad:</label>
-                                        <input type="tel" class="form-control" name="efectivo" />
-                                        <input type="hidden" value="@item.idReferido" class="form-control" name="id" />
-                                        <input type="hidden" value="@fecha1" class="form-control" name="fecha1" />
-                                        <input type="hidden" value="@fecha2" class="form-control" name="fecha2" />
+                                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/EditarEfectivo")">
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal fade" id="Efectivo_@item.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea ingresar PAGO a @item.Nombre?</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="col-form-label">Gestor/Canal:</label>
+                                                        <b>@item.Nombre</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Fecha Cita:</label>
+                                                        <b>@Convert.ToDateTime(fechaInicio).ToString("dd-MMMM-yyyy")</b><br />
+
+                                                        <label for="recipient-name" class="col-form-label">Precio de EPIs:</label>
+                                                        <b>$@item.PrecioNormal</b><br />
+                                                        <label for="recipient-name" class="col-form-label"> Pagos del Gestor:</label>
+                                                        <b>$@pago</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Cantidad:</label>
+                                                        <input type="tel" class="form-control" name="efectivo" />
+                                                        <input type="hidden" value="@item.idReferido" class="form-control" name="id" />
+                                                        <input type="hidden" value="@fechaInicio" class="form-control" name="fecha1" />
+                                                        <input type="hidden" value="@fechaFinal" class="form-control" name="fecha2" />
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                    <input type="submit" value="Guardar" class="btn btn-primary" />
-                                </div>
+                                </form>
                             </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
 
 
-        </td>
-    </tr>
+                        </td>
+                    </tr>
+
+
+
+                }
+
             }
         }
+
     </table>
 </div>
-
-@*<option value="Referencia OXXO">Referencia OXXO</option>
-<option value="Referencía BanBajío">Referencía BanBajío</option>
-<option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
-<option value="BanCoppel TLS">BanCoppel TLS</option>
-<option value="BanCoppel LC">BanCoppel LC</option>
-<option value="Banco Azteca TLS">Banco Azteca TLS</option>
-<option value="Banco Azteca LC">Banco Azteca LC</option>
-<option value="Cuenta Externa">Cuenta Externa</option>
-<option value="Pendiente de Pago">Pendiente de Pago</option>*@
 

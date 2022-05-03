@@ -32,6 +32,8 @@
         fechaFinal = fechaFinal.AddDays(1);
     }
 
+    //Query TABLA
+
     var modelo = db.Paciente.Join(db.Cita, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
         Join(db.Captura, a => a.M.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
         Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B.EstatusCaptura == "Terminado" && s.A.M.Asistencia == null
@@ -102,21 +104,6 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
 
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     //FILTRO CONCILIADOS Y NO CONCILIADOS
@@ -364,6 +351,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
             <option value="Banco Azteca TLS">Banco Azteca TLS</option>
             <option value="Banco Azteca LC">Banco Azteca LC</option>
             <option value="Banorte">Banorte</option>
+            <option value="Santander">Santander</option>
             <option value="Cuenta Externa">Cuenta Externa</option>
             <option value="Pendiente de Pago">Pendiente de Pago</option>
             <option value="">TODOS</option>
@@ -613,11 +601,20 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                     </td>
                     <td>
                         @{
+
+                            //OPCION CON PRECIO EN TABLA CAPTURA
+                            @*var costo = (from i in db.Captura where i.idPaciente == item.A.M.idPaciente select i).FirstOrDefault();
+
+                            <span><b>$@costo.PrecioEpi</b></span>*@
+
+
+                            //OPCION CON PRECIO DE REFERIDO
+                            var costo = (from i in db.Referido where i.Nombre == item.A.M.ReferidoPor && i.Tipo == item.A.M.CanalTipo select i).FirstOrDefault();
+
                             if (item.A.M.TipoLicencia != "AEREO")
                             {
-                                var costo = (from i in db.Referido where i.Nombre == item.A.M.ReferidoPor && i.Tipo == item.A.M.CanalTipo select i).FirstOrDefault();
 
-                                if (costo.PrecioNormalconIVA != null)
+                                if (costo.PrecioNormalconIVA != null && costo.PrecioNormalconIVA != "0")
                                 {
                                     <span><b>$@Convert.ToDouble(costo.PrecioNormalconIVA).ToString("####.##")</b></span>
                                 }
@@ -628,9 +625,19 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                             }
                             else
                             {
-                                <span><b>$3480</b></span>
+
+                                if (costo.PrecioAereo != null && costo.PrecioNormalconIVA != "0")
+                                {
+                                    <span><b>$@Convert.ToDouble(costo.PrecioAereo).ToString("####.##")</b></span>
+                                }
+                                else
+                                {
+                                    <span><b>$3480</b></span>
+                                }
+
                             }
                         }
+
                     </td>
                     <td style="font-size:smaller">
                         @item.A.M.Recepcionista
@@ -1427,7 +1434,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                         }
                                     </span>
                                 </span>
-                            }
+                                            }
                         }
                     </td>
 
@@ -1475,9 +1482,10 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                     </td>
                     <td>
                         @{
+                                var costo = (from i in db.Referido where i.Nombre == item.ReferidoPor && i.Tipo == item.CanalTipo select i).FirstOrDefault(); 
+
                             if (item.TipoLicencia != "AEREO")
                             {
-                                var costo = (from i in db.Referido where i.Nombre == item.ReferidoPor && i.Tipo == item.CanalTipo select i).FirstOrDefault();
 
                                 if (costo.PrecioNormalconIVA != null)
                                 {
@@ -1490,9 +1498,17 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                             }
                             else
                             {
-                                <span><b>$3480</b></span>
+                                if (costo.PrecioAereo != null)
+                                {
+                                    <span><b>$@Convert.ToDouble(costo.PrecioAereo).ToString("####.##")</b></span>
+                                }
+                                else
+                                {
+                                    <span><b>$3480</b></span>
+                                }
                             }
                         }
+
                     </td>
                     <td style="font-size:smaller">
                         @item.Solicita
@@ -1619,7 +1635,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                 </div>
                             </form>
 
-                            <!-- Efectivo -->
+                            <!-- Conekta -->
                             <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuentaALT")">
                                 @Html.AntiForgeryToken()
                                 <div class="modal fade" id="Conekta1_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -1678,10 +1694,10 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                 </div>
                             </form>
 
-                            <!-- OXXO -->
+                            <!-- Anticipos -->
                             <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuentaALT")">
                                 @Html.AntiForgeryToken()
-                                <div class="modal fade" id="Anticipos1_@item..idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal fade" id="Anticipos1_@item.idPacienteESP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -2130,9 +2146,10 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                     </td>
                     <td>
                         @{
+                            var costo = (from i in db.Referido where i.Nombre == item.A.M.ReferidoPor && i.Tipo == item.A.M.CanalTipo select i).FirstOrDefault();
+
                             if (item.A.M.TipoLicencia != "AEREO")
                             {
-                                var costo = (from i in db.Referido where i.Nombre == item.A.M.ReferidoPor && i.Tipo == item.A.M.CanalTipo select i).FirstOrDefault();
 
                                 if (costo.PrecioNormalconIVA != null)
                                 {
@@ -2145,7 +2162,14 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                             }
                             else
                             {
-                                <span><b>$3480</b></span>
+                                if (costo.PrecioAereo != null)
+                                {
+                                    <span><b>$@Convert.ToDouble(costo.PrecioAereo).ToString("####.##")</b></span>
+                                }
+                                else
+                                {
+                                    <span><b>$3480</b></span>
+                                }
                             }
                         }
                     </td>
@@ -2215,9 +2239,10 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                     </td>
                     <td>
                         @{
+                            var costo = (from i in db.Referido where i.Nombre == item.ReferidoPor && i.Tipo == item.CanalTipo select i).FirstOrDefault();
+
                             if (item.TipoLicencia != "AEREO")
                             {
-                                var costo = (from i in db.Referido where i.Nombre == item.ReferidoPor && i.Tipo == item.CanalTipo select i).FirstOrDefault();
 
                                 if (costo.PrecioNormalconIVA != null)
                                 {
@@ -2230,7 +2255,14 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                             }
                             else
                             {
-                                <span><b>$3480</b></span>
+                                if (costo.PrecioAereo != null)
+                                {
+                                    <span><b>$@Convert.ToDouble(costo.PrecioAereo).ToString("####.##")</b></span>
+                                }
+                                else
+                                {
+                                    <span><b>$3480</b></span>
+                                }
                             }
                         }
                     </td>

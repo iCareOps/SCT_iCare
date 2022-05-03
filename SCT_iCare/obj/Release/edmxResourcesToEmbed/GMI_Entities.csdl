@@ -44,6 +44,7 @@
     <Property Name="ComentarioAptitud" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
     <Property Name="FechaVigencia" Type="DateTime" Precision="3" />
     <Property Name="CarruselMedico" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="PrecioEpi" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="CERTIFICADO">
     <Key>
@@ -189,6 +190,7 @@
     <NavigationProperty Name="Archivos" Relationship="DevModel.FK_Archivos_Paciente" FromRole="Paciente" ToRole="Archivos" />
     <NavigationProperty Name="Biometricos" Relationship="DevModel.FK_Biometricos_Paciente" FromRole="Paciente" ToRole="Biometricos" />
     <Property Name="Genero" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Tickets" Relationship="DevModel.FK_Tickets_Paciente" FromRole="Paciente" ToRole="Tickets" />
   </EntityType>
   <EntityType Name="Recepcionista">
     <Key>
@@ -686,6 +688,10 @@
       <End Role="HuellasESP" EntitySet="HuellasESP" />
     </AssociationSet>
     <EntitySet Name="Tickets" EntityType="DevModel.Tickets" />
+    <AssociationSet Name="FK_Tickets_Paciente" Association="DevModel.FK_Tickets_Paciente">
+      <End Role="Paciente" EntitySet="Paciente" />
+      <End Role="Tickets" EntitySet="Tickets" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="CapturaIncidencia">
     <Key>
@@ -1278,6 +1284,7 @@
     <Property Name="PrecioNormalconIVA" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="Deuda" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
     <Property Name="Efectivo" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="Orden" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="ExpedienteRevaloracion">
     <Key>
@@ -1790,5 +1797,18 @@
     <Property Name="Ticket" Type="Binary" MaxLength="Max" FixedLength="false" />
     <Property Name="FechaCarga" Type="DateTime" Precision="3" />
     <Property Name="idPaciente" Type="Int32" />
+    <NavigationProperty Name="Paciente" Relationship="DevModel.FK_Tickets_Paciente" FromRole="Tickets" ToRole="Paciente" />
   </EntityType>
+  <Association Name="FK_Tickets_Paciente">
+    <End Type="DevModel.Paciente" Role="Paciente" Multiplicity="0..1" />
+    <End Type="DevModel.Tickets" Role="Tickets" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Paciente">
+        <PropertyRef Name="idPaciente" />
+      </Principal>
+      <Dependent Role="Tickets">
+        <PropertyRef Name="idPaciente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema>
