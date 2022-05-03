@@ -169,10 +169,6 @@ namespace SCT_iCare.Controllers.Contabilidad
         {
             var Referido = db.Referido.Find(referido);
 
-<<<<<<< HEAD
-=======
-
->>>>>>> da5749eac3a84985d851106c37a0d56e63d18895
             if (sucursal == "" || sucursal == null)
             {
                 ViewBag.Sucursal = "";
@@ -182,10 +178,6 @@ namespace SCT_iCare.Controllers.Contabilidad
                 ViewBag.Sucursal = sucursal;
             }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> da5749eac3a84985d851106c37a0d56e63d18895
             if (canal == "" || canal == null)
             {
                 ViewBag.Canal = "";
@@ -194,10 +186,6 @@ namespace SCT_iCare.Controllers.Contabilidad
             {
                 ViewBag.Canal = canal;
             }
-<<<<<<< HEAD
-=======
-
->>>>>>> da5749eac3a84985d851106c37a0d56e63d18895
 
             if (cuenta == "" || cuenta == null)
             {
@@ -207,8 +195,6 @@ namespace SCT_iCare.Controllers.Contabilidad
             {
                 ViewBag.Cuenta = cuenta;
             }
-
-<<<<<<< HEAD
             if (tipoPago == "" || tipoPago == null)
             {
                 ViewBag.Pago = "";
@@ -232,8 +218,6 @@ namespace SCT_iCare.Controllers.Contabilidad
             ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
             ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
 
-=======
-
             if (tipoPago == "" || tipoPago == null)
             {
                 ViewBag.Pago = "";
@@ -257,10 +241,6 @@ namespace SCT_iCare.Controllers.Contabilidad
 
             ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
             ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
-
-
-
->>>>>>> da5749eac3a84985d851106c37a0d56e63d18895
             return View();
         }
 
@@ -446,12 +426,6 @@ namespace SCT_iCare.Controllers.Contabilidad
 
             return Redirect("Pagos");
         }
-
-<<<<<<< HEAD
-
-
-
-=======
         public ActionResult EditarEfectivo(int? id, int efectivo, string usuario)
         {
             Referido referido = db.Referido.Find(id);
@@ -464,7 +438,6 @@ namespace SCT_iCare.Controllers.Contabilidad
 
             return Redirect("Pagos");
         }
->>>>>>> da5749eac3a84985d851106c37a0d56e63d18895
 
     }
 }
