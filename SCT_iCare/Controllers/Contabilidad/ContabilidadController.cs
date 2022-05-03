@@ -169,6 +169,15 @@ namespace SCT_iCare.Controllers.Contabilidad
         {
             var Referido = db.Referido.Find(referido);
 
+            if (sucursal == "" || sucursal == null)
+            {
+                ViewBag.Sucursal = "";
+            }
+            else
+            {
+                ViewBag.Sucursal = sucursal;
+            }
+
             if (canal == "" || canal == null)
             {
                 ViewBag.Canal = "";
@@ -176,35 +185,40 @@ namespace SCT_iCare.Controllers.Contabilidad
             else
             {
                 ViewBag.Canal = canal;
-            
-
-                if (canal == "" || canal == null)
-                {
-                    ViewBag.Canal = "";
-                }
-                else
-                {
-                    ViewBag.Canal = canal;
-                }
-
-
-                if (referido == null)
-                {
-                    ViewBag.Referido = "";
-                    ViewBag.idReferido = 0;
-                }
-                else
-                {
-                    ViewBag.Referido = Referido.Nombre;
-                    ViewBag.idReferido = Referido.idReferido;
-                }
-
-
-                ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
-                ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
-
-                
             }
+
+            if (cuenta == "" || cuenta == null)
+            {
+                ViewBag.Cuenta = "";
+            }
+            else
+            {
+                ViewBag.Cuenta = cuenta;
+            }
+
+            if (tipoPago == "" || tipoPago == null)
+            {
+                ViewBag.Pago = "";
+            }
+            else
+            {
+                ViewBag.Pago = tipoPago;
+            }
+
+            if (referido == null)
+            {
+                ViewBag.Referido = "";
+                ViewBag.idReferido = 0;
+            }
+            else
+            {
+                ViewBag.Referido = Referido.Nombre;
+                ViewBag.idReferido = Referido.idReferido;
+            }
+
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
+
             return View();
         }
 
@@ -297,13 +311,19 @@ namespace SCT_iCare.Controllers.Contabilidad
 
         }
 
+     
+
         public ActionResult AbrirTicket2(int id)
         {
             Tickets ticket = db.Tickets.Find(id);
 
             var bytesBinary = ticket.Ticket;
             TempData["ID"] = null;
-            return File(bytesBinary, "application/pdf");
+            return File(bytesBinary, "DownloadName.pdf");
+            //return File(bytesBinary, "application/pdf");
+            //return File(bytesBinary, "application/vnd.visio");
+
+
         }
 
         public ActionResult Deuda(int? id, string deuda, string canal)
@@ -386,6 +406,10 @@ namespace SCT_iCare.Controllers.Contabilidad
 
             return Redirect("Pagos");
         }
+
+
+
+
 
     }
 }
