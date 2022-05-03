@@ -745,109 +745,154 @@
                         }
 
 
-                        <tr tr style="background-color:@fila">
-                            <td>
-                                @flag
-                            </td>
-                            <td>
-                                @{
-                                    if (item.CarruselMedico == null)
+            <tr tr style="background-color:@fila">
+                <td>
+                    @flag
+                </td>
+                <td>
+                    @{
+                        if (item.CarruselMedico == null)
+                        {
+                            if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 2 && idUser != 3 && idUser != 13 && idUser != 25 && nombreUsuario == "Viridiana España"))
+                            {
+                                @Html.DisplayFor(modelItem => item.NombrePaciente)
+                            }
+                            else
+                            {
+                                <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_EC", new { id = item.idCaptura }, new { style = "color: black; text-decoration: none" })</b>
+                            }
+                        }
+                        else
+                        {
+                            var revisionEKG = (from i in db.Archivos where i.idPaciente == item.idPaciente select i).FirstOrDefault();
+
+                            if (revisionEKG.ElectroCardiograma != null)
+                            {
+                                <b>@Html.ActionLink(item.NombrePaciente, "PreDictamen", new { id = item.idPaciente }, new { style = "color: black; text-decoration: none" })</b>
+                            }
+
+
+                        }
+                    }
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.NoExpediente)
+                </td>
+                <td>
+                    @*@Html.DisplayFor(modelItem => item.TipoTramite)*@
+                    @{
+                        var licencia = (from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault();
+                    }
+                    @item.TipoTramite (<b>@licencia</b>)
+                </td>
+                <td>
+                    @{
+                        if (item.EstatusCaptura == "Pausado")
+                        {
+                            var comentario = (from c in db.CapturaIncidencia where c.idCaptura == item.idCaptura orderby c.idCapturaIncidencia descending select c.Comentario).FirstOrDefault();
+
+                            <span class="field-tip">
+                                <h6>
+                                    <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                    <span class="tip-content">@comentario</span>
+                                </h6>
+                            </span>
+                        }
+                        else if (item.EstatusCaptura == "Pendiente")
+                        {
+                            var comentario = (from c in db.IncidenciaDictamen where c.idCaptura == item.idCaptura orderby c.idIncidencia descending select c.Incidencia).FirstOrDefault();
+
+                            <span class="field-tip">
+                                <h6>
+                                    <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                    <span class="tip-content">@comentario</span>
+                                </h6>
+                            </span>
+                        }
+                        else
+                        {
+                            <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                        }
+                    }
+
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InicioCaptura)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FinalCaptura)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Doctor)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Sucursal)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Capturista)
+                </td>
+                <td>
+                    @{
+                        if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico == null)
+                        {
+                            using (Html.BeginForm("EditExpediente", "EPIs"))
+                            {
+                                var idCita = (from t in db.Cita where t.idPaciente == item.idPaciente select t).FirstOrDefault();
+                                var findPrecio = (from q in db.Referido where q.Nombre == idCita.ReferidoPor && q.Tipo == idCita.CC select q).FirstOrDefault();
+                                var precioEncontradoCI = findPrecio.PrecioNormalconIVA;
+                                var precioEncontradoSI = findPrecio.PrecioNormal;
+                                var precioEncontradoA = findPrecio.PrecioAereo;
+
+                                var precioFinal = "0";
+
+                                if (idCita.TipoLicencia == "AEREO")
+
+                                {
+                                    if (findPrecio.PrecioAereo == null)
                                     {
-                                        if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 2 && idUser != 3 && idUser != 13 && idUser != 25 && nombreUsuario == "Viridiana España"))
-                                        {
-                                            @Html.DisplayFor(modelItem => item.NombrePaciente)
-                                        }
-                                        else
-                                        {
-                                            <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_EC", new { id = item.idCaptura }, new { style = "color: black; text-decoration: none" })</b>
-                                        }
+
+                                        precioFinal = "3480";
+
                                     }
+
                                     else
                                     {
-                                        var revisionEKG = (from i in db.Archivos where i.idPaciente == item.idPaciente select i).FirstOrDefault();
 
-                                        if(revisionEKG.ElectroCardiograma != null)
-                                        {
-                                            <b>@Html.ActionLink(item.NombrePaciente, "PreDictamen", new { id = item.idPaciente }, new { style = "color: black; text-decoration: none" })</b>
-                                        }
+                                        precioFinal = precioEncontradoA;
 
-                                        
                                     }
+
                                 }
-                            </td>
 
-                            <td>
-                                @Html.DisplayFor(modelItem => item.NoExpediente)
-                            </td>
-                            <td>
-                                @*@Html.DisplayFor(modelItem => item.TipoTramite)*@
-                                @{
-                                    var licencia = (from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault();
-                                }
-                                @item.TipoTramite (<b>@licencia</b>)
-                            </td>
-                            <td>
-                                @{
-                                    if (item.EstatusCaptura == "Pausado")
+                                else
+                                {
+                                    if (findPrecio.PrecioNormalconIVA == null)
                                     {
-                                        var comentario = (from c in db.CapturaIncidencia where c.idCaptura == item.idCaptura orderby c.idCapturaIncidencia descending select c.Comentario).FirstOrDefault();
 
-                                        <span class="field-tip">
-                                            <h6>
-                                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
-                                                <span class="tip-content">@comentario</span>
-                                            </h6>
-                                        </span>
-                                    }
-                                    else if (item.EstatusCaptura == "Pendiente")
-                                    {
-                                        var comentario = (from c in db.IncidenciaDictamen where c.idCaptura == item.idCaptura orderby c.idIncidencia descending select c.Incidencia).FirstOrDefault();
+                                        precioFinal = precioEncontradoSI;
 
-                                        <span class="field-tip">
-                                            <h6>
-                                                <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
-                                                <span class="tip-content">@comentario</span>
-                                            </h6>
-                                        </span>
                                     }
+
                                     else
                                     {
-                                        <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+
+                                        precioFinal = precioEncontradoCI;
+
                                     }
+
                                 }
 
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.InicioCaptura)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.FinalCaptura)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Doctor)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Sucursal)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Capturista)
-                            </td>
-                            <td>
-                                @{
-                                    if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico == null)
-                                    {
-                                        using (Html.BeginForm("EditExpediente", "EPIs"))
-                                        {
-                                            @Html.AntiForgeryToken()
-                                            <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
-                                        }
-                                    }
-                                    else if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico != null)
-                                    {
-                                        <a href=@Url.Action("PreDictamen", "EPIs", new { id = item.idPaciente, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
-                                    }
-                                    else if (item.EstatusCaptura == "En captura..." || item.EstatusCaptura == "Pausado" || item.EstatusCaptura == "Pendiente")
-                                    {
+                                @Html.AntiForgeryToken()
+                                <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario, precioEpis = precioFinal }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                            }
+                        }
+                        else if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico != null)
+                        {
+                            <a href=@Url.Action("PreDictamen", "EPIs", new { id = item.idPaciente, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                        }
+                        else if (item.EstatusCaptura == "En captura..." || item.EstatusCaptura == "Pausado" || item.EstatusCaptura == "Pendiente")
+                        {
                             <div class="btn-group">
                                 <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
@@ -943,16 +988,16 @@
                                 </form>
                             </div>
 
-                                    }
-                                    else if (item.EstatusCaptura == "Terminado")
-                                    {
-                                        <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
-                                    }
+                        }
+                        else if (item.EstatusCaptura == "Terminado")
+                        {
+                            <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
+                        }
 
 
-                                }
-                            </td>
-                        </tr>
+                    }
+                    </td>
+                </tr>
                         flag++;
                     }
                 }

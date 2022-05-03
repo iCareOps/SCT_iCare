@@ -18,5 +18,7 @@ namespace SCT_iCare
         public byte[] Ticket { get; set; }
         public Nullable<System.DateTime> FechaCarga { get; set; }
         public Nullable<int> idPaciente { get; set; }
+    
+        public virtual Paciente Paciente { get; set; }
     }
 }

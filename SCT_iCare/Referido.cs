@@ -26,5 +26,6 @@ namespace SCT_iCare
         public string PrecioNormalconIVA { get; set; }
         public string Deuda { get; set; }
         public string Efectivo { get; set; }
+        public string Orden { get; set; }
     }
 }

@@ -239,7 +239,7 @@ namespace SCT_iCare.Controllers.Certificados
                         Chunk c2 = new Chunk("Paciente:" + nombre + "\n", font);
                         Chunk c3 = new Chunk("Fecha de Nacimiento:" + fechanac + "\n", font);
                         Chunk c4 = new Chunk("Sexo:" + sexo + "                                                          " + "Número de Pasaporte:" + pasaporte + "\n", font);
-                        Chunk c5 = new Chunk("Médico: Dra. Daniela Carolina Navarro Fabila", font);
+                        Chunk c5 = new Chunk("Médico: Dr. Pedro Azuara Galdeano", font);
                         Chunk cr1 = new Chunk("RESULTADO:  ", font);
                         Chunk cr2 = new Chunk("Ag SARS COV-2 " + res + "", fontr); //Resultado en azul
 
@@ -326,7 +326,7 @@ namespace SCT_iCare.Controllers.Certificados
                     Chunk c2 = new Chunk("Paciente:" + nombre + "\n", font);
                     Chunk c3 = new Chunk("Fecha de Nacimiento:" + fechanac + "\n", font);
                     Chunk c4 = new Chunk("Sexo:" + sexo + "                                                          " + "Número de Pasaporte:" + pasaporte + "\n", font);
-                    Chunk c5 = new Chunk("Médico: Dra. Daniela Carolina Navarro Fabila", font);
+                    Chunk c5 = new Chunk("Médico: Dr. Pedro Azuara Galdeano", font);
                     Chunk cr1 = new Chunk("RESULTADO:  ", font);
                     Chunk cr2 = new Chunk("Ag SARS COV-2 " + res + "", fontr); //Resultado en azul
 
