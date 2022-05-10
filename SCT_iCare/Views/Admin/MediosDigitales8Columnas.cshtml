@@ -17,21 +17,57 @@
 
     DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
     DateTime fecha1 = DateTime.Today.AddDays(1);
+    DateTime fechaPlan = DateTime.Today;
+
+    DateTime ViewBagFechaInicio = Convert.ToDateTime(ViewBag.fechaInicio);
+    var SetFechaInicio = ViewBagFechaInicio.Date.ToString("yyyy-MM");
+    var SetFechaInicioIn = SetFechaInicio + "-01";
+    DateTime ViewBagFechaFinal = Convert.ToDateTime(ViewBag.fechaFinal);
+    var SetFechaFinal = ViewBagFechaFinal.Date.ToString("yyyy-MM-dd");
+
+    double metaMuestra = 0;
+
+
+    //FILTRO DE FECHAS
+
+    if (ViewBag.FechaInicio != null)
+    {
+        fecha = Convert.ToDateTime(SetFechaInicioIn);
+
+        if (ViewBag.FechaFinal == null && fecha.Month != DateTime.Today.Month)
+        {
+            fecha1 = fecha.AddMonths(1).AddDays(-1);
+            fechaPlan = fecha1;
+        }
+    }
+
+    if (ViewBag.FechaFinal != null)
+    {
+        fecha1 = Convert.ToDateTime(ViewBag.FechaFinal);
+        fechaPlan = fecha1;
+    }
+
+    if (ViewBag.FechaFinal > DateTime.Today)
+    {
+        ViewBag.FechaFinal = DateTime.Today;
+        fecha1 = Convert.ToDateTime(ViewBag.FechaFinal);
+        fechaPlan = fecha1;
+    }
 
     DateTime fecha3 = fecha.AddMonths(-1);
-    DateTime fecha4 = fecha3.AddMonths(1);
+    DateTime fecha4 = fechaPlan.AddMonths(-1);
+
 
     int ultimoDiaMesAnterior = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddDays(-1).Day;
     int diaCorriente = DateTime.Today.Day;
-
-    if (diaCorriente > ultimoDiaMesAnterior)
-    {
-        fecha4 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, ultimoDiaMesAnterior).AddMonths(-1);
-    }
-    else
-    {
-        fecha4 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorriente).AddMonths(-1);
-    }
+    //if (diaCorriente > ultimoDiaMesAnterior)
+    //{
+    //    fecha4 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, ultimoDiaMesAnterior).AddMonths(-1);
+    //}
+    //else
+    //{
+    //    fecha4 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorriente).AddMonths(-1);
+    //}
 
 
 
@@ -98,12 +134,67 @@
     }
 
     int? Meta = metaTotal / db.Referido.Where(w => w.Tipo == "MEDIOS DIGITALES").Count();
+    double metaAs = db.Referido.Where(w => w.Tipo == "MEDIOS DIGITALES").Count();
+
 
 }
 
-<br />
-<h2 style="color:white">Tabla Comparativa (Medios Digitales)<span style="color:goldenrod">@DateTime.Now.ToString("MMMM-yy").ToUpper()</span></h2>
-<br />
+<h2 style="color:white"><span style="color:goldenrod">@fecha.ToString("MMMM-yy").ToUpper()</span></h2>
+
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/MediosDigitales8Columnas")">
+    <div>
+
+        @*FILTROS DE FECHA POR MES*@
+
+        @{
+
+            if (ViewBag.fechaInicio != null)
+            {
+
+                <input type="month" name="fechaInicio" class="form-control" value="@SetFechaInicio" style="width: 160px;" />
+
+            }
+
+            else
+
+            {
+
+                <input type="month" name="fechaInicio" class="form-control" value="" style="width: 160px;" />
+
+            }
+
+        }
+
+        @{
+
+            if (ViewBag.fechaFinal != null)
+            {
+
+                <input type="date" name="fechaFinal" class="form-control" value="@SetFechaFinal" style="width: 160px;" />
+
+            }
+
+            else
+
+            {
+
+                <input type="date" name="fechaFinal" class="form-control" value="" style="width: 160px;" />
+
+            }
+
+        }
+
+        <input type="submit" class="btn btn-info" value="Enviar" />
+
+        <a href="~/Admin/MediosDigitales8Columnas">
+            <span type="button" class="btn btn-success">Limpiar</span>
+        </a>
+
+    </div>
+</form>
+
+<h2 style="color:white">Tabla Comparativa (Medios Digitales)<span style="color:goldenrod">@fechaPlan.ToString("MMMM-yy").ToUpper()</span></h2>
+<h5 style="color: yellow">Resultados del día @fecha.ToString("dd-MMMM-yyyy") al día @fechaPlan.ToString("dd-MMMM-yyyy")</h5>
 
 <!--<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/TablaComparacion")">
     <div>
@@ -113,21 +204,19 @@
             <option value="Diarias">METAS DIARIAS</option>
             <option value="Semanales">METAS SEMANALES</option>
             <option value="Sucursales">SUCURSALES</option>-->
-            @*<option value="CallCenter">CALL CENTER</option>
-        <option value="Gestores">GESTORES</option>*@
-            <!--<option value="Alternativos">ACUMULADO ALT</option>
-            <option value="Comparacion">COMPARACIÓN</option>
-            <option value="Doctores">DOCTORES</option>
-            <option disabled>-------------------------</option>
-            <option value="Metas">ACTUALIZAR METAS</option>
-            <option value="Precios">ACTUALIZAR PRECIOS</option>
-        </select>-->
-        @*<input type="month" class="form-control" />*@
-        <!--<input type="submit" class="btn btn-info" value="Enviar" />
+@*<option value="CallCenter">CALL CENTER</option>
+    <option value="Gestores">GESTORES</option>*@
+<!--<option value="Alternativos">ACUMULADO ALT</option>
+    <option value="Comparacion">COMPARACIÓN</option>
+    <option value="Doctores">DOCTORES</option>
+    <option disabled>-------------------------</option>
+    <option value="Metas">ACTUALIZAR METAS</option>
+    <option value="Precios">ACTUALIZAR PRECIOS</option>
+</select>-->
+@*<input type="month" class="form-control" />*@
+<!--<input type="submit" class="btn btn-info" value="Enviar" />
     </div>
 </form>-->
-
-<br />
 @*<div>
         <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
     </div>*@
@@ -144,7 +233,7 @@
 
 </script>
 
-<a href="~/Admin/TablaComparacion" style="text-decoration:none"><h4 style="color:white">Regresar a la Tabla General</h4></a>
+<a href="~/Admin/General8Columnas" style="text-decoration:none"><h4 style="color:white">Regresar a la Tabla Sucursales</h4></a>
 <div class="tablaScroll">
     <table id="tbl_exporttable_to_xls" class="table  table-bordered table-hover tablas" style="color: #2F2D6B">
         <thead>
@@ -215,9 +304,11 @@
 
                     <td style="text-align: center; border-right: none">
                         @{
-                            metaPorcentaje = (Convert.ToDouble((Convert.ToDouble(Meta) / 30) * DateTime.Today.Day) * 100) / metaTotal;
+                            metaMuestra = (Convert.ToDouble(Convert.ToDouble(metaTotal) / 30) * fechaPlan.Day);
+                            metaPorcentaje = 100 / metaAs;
                         }
-                        <b class="pull-right">@Convert.ToInt32((Convert.ToInt32(Meta) / 30) * DateTime.Today.Day)</b>@*<span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>*@
+                        <b class="pull-right">@Convert.ToInt32((Convert.ToInt32(metaMuestra) / metaAs))</b>@*<span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>*@
+
                     </td>
 
                     <td style="text-align: center; border-right: none; border-left: none">
@@ -234,7 +325,7 @@
                             metaPorcentajeMesAnteriorDiferencia = metaPorcentaje - metaPorcentajeMesAnterior;
                             metaPorcentajeMesAnteriorDiferenciaFooter += metaPorcentajeMesAnteriorDiferencia;
 
-                            int? planDiferencia = realizadoHoy - Convert.ToInt32((Convert.ToInt32(Meta) / 30) * DateTime.Today.Day);
+                            int? planDiferencia = realizadoHoy - Convert.ToInt32((Convert.ToInt32(Meta) / 30) * fechaPlan.Day);
 
                             planTotalMesAnteriorFooter += planDiferencia;
 
@@ -272,7 +363,7 @@
                         @{
                             //double porcentajePlanDiferencia = Convert.ToDouble((100 * Convert.ToDouble(item.Meta)) / db.Canales.Sum(s => s.Meta));
                             //double porcentajePlanDiferencia = metaPorcentaje - ((Convert.ToDouble(item.Meta)) * 100 / Convert.ToDouble(metaTotal));
-                            double? porcentajePlanDiferencia = (planDiferencia * 100) / Convert.ToDouble((Convert.ToDouble(Meta) / 30) * DateTime.Today.Day);
+                            double? porcentajePlanDiferencia = (planDiferencia * 100) / Convert.ToDouble((Convert.ToDouble(Meta) / 30) * fechaPlan.Day);
                             porcentajePlanDiferencia = realizadoHoy == 0 ? 0 : porcentajePlanDiferencia;
 
                             if (porcentajePlanDiferencia > 0)
@@ -305,7 +396,7 @@
 
                         @{
                             double Span = 0;
-                            double? diferenciaMeta = realizadoHoy - @Convert.ToInt32((Convert.ToInt32(Meta) / 30) * DateTime.Today.Day);
+                            double? diferenciaMeta = realizadoHoy - @Convert.ToInt32((Convert.ToInt32(Meta) / 30) * fechaPlan.Day);
                             diferenciaMeta = realizadoHoy == 0 ? 0 : diferenciaMeta;
                             string texto3 = "";
                             string parentesisDerechoAng = "";
@@ -330,10 +421,10 @@
                         }
 
                         @{
-                            double? porcentajeSpanPlanvsReal = (diferenciaMeta * (Span)) * (100) / @Convert.ToInt32((Convert.ToInt32(Meta) / 30) * DateTime.Today.Day);
+                            double? porcentajeSpanPlanvsReal = (diferenciaMeta * (Span)) * (100) / @Convert.ToInt32((Convert.ToInt32(Meta) / 30) * fechaPlan.Day);
                         }
 
-                        @if (realizadoTotal == 0 || @Convert.ToInt32((Convert.ToInt32(Meta) / 30) * DateTime.Today.Day) == 0)
+                        @if (realizadoTotal == 0 || @Convert.ToInt32((Convert.ToInt32(Meta) / 30) * fechaPlan.Day) == 0)
                         {
 
                             porcentajeSpanPlanvsReal = 0;
@@ -465,7 +556,7 @@
             </td>
 
             <td class="bg-info" style="text-align: center; border-right: none">
-                <b class="pull-right">@metaTotal</b>@*<span class="pull-right" style="font-size:small">100%</span>*@
+                <b class="pull-right">@Convert.ToInt32(metaMuestra)</b>@*<span class="pull-right" style="font-size:small">100%</span>*@
             </td>
 
             <td class="bg-info" style="text-align: center; border-right: none; border-left: none">
@@ -618,13 +709,13 @@
             <td class="bg-info" style="text-align: center; border-right: none; border-left: none">
 
                 @*@{
-            double SpanPlanTotalMant = 0;
-            double diferenciaPtantvsPtact = realizadoTotal - realizadoTotalMesAnterior;
-            diferenciaPtantvsPtact = realizadoTotal == 0 ? 0 : diferenciaPtantvsPtact;
-            string textoAngPtant = "";
-            string parentesisDerechoAng1Ptant = "";
-            string parentesisIZquierdoAng1Ptant = "";
-        }*@
+                        double SpanPlanTotalMant = 0;
+                        double diferenciaPtantvsPtact = realizadoTotal - realizadoTotalMesAnterior;
+                        diferenciaPtantvsPtact = realizadoTotal == 0 ? 0 : diferenciaPtantvsPtact;
+                        string textoAngPtant = "";
+                        string parentesisDerechoAng1Ptant = "";
+                        string parentesisIZquierdoAng1Ptant = "";
+                    }*@
 
                 @if (diferenciaPtantvsPtact > 0)
                 {

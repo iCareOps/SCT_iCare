@@ -1,4 +1,6 @@
-﻿
+﻿@*XLSX *@
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+
 @{
     ViewBag.Title = "Conciliacion";
 
@@ -7,6 +9,7 @@
 
     DateTime fecha1 = DateTime.Today;
     DateTime fecha2 = DateTime.Today.AddDays(1);
+    DateTime fechaF = DateTime.Today;
 
     if (ViewBag.FechaInicio != null)
     {
@@ -16,6 +19,7 @@
     if (ViewBag.FechaFinal != null)
     {
         fecha2 = Convert.ToDateTime(ViewBag.FechaFinal);
+        fechaF = Convert.ToDateTime(ViewBag.FechaFinal);
         fecha2 = fecha2.AddDays(1);
     }
 
@@ -27,6 +31,7 @@
     int totalFooterConekta = 0;
     int totalFooterBajio = 0;
     int totalFooterBanorte = 0;
+    int totalFooterSantander = 0;
     int totalFooterCoppelTLS = 0;
     int totalFooterCoppelLC = 0;
     int totalFooterAztecaTLS = 0;
@@ -90,29 +95,50 @@
 
         <input type="submit" class="btn btn-info" value="Enviar" />
         <a href="~/Contabilidad/Conciliacion">
-        <span type="button" class="btn btn-success">Limpiar</span></a>
+            <span type="button" class="btn btn-success">Limpiar</span>
+        </a>
 
     </div>
-
+    <br />
 
 </form>
 
+<script>
+
+    function ExportToExcel(type, fn, dl)
+    {
+        var elt = document.getElementById('Excel');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+            XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+            XLSX.writeFile(wb, fn || ('Resumen de conciliacion' + ' del @Convert.ToDateTime(fecha1).ToString("dd-MM-yy")' + ' al @Convert.ToDateTime(fechaF).ToString("dd-MM-yy").' + (type || 'xlsx')));
+    }
+
+</script>
+
+<div>
+    <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
+</div>
+
 <h3 style="color: white">EPIs</h3>
 <div class="tablaScroll" style="min-height: 300px; max-height:450px">
-    <table class="table  table-hover tablas table-bordered" style="color: #2F2D6B">
+    <table id="Excel" class="table  table-hover tablas table-bordered" style="color: #2F2D6B">
         <thead style="color:white">
             <tr>
                 <th style="text-align:center">
                     Sucursal
                 </th>
-                <th style="text-align:center">
+                <th style="text-align: center">
                     EPIs
                 </th>
-                <th style="text-align:center">
+                <th style="text-align: center">
                     CAJA
                 </th>
-                <th style="text-align:center">
+                <th style="text-align: center">
                     BANCOS
+                </th>
+                <th style="text-align:center">
+                    @Html.ActionLink("CXC", "Index", new { tipoPago = "Pendiente de Pago", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
                 </th>
                 <th style="text-align:center">
                     @Html.ActionLink("Conekta", "Index", new { tipoPago = "OXXO", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
@@ -122,6 +148,9 @@
                 </th>
                 <th style="text-align:center">
                     @Html.ActionLink("Banorte", "Index", new { tipoPago = "Banorte", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
+                </th>
+                <th style="text-align:center">
+                    @Html.ActionLink("Santander", "Index", new { tipoPago = "Santander", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
                 </th>
                 <th style="text-align:center">
                     @Html.ActionLink("Coppel TLS", "Index", new { tipoPago = "Coppel TLS", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
@@ -136,19 +165,19 @@
                     @Html.ActionLink("Azteca LC", "Index", new { tipoPago = "Azteca LC", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
                 </th>
                 <th style="text-align:center">
-                    @Html.ActionLink("CXC", "Index", new { tipoPago = "Pendiente de Pago", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
-                </th>
-                <th style="text-align:center">
                     @Html.ActionLink("Aclarciones", "Index", new { cuenta = "ACLARCIONES", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: white; text-decoration: none" })
                 </th>
             </tr>
         </thead>
 
+
+        @*PACIENTES NORMALES DE SUCURSAL EN LA TABLA*@
+
         @{
             foreach (var item in db.Sucursales.Where(w => w.Nombre != "MIXCOAC" && w.Nombre != "IN SITU"))
             {
                 <tr>
-                    <td><b>@Html.ActionLink(item.Nombre, "Index", new { sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</b></td>
+                    <td style="border-right-color: black"><b>@Html.ActionLink(item.Nombre, "Index", new { sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</b></td>
 
                     @*//EPIs*@
                     <td style="text-align:center">
@@ -159,7 +188,7 @@
 
                             totalFooterEPIS += epis;
                         }
-                        <span>@Html.ActionLink(epis.ToString(), "Index", new { sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                        <span><b>@Html.ActionLink(epis.ToString(), "Index", new { sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</b></span>
 
                     </td>
 
@@ -168,7 +197,7 @@
                         @{
                             int Cuenta = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
                             Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
-                            w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN").Count();
+                            w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" && w.N.Conciliado == null && w.N.Cuenta != "CUENTAS X COBRAR").Count();
 
                             int CuentaR = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
                             Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
@@ -178,7 +207,7 @@
                             totalFooterCuenta += CuentaP;
                         }
 
-                        <span>@Html.ActionLink(CuentaP.ToString(), "Index", new { sucursal = item.Nombre, conciliadooo = "NO CONCILIADOS", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                        <span><b>@Html.ActionLink(CuentaP.ToString(), "Index", new { sucursal = item.Nombre, conciliadooo = "NO CONCILIADOS", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</b></span>
 
                     </td>
 
@@ -193,8 +222,21 @@
                             totalFooterBancos += Banco;
                         }
 
-                        <span>@Html.ActionLink(Banco.ToString(), "Index", new { sucursal = item.Nombre, conciliadooo = "CONCILIADOS", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                        <span><b>@Html.ActionLink(Banco.ToString(), "Index", new { sucursal = item.Nombre, conciliadooo = "CONCILIADOS", fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</b></span>
 
+                    </td>
+
+                    @*//CXC*@
+                    <td style="text-align: center; border-right-color: black">
+                        @{
+                            int cxc = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                w.N.TipoPago == "Pendiente de Pago").Count();
+
+                            totalFooterCXC += cxc;
+                        }
+                        <span><b>@Html.ActionLink(cxc.ToString(), "Index", new { tipoPago = "Pendiente de Pago", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</b></span>
                     </td>
 
                     @*//Conekta*@
@@ -241,6 +283,19 @@
                             totalFooterBanorte += banorte;
                         }
                         <span>@Html.ActionLink(banorte.ToString(), "Index", new { tipoPago = "Banorte", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                    </td>
+
+                    @*//Santander*@
+                    <td style="text-align:center">
+                        @{
+                            int santander = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
+                                Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
+                                w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
+                                w.N.TipoPago == "Santander").Count();
+
+                            totalFooterSantander += santander;
+                        }
+                        <span>@Html.ActionLink(santander.ToString(), "Index", new { tipoPago = "Santander", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
                     </td>
 
                     @*//CoppelTLS*@
@@ -295,19 +350,6 @@
                         <span>@Html.ActionLink(aztecaLC.ToString(), "Index", new { tipoPago = "Azteca LC", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
                     </td>
 
-                    @*//CXC*@
-                    <td style="text-align:center">
-                        @{
-                            int cxc = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m }).
-                                Where(w => w.M.FechaExpdiente >= fecha1 && w.M.FechaExpdiente < fecha2 &&
-                                w.M.EstatusCaptura == "Terminado" && w.M.Sucursal == item.Nombre && w.M.TipoTramite != "REVALORACIÓN" &&
-                                w.N.TipoPago == "Pendiente de Pago").Count();
-
-                            totalFooterCXC += cxc;
-                        }
-                        <span>@Html.ActionLink(cxc.ToString(), "Index", new { tipoPago = "Pendiente de Pago", sucursal = item.Nombre, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
-                    </td>
-
                     @*//Aclaraciones*@
                     <td style="text-align:center">
                         @{
@@ -325,11 +367,16 @@
             }
         }
 
+
+
+
+        @*ESTOS SON LOS PACIENTES ALT EN LA TABLA*@
+
         @{
             foreach (var item in db.Canales.Where(w => w.NombreCanal == "IN SITU" || w.NombreCanal == "GESTOR ALT"))
             {
                 <tr>
-                    <td><b>@Html.ActionLink(item.NombreCanal, "Index", new { Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</b></td>
+                    <td style="border-right-color: black"><b>@Html.ActionLink(item.NombreCanal, "Index", new { Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</b></td>
 
                     @*//EPIs*@
                     <td style="text-align:center">
@@ -343,11 +390,11 @@
                         <span><b>@epis</b></span>
                     </td>
 
-                    @*//Cuenta*@
+                    @*//Caja*@
                     <td style="text-align:center">
                         @{
                             int cuentaALT = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
-                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN").Count();
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" && w.Conciliado == null && w.Cuenta != "CUENTAS X COBRAR").Count();
 
                             int cuentaALTR = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
                                 w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" && w.Conciliado != null).Count();
@@ -355,7 +402,7 @@
                             int CuentasALTP = cuentaALT - cuentaALTR;
                             totalFooterCuenta += CuentasALTP;
                         }
-                        <span>@Html.ActionLink(CuentasALTP.ToString(), "Index", new { Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B text-decoration: none" })</span>
+                        <span><b>@Html.ActionLink(CuentasALTP.ToString(), "Index", new { Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B text-decoration: none" })</b></span>
                     </td>
 
                     @*//Bancos*@
@@ -366,7 +413,21 @@
 
                             totalFooterBancos += Bancos;
                         }
-                        <span>@Html.ActionLink(Bancos.ToString(), "Index", new { Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B text-decoration: none" })</span>
+                        <span><b>@Html.ActionLink(Bancos.ToString(), "Index", new { Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B text-decoration: none" })</b></span>
+                    </td>
+
+                    @*//CXC*@
+                    <td style="text-align: center; border-right-color: black">
+                        @{
+                            int cxc = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                w.TipoPago == "Pendiente de Pago").Count();
+
+                            totalFooterCXC += cxc;
+
+
+                        }
+                        <span><b>@Html.ActionLink(cxc.ToString(), "Index", new { tipoPago = "Pendiente de Pago", Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</b></span>
                     </td>
 
                     @*//Conekta*@
@@ -408,6 +469,18 @@
                             totalFooterBanorte += banorte;
                         }
                         <span>@Html.ActionLink(banorte.ToString(), "Index", new { tipoPago = "Banorte", Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
+                    </td>
+
+                    @*//Banorte*@
+                    <td style="text-align:center">
+                        @{
+                            int santander = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
+                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
+                                w.TipoPago == "Santander").Count();
+
+                            totalFooterSantander += santander;
+                        }
+                        <span>@Html.ActionLink(santander.ToString(), "Index", new { tipoPago = "Santander", Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
                     </td>
 
                     @*//BanCoppelTLS*@
@@ -461,20 +534,6 @@
                         <span>@Html.ActionLink(aztecaLC.ToString(), "Index", new { tipoPago = "Azteca LC", Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
                     </td>
 
-                    @*//CXC*@
-                    <td style="text-align:center">
-                        @{
-                            int cxc = db.PacienteESP.Where(w => w.FechaCaptura >= fecha1 && w.FechaCaptura < fecha2 &&
-                                w.EstatusCaptura == "Terminado" && w.CanalTipo == item.NombreCanal && w.TipoTramite != "REVALORACIÓN" &&
-                                w.TipoPago == "Pendiente de Pago").Count();
-
-                            totalFooterCXC += cxc;
-
-
-                        }
-                        <span>@Html.ActionLink(cxc.ToString(), "Index", new { tipoPago = "Pendiente de Pago", Canal = item.NombreCanal, fechaInicio = fecha1, fechaFinal = fecha2.AddDays(-1) }, new { style = "color: #2F2D6B; text-decoration: none" })</span>
-                    </td>
-
                     @*//Aclaraciones*@
                     <td style="text-align:center">
                         @{
@@ -492,25 +551,26 @@
         }
 
         <tr>
-            <td><b>TOTALES</b></td>
-            <td style="text-align:center"><b>@totalFooterEPIS</b></td>
-            <td style="text-align:center"><b>@totalFooterCuenta</b></td>
+            <td style="border-right-color: black"><b>TOTALES</b></td>
+            <td style="text-align: center""><b>@totalFooterEPIS</b></td>
+            <td style="text-align: center"><b>@totalFooterCuenta</b></td>
             <td style="text-align:center"><b>@totalFooterBancos</b></td>
-            <td style="text-align:center">@totalFooterConekta</td>
+            <td style="text-align: center; border-right-color: black"><b>@totalFooterCXC</b></td>
+            <td style="text-align: center">@totalFooterConekta</td>
             <td style="text-align:center">@totalFooterBajio</td>
             <td style="text-align:center">@totalFooterBanorte</td>
+            <td style="text-align:center">@totalFooterSantander</td>
             <td style="text-align:center">@totalFooterCoppelTLS</td>
             <td style="text-align:center">@totalFooterAztecaTLS</td>
             <td style="text-align:center">@totalFooterCoppelLC</td>
             <td style="text-align:center">@totalFooterAztecaLC</td>
-            <td style="text-align:center">@totalFooterCXC</td>
             <td style="text-align:center">@totalFooterAclaraciones</td>
         </tr>
 
     </table>
 </div>
 
-@{ 
+@{
     totalFooterEPIS = 0;
     totalFooterCuenta = 0;
     totalFooterBancos = 0;
@@ -1458,100 +1518,100 @@
             }
         }
 
-    <tr>
-        <td><b>TOTALES</b></td>
-        @{
-            if (totalFooterEPIS != 0)
-            {
-                <td style="text-align:center"><b>$@totalFooterEPIS.ToString("###,###,###,###")</b></td>
-            }
-            else
-            {
-                <td style="text-align:center"><b>-----</b></td>
-            }           
+        <tr>
+            <td><b>TOTALES</b></td>
+            @{
+                if (totalFooterEPIS != 0)
+                {
+                    <td style="text-align:center"><b>$@totalFooterEPIS.ToString("###,###,###,###")</b></td>
+                }
+                else
+                {
+                    <td style="text-align:center"><b>-----</b></td>
+                }
 
-            if (totalFooterConekta != 0)
-            {
-                <td style="text-align:center"><b>$@totalFooterConekta.ToString("###,###,###,###")</b></td>
-            }
-            else
-            {
-                <td style="text-align:center"><b>-----</b></td>
-            }
+                if (totalFooterConekta != 0)
+                {
+                    <td style="text-align:center"><b>$@totalFooterConekta.ToString("###,###,###,###")</b></td>
+                }
+                else
+                {
+                    <td style="text-align:center"><b>-----</b></td>
+                }
 
-            if (totalFooterBajio != 0)
-            {
-                <td style="text-align:center"><b>$@totalFooterBajio.ToString("###,###,###,###")</b></td>
-            }
-            else
-            {
-                <td style="text-align:center"><b>-----</b></td>
-            }
+                if (totalFooterBajio != 0)
+                {
+                    <td style="text-align:center"><b>$@totalFooterBajio.ToString("###,###,###,###")</b></td>
+                }
+                else
+                {
+                    <td style="text-align:center"><b>-----</b></td>
+                }
 
-            if (totalFooterBanorte != 0)
-            {
-                <td style="text-align:center"><b>$@totalFooterBanorte.ToString("###,###,###,###")</b></td>
-            }
-            else
-            {
-                <td style="text-align:center"><b>-----</b></td>
-            }
+                if (totalFooterBanorte != 0)
+                {
+                    <td style="text-align:center"><b>$@totalFooterBanorte.ToString("###,###,###,###")</b></td>
+                }
+                else
+                {
+                    <td style="text-align:center"><b>-----</b></td>
+                }
 
-            if (totalFooterCoppelTLS != 0)
-            {
-                <td style="text-align:center"><b>$@totalFooterCoppelTLS.ToString("###,###,###,###")</b></td>
-            }
-            else
-            {
-                <td style="text-align:center"><b>-----</b></td>
-            }
+                if (totalFooterCoppelTLS != 0)
+                {
+                    <td style="text-align:center"><b>$@totalFooterCoppelTLS.ToString("###,###,###,###")</b></td>
+                }
+                else
+                {
+                    <td style="text-align:center"><b>-----</b></td>
+                }
 
-            if (totalFooterAztecaTLS != 0)
-            {
-                <td style="text-align:center"><b>$@totalFooterAztecaTLS.ToString("###,###,###,###")</b></td>
-            }
-            else
-            {
-                <td style="text-align:center"><b>-----</b></td>
-            }
+                if (totalFooterAztecaTLS != 0)
+                {
+                    <td style="text-align:center"><b>$@totalFooterAztecaTLS.ToString("###,###,###,###")</b></td>
+                }
+                else
+                {
+                    <td style="text-align:center"><b>-----</b></td>
+                }
 
-            if (totalFooterCoppelLC != 0)
-            {
-                <td style="text-align:center"><b>$@totalFooterCoppelLC.ToString("###,###,###,###")</b></td>
-            }
-            else
-            {
-                <td style="text-align:center"><b>-----</b></td>
-            }
+                if (totalFooterCoppelLC != 0)
+                {
+                    <td style="text-align:center"><b>$@totalFooterCoppelLC.ToString("###,###,###,###")</b></td>
+                }
+                else
+                {
+                    <td style="text-align:center"><b>-----</b></td>
+                }
 
-            if (totalFooterAztecaLC != 0)
-            {
-                <td style="text-align:center"><b>$@totalFooterAztecaLC.ToString("###,###,###,###")</b></td>
-            }
-            else
-            {
-                <td style="text-align:center"><b>-----</b></td>
-            }
+                if (totalFooterAztecaLC != 0)
+                {
+                    <td style="text-align:center"><b>$@totalFooterAztecaLC.ToString("###,###,###,###")</b></td>
+                }
+                else
+                {
+                    <td style="text-align:center"><b>-----</b></td>
+                }
 
-            if (totalFooterCXC != 0)
-            {
-                <td style="text-align:center"><b>$@totalFooterCXC.ToString("###,###,###,###")</b></td>
-            }
-            else
-            {
-                <td style="text-align:center"><b>-----</b></td>
-            }
+                if (totalFooterCXC != 0)
+                {
+                    <td style="text-align:center"><b>$@totalFooterCXC.ToString("###,###,###,###")</b></td>
+                }
+                else
+                {
+                    <td style="text-align:center"><b>-----</b></td>
+                }
 
-            if (totalFooterAclaraciones != 0)
-            {
-                <td style="text-align:center"><b>$@totalFooterAclaraciones.ToString("###,###,###,###")</b></td>
+                if (totalFooterAclaraciones != 0)
+                {
+                    <td style="text-align:center"><b>$@totalFooterAclaraciones.ToString("###,###,###,###")</b></td>
+                }
+                else
+                {
+                    <td style="text-align:center"><b>-----</b></td>
+                }
             }
-            else
-            {
-                <td style="text-align:center"><b>-----</b></td>
-            }
-        }
-    </tr>
+        </tr>
 
     </table>
 </div>

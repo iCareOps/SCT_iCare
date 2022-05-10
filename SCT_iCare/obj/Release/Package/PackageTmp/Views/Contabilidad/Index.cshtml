@@ -427,13 +427,15 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
         </a>
 
     </div>
+    <br />
 
 
 </form>
 
 <script>
 
-    function ExportToExcel(type, fn, dl) {
+    function ExportToExcel(type, fn, dl)
+    {
         var elt = document.getElementById('tbl_exporttable_to_xls');
         var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
         return dl ?
@@ -447,21 +449,21 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
 
 
 
-|   <div>
-    <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
+    <div>
+        <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
 
-    @*<button style="background-color:cadetblue" class="btn btn-info dropdown-toggle" onclick="" id="IdBotonUno">General</button>*@
-    <a style="background-color:Highlight" class="btn btn-info dropdown-toggle" href="/Contabilidad/Index">General</a>
-    @*<button style="background-color:Highlight" class="btn btn-info dropdown-toggle" onclick="" id="IdBotonDos">Conciliados</button>*@
-    <a style="background-color:forestgreen" class="btn btn-info dropdown-toggle" href="/Contabilidad/Index/1">Conciliados</a>
-    @*<button style="background-color:red" class="btn btn-info dropdown-toggle" onclick="" id="IdBotonTres">No conciliados</button>*@
-    <a style="background-color:red" class="btn btn-info dropdown-toggle" href="/Contabilidad/Index/2">No conciliados</a>
-    @*<a href="~/Contabilidad/Conciliados">*@
-    <!--<span class="btn btn-info">Ir a Conciliados</span>-->
-    @*</a>*@
+        @*<button style="background-color:cadetblue" class="btn btn-info dropdown-toggle" onclick="" id="IdBotonUno">General</button>*@
+        <a style="background-color:Highlight" class="btn btn-info dropdown-toggle" href="/Contabilidad/Index">General</a>
+        @*<button style="background-color:Highlight" class="btn btn-info dropdown-toggle" onclick="" id="IdBotonDos">Conciliados</button>*@
+        <a style="background-color:forestgreen" class="btn btn-info dropdown-toggle" href="/Contabilidad/Index/1">Conciliados</a>
+        @*<button style="background-color:red" class="btn btn-info dropdown-toggle" onclick="" id="IdBotonTres">No conciliados</button>*@
+        <a style="background-color:red" class="btn btn-info dropdown-toggle" href="/Contabilidad/Index/2">No conciliados</a>
+        @*<a href="~/Contabilidad/Conciliados">*@
+        <!--<span class="btn btn-info">Ir a Conciliados</span>-->
+        @*</a>*@
 
 
-</div>
+    </div>
 
 
 <br />
@@ -655,13 +657,13 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
 
                                     <div class="dropdown-menu" style="padding:10px">
                                         @*@{
-                                                var consultaTicket = (from i in db.Tickets where i.idPaciente == item.A.M.idPaciente select i.idTicket).FirstOrDefault();
+                        var consultaTicket = (from i in db.Tickets where i.idPaciente == item.A.M.idPaciente select i.idTicket).FirstOrDefault();
 
-                                                if (consultaTicket != 0)
-                                                {
-                                                    <b>@Html.ActionLink("Ticket de Pago", "AbrirTicket", new { id = consultaTicket }, new { style = "color: crimson; text-decoration: none" })</b>
-                                                }
-                                            }*@
+                        if (consultaTicket != 0)
+                        {
+                            <b>@Html.ActionLink("Ticket de Pago", "AbrirTicket", new { id = consultaTicket }, new { style = "color: crimson; text-decoration: none" })</b>
+                        }
+                    }*@
                                         <a href="#" data-toggle="modal" data-target="#Prueba_@item.A.M.idCita"><b style="color:red">Abrir Ticket</b></a>
                                         <div class="dropdown-divider"></div>
                                         <a href="#" data-toggle="modal" data-target="#Efectivo_@item.A.M.idCita"><b>Bancos</b></a>
@@ -673,13 +675,13 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                         <a href="#" data-toggle="modal" data-target="#CXC_@item.A.M.idCita"><b>CuentasXCobrar</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#Corporativo_@item.A.M.idCita"><b>Corporativo</b></a>
-                                            <div class="dropdown-divider"></div>*@
+                    <div class="dropdown-divider"></div>*@
                                         <a href="#" data-toggle="modal" data-target="#Aclaracion_@item.A.M.idCita"><b>Aclaracion</b></a>
                                         <div class="dropdown-divider"></div>
                                         <a href="#" data-toggle="modal" data-target="#Devoluciones_@item.A.M.idCita"><b>Devoluciones</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#CONCILIADO_@item.A.M.idPaciente"><b>CONCILIADO</b></a>
-                                            <div class="dropdown-divider"></div>*@
+                    <div class="dropdown-divider"></div>*@
                                     </div>
                                 }
 
@@ -696,13 +698,13 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
 
                                     <div class="dropdown-menu" style="padding:10px">
                                         @*@{
-                                                var consultaTicket = (from i in db.Tickets where i.idPaciente == item.A.M.idPaciente select i.idTicket).FirstOrDefault();
+                        var consultaTicket = (from i in db.Tickets where i.idPaciente == item.A.M.idPaciente select i.idTicket).FirstOrDefault();
 
-                                                if (consultaTicket != 0)
-                                                {
-                                                    <b>@Html.ActionLink("Ticket de Pago", "AbrirTicket", new { id = consultaTicket }, new { style = "color: crimson; text-decoration: none" })</b>
-                                                }
-                                            }*@
+                        if (consultaTicket != 0)
+                        {
+                            <b>@Html.ActionLink("Ticket de Pago", "AbrirTicket", new { id = consultaTicket }, new { style = "color: crimson; text-decoration: none" })</b>
+                        }
+                    }*@
                                         <a href="#" data-toggle="modal" data-target="#Prueba_@item.A.M.idCita"><b>Prueba</b></a>
                                         <div class="dropdown-divider"></div>
                                         <a href="#" data-toggle="modal" data-target="#Efectivo_@item.A.M.idCita"><b>Bancos</b></a>
@@ -714,13 +716,13 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                         <a href="#" data-toggle="modal" data-target="#CXC_@item.A.M.idCita"><b>CuentasXCobrar</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#Corporativo_@item.A.M.idCita"><b>Corporativo</b></a>
-                                            <div class="dropdown-divider"></div>*@
+                    <div class="dropdown-divider"></div>*@
                                         <a href="#" data-toggle="modal" data-target="#Aclaracion_@item.A.M.idCita"><b>Aclaracion</b></a>
                                         <div class="dropdown-divider"></div>
                                         <a href="#" data-toggle="modal" data-target="#Devoluciones_@item.A.M.idCita"><b>Devoluciones</b></a>
                                         <div class="dropdown-divider"></div>
                                         @*<a href="#" data-toggle="modal" data-target="#CONCILIADO_@item.A.M.idPaciente"><b>CONCILIADO</b></a>
-                                            <div class="dropdown-divider"></div>*@
+                    <div class="dropdown-divider"></div>*@
 
                                     </div>
                                 }
@@ -814,6 +816,11 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                 </div>
                             </form>
 
+                    
+
+
+
+
                             <!-- Efectivo -->
                             <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuenta")">
                                 @Html.AntiForgeryToken()
@@ -846,6 +853,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -854,6 +862,18 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Pendiente de Pago">Pendiente de Pago</option>
                                                     </select>
                                                     <br />
+
+                                                    @*CAMPO REQUERIDO PARA SELECTORES*@
+                                                    <br />
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="form-select" required>Usar Saldo a Favor?</label>
+                                                        <select name="usarSaldo" id="usarSaldo1" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-control" required>
+                                                            <option disabled selected value="">Seleccione una opcion</option>
+                                                            <option value="Si">Si</option>
+                                                            <option value="No">No</option>
+                                                        </select>
+                                                    </div>
+
                                                     <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
                                                     <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
@@ -934,6 +954,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -942,6 +963,18 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Pendiente de Pago">Pendiente de Pago</option>
                                                     </select>
                                                     <br />
+
+                                                    @*CAMPO REQUERIDO PARA SELECTORES*@
+                                                    <br />
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="form-select" required>Usar Saldo a Favor?</label>
+                                                        <select name="usarSaldo" id="usarSaldo1" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-control" required>
+                                                            <option disabled selected value="">Seleccione una opcion</option>
+                                                            <option value="Si">Si</option>
+                                                            <option value="No">No</option>
+                                                        </select>
+                                                    </div>
+
                                                     <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
                                                     <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
@@ -1012,6 +1045,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1090,6 +1124,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1138,64 +1173,64 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
 
                             <!-- Efectivo -->
                             @*<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuenta")">
-                                    @Html.AntiForgeryToken()
-                                    <div class="modal fade" id="Corporativo_@item.A.M.idCita" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Está seguro de mandar los datos de esta venta a CORPORATIVO?</b></h4>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <input type="hidden" name="id" value="@item.A.M.idCita" />
-                                                    <input type="hidden" name="cuenta" value="CORPORATIVO" />
-                                                    <div class="form-group" style="width:60%; min-width:320px">
-                                                        <label for="recipient-name" class="col-form-label">Nombre:</label>
-                                                        <b>@item.A.N.Nombre</b><br />
-                                                        <label for="recipient-name" class="col-form-label">CURP:</label>
-                                                        <b>@item.A.N.CURP</b><br />
-                                                        <label for="recipient-name" class="col-form-label">NoExpediente:</label>
-                                                        <b>@item.A.M.NoExpediente</b><br />
-                                                        <label for="recipient-name" class="col-form-label">Fecha:</label>
-                                                        <b>@Convert.ToDateTime(item.A.M.FechaReferencia).ToString("dd-MMMM-yyyy")</b><br />
-                                                        <label for="recipient-name" class="col-form-label">Sucursal:</label>
-                                                        <b>@item.A.M.Sucursal</b><br />
-                                                        <label for="recipient-name" class="col-form-label">Doctor:</label>
-                                                        <b>@item.A.M.Doctor</b><br />
-                                                        <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
-                                                        <select required name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
-                                                            <option selected disabled>Seleccionar</option>
-                                                            <option value="Referencia OXXO">Referencia OXXO</option>
-                                                            <option value="Referencía BanBajío">Referencía BanBajío</option>
-                                                            <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
-                                                            <option value="Banorte">Banorte</option>
-                                                            <option value="BanCoppel TLS">BanCoppel TLS</option>
-                                                            <option value="BanCoppel LC">BanCoppel LC</option>
-                                                            <option value="Banco Azteca TLS">Banco Azteca TLS</option>
-                                                            <option value="Banco Azteca LC">Banco Azteca LC</option>
-                                                            <option value="Cuenta Externa">Cuenta Externa</option>
-                                                            <option value="Pendiente de Pago">Pendiente de Pago</option>
-                                                        </select>
-                                                        <br />
-                                                        <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
-                                                        <input type="date" class="form-control" name="fechaContable" />
-                                                        <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
-                                                        <input type="text" class="form-control" name="comentario" />
-                                                        <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                        <input type="hidden" name="fechaInicio" value="@fechaInicio" />
-                                                        <input type="hidden" name="fechaFinal" value="@fechaFinal" />
-                                                        <input type="hidden" name="cuenta2" value="@cuenta" />
-                                                        <input type="hidden" name="canal" value="@canal" />
-                                                        <input type="hidden" name="sucursal" value="@sucursal" />
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>*@
+            @Html.AntiForgeryToken()
+            <div class="modal fade" id="Corporativo_@item.A.M.idCita" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="exampleModalLabel"><b>¿Está seguro de mandar los datos de esta venta a CORPORATIVO?</b></h4>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="id" value="@item.A.M.idCita" />
+                            <input type="hidden" name="cuenta" value="CORPORATIVO" />
+                            <div class="form-group" style="width:60%; min-width:320px">
+                                <label for="recipient-name" class="col-form-label">Nombre:</label>
+                                <b>@item.A.N.Nombre</b><br />
+                                <label for="recipient-name" class="col-form-label">CURP:</label>
+                                <b>@item.A.N.CURP</b><br />
+                                <label for="recipient-name" class="col-form-label">NoExpediente:</label>
+                                <b>@item.A.M.NoExpediente</b><br />
+                                <label for="recipient-name" class="col-form-label">Fecha:</label>
+                                <b>@Convert.ToDateTime(item.A.M.FechaReferencia).ToString("dd-MMMM-yyyy")</b><br />
+                                <label for="recipient-name" class="col-form-label">Sucursal:</label>
+                                <b>@item.A.M.Sucursal</b><br />
+                                <label for="recipient-name" class="col-form-label">Doctor:</label>
+                                <b>@item.A.M.Doctor</b><br />
+                                <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+                                <select required name="pago" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-select">
+                                    <option selected disabled>Seleccionar</option>
+                                    <option value="Referencia OXXO">Referencia OXXO</option>
+                                    <option value="Referencía BanBajío">Referencía BanBajío</option>
+                                    <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
+                                    <option value="Banorte">Banorte</option>
+                                    <option value="BanCoppel TLS">BanCoppel TLS</option>
+                                    <option value="BanCoppel LC">BanCoppel LC</option>
+                                    <option value="Banco Azteca TLS">Banco Azteca TLS</option>
+                                    <option value="Banco Azteca LC">Banco Azteca LC</option>
+                                    <option value="Cuenta Externa">Cuenta Externa</option>
+                                    <option value="Pendiente de Pago">Pendiente de Pago</option>
+                                </select>
+                                <br />
+                                <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
+                                <input type="date" class="form-control" name="fechaContable" />
+                                <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
+                                <input type="text" class="form-control" name="comentario" />
+                                <input type="hidden" name="usuario" value="@oUser.Nombre" />
+                                <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                <input type="hidden" name="fechaFinal" value="@fechaFinal" />
+                                <input type="hidden" name="cuenta2" value="@cuenta" />
+                                <input type="hidden" name="canal" value="@canal" />
+                                <input type="hidden" name="sucursal" value="@sucursal" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <input type="submit" value="Guardar" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>*@
 
                             <!-- Aclaraciones -->
                             <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuenta")">
@@ -1229,6 +1264,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1307,6 +1343,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1354,47 +1391,47 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                             </form>
 
                             @*<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/CambiarCuenta")">
-                                    @Html.AntiForgeryToken()
-                                    <div class="modal fade" id="CONCILIADO_@item.A.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Ha conciliado este pago?</b></h4>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <input type="hidden" name="id" value="@item.A.M.idCita" />
-                                                    <input type="hidden" name="cuenta" value="CONCILIADO" />
-                                                    <div class="form-group" style="width:60%; min-width:320px">
-                                                        <label for="recipient-name" class="col-form-label">Nombre:</label>
-                                                        <b>@item.A.N.Nombre</b><br />
-                                                        <label for="recipient-name" class="col-form-label">CURP:</label>
-                                                        <b>@item.A.N.CURP</b><br />
-                                                        <label for="recipient-name" class="col-form-label">NoExpediente:</label>
-                                                        <b>@item.A.M.NoExpediente</b><br />
-                                                        <label for="recipient-name" class="col-form-label">Fecha:</label>
-                                                        <b>@Convert.ToDateTime(item.A.M.FechaReferencia).ToString("dd-MMMM-yyyy")</b><br />
-                                                        <label for="recipient-name" class="col-form-label">Doctor:</label>
-                                                        <b>@item.A.M.Doctor</b><br />
-                                                        <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
+            @Html.AntiForgeryToken()
+            <div class="modal fade" id="CONCILIADO_@item.A.M.idPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="exampleModalLabel"><b>¿Ha conciliado este pago?</b></h4>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="id" value="@item.A.M.idCita" />
+                            <input type="hidden" name="cuenta" value="CONCILIADO" />
+                            <div class="form-group" style="width:60%; min-width:320px">
+                                <label for="recipient-name" class="col-form-label">Nombre:</label>
+                                <b>@item.A.N.Nombre</b><br />
+                                <label for="recipient-name" class="col-form-label">CURP:</label>
+                                <b>@item.A.N.CURP</b><br />
+                                <label for="recipient-name" class="col-form-label">NoExpediente:</label>
+                                <b>@item.A.M.NoExpediente</b><br />
+                                <label for="recipient-name" class="col-form-label">Fecha:</label>
+                                <b>@Convert.ToDateTime(item.A.M.FechaReferencia).ToString("dd-MMMM-yyyy")</b><br />
+                                <label for="recipient-name" class="col-form-label">Doctor:</label>
+                                <b>@item.A.M.Doctor</b><br />
+                                <label for="recipient-name" class="col-form-label">Tipo de Pago:</label>
 
-                                                        <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
-                                                        <input type="text" class="form-control" name="comentario" />
-                                                        <input type="hidden" name="usuario" value="@oUser.Nombre" />
-                                                        <input type="hidden" name="fechaInicio" value="@fechaInicio" />
-                                                        <input type="hidden" name="fechaFinal" value="@fechaFinal" />
-                                                        <input type="hidden" name="cuenta2" value="@cuenta" />
-                                                        <input type="hidden" name="canal" value="@canal" />
-                                                        <input type="hidden" name="sucursal" value="@sucursal" />
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>*@
+                                <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
+                                <input type="text" class="form-control" name="comentario" />
+                                <input type="hidden" name="usuario" value="@oUser.Nombre" />
+                                <input type="hidden" name="fechaInicio" value="@fechaInicio" />
+                                <input type="hidden" name="fechaFinal" value="@fechaFinal" />
+                                <input type="hidden" name="cuenta2" value="@cuenta" />
+                                <input type="hidden" name="canal" value="@canal" />
+                                <input type="hidden" name="sucursal" value="@sucursal" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <input type="submit" value="Guardar" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>*@
 
                         </div>
 
@@ -1606,6 +1643,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1614,6 +1652,18 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Pendiente de Pago">Pendiente de Pago</option>
                                                     </select>
                                                     <br />
+
+                                                    @*CAMPO REQUERIDO PARA SELECTORES*@
+                                                    <br />
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="form-select" required>Usar Saldo a Favor?</label>
+                                                        <select name="usarSaldo" id="usarSaldo1" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-control" required>
+                                                            <option disabled selected value="">Seleccione una opcion</option>
+                                                            <option value="Si">Si</option>
+                                                            <option value="No">No</option>
+                                                        </select>
+                                                    </div>
+
                                                     <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
                                                     <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
@@ -1665,6 +1715,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1673,6 +1724,19 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Pendiente de Pago">Pendiente de Pago</option>
                                                     </select>
                                                     <br />
+
+
+                                                    @*CAMPO REQUERIDO PARA SELECTORES*@
+                                                    <br />
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="form-select" required>Usar Saldo a Favor?</label>
+                                                        <select name="usarSaldo" id="usarSaldo1" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-control" required>
+                                                            <option disabled selected value="">Seleccione una opcion</option>
+                                                            <option value="Si">Si</option>
+                                                            <option value="No">No</option>
+                                                        </select>
+                                                    </div>
+
                                                     <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
                                                     <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
@@ -1724,6 +1788,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1783,6 +1848,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1902,6 +1968,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1960,6 +2027,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>

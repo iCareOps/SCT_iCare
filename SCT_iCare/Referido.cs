@@ -14,6 +14,12 @@ namespace SCT_iCare
     
     public partial class Referido
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Referido()
+        {
+            this.PagosGestores = new HashSet<PagosGestores>();
+        }
+    
         public int idReferido { get; set; }
         public string Nombre { get; set; }
         public string Tipo { get; set; }
@@ -27,5 +33,8 @@ namespace SCT_iCare
         public string Deuda { get; set; }
         public string Efectivo { get; set; }
         public string Orden { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PagosGestores> PagosGestores { get; set; }
     }
 }

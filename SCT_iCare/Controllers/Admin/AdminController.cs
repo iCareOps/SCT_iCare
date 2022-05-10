@@ -471,8 +471,13 @@ namespace SCT_iCare.Controllers.Admin
             }
         }
 
-        public ActionResult TablaComparacion(string gestor)
+        public ActionResult TablaComparacion(string gestor, DateTime? fechaInicio, DateTime? fechaFinal)
         {
+
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
+
+
             if (gestor == "Diarias")
             {
                 return Redirect("TablaMetasDiarias");
@@ -519,8 +524,10 @@ namespace SCT_iCare.Controllers.Admin
             }
         }
 
-        public ActionResult TablaComparacion2(string gestor)
+        public ActionResult TablaComparacion2(string gestor, DateTime? fechaInicio, DateTime? fechaFinal)
         {
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
             return View();
         }
 
@@ -620,43 +627,68 @@ namespace SCT_iCare.Controllers.Admin
             }
         }
 
-        public ActionResult Gestores8Columnas()
+        public ActionResult General8Columnas(DateTime? fechaInicio, DateTime? fechaFinal)
         {
+
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
+
             return View();
         }
 
-        public ActionResult MediosDigitales8Columnas()
+        public ActionResult Gestores8Columnas(DateTime? fechaInicio, DateTime? fechaFinal)
         {
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
             return View();
         }
 
-        public ActionResult InSitu8Columnas()
+        public ActionResult MediosDigitales8Columnas(DateTime? fechaInicio, DateTime? fechaFinal)
         {
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
             return View();
         }
 
-        public ActionResult ALT8Columnas()
+        public ActionResult InSitu8Columnas(DateTime? fechaInicio, DateTime? fechaFinal)
         {
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
             return View();
         }
 
-        public ActionResult Sindicatos8Columnas()
+        public ActionResult ALT8Columnas(DateTime? fechaInicio, DateTime? fechaFinal)
         {
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
             return View();
         }
 
-        public ActionResult CallCenter8Columnas()
+        public ActionResult Sindicatos8Columnas(DateTime? fechaInicio, DateTime? fechaFinal)
         {
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
             return View();
         }
 
-        public ActionResult Empresas8Columnas()
+        public ActionResult CallCenter8Columnas(DateTime? fechaInicio, DateTime? fechaFinal)
         {
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
             return View();
         }
 
-        public ActionResult Otros8Columnas()
+        public ActionResult Empresas8Columnas(DateTime? fechaInicio, DateTime? fechaFinal)
         {
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
+            return View();
+        }
+
+        public ActionResult Otros8Columnas(DateTime? fechaInicio, DateTime? fechaFinal)
+        {
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
             return View();
         }
 

@@ -87,5 +87,6 @@ namespace SCT_iCare
         public virtual DbSet<ConteoDoctores2> ConteoDoctores2 { get; set; }
         public virtual DbSet<Doctores2> Doctores2 { get; set; }
         public virtual DbSet<Tickets> Tickets { get; set; }
+        public virtual DbSet<PagosGestores> PagosGestores { get; set; }
     }
 }

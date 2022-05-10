@@ -427,13 +427,15 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
         </a>
 
     </div>
+    <br />
 
 
 </form>
 
 <script>
 
-    function ExportToExcel(type, fn, dl) {
+    function ExportToExcel(type, fn, dl)
+    {
         var elt = document.getElementById('tbl_exporttable_to_xls');
         var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
         return dl ?
@@ -447,21 +449,21 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
 
 
 
-|   <div>
-    <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
+    <div>
+        <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
 
-    @*<button style="background-color:cadetblue" class="btn btn-info dropdown-toggle" onclick="" id="IdBotonUno">General</button>*@
-    <a style="background-color:Highlight" class="btn btn-info dropdown-toggle" href="/Contabilidad/Index">General</a>
-    @*<button style="background-color:Highlight" class="btn btn-info dropdown-toggle" onclick="" id="IdBotonDos">Conciliados</button>*@
-    <a style="background-color:forestgreen" class="btn btn-info dropdown-toggle" href="/Contabilidad/Index/1">Conciliados</a>
-    @*<button style="background-color:red" class="btn btn-info dropdown-toggle" onclick="" id="IdBotonTres">No conciliados</button>*@
-    <a style="background-color:red" class="btn btn-info dropdown-toggle" href="/Contabilidad/Index/2">No conciliados</a>
-    @*<a href="~/Contabilidad/Conciliados">*@
-    <!--<span class="btn btn-info">Ir a Conciliados</span>-->
-    @*</a>*@
+        @*<button style="background-color:cadetblue" class="btn btn-info dropdown-toggle" onclick="" id="IdBotonUno">General</button>*@
+        <a style="background-color:Highlight" class="btn btn-info dropdown-toggle" href="/Contabilidad/Index">General</a>
+        @*<button style="background-color:Highlight" class="btn btn-info dropdown-toggle" onclick="" id="IdBotonDos">Conciliados</button>*@
+        <a style="background-color:forestgreen" class="btn btn-info dropdown-toggle" href="/Contabilidad/Index/1">Conciliados</a>
+        @*<button style="background-color:red" class="btn btn-info dropdown-toggle" onclick="" id="IdBotonTres">No conciliados</button>*@
+        <a style="background-color:red" class="btn btn-info dropdown-toggle" href="/Contabilidad/Index/2">No conciliados</a>
+        @*<a href="~/Contabilidad/Conciliados">*@
+        <!--<span class="btn btn-info">Ir a Conciliados</span>-->
+        @*</a>*@
 
 
-</div>
+    </div>
 
 
 <br />
@@ -851,6 +853,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -859,6 +862,18 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Pendiente de Pago">Pendiente de Pago</option>
                                                     </select>
                                                     <br />
+
+                                                    @*CAMPO REQUERIDO PARA SELECTORES*@
+                                                    <br />
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="form-select" required>Usar Saldo a Favor?</label>
+                                                        <select name="usarSaldo" id="usarSaldo1" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-control" required>
+                                                            <option disabled selected value="">Seleccione una opcion</option>
+                                                            <option value="Si">Si</option>
+                                                            <option value="No">No</option>
+                                                        </select>
+                                                    </div>
+
                                                     <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
                                                     <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
@@ -939,6 +954,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -947,6 +963,18 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Pendiente de Pago">Pendiente de Pago</option>
                                                     </select>
                                                     <br />
+
+                                                    @*CAMPO REQUERIDO PARA SELECTORES*@
+                                                    <br />
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="form-select" required>Usar Saldo a Favor?</label>
+                                                        <select name="usarSaldo" id="usarSaldo1" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-control" required>
+                                                            <option disabled selected value="">Seleccione una opcion</option>
+                                                            <option value="Si">Si</option>
+                                                            <option value="No">No</option>
+                                                        </select>
+                                                    </div>
+
                                                     <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
                                                     <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
@@ -1017,6 +1045,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1095,6 +1124,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1234,6 +1264,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1312,6 +1343,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1611,6 +1643,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1619,6 +1652,18 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Pendiente de Pago">Pendiente de Pago</option>
                                                     </select>
                                                     <br />
+
+                                                    @*CAMPO REQUERIDO PARA SELECTORES*@
+                                                    <br />
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="form-select" required>Usar Saldo a Favor?</label>
+                                                        <select name="usarSaldo" id="usarSaldo1" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-control" required>
+                                                            <option disabled selected value="">Seleccione una opcion</option>
+                                                            <option value="Si">Si</option>
+                                                            <option value="No">No</option>
+                                                        </select>
+                                                    </div>
+
                                                     <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
                                                     <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
@@ -1670,6 +1715,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1678,6 +1724,19 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Pendiente de Pago">Pendiente de Pago</option>
                                                     </select>
                                                     <br />
+
+
+                                                    @*CAMPO REQUERIDO PARA SELECTORES*@
+                                                    <br />
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="form-select" required>Usar Saldo a Favor?</label>
+                                                        <select name="usarSaldo" id="usarSaldo1" style="width:100%; min-height:5vh; min-width:99%; font-size:2vh" class="form-control" required>
+                                                            <option disabled selected value="">Seleccione una opcion</option>
+                                                            <option value="Si">Si</option>
+                                                            <option value="No">No</option>
+                                                        </select>
+                                                    </div>
+
                                                     <label for="recipient-name" class="col-form-label">Fecha de pago contable:</label>
                                                     <input type="date" class="form-control" name="fechaContable" />
                                                     <label for="recipient-name" class="col-form-label">¿Desea agregar un comentario?:</label>
@@ -1729,6 +1788,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1788,6 +1848,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1907,6 +1968,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>
@@ -1965,6 +2027,7 @@ Where(s => s.A.M.FechaCita >= fechaInicio && s.A.M.FechaCita < fechaFinal && s.B
                                                         <option value="Referencía BanBajío">Referencía BanBajío</option>
                                                         <option value="Transferencia vía BanBajío">Transferencia vía BanBajío</option>
                                                         <option value="Banorte">Banorte</option>
+                                                        <option value="Santander">Santander</option>
                                                         <option value="BanCoppel TLS">BanCoppel TLS</option>
                                                         <option value="BanCoppel LC">BanCoppel LC</option>
                                                         <option value="Banco Azteca TLS">Banco Azteca TLS</option>

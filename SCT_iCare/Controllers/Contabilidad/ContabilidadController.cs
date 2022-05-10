@@ -90,7 +90,6 @@ namespace SCT_iCare.Controllers.Contabilidad
 
             }
 
-
             ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
             ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
 
@@ -246,7 +245,7 @@ namespace SCT_iCare.Controllers.Contabilidad
 
 
         public ActionResult CambiarCuenta(int? id, string cuenta, string cuenta2, string comentario, string usuario, string canal, string sucursal, 
-            DateTime? fechaInicio, DateTime? fechaFinal, DateTime? fechaContable, string pago, int? idGestor)
+            DateTime? fechaInicio, DateTime? fechaFinal, DateTime? fechaContable, string pago, int? idGestor, string usarSaldo)
         {
             var cita = db.Cita.Find(id);
 
@@ -255,6 +254,7 @@ namespace SCT_iCare.Controllers.Contabilidad
             cita.CuentaComentario = historico + comentario + cuentaAnterior + " " + DateTime.Today.ToString("dd-MM-yy") + " POR " + usuario;
             cita.Cuenta = cuenta;
             cita.FechaContable = fechaContable == null ? DateTime.Now : fechaContable;
+            cita.UsarSaldo = usarSaldo;
 
             if (pago != null || pago != "")
             {
@@ -375,68 +375,44 @@ namespace SCT_iCare.Controllers.Contabilidad
             return Redirect("Pagos");
         }
 
-        public ActionResult Efectivo(int? id, string efectivo, DateTime? fecha1, DateTime? fecha2, string canal, string cuenta, string sucursal, string tipoPago, int? referido)
+
+
+
+        //METODO DE INGRESO DE PAGOS EN LA VISTA DE PAGOS
+        public ActionResult EditarEfectivo(int? id, int efectivo, string usuario, DateTime fechaAhora, DateTime? fecha1, DateTime? fecha2)
         {
-            var gestor = db.Referido.Find(id);
 
-            gestor.Efectivo = efectivo != null ? efectivo : null;
-            //variables para filtro
-            if (canal == "" || canal == null)
-            {
-                ViewBag.Canal = "";
-            }
-            else
-            {
-                ViewBag.Canal = canal;
-            }
+            ViewBag.FechaInicio = fecha1 != null ? fecha1 : null;
+            ViewBag.FechaFinal = fecha2 != null ? fecha2 : null;
 
-            if (ModelState.IsValid)
-            {
-                db.Entry(gestor).State = EntityState.Modified;
-                db.SaveChanges();
-            }
+            DateTime fechaInicio = ViewBag.FechaInicio;
+            DateTime fechaFinal = ViewBag.FechaFinal;
 
-            int episEquivalentes = 0;
-
-            if(gestor.PrecioNormalconIVA != null)
-            {
-                episEquivalentes = Convert.ToInt32(efectivo) / Convert.ToInt32(gestor.PrecioNormalconIVA);
-            }
-            else
-            {
-                episEquivalentes = Convert.ToInt32(efectivo) / Convert.ToInt32(gestor.PrecioNormal);
-            }
-
-            var citasCXC = (from i in db.Cita where i.CanalTipo == gestor.Tipo && i.ReferidoPor == gestor.Nombre && i.TipoPago == "Pendiente de Pago" && i.FechaCita >= fecha1 && i.FechaCita < fecha2 select i).OrderBy(o => o.FechaCita).Take(episEquivalentes);
-
-            foreach(var item in citasCXC)
-            {
-                var cita = db.Cita.Find(item.idCita);
-
-                cita.Conciliado = DateTime.Today.Day.ToString() + "-" + DateTime.Today.Month.ToString() + "-" + DateTime.Today.Year.ToString();
-                cita.TipoPago = "Efectivo";
-                cita.Cuenta = "EFECTIVO";
-
-                if (ModelState.IsValid)
-                {
-                    db.Entry(cita).State = EntityState.Modified;
-                    db.SaveChanges();
-                }
-            }
-
-            return Redirect("Pagos");
-        }
-        public ActionResult EditarEfectivo(int? id, int efectivo, string usuario)
-        {
             Referido referido = db.Referido.Find(id);
+            PagosGestores pagosGestores = new PagosGestores();
+
+            int efectivoActual = Convert.ToInt32(referido.Efectivo);
+            int sumaEfectivos = efectivoActual + efectivo;
+
+            referido.Efectivo = Convert.ToString(sumaEfectivos);
+
+            pagosGestores.Gestor = referido.Nombre;
+            pagosGestores.idReferido = referido.idReferido;
+            pagosGestores.PagoIngresado = Convert.ToString(efectivo);
+            pagosGestores.Fecha = fechaAhora;
 
             if (ModelState.IsValid)
             {
                 db.Entry(referido).State = EntityState.Modified;
                 db.SaveChanges();
             }
-
-            return Redirect("Pagos");
+            if (ModelState.IsValid)
+            {
+                db.PagosGestores.Add(pagosGestores);
+                db.SaveChanges();
+            }
+            
+            return RedirectToAction("Pagos", new { fechaInicio = fechaInicio, fechaFinal = fechaFinal});
         }
 
     }

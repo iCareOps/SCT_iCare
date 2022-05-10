@@ -19,21 +19,57 @@
 
     DateTime fecha = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
     DateTime fecha1 = DateTime.Today.AddDays(1);
+    DateTime fechaPlan = DateTime.Today;
+
+    DateTime ViewBagFechaInicio = Convert.ToDateTime(ViewBag.fechaInicio);
+    var SetFechaInicio = ViewBagFechaInicio.Date.ToString("yyyy-MM");
+    var SetFechaInicioIn = SetFechaInicio + "-01";
+    DateTime ViewBagFechaFinal = Convert.ToDateTime(ViewBag.fechaFinal);
+    var SetFechaFinal = ViewBagFechaFinal.Date.ToString("yyyy-MM-dd");
+
+
+
+    //FILTRO DE FECHAS
+
+    if (ViewBag.FechaInicio != null)
+    {
+        fecha = Convert.ToDateTime(SetFechaInicioIn);
+
+        if (ViewBag.FechaFinal == null && fecha.Month != DateTime.Today.Month)
+        {
+            fecha1 = fecha.AddMonths(1).AddDays(-1);
+            fechaPlan = fecha1;
+        }
+    }
+
+    if (ViewBag.FechaFinal != null)
+    {
+        fecha1 = Convert.ToDateTime(ViewBag.FechaFinal);
+        fechaPlan = fecha1;
+    }
+
+    if (ViewBag.FechaFinal > DateTime.Today)
+    {
+        ViewBag.FechaFinal = DateTime.Today;
+        fecha1 = Convert.ToDateTime(ViewBag.FechaFinal);
+        fechaPlan = fecha1;
+    }
 
     DateTime fecha3 = fecha.AddMonths(-1);
-    DateTime fecha4 = fecha3.AddMonths(1);
+    DateTime fecha4 = fechaPlan.AddMonths(-1);
+
 
     int ultimoDiaMesAnterior = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddDays(-1).Day;
     int diaCorriente = DateTime.Today.Day;
 
-    if (diaCorriente > ultimoDiaMesAnterior)
-    {
-        fecha4 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, ultimoDiaMesAnterior).AddMonths(-1);
-    }
-    else
-    {
-        fecha4 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorriente).AddMonths(-1);
-    }
+    //if (diaCorriente > ultimoDiaMesAnterior)
+    //{
+    //    fecha4 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, ultimoDiaMesAnterior).AddMonths(-1);
+    //}
+    //else
+    //{
+    //    fecha4 = new DateTime(DateTime.Today.Year, DateTime.Today.Month, diaCorriente).AddMonths(-1);
+    //}
 
     var canales = db.Canales.Where(w => w.NombreCanal != "GESTOR ALT" && w.NombreCanal != "IN SITU");
     var canales1 = db.Canales.Where(w => w.NombreCanal == "GESTOR ALT" || w.NombreCanal == "IN SITU");
@@ -59,11 +95,11 @@
 
     foreach (var e in canales)
     {
-        metaTotal += (Convert.ToInt32(e.Meta) / 30) * diaCorriente;
+        metaTotal += (Convert.ToInt32(e.Meta) / 30) * fechaPlan.Day;
     }
     foreach (var e in canales1)
     {
-        metaTotal += (Convert.ToInt32(e.Meta) / 30) * diaCorriente;
+        metaTotal += (Convert.ToInt32(e.Meta) / 30) * fechaPlan.Day;
     }
 
     //    var realizadosCallCenter = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
@@ -125,29 +161,59 @@
 }
 
 <br />
-<h2 style="color:white"><span style="color:goldenrod">@DateTime.Now.ToString("MMMM-yy").ToUpper()</span></h2>
+<h2 style="color:white"><span style="color:goldenrod">@fecha.ToString("MMMM-yy").ToUpper()</span></h2>
 
-<!--<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/TablaComparacion")">
+<form class="form-inline" method="post" enctype="multipart/form-data" action="@Url.Content("~/Admin/TablaComparacion")">
     <div>
 
-        <select name="gestor" style="font-size:2vh" class="form-control">
-            <option>Seleccionar</option>
-            <option value="Diarias">METAS DIARIAS</option>
-            <option value="Semanales">METAS SEMANALES</option>
-            <option value="Sucursales">SUCURSALES</option>-->
-@*<option value="CallCenter">CALL CENTER</option>
-    <option value="Gestores">GESTORES</option>*@
-<!--<option value="Alternativos">ACUMULADO ALT</option>
-    <option value="Comparacion">COMPARACIÓN</option>
-    <option value="Doctores">DOCTORES</option>
-    <option disabled>-------------------------</option>
-    <option value="Metas">ACTUALIZAR METAS</option>
-    <option value="Precios">ACTUALIZAR PRECIOS</option>
-</select>-->
-@*<input type="month" class="form-control" />*@
-<!--<input type="submit" class="btn btn-info" value="Enviar" />
+        @*FILTROS DE FECHA POR MES*@
+
+        @{
+
+            if (ViewBag.fechaInicio != null)
+            {
+
+                <input type="month" name="fechaInicio" class="form-control" value="@SetFechaInicio" style="width: 160px;" />
+
+            }
+
+            else
+
+            {
+
+                <input type="month" name="fechaInicio" class="form-control" value="" style="width: 160px;" />
+
+            }
+
+        }
+
+        @{
+
+            if (ViewBag.fechaFinal != null)
+            {
+
+                <input type="date" name="fechaFinal" class="form-control" value="@SetFechaFinal" style="width: 160px;" />
+
+            }
+
+            else
+
+            {
+
+                <input type="date" name="fechaFinal" class="form-control" value="" style="width: 160px;" />
+
+            }
+
+        }
+
+        <input type="submit" class="btn btn-info" value="Enviar" />
+
+        <a href="~/Admin/TablaComparacion">
+            <span type="button" class="btn btn-success">Limpiar</span>
+        </a>
+
     </div>
-</form>-->
+</form>
 
 @*<div>
         <button style="background-color:limegreen" class="btn btn-info dropdown-toggle" onclick="ExportToExcel('xlsx')">Exportar Datos a XLSX</button>
@@ -165,8 +231,12 @@
 
 </script>
 
-<h3 style="color:white">Mensual (por Canal)</h3>
-<div class="tablaScroll">
+
+
+
+<h3 hidden style="color:white">Mensual (por Canal)</h3>
+<h5 hidden style="color: white">Resultados del día @fecha.ToString("dd-MMMM-yyyy") al día @fechaPlan.ToString("dd-MMMM-yyyy")</h5>
+<div hidden class="tablaScroll">
     <table id="tbl_exporttable_to_xls" class="table  table-bordered table-hover tablas" style="color: #2F2D6B">
         <thead>
             <tr style="color:white">
@@ -183,7 +253,7 @@
                     Real
                 </th>
                 <th rowspan="2" style="text-align:center">
-                    @DateTime.Now.ToString("dd-MMMM-yy").ToUpper()
+                    @fechaPlan.ToString("dd-MMMM-yy").ToUpper()
                 </th>
                 <th colspan="5" style="font-size:x-small; text-align:center">
                     COMPARATIVO
@@ -206,8 +276,12 @@
             foreach (var item in canales)
             {
                 <tr>
+
+                    @*AÑO ANTERIOR*@
                     <td style="text-align:center">
                     </td>
+
+                    @*MES ANTERIOR*@
                     <td style="border-right: none">
                         @{
                             realizadoHoyMesAnterior = realizadosTOTAL.Where(w => w.M.FechaExpdiente >= fecha3 && w.M.FechaExpdiente < fecha4 && w.N.CanalTipo == item.NombreCanal).Count();
@@ -228,24 +302,28 @@
 
                     </td>
 
+                    @*PORCENTAJE MES ANTERIOR*@
                     <td style="text-align: center; border-right: none; border-left: none">
                         <span style="font-size:small; text-align:right">@metaPorcentaje.ToString("##.##")&zwnj;</span>
                         <span class="pull-right" style="font-size:small">&#37;</span>
                     </td>
 
 
+                    @*PLAN*@
                     <td style="text-align: center; border-right: none">
                         @{
-                            metaPorcentaje = (Convert.ToDouble((Convert.ToDouble(item.Meta) / 30) * DateTime.Today.Day) * 100) / metaTotal;
+                            metaPorcentaje = (Convert.ToDouble((Convert.ToDouble(item.Meta) / 30) * fechaPlan.Day) * 100) / metaTotal;
                         }
-                        <b class="pull-right">@Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * DateTime.Today.Day)</b>@*<span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>*@
+                        <b class="pull-right">@Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * fechaPlan.Day)</b>@*<span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>*@
                     </td>
 
+                    @*PORCENTAJE PLAN*@
                     <td style="text-align: center; border-right: none; border-left: none">
                         <span style="font-size:small; text-align:center">@metaPorcentaje.ToString("##.##")&zwnj;</span>
                         <span class="pull-right" style="font-size:small">&#37;</span>
                     </td>
 
+                    @*REALIZADOS HOY*@
                     <td style="text-align: center; border-right: none">
                         @{
                             realizadoHoy = realizadosTOTAL.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1 && w.N.CanalTipo == item.NombreCanal).Count();
@@ -255,7 +333,7 @@
                             metaPorcentajeMesAnteriorDiferencia = metaPorcentaje - metaPorcentajeMesAnterior;
                             metaPorcentajeMesAnteriorDiferenciaFooter += metaPorcentajeMesAnteriorDiferencia;
 
-                            int planDiferencia = realizadoHoy - Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * DateTime.Today.Day);
+                            int planDiferencia = realizadoHoy - Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * fechaPlan.Day);
 
                             planTotalMesAnteriorFooter += planDiferencia;
 
@@ -299,10 +377,14 @@
                         }
                     }
 
+
+                    @*NOMBRE DE SUCURSALES O CANALES*@
                     <td class="bg-info" style="text-align:center">
                         <a href="@enlace" style="text-decoration:none; color:darkblue"><b>@item.NombreCanal</b></a>
                     </td>
 
+
+                    @*PLAN VS REAL*@
                     <td style="text-align:center; border-right: none; border-left: none">
 
                         @if (planDiferencia > 0)
@@ -319,7 +401,7 @@
                         @{
                             //double porcentajePlanDiferencia = Convert.ToDouble((100 * Convert.ToDouble(item.Meta)) / db.Canales.Sum(s => s.Meta));
                             //double porcentajePlanDiferencia = metaPorcentaje - ((Convert.ToDouble(item.Meta)) * 100 / Convert.ToDouble(metaTotal));
-                            double porcentajePlanDiferencia = (planDiferencia * 100) / Convert.ToDouble((Convert.ToDouble(item.Meta) / 30) * DateTime.Today.Day);
+                            double porcentajePlanDiferencia = (planDiferencia * 100) / Convert.ToDouble((Convert.ToDouble(item.Meta) / 30) * fechaPlan.Day);
                             porcentajePlanDiferencia = realizadoHoy == 0 ? 0 : porcentajePlanDiferencia;
 
                             if (porcentajePlanDiferencia > 0)
@@ -348,11 +430,13 @@
 
                     </td>
 
+
+                    @*MES ANTERIOR*@
                     <td style="text-align: center; border-left: none">
 
                         @{
                             double Span = 0;
-                            double diferenciaMeta = realizadoHoy - @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * DateTime.Today.Day);
+                            double diferenciaMeta = realizadoHoy - @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * fechaPlan.Day);
                             diferenciaMeta = realizadoHoy == 0 ? 0 : diferenciaMeta;
                             string texto3 = "";
                             string parentesisDerechoAng = "";
@@ -377,10 +461,10 @@
                         }
 
                         @{
-                            double porcentajeSpanPlanvsReal = (diferenciaMeta * (Span)) * (100) / @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * DateTime.Today.Day);
+                            double porcentajeSpanPlanvsReal = (diferenciaMeta * (Span)) * (100) / @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * fechaPlan.Day);
                         }
 
-                        @if (realizadoTotal == 0 || @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * DateTime.Today.Day) == 0)
+                        @if (realizadoTotal == 0 || @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * fechaPlan.Day) == 0)
                         {
 
                             porcentajeSpanPlanvsReal = 0;
@@ -447,6 +531,7 @@
                         }
                     </td>
 
+                    @*AÑO ANTERIOR*@
                     <td style="text-align:center; border-right: none; border-left: none">
 
                         @{
@@ -498,6 +583,9 @@
             }
         }
 
+
+
+        @*AQUI EMPIEZA LOS GESTOR ALT Y LOS INSITU*@
         @{
             foreach (var item in canales1)
             {
@@ -532,9 +620,9 @@
 
                     <td style="text-align: center; border-right: none">
                         @{
-                            metaPorcentaje = (Convert.ToDouble((Convert.ToDouble(item.Meta) / 30) * DateTime.Today.Day) * 100) / metaTotal;
+                            metaPorcentaje = (Convert.ToDouble((Convert.ToDouble(item.Meta) / 30) * fechaPlan.Day) * 100) / metaTotal;
                         }
-                        <b class="pull-right">@Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * DateTime.Today.Day)</b>@*<span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>*@
+                        <b class="pull-right">@Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * fechaPlan.Day)</b>@*<span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>*@
                     </td>
 
                     <td style="text-align: center; border-right: none; border-left: none">
@@ -551,7 +639,7 @@
                             metaPorcentajeMesAnteriorDiferencia = metaPorcentaje - metaPorcentajeMesAnterior;
                             metaPorcentajeMesAnteriorDiferenciaFooter += metaPorcentajeMesAnteriorDiferencia;
 
-                            int planDiferencia = realizadoHoy - Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * DateTime.Today.Day);
+                            int planDiferencia = realizadoHoy - Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * fechaPlan.Day);
 
                             planTotalMesAnteriorFooter += planDiferencia;
 
@@ -600,7 +688,7 @@
                         @{
                             //double porcentajePlanDiferencia = Convert.ToDouble((100 * Convert.ToDouble(item.Meta)) / db.Canales.Sum(s => s.Meta));
                             //double porcentajePlanDiferencia = metaPorcentaje - ((Convert.ToDouble(item.Meta)) * 100 / Convert.ToDouble(metaTotal));
-                            double porcentajePlanDiferencia = (planDiferencia * 100) / Convert.ToDouble((Convert.ToDouble(item.Meta) / 30) * DateTime.Today.Day);
+                            double porcentajePlanDiferencia = (planDiferencia * 100) / Convert.ToDouble((Convert.ToDouble(item.Meta) / 30) * fechaPlan.Day);
                             porcentajePlanDiferencia = realizadoHoy == 0 ? 0 : porcentajePlanDiferencia;
 
                             if (porcentajePlanDiferencia > 0)
@@ -633,7 +721,7 @@
 
                         @{
                             double Span = 0;
-                            double diferenciaMeta = realizadoHoy - @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * DateTime.Today.Day);
+                            double diferenciaMeta = realizadoHoy - @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * fechaPlan.Day);
                             diferenciaMeta = realizadoHoy == 0 ? 0 : diferenciaMeta;
                             string texto3 = "";
                             string parentesisDerechoAng = "";
@@ -658,10 +746,10 @@
                         }
 
                         @{
-                            double porcentajeSpanPlanvsReal = (diferenciaMeta * (Span)) * (100) / @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * DateTime.Today.Day);
+                            double porcentajeSpanPlanvsReal = (diferenciaMeta * (Span)) * (100) / @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * fechaPlan.Day);
                         }
 
-                        @if (realizadoTotal == 0 || @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * DateTime.Today.Day) == 0)
+                        @if (realizadoTotal == 0 || @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * fechaPlan.Day) == 0)
                         {
 
                             porcentajeSpanPlanvsReal = 0;
@@ -1006,7 +1094,11 @@
     </table>
 </div>
 
+
+@*TABLA MENSUAL*@
+
 <h3 style="color:white">Mensual (General)</h3>
+<h5 style="color: white">Resultados del día @fecha.ToString("dd-MMMM-yyyy") al día @fechaPlan.ToString("dd-MMMM-yyyy")</h5>
 <div class="tablaScroll">
     <table id="tbl_exporttable_to_xls" class="table  table-bordered table-hover tablas" style="color: #2F2D6B">
         <thead>
@@ -1024,7 +1116,7 @@
                     Real
                 </th>
                 <th rowspan="2" style="text-align:center">
-                    @DateTime.Now.ToString("dd-MMMM-yy").ToUpper()
+                    @fechaPlan.ToString("dd-MMMM-yy").ToUpper()
                 </th>
                 <th colspan="5" style="font-size:x-small; text-align:center">
                     COMPARATIVO
@@ -1078,9 +1170,9 @@
                         metaGENERAL += Convert.ToInt32(i.Meta);
                     }
 
-                    metaPorcentaje = (Convert.ToDouble((Convert.ToDouble(metaGENERAL) / 30) * DateTime.Today.Day) * 100) / metaTotal;
+                    metaPorcentaje = (Convert.ToDouble((Convert.ToDouble(metaGENERAL) / 30) * fechaPlan.Day) * 100) / metaTotal;
                 }
-                <b class="pull-right">@Convert.ToInt32((Convert.ToInt32(metaGENERAL) / 30) * DateTime.Today.Day)</b>@*<span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>*@
+                <b class="pull-right">@Convert.ToInt32((Convert.ToInt32(metaGENERAL) / 30) * fechaPlan.Day)</b>@*<span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>*@
             </td>
 
             <td style="text-align: center; border-right: none; border-left: none">
@@ -1095,7 +1187,7 @@
                     metaPorcentajeMesAnteriorDiferencia = metaPorcentaje - metaPorcentajeMesAnterior;
                     metaPorcentajeMesAnteriorDiferenciaFooter += metaPorcentajeMesAnteriorDiferencia;
 
-                    int planDiferencia2 = realizadoGENERAL - Convert.ToInt32((Convert.ToInt32(metaGENERAL) / 30) * DateTime.Today.Day);
+                    int planDiferencia2 = realizadoGENERAL - Convert.ToInt32((Convert.ToInt32(metaGENERAL) / 30) * fechaPlan.Day);
 
                     planTotalMesAnteriorFooter += planDiferencia2;
 
@@ -1121,8 +1213,8 @@
             </td>
 
             @*<td class="bg-info" style="text-align:center">
-                <b>SUCURSALES</b>
-            </td>*@
+                    <b>SUCURSALES</b>
+                </td>*@
 
             <td style="text-align:center; border-right: none; border-left: none">
 
@@ -1140,7 +1232,7 @@
                 @{
                     //double porcentajePlanDiferencia = Convert.ToDouble((100 * Convert.ToDouble(item.Meta)) / db.Canales.Sum(s => s.Meta));
                     //double porcentajePlanDiferencia = metaPorcentaje - ((Convert.ToDouble(item.Meta)) * 100 / Convert.ToDouble(metaTotal));
-                    double porcentajePlanDiferencia2 = (planDiferencia2 * 100) / Convert.ToDouble((Convert.ToDouble(metaGENERAL) / 30) * DateTime.Today.Day);
+                    double porcentajePlanDiferencia2 = (planDiferencia2 * 100) / Convert.ToDouble((Convert.ToDouble(metaGENERAL) / 30) * fechaPlan.Day);
                     porcentajePlanDiferencia2 = realizadoHoy == 0 ? 0 : porcentajePlanDiferencia2;
 
                     if (porcentajePlanDiferencia2 > 0)
@@ -1173,7 +1265,7 @@
 
                 @{
                     double Span2 = 0;
-                    double diferenciaMeta2 = realizadoGENERAL - @Convert.ToInt32((Convert.ToInt32(metaGENERAL) / 30) * DateTime.Today.Day);
+                    double diferenciaMeta2 = realizadoGENERAL - @Convert.ToInt32((Convert.ToInt32(metaGENERAL) / 30) * fechaPlan.Day);
                     diferenciaMeta2 = realizadoGENERAL == 0 ? 0 : diferenciaMeta2;
                     string texto32 = "";
                     string parentesisDerechoAng2 = "";
@@ -1198,10 +1290,10 @@
                 }
 
                 @{
-                    double porcentajeSpanPlanvsReal2 = (diferenciaMeta2 * (Span2)) * (100) / @Convert.ToInt32((Convert.ToInt32(metaGENERAL) / 30) * DateTime.Today.Day);
+                    double porcentajeSpanPlanvsReal2 = (diferenciaMeta2 * (Span2)) * (100) / @Convert.ToInt32((Convert.ToInt32(metaGENERAL) / 30) * fechaPlan.Day);
                 }
 
-                @if (realizadoTotal == 0 || @Convert.ToInt32((Convert.ToInt32(metaGENERAL) / 30) * DateTime.Today.Day) == 0)
+                @if (realizadoTotal == 0 || @Convert.ToInt32((Convert.ToInt32(metaGENERAL) / 30) * fechaPlan.Day) == 0)
                 {
 
                     porcentajeSpanPlanvsReal2 = 0;
@@ -1352,9 +1444,9 @@
 
                     <td style="text-align: center; border-right: none">
                         @{
-                            metaPorcentaje = (Convert.ToDouble((Convert.ToDouble(item.Meta) / 30) * DateTime.Today.Day) * 100) / metaTotal;
+                            metaPorcentaje = (Convert.ToDouble((Convert.ToDouble(item.Meta) / 30) * fechaPlan.Day) * 100) / metaTotal;
                         }
-                        <b class="pull-right">@Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * DateTime.Today.Day)</b>@*<span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>*@
+                        <b class="pull-right">@Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * fechaPlan.Day)</b>@*<span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>*@
                     </td>
 
                     <td style="text-align: center; border-right: none; border-left: none">
@@ -1371,7 +1463,7 @@
                             metaPorcentajeMesAnteriorDiferencia = metaPorcentaje - metaPorcentajeMesAnterior;
                             metaPorcentajeMesAnteriorDiferenciaFooter += metaPorcentajeMesAnteriorDiferencia;
 
-                            planDiferencia2 = realizadoHoy - Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * DateTime.Today.Day);
+                            planDiferencia2 = realizadoHoy - Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * fechaPlan.Day);
 
                             planTotalMesAnteriorFooter += planDiferencia2;
 
@@ -1420,7 +1512,7 @@
                         @{
                             //double porcentajePlanDiferencia = Convert.ToDouble((100 * Convert.ToDouble(item.Meta)) / db.Canales.Sum(s => s.Meta));
                             //double porcentajePlanDiferencia = metaPorcentaje - ((Convert.ToDouble(item.Meta)) * 100 / Convert.ToDouble(metaTotal));
-                            porcentajePlanDiferencia2 = (planDiferencia2 * 100) / Convert.ToDouble((Convert.ToDouble(item.Meta) / 30) * DateTime.Today.Day);
+                            porcentajePlanDiferencia2 = (planDiferencia2 * 100) / Convert.ToDouble((Convert.ToDouble(item.Meta) / 30) * fechaPlan.Day);
                             porcentajePlanDiferencia2 = realizadoHoy == 0 ? 0 : porcentajePlanDiferencia2;
 
                             if (porcentajePlanDiferencia2 > 0)
@@ -1453,7 +1545,7 @@
 
                         @{
                             Span2 = 0;
-                            diferenciaMeta2 = realizadoHoy - @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * DateTime.Today.Day);
+                            diferenciaMeta2 = realizadoHoy - @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * fechaPlan.Day);
                             diferenciaMeta2 = realizadoHoy == 0 ? 0 : diferenciaMeta2;
                             texto32 = "";
                             parentesisDerechoAng2 = "";
@@ -1478,10 +1570,10 @@
                         }
 
                         @{
-                            porcentajeSpanPlanvsReal2 = (diferenciaMeta2 * (Span2)) * (100) / @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * DateTime.Today.Day);
+                            porcentajeSpanPlanvsReal2 = (diferenciaMeta2 * (Span2)) * (100) / @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * fechaPlan.Day);
                         }
 
-                        @if (realizadoTotal == 0 || @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * DateTime.Today.Day) == 0)
+                        @if (realizadoTotal == 0 || @Convert.ToInt32((Convert.ToInt32(item.Meta) / 30) * fechaPlan.Day) == 0)
                         {
 
                             porcentajeSpanPlanvsReal2 = 0;
@@ -1613,7 +1705,7 @@
             </td>
 
             <td class="bg-info" style="text-align: center; border-right: none">
-                <b class="pull-right">@metaTotal</b>@*<span class="pull-right" style="font-size:small">100%</span>*@
+                <a href="TablaMetasDiarias" style="text-decoration:none; color:darkblue"><b>@metaTotal</b></a>@*<span class="pull-right" style="font-size:small">100%</span>*@
             </td>
 
             <td class="bg-info" style="text-align: center; border-right: none; border-left: none">
@@ -1631,7 +1723,7 @@
             </td>
 
             <td class="bg-info" style="text-align:center;">
-                <b>TOTAL</b>
+                <a href="General8Columnas" style="text-decoration:none; color:darkblue"><b>TOTAL</b></a>
             </td>
 
             <td class="bg-info" style="text-align: center; border-right: none">
@@ -1825,238 +1917,3 @@
 
     </table>
 </div>
-
-
-<!--  -----------------------------------------------------------------------------------------------------------------------------------------  -->
-@*@{
-
-        texto = "";
-        texto2 = "";
-
-        fecha = new DateTime(DateTime.Today.Year, 1, 1);
-        fecha1 = DateTime.Today.AddDays(1);
-
-        fecha3 = fecha.AddMonths(-1);
-        fecha4 = fecha3.AddMonths(1);
-
-        metaTotal = 0;
-        realizadoTotal = 0;
-        realizadoTotalMesAnterior = 0;
-
-        realizadoTotalCalculo = 0;
-        realizadoTotalCalculoMesAnterior = 0;
-
-        realizadoHoy = 0;
-        realizadoHoyMesAnterior = 0;
-        realizadoHoyMesAnteriorDiferencia = 0;
-
-        realizadoTotalMesAnteriorFooter = 0;
-
-        metaPorcentaje = 0.00;
-        metaPorcentajeMesAnterior = 0.00;
-        metaPorcentajeMesAnteriorDiferencia = 0.00;
-        metaPorcentajeMesAnteriorDiferenciaFooter = 0.00;
-
-        foreach (var e in canales)
-        {
-            metaTotal += Convert.ToInt32(e.Meta);
-        }
-
-
-        foreach (var item in canales)
-        {
-            if (item.NombreCanal == "Call Center")
-            {
-                realizadoHoy = realizadosCallCenter.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
-            }
-            else if (item.NombreCanal == "CATEM")
-            {
-                realizadoHoy = realizadosCATEM.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-            }
-            else if (item.NombreCanal == "ALT")
-            {
-                realizadoHoy = realizadosALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
-            }
-            else if (item.NombreCanal == "Gestores")
-            {
-                realizadoHoy = realizadosGestores.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-            }
-            else if (item.NombreCanal == "Empresas")
-            {
-                realizadoHoy = realizadosEmpresas.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-            }
-            else if (item.NombreCanal == "ALT IS")
-            {
-                realizadoHoy = 0;
-            }
-            else if (item.NombreCanal == "Medios Digitales")
-            {
-                realizadoHoy = 0;
-            }
-            realizadoTotalCalculo += realizadoHoy;
-        }
-
-        foreach (var item in canales)
-        {
-            if (item.NombreCanal == "Call Center")
-            {
-                realizadoHoyMesAnterior = realizadosCallCenter.Where(w => w.M.FechaExpdiente >= fecha3 && w.M.FechaExpdiente < fecha4).Count();
-            }
-            else if (item.NombreCanal == "CATEM")
-            {
-                realizadoHoyMesAnterior = realizadosCATEM.Where(w => w.O.M.FechaExpdiente >= fecha3 && w.O.M.FechaExpdiente < fecha4).Count();
-            }
-            else if (item.NombreCanal == "ALT")
-            {
-                realizadoHoyMesAnterior = realizadosALT.Where(w => w.FechaCaptura >= fecha3 && w.FechaCaptura < fecha4).Count();
-            }
-            else if (item.NombreCanal == "Gestores")
-            {
-                realizadoHoyMesAnterior = realizadosGestores.Where(w => w.O.M.FechaExpdiente >= fecha3 && w.O.M.FechaExpdiente < fecha4).Count();
-            }
-            else if (item.NombreCanal == "Empresas")
-            {
-                realizadoHoyMesAnterior = realizadosEmpresas.Where(w => w.O.M.FechaExpdiente >= fecha3 && w.O.M.FechaExpdiente < fecha4).Count();
-            }
-            else if (item.NombreCanal == "ALT IS")
-            {
-                realizadoHoyMesAnterior = 0;
-            }
-            else if (item.NombreCanal == "Medios Digitales")
-            {
-                realizadoHoyMesAnterior = 0;
-            }
-            realizadoTotalCalculoMesAnterior += realizadoHoyMesAnterior;
-        }
-
-    }*@
-
-
-@*<h3 style="color:white">Acumulado Anual</h3>
-    <div class="tablaScroll">
-        <table class="table  table-bordered table-hover tablas" style="color: #2F2D6B">
-            <thead>
-                <tr style="color:white">
-                    <th rowspan="2" style="text-align:center">
-                        Año Anterior
-                    </th>
-                    <th rowspan="2" style="text-align:center">
-                        Mes Anterior
-                    </th>
-                    <th rowspan="2" style="text-align:center">
-                        Meta
-                    </th>
-                    <th rowspan="2" style="text-align:center">
-                        Realizado
-                    </th>
-                    <th rowspan="2" style="text-align:center">
-                        @DateTime.Now.ToString("MMMM-yy").ToUpper()
-                    </th>
-                    <th colspan="3" style="font-size:x-small; text-align:center">
-                        COMPARATIVO
-                    </th>
-                </tr>
-                <tr style="color:white">
-                    <th style="text-align:center">
-                        Presupuesto
-                    </th>
-                    <th style="text-align:center">
-                        Mes Anterior
-                    </th>
-                    <th style="text-align:center">
-                        Año Anterior
-                    </th>
-                </tr>
-            </thead>
-
-            @{
-                foreach (var item in canales)
-                {
-                    <tr>
-                        <td style="text-align:center">
-                        </td>
-                        <td style="text-align:center">
-                            ----------------
-                        </td>
-                        <td style="text-align:center">
-                            @{
-                                metaPorcentaje = (Convert.ToDouble(item.Meta) * 100) / metaTotal;
-                                int metaPorcentajeAnual = Convert.ToInt32(item.Meta) * 12;
-                            }
-                            <b>@metaPorcentajeAnual</b><span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>
-                        </td>
-                        <td style="text-align:center">
-                            @{
-                                if (item.NombreCanal == "Call Center")
-                                {
-                                    realizadoHoy = realizadosCallCenter.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1).Count();
-                                }
-                                else if (item.NombreCanal == "CATEM")
-                                {
-                                    realizadoHoy = realizadosCATEM.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                                }
-                                else if (item.NombreCanal == "ALT")
-                                {
-                                    realizadoHoy = realizadosALT.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1).Count();
-                                }
-                                else if (item.NombreCanal == "Gestores")
-                                {
-                                    realizadoHoy = realizadosGestores.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                                }
-                                else if (item.NombreCanal == "Empresas")
-                                {
-                                    realizadoHoy = realizadosEmpresas.Where(w => w.O.M.FechaExpdiente >= fecha && w.O.M.FechaExpdiente < fecha1).Count();
-                                }
-                                else if (item.NombreCanal == "ALT IS")
-                                {
-                                    realizadoHoy = 0;
-                                }
-                                else if (item.NombreCanal == "Medios Digitales")
-                                {
-                                    realizadoHoy = 0;
-                                }
-                                realizadoTotal += realizadoHoy;
-                                metaPorcentaje = (Convert.ToDouble(realizadoHoy) * 100) / realizadoTotalCalculo;
-                                metaPorcentajeMesAnteriorDiferencia = metaPorcentaje - metaPorcentajeMesAnterior;
-                                metaPorcentajeMesAnteriorDiferenciaFooter += metaPorcentajeMesAnteriorDiferencia;
-                            }
-                            <b>@realizadoHoy</b><span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>
-                        </td>
-                        <td class="bg-info" style="text-align:center">
-                            <b>@item.NombreCanal</b>
-                        </td>
-                        <td style="text-align:center">
-                        </td>
-                        <td style="text-align:center">
-                            ----------------
-                        </td>
-                        <td style="text-align:center">
-                        </td>
-                    </tr>
-                }
-            }
-
-            <tr>
-                <td class="bg-info" style="text-align:center">
-                </td>
-                <td class="bg-info" style="text-align:center">
-                    ----------------
-                </td>
-                <td class="bg-info" style="text-align:center">
-                </td>
-                <td class="bg-info" style="text-align:center">
-                </td>
-                <td class="bg-info" style="text-align:center;">
-                    <b>TOTAL</b>
-                </td>
-                <td class="bg-info" style="text-align:center">
-                </td>
-                <td class="bg-info" style="text-align:center">
-                    ----------------
-                </td>
-                <td class="bg-info" style="text-align:center">
-                </td>
-            </tr>
-
-        </table>
-    </div>*@
