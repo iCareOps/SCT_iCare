@@ -24,6 +24,30 @@
           <Property Name="ArchivosExtra" Type="varbinary(max)" />
           <Property Name="idPaciente" Type="int" />
         </EntityType>
+        <EntityType Name="AudioGA">
+          <Key>
+            <PropertyRef Name="idAudioGA" />
+          </Key>
+          <Property Name="idAudioGA" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="idPacienteGA" Type="int" />
+          <Property Name="NoExpediente" Type="varchar" MaxLength="20" />
+          <Property Name="D125" Type="varchar" MaxLength="10" />
+          <Property Name="D250" Type="varchar" MaxLength="10" />
+          <Property Name="D500" Type="varchar" MaxLength="10" />
+          <Property Name="D1000" Type="varchar" MaxLength="10" />
+          <Property Name="D2000" Type="varchar" MaxLength="10" />
+          <Property Name="D4000" Type="varchar" MaxLength="10" />
+          <Property Name="D8000" Type="varchar" MaxLength="10" />
+          <Property Name="D12000" Type="varchar" MaxLength="10" />
+          <Property Name="I125" Type="varchar" MaxLength="10" />
+          <Property Name="I250" Type="varchar" MaxLength="10" />
+          <Property Name="I500" Type="varchar" MaxLength="10" />
+          <Property Name="I1000" Type="varchar" MaxLength="10" />
+          <Property Name="I2000" Type="varchar" MaxLength="10" />
+          <Property Name="I4000" Type="varchar" MaxLength="10" />
+          <Property Name="I8000" Type="varchar" MaxLength="10" />
+          <Property Name="I12000" Type="varchar" MaxLength="10" />
+        </EntityType>
         <EntityType Name="Biometricos">
           <Key>
             <PropertyRef Name="idBiometricos" />
@@ -31,6 +55,20 @@
           <Property Name="idBiometricos" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Foto" Type="varbinary(max)" />
           <Property Name="idPaciente" Type="int" />
+        </EntityType>
+        <!--Errores durante la generación:
+advertencia 6013: La tabla o vista 'Dev.dbo.Cadena' no tiene definida una clave principal y no es posible inferir ninguna clave principal válida. Esta tabla o vista se ha excluido. Para usar la entidad, necesitará revisar el esquema, agregar las claves correctas y quitar sus comentarios.
+        <EntityType Name="Cadena">
+          <Property Name="Cadena" Type="varchar(max)" />
+        </EntityType>-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'Dev.dbo.CadenaSplit' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <EntityType Name="CadenaSplit">
+          <Key>
+            <PropertyRef Name="idCadena" />
+          </Key>
+          <Property Name="idCadena" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Cadena" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="CallCenter">
           <Key>
@@ -92,6 +130,17 @@
           <Property Name="idCaptura" Type="int" />
           <Property Name="PausaInicio" Type="datetime" />
           <Property Name="PausaFinal" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Cardiologo">
+          <Key>
+            <PropertyRef Name="idCardiologo" />
+          </Key>
+          <Property Name="idCardiologo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="idPacienteDS" Type="int" />
+          <Property Name="CertificadoMedico" Type="varchar(max)" />
+          <Property Name="PlanTratamiento" Type="varchar(max)" />
+          <Property Name="Medicamento" Type="varchar" MaxLength="20" />
+          <Property Name="Seguimiento" Type="datetime" />
         </EntityType>
         <EntityType Name="CarruselMedico">
           <Key>
@@ -170,6 +219,33 @@
           <Property Name="Conciliado" Type="varchar" MaxLength="10" />
           <Property Name="FechaContable" Type="datetime" />
           <Property Name="UsarSaldo" Type="varchar" MaxLength="5" />
+          <Property Name="FormaPago" Type="varchar" MaxLength="40" />
+        </EntityType>
+        <EntityType Name="CitaDS">
+          <Key>
+            <PropertyRef Name="idCitaDS" />
+          </Key>
+          <Property Name="idCitaDS" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FechaCita" Type="datetime" />
+          <Property Name="EstatusPago" Type="varchar" MaxLength="40" />
+          <Property Name="Estado" Type="varchar" MaxLength="50" />
+          <Property Name="Recepcionista" Type="varchar" MaxLength="100" />
+          <Property Name="FechaPago" Type="datetime" />
+          <Property Name="idPacienteDS" Type="int" />
+          <Property Name="Sucursal" Type="varchar" MaxLength="50" />
+          <Property Name="Inicio_Oftalmologia" Type="datetime" />
+          <Property Name="Fin_Oftalmologia" Type="datetime" />
+          <Property Name="Inicio_MedicinaInterna" Type="datetime" />
+          <Property Name="Fin_MedicinaInterna" Type="datetime" />
+          <Property Name="Inicio_Cardiologia" Type="datetime" />
+          <Property Name="Fin_Cardiologia" Type="datetime" />
+          <Property Name="Inicio_Nutriciom" Type="datetime" />
+          <Property Name="Fin_Nutricion" Type="datetime" />
+          <Property Name="Membresia" Type="varchar" MaxLength="10" />
+          <Property Name="Inicio_SignosVitales" Type="datetime" />
+          <Property Name="Fin_SignosVitales" Type="datetime" />
+          <Property Name="NoMembresia" Type="varchar" MaxLength="30" />
+          <Property Name="ReferidoPor" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="Ciudades">
           <Key>
@@ -246,6 +322,15 @@
           <Property Name="idDoctorModulo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="idUsuario" Type="int" />
           <Property Name="idSucursal" Type="int" />
+          <Property Name="idModulo" Type="int" />
+        </EntityType>
+        <EntityType Name="DoctorModuloDS">
+          <Key>
+            <PropertyRef Name="idDoctorModuloDS" />
+          </Key>
+          <Property Name="idDoctorModuloDS" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="idUsuario" Type="int" />
+          <Property Name="idSucursalDS" Type="int" />
           <Property Name="idModulo" Type="int" />
         </EntityType>
         <EntityType Name="DocumentosESP">
@@ -510,6 +595,93 @@
           <Property Name="Protesis" Type="varchar" MaxLength="10" />
           <Property Name="idPaciente" Type="int" />
         </EntityType>
+        <EntityType Name="EPI_GA">
+          <Key>
+            <PropertyRef Name="idEPI_GA" />
+          </Key>
+          <Property Name="idEPI_GA" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="idPacienteGA" Type="int" />
+          <Property Name="NoExpediente" Type="varchar" MaxLength="10" />
+          <Property Name="Genero" Type="varchar" MaxLength="10" />
+          <Property Name="Sistolica" Type="varchar" MaxLength="10" />
+          <Property Name="Diastolica" Type="varchar" MaxLength="10" />
+          <Property Name="Cardiaca" Type="varchar" MaxLength="10" />
+          <Property Name="Respiratoria" Type="varchar" MaxLength="10" />
+          <Property Name="Temperatura" Type="varchar" MaxLength="10" />
+          <Property Name="Peso" Type="varchar" MaxLength="10" />
+          <Property Name="Estatura" Type="varchar" MaxLength="10" />
+          <Property Name="Cintura" Type="varchar" MaxLength="10" />
+          <Property Name="Cuello" Type="varchar" MaxLength="10" />
+          <Property Name="Grasa" Type="varchar" MaxLength="10" />
+          <Property Name="Glucosa" Type="varchar" MaxLength="10" />
+          <Property Name="Hemoglobina" Type="varchar" MaxLength="10" />
+          <Property Name="Ritmo" Type="varchar" MaxLength="10" />
+          <Property Name="Frecuencia" Type="varchar" MaxLength="10" />
+          <Property Name="Eje" Type="varchar" MaxLength="10" />
+          <Property Name="PR" Type="varchar" MaxLength="10" />
+          <Property Name="QT" Type="varchar" MaxLength="10" />
+          <Property Name="QRS" Type="varchar" MaxLength="10" />
+          <Property Name="OndaP" Type="varchar" MaxLength="10" />
+          <Property Name="OndaT" Type="varchar" MaxLength="10" />
+          <Property Name="AVCD" Type="varchar" MaxLength="10" />
+          <Property Name="AVCI" Type="varchar" MaxLength="10" />
+          <Property Name="AVID" Type="varchar" MaxLength="10" />
+          <Property Name="AVII" Type="varchar" MaxLength="10" />
+          <Property Name="AVLD" Type="varchar" MaxLength="10" />
+          <Property Name="AVLI" Type="varchar" MaxLength="10" />
+          <Property Name="Lentes" Type="varchar" MaxLength="10" />
+          <Property Name="Estereopsis" Type="varchar" MaxLength="10" />
+          <Property Name="Carta" Type="varchar" MaxLength="10" />
+          <Property Name="CampoVisual" Type="varchar" MaxLength="20" />
+          <Property Name="MovOculares" Type="varchar" MaxLength="20" />
+          <Property Name="RPD" Type="varchar" MaxLength="20" />
+          <Property Name="RPI" Type="varchar" MaxLength="20" />
+          <Property Name="Nota" Type="varchar" MaxLength="20" />
+          <Property Name="TestVC" Type="varchar" MaxLength="20" />
+          <Property Name="MadreVive" Type="varchar" MaxLength="10" />
+          <Property Name="PadreVive" Type="varchar" MaxLength="10" />
+          <Property Name="HermanosViven" Type="varchar" MaxLength="10" />
+          <Property Name="VacCompletas" Type="varchar" MaxLength="10" />
+          <Property Name="ECivil" Type="varchar" MaxLength="30" />
+          <Property Name="Religion" Type="varchar" MaxLength="30" />
+          <Property Name="Escolaridad" Type="varchar" MaxLength="30" />
+          <Property Name="Hijos" Type="varchar" MaxLength="10" />
+          <Property Name="ECongenita" Type="varchar" MaxLength="10" />
+          <Property Name="EspDiag" Type="varchar" MaxLength="20" />
+          <Property Name="Alergia" Type="varchar" MaxLength="20" />
+          <Property Name="Diabetes" Type="varchar" MaxLength="10" />
+          <Property Name="DiagHipArt" Type="varchar" MaxLength="10" />
+          <Property Name="Alcohol" Type="varchar" MaxLength="10" />
+          <Property Name="Fuma" Type="varchar" MaxLength="10" />
+          <Property Name="Drogas" Type="varchar" MaxLength="10" />
+          <Property Name="UsaLentes" Type="varchar" MaxLength="10" />
+          <Property Name="TLentes" Type="varchar" MaxLength="10" />
+          <Property Name="URegla" Type="varchar" MaxLength="10" />
+          <Property Name="Embarazos" Type="varchar" MaxLength="10" />
+          <Property Name="Abortos" Type="varchar" MaxLength="10" />
+          <Property Name="Parto" Type="varchar" MaxLength="10" />
+          <Property Name="Cesarea" Type="varchar" MaxLength="10" />
+          <Property Name="IVSexual" Type="varchar" MaxLength="10" />
+          <Property Name="Patologias" Type="varchar" MaxLength="20" />
+          <Property Name="Interpretacion" Type="varchar" MaxLength="20" />
+          <Property Name="NotaMedica" Type="varchar" MaxLength="20" />
+          <Property Name="D125" Type="varchar" MaxLength="10" />
+          <Property Name="D250" Type="varchar" MaxLength="10" />
+          <Property Name="D500" Type="varchar" MaxLength="10" />
+          <Property Name="D1000" Type="varchar" MaxLength="10" />
+          <Property Name="D2000" Type="varchar" MaxLength="10" />
+          <Property Name="D4000" Type="varchar" MaxLength="10" />
+          <Property Name="D8000" Type="varchar" MaxLength="10" />
+          <Property Name="D12000" Type="varchar" MaxLength="10" />
+          <Property Name="I125" Type="varchar" MaxLength="10" />
+          <Property Name="I250" Type="varchar" MaxLength="10" />
+          <Property Name="I500" Type="varchar" MaxLength="10" />
+          <Property Name="I1000" Type="varchar" MaxLength="10" />
+          <Property Name="I2000" Type="varchar" MaxLength="10" />
+          <Property Name="I4000" Type="varchar" MaxLength="10" />
+          <Property Name="I8000" Type="varchar" MaxLength="10" />
+          <Property Name="I12000" Type="varchar" MaxLength="10" />
+        </EntityType>
         <EntityType Name="EPI_Laboratorio">
           <Key>
             <PropertyRef Name="idLaboratorio" />
@@ -585,6 +757,14 @@
           <Property Name="Recpecionista" Type="varchar" MaxLength="100" />
           <Property Name="idPaciente" Type="int" />
         </EntityType>
+        <EntityType Name="Farmacia">
+          <Key>
+            <PropertyRef Name="idFarmacia" />
+          </Key>
+          <Property Name="idFarmacia" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MedicamentoGeneral" Type="varchar" MaxLength="500" />
+          <Property Name="idPacienteDS" Type="int" />
+        </EntityType>
         <EntityType Name="FirmaESP">
           <Key>
             <PropertyRef Name="idFirmaESP" />
@@ -599,6 +779,14 @@
           </Key>
           <Property Name="idFoto" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="FotoESP" Type="varbinary(max)" />
+          <Property Name="idPacienteESP" Type="int" />
+        </EntityType>
+        <EntityType Name="Fotos">
+          <Key>
+            <PropertyRef Name="idFoto" />
+          </Key>
+          <Property Name="idFoto" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Foto" Type="varbinary(max)" />
           <Property Name="idPacienteESP" Type="int" />
         </EntityType>
         <EntityType Name="HemoglobinaGlucosiladaESP">
@@ -666,6 +854,17 @@
           <Property Name="Movimiento" Type="varchar" MaxLength="200" />
           <Property Name="idLogInicioGestor" Type="int" />
         </EntityType>
+        <EntityType Name="MedicinaInterna">
+          <Key>
+            <PropertyRef Name="idMedicinaInterna" />
+          </Key>
+          <Property Name="idMedicinaInterna" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="idPacienteDS" Type="int" />
+          <Property Name="CertificadoMedico" Type="varchar(max)" />
+          <Property Name="PlanTratamiento" Type="varchar(max)" />
+          <Property Name="Medicamento" Type="varchar" MaxLength="20" />
+          <Property Name="Seguimiento" Type="datetime" />
+        </EntityType>
         <EntityType Name="Menu">
           <Key>
             <PropertyRef Name="idMenu" />
@@ -705,6 +904,28 @@
           <Property Name="I8000" Type="varchar" MaxLength="10" />
           <Property Name="I12000" Type="varchar" MaxLength="10" />
         </EntityType>
+        <EntityType Name="Nutriologo">
+          <Key>
+            <PropertyRef Name="idNutriologo" />
+          </Key>
+          <Property Name="idNutriologo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="idPacienteDS" Type="int" />
+          <Property Name="CertificadoMedico" Type="varchar(max)" />
+          <Property Name="PlanTratamiento" Type="varchar(max)" />
+          <Property Name="Medicamento" Type="varchar" MaxLength="20" />
+          <Property Name="Seguimiento" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Oftalmologo">
+          <Key>
+            <PropertyRef Name="idOftalmologo" />
+          </Key>
+          <Property Name="idOftalmologo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="idPacienteDS" Type="int" />
+          <Property Name="CertificadoMedico" Type="varchar(max)" />
+          <Property Name="PlanTratamiento" Type="varchar(max)" />
+          <Property Name="Medicamento" Type="varchar" MaxLength="20" />
+          <Property Name="Seguimiento" Type="datetime" />
+        </EntityType>
         <EntityType Name="Paciente">
           <Key>
             <PropertyRef Name="idPaciente" />
@@ -717,6 +938,22 @@
           <Property Name="CURP" Type="varchar" MaxLength="20" />
           <Property Name="HASH" Type="varchar" MaxLength="20" />
           <Property Name="Genero" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="PacienteDS">
+          <Key>
+            <PropertyRef Name="idPacienteDS" />
+          </Key>
+          <Property Name="idPacienteDS" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="200" />
+          <Property Name="Email" Type="varchar" MaxLength="200" />
+          <Property Name="Telefono" Type="varchar" MaxLength="20" />
+          <Property Name="HASH" Type="varchar" MaxLength="20" />
+          <Property Name="Direccion" Type="varchar" MaxLength="150" />
+          <Property Name="Colonia" Type="varchar" MaxLength="100" />
+          <Property Name="CP" Type="varchar" MaxLength="10" />
+          <Property Name="Ciudad" Type="varchar" MaxLength="50" />
+          <Property Name="Estado" Type="varchar" MaxLength="50" />
+          <Property Name="Nacimiento" Type="datetime" />
         </EntityType>
         <EntityType Name="PacienteESP">
           <Key>
@@ -751,6 +988,56 @@
           <Property Name="Conciliado" Type="varchar" MaxLength="20" />
           <Property Name="TipoPago" Type="varchar" MaxLength="100" />
           <Property Name="FechaContable" Type="datetime" />
+          <Property Name="FormaPago" Type="varchar" MaxLength="40" />
+        </EntityType>
+        <EntityType Name="PacienteGA">
+          <Key>
+            <PropertyRef Name="idPacienteGA" />
+          </Key>
+          <Property Name="idPacienteGA" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="200" />
+          <Property Name="CURP" Type="varchar" MaxLength="20" />
+          <Property Name="Telefono" Type="varchar" MaxLength="20" />
+          <Property Name="Email" Type="varchar" MaxLength="50" />
+          <Property Name="Folio" Type="varchar" MaxLength="15" />
+          <Property Name="HASH" Type="varchar" MaxLength="15" />
+          <Property Name="Genero" Type="varchar" MaxLength="10" />
+          <Property Name="Estatura" Type="varchar" MaxLength="10" />
+          <Property Name="NoExpediente" Type="varchar" MaxLength="20" />
+          <Property Name="FechaCreacion" Type="datetime" />
+          <Property Name="TipoPago" Type="varchar" MaxLength="20" />
+          <Property Name="Recepcionista" Type="varchar" MaxLength="50" />
+          <Property Name="Asistencia" Type="varchar" MaxLength="10" />
+          <Property Name="CancelaComentario" Type="varchar" MaxLength="200" />
+          <Property Name="Entregado" Type="varchar" MaxLength="10" />
+          <Property Name="ReferidoPor" Type="varchar" MaxLength="50" />
+          <Property Name="FechaCita" Type="datetime" />
+          <Property Name="Metra" Type="varchar" MaxLength="10" />
+          <Property Name="Solicita" Type="varchar" MaxLength="50" />
+          <Property Name="FechaSolicitud" Type="datetime" />
+          <Property Name="FechaReferencia" Type="datetime" />
+          <Property Name="NoOrden" Type="varchar" MaxLength="100" />
+          <Property Name="EstatusPago" Type="varchar" MaxLength="20" />
+          <Property Name="Referencia" Type="varchar" MaxLength="50" />
+          <Property Name="idCanal" Type="int" />
+          <Property Name="Canal" Type="varchar" MaxLength="50" />
+          <Property Name="CC" Type="varchar" MaxLength="50" />
+          <Property Name="CarruselMedico" Type="varchar" MaxLength="20" />
+          <Property Name="TipoTramite" Type="varchar" MaxLength="50" />
+          <Property Name="TipoLicencia" Type="varchar" MaxLength="50" />
+          <Property Name="Sucursal" Type="varchar" MaxLength="50" />
+          <Property Name="Doctor" Type="varchar" MaxLength="50" />
+          <Property Name="EstatusCaptura" Type="varchar" MaxLength="50" />
+          <Property Name="Capturista" Type="varchar" MaxLength="100" />
+          <Property Name="InicioCaptura" Type="datetime" />
+          <Property Name="FinalCaptura" Type="datetime" />
+          <Property Name="PausaInicio" Type="datetime" />
+          <Property Name="PausaFinal" Type="datetime" />
+          <Property Name="Duracion" Type="int" />
+          <Property Name="Aptitud" Type="varchar" MaxLength="10" />
+          <Property Name="ComentarioAptitud" Type="varchar" MaxLength="200" />
+          <Property Name="FechaVigencia" Type="datetime" />
+          <Property Name="ALT" Type="varchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="PagosGestores">
           <Key>
@@ -769,6 +1056,14 @@
           <Property Name="idRecepcionista" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="idUsuario" Type="int" />
           <Property Name="idSucursal" Type="int" />
+        </EntityType>
+        <EntityType Name="RecepcionistaDS">
+          <Key>
+            <PropertyRef Name="idRecepcionistaDS" />
+          </Key>
+          <Property Name="idRecepcionistaDS" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="idUsuario" Type="int" />
+          <Property Name="idSucursalDS" Type="int" />
         </EntityType>
         <EntityType Name="ReferenciasSB">
           <Key>
@@ -812,6 +1107,31 @@
           <Property Name="idMenu" Type="int" />
           <Property Name="idRol" Type="int" />
         </EntityType>
+        <EntityType Name="SignosVitalesDS">
+          <Key>
+            <PropertyRef Name="idSignosVitalesDS" />
+          </Key>
+          <Property Name="idSignosVitalesDS" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Sistolica" Type="varchar" MaxLength="20" />
+          <Property Name="Diastolica" Type="varchar" MaxLength="10" />
+          <Property Name="Cardiaca" Type="varchar" MaxLength="10" />
+          <Property Name="Respiratoria" Type="varchar" MaxLength="10" />
+          <Property Name="Temperatura" Type="varchar" MaxLength="10" />
+          <Property Name="Peso" Type="varchar" MaxLength="10" />
+          <Property Name="Estatura" Type="varchar" MaxLength="10" />
+          <Property Name="IMC" Type="varchar" MaxLength="10" />
+          <Property Name="Cintura" Type="varchar" MaxLength="10" />
+          <Property Name="Cuello" Type="varchar" MaxLength="10" />
+          <Property Name="Grasa" Type="varchar" MaxLength="10" />
+          <Property Name="idPacienteDS" Type="int" />
+        </EntityType>
+        <EntityType Name="SucursalDS">
+          <Key>
+            <PropertyRef Name="idSucursalDS" />
+          </Key>
+          <Property Name="idSucursalDS" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="Sucursales">
           <Key>
             <PropertyRef Name="idSucursal" />
@@ -824,6 +1144,16 @@
           <Property Name="SUC" Type="varchar" MaxLength="10" />
           <Property Name="Contador" Type="int" />
           <Property Name="ContadorFecha" Type="datetime" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
         </EntityType>
         <EntityType Name="Tickets">
           <Key>
@@ -875,6 +1205,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_AudioGA_PacienteGA">
+          <End Role="PacienteGA" Type="Self.PacienteGA" Multiplicity="0..1" />
+          <End Role="AudioGA" Type="Self.AudioGA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteGA">
+              <PropertyRef Name="idPacienteGA" />
+            </Principal>
+            <Dependent Role="AudioGA">
+              <PropertyRef Name="idPacienteGA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Biometricos_Paciente">
           <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
           <End Role="Biometricos" Type="Self.Biometricos" Multiplicity="*" />
@@ -908,6 +1250,18 @@
             </Principal>
             <Dependent Role="CapturaIncidencia">
               <PropertyRef Name="idCaptura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cardiologo_PacienteDS">
+          <End Role="PacienteDS" Type="Self.PacienteDS" Multiplicity="0..1" />
+          <End Role="Cardiologo" Type="Self.Cardiologo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteDS">
+              <PropertyRef Name="idPacienteDS" />
+            </Principal>
+            <Dependent Role="Cardiologo">
+              <PropertyRef Name="idPacienteDS" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -956,6 +1310,18 @@
             </Principal>
             <Dependent Role="Cita">
               <PropertyRef Name="idPaciente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CitaDS_PacienteDS">
+          <End Role="PacienteDS" Type="Self.PacienteDS" Multiplicity="0..1" />
+          <End Role="CitaDS" Type="Self.CitaDS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteDS">
+              <PropertyRef Name="idPacienteDS" />
+            </Principal>
+            <Dependent Role="CitaDS">
+              <PropertyRef Name="idPacienteDS" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1063,6 +1429,42 @@
               <PropertyRef Name="idUsuario" />
             </Principal>
             <Dependent Role="DoctorModulo">
+              <PropertyRef Name="idUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DoctorModuloDS_Modulos">
+          <End Role="Modulos" Type="Self.Modulos" Multiplicity="0..1" />
+          <End Role="DoctorModuloDS" Type="Self.DoctorModuloDS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Modulos">
+              <PropertyRef Name="idModulo" />
+            </Principal>
+            <Dependent Role="DoctorModuloDS">
+              <PropertyRef Name="idModulo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DoctorModuloDS_SucursalDS">
+          <End Role="SucursalDS" Type="Self.SucursalDS" Multiplicity="0..1" />
+          <End Role="DoctorModuloDS" Type="Self.DoctorModuloDS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SucursalDS">
+              <PropertyRef Name="idSucursalDS" />
+            </Principal>
+            <Dependent Role="DoctorModuloDS">
+              <PropertyRef Name="idSucursalDS" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DoctorModuloDS_Usuarios">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+          <End Role="DoctorModuloDS" Type="Self.DoctorModuloDS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="idUsuario" />
+            </Principal>
+            <Dependent Role="DoctorModuloDS">
               <PropertyRef Name="idUsuario" />
             </Dependent>
           </ReferentialConstraint>
@@ -1187,6 +1589,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_EPI_GA_PacienteGA">
+          <End Role="PacienteGA" Type="Self.PacienteGA" Multiplicity="0..1" />
+          <End Role="EPI_GA" Type="Self.EPI_GA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteGA">
+              <PropertyRef Name="idPacienteGA" />
+            </Principal>
+            <Dependent Role="EPI_GA">
+              <PropertyRef Name="idPacienteGA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_EPI_Laboratorio_Paciente">
           <End Role="Paciente" Type="Self.Paciente" Multiplicity="0..1" />
           <End Role="EPI_Laboratorio" Type="Self.EPI_Laboratorio" Multiplicity="*" />
@@ -1256,6 +1670,18 @@
             </Principal>
             <Dependent Role="Expedientes">
               <PropertyRef Name="idPaciente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Farmacia_PacienteDS">
+          <End Role="PacienteDS" Type="Self.PacienteDS" Multiplicity="0..1" />
+          <End Role="Farmacia" Type="Self.Farmacia" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteDS">
+              <PropertyRef Name="idPacienteDS" />
+            </Principal>
+            <Dependent Role="Farmacia">
+              <PropertyRef Name="idPacienteDS" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1355,6 +1781,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_MedicinaInterna_PacienteDS">
+          <End Role="PacienteDS" Type="Self.PacienteDS" Multiplicity="0..1" />
+          <End Role="MedicinaInterna" Type="Self.MedicinaInterna" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteDS">
+              <PropertyRef Name="idPacienteDS" />
+            </Principal>
+            <Dependent Role="MedicinaInterna">
+              <PropertyRef Name="idPacienteDS" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_MovimientosAudio_PacienteESP">
           <End Role="PacienteESP" Type="Self.PacienteESP" Multiplicity="0..1" />
           <End Role="MovimientosAudio" Type="Self.MovimientosAudio" Multiplicity="*" />
@@ -1364,6 +1802,30 @@
             </Principal>
             <Dependent Role="MovimientosAudio">
               <PropertyRef Name="idPacienteESP" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Nutriologo_PacienteDS">
+          <End Role="PacienteDS" Type="Self.PacienteDS" Multiplicity="0..1" />
+          <End Role="Nutriologo" Type="Self.Nutriologo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteDS">
+              <PropertyRef Name="idPacienteDS" />
+            </Principal>
+            <Dependent Role="Nutriologo">
+              <PropertyRef Name="idPacienteDS" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Oftalmologo_PacienteDS">
+          <End Role="PacienteDS" Type="Self.PacienteDS" Multiplicity="0..1" />
+          <End Role="Oftalmologo" Type="Self.Oftalmologo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteDS">
+              <PropertyRef Name="idPacienteDS" />
+            </Principal>
+            <Dependent Role="Oftalmologo">
+              <PropertyRef Name="idPacienteDS" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1403,6 +1865,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_RecepcionistaDS_SucursalDS">
+          <End Role="SucursalDS" Type="Self.SucursalDS" Multiplicity="0..1" />
+          <End Role="RecepcionistaDS" Type="Self.RecepcionistaDS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SucursalDS">
+              <PropertyRef Name="idSucursalDS" />
+            </Principal>
+            <Dependent Role="RecepcionistaDS">
+              <PropertyRef Name="idSucursalDS" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RecepcionistaDS_Usuarios">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+          <End Role="RecepcionistaDS" Type="Self.RecepcionistaDS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="idUsuario" />
+            </Principal>
+            <Dependent Role="RecepcionistaDS">
+              <PropertyRef Name="idUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_RolMenu_Menu">
           <End Role="Menu" Type="Self.Menu" Multiplicity="0..1" />
           <End Role="RolMenu" Type="Self.RolMenu" Multiplicity="*" />
@@ -1424,6 +1910,18 @@
             </Principal>
             <Dependent Role="RolMenu">
               <PropertyRef Name="idRol" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SignosVitalesDS_PacienteDS">
+          <End Role="PacienteDS" Type="Self.PacienteDS" Multiplicity="0..1" />
+          <End Role="SignosVitalesDS" Type="Self.SignosVitalesDS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteDS">
+              <PropertyRef Name="idPacienteDS" />
+            </Principal>
+            <Dependent Role="SignosVitalesDS">
+              <PropertyRef Name="idPacienteDS" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1478,16 +1976,19 @@
         <EntityContainer Name="DevModelStoreContainer">
           <EntitySet Name="Aptitud" EntityType="Self.Aptitud" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Archivos" EntityType="Self.Archivos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AudioGA" EntityType="Self.AudioGA" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Biometricos" EntityType="Self.Biometricos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CallCenter" EntityType="Self.CallCenter" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Canal" EntityType="Self.Canal" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Canales" EntityType="Self.Canales" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Captura" EntityType="Self.Captura" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CapturaIncidencia" EntityType="Self.CapturaIncidencia" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Cardiologo" EntityType="Self.Cardiologo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CarruselMedico" EntityType="Self.CarruselMedico" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CartaNoAccidentesESP" EntityType="Self.CartaNoAccidentesESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CERTIFICADO" EntityType="Self.CERTIFICADO" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Cita" EntityType="Self.Cita" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CitaDS" EntityType="Self.CitaDS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Ciudades" EntityType="Self.Ciudades" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ConteoDoctores2" EntityType="Self.ConteoDoctores2" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DeclaracionSaludESP" EntityType="Self.DeclaracionSaludESP" Schema="dbo" store:Type="Tables" />
@@ -1497,6 +1998,7 @@
           <EntitySet Name="Doctores" EntityType="Self.Doctores" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Doctores2" EntityType="Self.Doctores2" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DoctorModulo" EntityType="Self.DoctorModulo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DoctorModuloDS" EntityType="Self.DoctorModuloDS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DocumentosESP" EntityType="Self.DocumentosESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EKGRandom" EntityType="Self.EKGRandom" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EPI_A_Heredofamiliares" EntityType="Self.EPI_A_Heredofamiliares" Schema="dbo" store:Type="Tables" />
@@ -1508,14 +2010,17 @@
           <EntitySet Name="EPI_DictamenAptitud" EntityType="Self.EPI_DictamenAptitud" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EPI_ESP" EntityType="Self.EPI_ESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EPI_ExploracionFisica" EntityType="Self.EPI_ExploracionFisica" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EPI_GA" EntityType="Self.EPI_GA" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EPI_Laboratorio" EntityType="Self.EPI_Laboratorio" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EPI_Odontologia" EntityType="Self.EPI_Odontologia" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Epi_Oftalmologia" EntityType="Self.Epi_Oftalmologia" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EPI_SignosVitales" EntityType="Self.EPI_SignosVitales" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ExpedienteRevaloracion" EntityType="Self.ExpedienteRevaloracion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Expedientes" EntityType="Self.Expedientes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Farmacia" EntityType="Self.Farmacia" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FirmaESP" EntityType="Self.FirmaESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FotoPacienteESP" EntityType="Self.FotoPacienteESP" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Fotos" EntityType="Self.Fotos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HemoglobinaGlucosiladaESP" EntityType="Self.HemoglobinaGlucosiladaESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HuellasESP" EntityType="Self.HuellasESP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HuellasRandom" EntityType="Self.HuellasRandom" Schema="dbo" store:Type="Tables" />
@@ -1523,25 +2028,44 @@
           <EntitySet Name="IncidenciaPaciente" EntityType="Self.IncidenciaPaciente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="log_InicioGestor" EntityType="Self.log_InicioGestor" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="log_Movimientos" EntityType="Self.log_Movimientos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MedicinaInterna" EntityType="Self.MedicinaInterna" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Menu" EntityType="Self.Menu" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Modulos" EntityType="Self.Modulos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MovimientosAudio" EntityType="Self.MovimientosAudio" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Nutriologo" EntityType="Self.Nutriologo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Oftalmologo" EntityType="Self.Oftalmologo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Paciente" EntityType="Self.Paciente" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PacienteDS" EntityType="Self.PacienteDS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PacienteESP" EntityType="Self.PacienteESP" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PacienteGA" EntityType="Self.PacienteGA" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PagosGestores" EntityType="Self.PagosGestores" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Recepcionista" EntityType="Self.Recepcionista" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RecepcionistaDS" EntityType="Self.RecepcionistaDS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReferenciasSB" EntityType="Self.ReferenciasSB" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Referido" EntityType="Self.Referido" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RolMenu" EntityType="Self.RolMenu" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SignosVitalesDS" EntityType="Self.SignosVitalesDS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SucursalDS" EntityType="Self.SucursalDS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Sucursales" EntityType="Self.Sucursales" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tickets" EntityType="Self.Tickets" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tipificaciones" EntityType="Self.Tipificaciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UrgentesCount" EntityType="Self.UrgentesCount" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CadenaSplit" EntityType="Self.CadenaSplit" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [CadenaSplit].[idCadena] AS [idCadena], 
+    [CadenaSplit].[Cadena] AS [Cadena]
+    FROM [dbo].[CadenaSplit] AS [CadenaSplit]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK_Archivos_Paciente" Association="Self.FK_Archivos_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
             <End Role="Archivos" EntitySet="Archivos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AudioGA_PacienteGA" Association="Self.FK_AudioGA_PacienteGA">
+            <End Role="PacienteGA" EntitySet="PacienteGA" />
+            <End Role="AudioGA" EntitySet="AudioGA" />
           </AssociationSet>
           <AssociationSet Name="FK_Biometricos_Paciente" Association="Self.FK_Biometricos_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
@@ -1554,6 +2078,10 @@
           <AssociationSet Name="FK_CapturaIncidencia_Captura" Association="Self.FK_CapturaIncidencia_Captura">
             <End Role="Captura" EntitySet="Captura" />
             <End Role="CapturaIncidencia" EntitySet="CapturaIncidencia" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cardiologo_PacienteDS" Association="Self.FK_Cardiologo_PacienteDS">
+            <End Role="PacienteDS" EntitySet="PacienteDS" />
+            <End Role="Cardiologo" EntitySet="Cardiologo" />
           </AssociationSet>
           <AssociationSet Name="FK_CarruselMedico_Paciente" Association="Self.FK_CarruselMedico_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
@@ -1570,6 +2098,10 @@
           <AssociationSet Name="FK_Cita_Paciente" Association="Self.FK_Cita_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
             <End Role="Cita" EntitySet="Cita" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CitaDS_PacienteDS" Association="Self.FK_CitaDS_PacienteDS">
+            <End Role="PacienteDS" EntitySet="PacienteDS" />
+            <End Role="CitaDS" EntitySet="CitaDS" />
           </AssociationSet>
           <AssociationSet Name="FK_DeclaracionSaludESP_PacienteESP" Association="Self.FK_DeclaracionSaludESP_PacienteESP">
             <End Role="PacienteESP" EntitySet="PacienteESP" />
@@ -1606,6 +2138,18 @@
           <AssociationSet Name="FK_DoctorModulo_Usuarios" Association="Self.FK_DoctorModulo_Usuarios">
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="DoctorModulo" EntitySet="DoctorModulo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DoctorModuloDS_Modulos" Association="Self.FK_DoctorModuloDS_Modulos">
+            <End Role="Modulos" EntitySet="Modulos" />
+            <End Role="DoctorModuloDS" EntitySet="DoctorModuloDS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DoctorModuloDS_SucursalDS" Association="Self.FK_DoctorModuloDS_SucursalDS">
+            <End Role="SucursalDS" EntitySet="SucursalDS" />
+            <End Role="DoctorModuloDS" EntitySet="DoctorModuloDS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DoctorModuloDS_Usuarios" Association="Self.FK_DoctorModuloDS_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="DoctorModuloDS" EntitySet="DoctorModuloDS" />
           </AssociationSet>
           <AssociationSet Name="FK_DocumentosESP_PacienteESP" Association="Self.FK_DocumentosESP_PacienteESP">
             <End Role="PacienteESP" EntitySet="PacienteESP" />
@@ -1647,6 +2191,10 @@
             <End Role="Paciente" EntitySet="Paciente" />
             <End Role="EPI_ExploracionFisica" EntitySet="EPI_ExploracionFisica" />
           </AssociationSet>
+          <AssociationSet Name="FK_EPI_GA_PacienteGA" Association="Self.FK_EPI_GA_PacienteGA">
+            <End Role="PacienteGA" EntitySet="PacienteGA" />
+            <End Role="EPI_GA" EntitySet="EPI_GA" />
+          </AssociationSet>
           <AssociationSet Name="FK_EPI_Laboratorio_Paciente" Association="Self.FK_EPI_Laboratorio_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
             <End Role="EPI_Laboratorio" EntitySet="EPI_Laboratorio" />
@@ -1670,6 +2218,10 @@
           <AssociationSet Name="FK_Expedientes_Paciente" Association="Self.FK_Expedientes_Paciente">
             <End Role="Paciente" EntitySet="Paciente" />
             <End Role="Expedientes" EntitySet="Expedientes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Farmacia_PacienteDS" Association="Self.FK_Farmacia_PacienteDS">
+            <End Role="PacienteDS" EntitySet="PacienteDS" />
+            <End Role="Farmacia" EntitySet="Farmacia" />
           </AssociationSet>
           <AssociationSet Name="FK_FirmaESP_PacienteESP" Association="Self.FK_FirmaESP_PacienteESP">
             <End Role="PacienteESP" EntitySet="PacienteESP" />
@@ -1703,9 +2255,21 @@
             <End Role="log_InicioGestor" EntitySet="log_InicioGestor" />
             <End Role="log_Movimientos" EntitySet="log_Movimientos" />
           </AssociationSet>
+          <AssociationSet Name="FK_MedicinaInterna_PacienteDS" Association="Self.FK_MedicinaInterna_PacienteDS">
+            <End Role="PacienteDS" EntitySet="PacienteDS" />
+            <End Role="MedicinaInterna" EntitySet="MedicinaInterna" />
+          </AssociationSet>
           <AssociationSet Name="FK_MovimientosAudio_PacienteESP" Association="Self.FK_MovimientosAudio_PacienteESP">
             <End Role="PacienteESP" EntitySet="PacienteESP" />
             <End Role="MovimientosAudio" EntitySet="MovimientosAudio" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Nutriologo_PacienteDS" Association="Self.FK_Nutriologo_PacienteDS">
+            <End Role="PacienteDS" EntitySet="PacienteDS" />
+            <End Role="Nutriologo" EntitySet="Nutriologo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Oftalmologo_PacienteDS" Association="Self.FK_Oftalmologo_PacienteDS">
+            <End Role="PacienteDS" EntitySet="PacienteDS" />
+            <End Role="Oftalmologo" EntitySet="Oftalmologo" />
           </AssociationSet>
           <AssociationSet Name="FK_PagosGestores_Referido" Association="Self.FK_PagosGestores_Referido">
             <End Role="Referido" EntitySet="Referido" />
@@ -1719,6 +2283,14 @@
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="Recepcionista" EntitySet="Recepcionista" />
           </AssociationSet>
+          <AssociationSet Name="FK_RecepcionistaDS_SucursalDS" Association="Self.FK_RecepcionistaDS_SucursalDS">
+            <End Role="SucursalDS" EntitySet="SucursalDS" />
+            <End Role="RecepcionistaDS" EntitySet="RecepcionistaDS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RecepcionistaDS_Usuarios" Association="Self.FK_RecepcionistaDS_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="RecepcionistaDS" EntitySet="RecepcionistaDS" />
+          </AssociationSet>
           <AssociationSet Name="FK_RolMenu_Menu" Association="Self.FK_RolMenu_Menu">
             <End Role="Menu" EntitySet="Menu" />
             <End Role="RolMenu" EntitySet="RolMenu" />
@@ -1726,6 +2298,10 @@
           <AssociationSet Name="FK_RolMenu_Roles" Association="Self.FK_RolMenu_Roles">
             <End Role="Roles" EntitySet="Roles" />
             <End Role="RolMenu" EntitySet="RolMenu" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SignosVitalesDS_PacienteDS" Association="Self.FK_SignosVitalesDS_PacienteDS">
+            <End Role="PacienteDS" EntitySet="PacienteDS" />
+            <End Role="SignosVitalesDS" EntitySet="SignosVitalesDS" />
           </AssociationSet>
           <AssociationSet Name="FK_Sucursales_Ciudades" Association="Self.FK_Sucursales_Ciudades">
             <End Role="Ciudades" EntitySet="Ciudades" />
@@ -1843,6 +2419,7 @@
           <Property Name="Conciliado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="FechaContable" Type="DateTime" Precision="3" />
           <Property Name="UsarSaldo" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="FormaPago" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Ciudades">
           <Key>
@@ -2009,6 +2586,8 @@
           <NavigationProperty Name="Roles" Relationship="Self.FK_Usuarios_Roles" FromRole="Usuarios" ToRole="Roles" />
           <NavigationProperty Name="log_InicioGestor" Relationship="DevModel.FK_log_InicioGestor_Usuarios" FromRole="Usuarios" ToRole="log_InicioGestor" />
           <NavigationProperty Name="DoctorModulo" Relationship="DevModel.FK_DoctorModulo_Usuarios" FromRole="Usuarios" ToRole="DoctorModulo" />
+          <NavigationProperty Name="DoctorModuloDS" Relationship="DevModel.FK_DoctorModuloDS_Usuarios" FromRole="Usuarios" ToRole="DoctorModuloDS" />
+          <NavigationProperty Name="RecepcionistaDS" Relationship="DevModel.FK_RecepcionistaDS_Usuarios" FromRole="Usuarios" ToRole="RecepcionistaDS" />
         </EntityType>
         <Association Name="FK_Dictamen_Aptitud">
           <End Role="Aptitud" Type="Self.Aptitud" Multiplicity="0..1" />
@@ -2446,6 +3025,79 @@
             <End Role="Referido" EntitySet="Referido" />
             <End Role="PagosGestores" EntitySet="PagosGestores" />
           </AssociationSet>
+          <EntitySet Name="AudioGA" EntityType="DevModel.AudioGA" />
+          <EntitySet Name="Cardiologo" EntityType="DevModel.Cardiologo" />
+          <EntitySet Name="CitaDS" EntityType="DevModel.CitaDS" />
+          <EntitySet Name="DoctorModuloDS" EntityType="DevModel.DoctorModuloDS" />
+          <EntitySet Name="EPI_GA" EntityType="DevModel.EPI_GA" />
+          <EntitySet Name="Farmacia" EntityType="DevModel.Farmacia" />
+          <EntitySet Name="Fotos" EntityType="DevModel.Fotos" />
+          <EntitySet Name="MedicinaInterna" EntityType="DevModel.MedicinaInterna" />
+          <EntitySet Name="Nutriologo" EntityType="DevModel.Nutriologo" />
+          <EntitySet Name="Oftalmologo" EntityType="DevModel.Oftalmologo" />
+          <EntitySet Name="PacienteDS" EntityType="DevModel.PacienteDS" />
+          <EntitySet Name="PacienteGA" EntityType="DevModel.PacienteGA" />
+          <EntitySet Name="RecepcionistaDS" EntityType="DevModel.RecepcionistaDS" />
+          <EntitySet Name="SignosVitalesDS" EntityType="DevModel.SignosVitalesDS" />
+          <EntitySet Name="SucursalDS" EntityType="DevModel.SucursalDS" />
+          <EntitySet Name="sysdiagrams" EntityType="DevModel.sysdiagrams" />
+          <EntitySet Name="CadenaSplit" EntityType="DevModel.CadenaSplit" />
+          <AssociationSet Name="FK_AudioGA_PacienteGA" Association="DevModel.FK_AudioGA_PacienteGA">
+            <End Role="PacienteGA" EntitySet="PacienteGA" />
+            <End Role="AudioGA" EntitySet="AudioGA" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cardiologo_PacienteDS" Association="DevModel.FK_Cardiologo_PacienteDS">
+            <End Role="PacienteDS" EntitySet="PacienteDS" />
+            <End Role="Cardiologo" EntitySet="Cardiologo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CitaDS_PacienteDS" Association="DevModel.FK_CitaDS_PacienteDS">
+            <End Role="PacienteDS" EntitySet="PacienteDS" />
+            <End Role="CitaDS" EntitySet="CitaDS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DoctorModuloDS_Modulos" Association="DevModel.FK_DoctorModuloDS_Modulos">
+            <End Role="Modulos" EntitySet="Modulos" />
+            <End Role="DoctorModuloDS" EntitySet="DoctorModuloDS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DoctorModuloDS_SucursalDS" Association="DevModel.FK_DoctorModuloDS_SucursalDS">
+            <End Role="SucursalDS" EntitySet="SucursalDS" />
+            <End Role="DoctorModuloDS" EntitySet="DoctorModuloDS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DoctorModuloDS_Usuarios" Association="DevModel.FK_DoctorModuloDS_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="DoctorModuloDS" EntitySet="DoctorModuloDS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EPI_GA_PacienteGA" Association="DevModel.FK_EPI_GA_PacienteGA">
+            <End Role="PacienteGA" EntitySet="PacienteGA" />
+            <End Role="EPI_GA" EntitySet="EPI_GA" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Farmacia_PacienteDS" Association="DevModel.FK_Farmacia_PacienteDS">
+            <End Role="PacienteDS" EntitySet="PacienteDS" />
+            <End Role="Farmacia" EntitySet="Farmacia" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MedicinaInterna_PacienteDS" Association="DevModel.FK_MedicinaInterna_PacienteDS">
+            <End Role="PacienteDS" EntitySet="PacienteDS" />
+            <End Role="MedicinaInterna" EntitySet="MedicinaInterna" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Nutriologo_PacienteDS" Association="DevModel.FK_Nutriologo_PacienteDS">
+            <End Role="PacienteDS" EntitySet="PacienteDS" />
+            <End Role="Nutriologo" EntitySet="Nutriologo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Oftalmologo_PacienteDS" Association="DevModel.FK_Oftalmologo_PacienteDS">
+            <End Role="PacienteDS" EntitySet="PacienteDS" />
+            <End Role="Oftalmologo" EntitySet="Oftalmologo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SignosVitalesDS_PacienteDS" Association="DevModel.FK_SignosVitalesDS_PacienteDS">
+            <End Role="PacienteDS" EntitySet="PacienteDS" />
+            <End Role="SignosVitalesDS" EntitySet="SignosVitalesDS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RecepcionistaDS_SucursalDS" Association="DevModel.FK_RecepcionistaDS_SucursalDS">
+            <End Role="SucursalDS" EntitySet="SucursalDS" />
+            <End Role="RecepcionistaDS" EntitySet="RecepcionistaDS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RecepcionistaDS_Usuarios" Association="DevModel.FK_RecepcionistaDS_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="RecepcionistaDS" EntitySet="RecepcionistaDS" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="CapturaIncidencia">
           <Key>
@@ -2576,6 +3228,7 @@
           <Property Name="idModulo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="DoctorModulo" Relationship="DevModel.FK_DoctorModulo_Modulos" FromRole="Modulos" ToRole="DoctorModulo" />
+          <NavigationProperty Name="DoctorModuloDS" Relationship="DevModel.FK_DoctorModuloDS_Modulos" FromRole="Modulos" ToRole="DoctorModuloDS" />
         </EntityType>
         <Association Name="FK_DoctorModulo_Modulos">
           <End Type="DevModel.Modulos" Role="Modulos" Multiplicity="0..1" />
@@ -3167,6 +3820,7 @@
           <Property Name="Conciliado" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="TipoPago" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="FechaContable" Type="DateTime" Precision="3" />
+          <Property Name="FormaPago" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
           </EntityType>
         <EntityType Name="FotoPacienteESP">
           <Key>
@@ -3589,6 +4243,520 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="AudioGA">
+          <Key>
+            <PropertyRef Name="idAudioGA" />
+          </Key>
+          <Property Name="idAudioGA" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idPacienteGA" Type="Int32" />
+          <Property Name="NoExpediente" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="D125" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D250" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D500" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D1000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D2000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D4000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D8000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D12000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I125" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I250" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I500" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I1000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I2000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I4000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I8000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I12000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="PacienteGA" Relationship="DevModel.FK_AudioGA_PacienteGA" FromRole="AudioGA" ToRole="PacienteGA" />
+        </EntityType>
+        <EntityType Name="Cardiologo">
+          <Key>
+            <PropertyRef Name="idCardiologo" />
+          </Key>
+          <Property Name="idCardiologo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idPacienteDS" Type="Int32" />
+          <Property Name="CertificadoMedico" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="PlanTratamiento" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Medicamento" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Seguimiento" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="PacienteDS" Relationship="DevModel.FK_Cardiologo_PacienteDS" FromRole="Cardiologo" ToRole="PacienteDS" />
+        </EntityType>
+        <EntityType Name="CitaDS">
+          <Key>
+            <PropertyRef Name="idCitaDS" />
+          </Key>
+          <Property Name="idCitaDS" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FechaCita" Type="DateTime" Precision="3" />
+          <Property Name="EstatusPago" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Recepcionista" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FechaPago" Type="DateTime" Precision="3" />
+          <Property Name="idPacienteDS" Type="Int32" />
+          <Property Name="Sucursal" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Inicio_Oftalmologia" Type="DateTime" Precision="3" />
+          <Property Name="Fin_Oftalmologia" Type="DateTime" Precision="3" />
+          <Property Name="Inicio_MedicinaInterna" Type="DateTime" Precision="3" />
+          <Property Name="Fin_MedicinaInterna" Type="DateTime" Precision="3" />
+          <Property Name="Inicio_Cardiologia" Type="DateTime" Precision="3" />
+          <Property Name="Fin_Cardiologia" Type="DateTime" Precision="3" />
+          <Property Name="Inicio_Nutriciom" Type="DateTime" Precision="3" />
+          <Property Name="Fin_Nutricion" Type="DateTime" Precision="3" />
+          <Property Name="Membresia" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Inicio_SignosVitales" Type="DateTime" Precision="3" />
+          <Property Name="Fin_SignosVitales" Type="DateTime" Precision="3" />
+          <Property Name="NoMembresia" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="ReferidoPor" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="PacienteDS" Relationship="DevModel.FK_CitaDS_PacienteDS" FromRole="CitaDS" ToRole="PacienteDS" />
+        </EntityType>
+        <EntityType Name="DoctorModuloDS">
+          <Key>
+            <PropertyRef Name="idDoctorModuloDS" />
+          </Key>
+          <Property Name="idDoctorModuloDS" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idUsuario" Type="Int32" />
+          <Property Name="idSucursalDS" Type="Int32" />
+          <Property Name="idModulo" Type="Int32" />
+          <NavigationProperty Name="Modulos" Relationship="DevModel.FK_DoctorModuloDS_Modulos" FromRole="DoctorModuloDS" ToRole="Modulos" />
+          <NavigationProperty Name="SucursalDS" Relationship="DevModel.FK_DoctorModuloDS_SucursalDS" FromRole="DoctorModuloDS" ToRole="SucursalDS" />
+          <NavigationProperty Name="Usuarios" Relationship="DevModel.FK_DoctorModuloDS_Usuarios" FromRole="DoctorModuloDS" ToRole="Usuarios" />
+        </EntityType>
+        <EntityType Name="EPI_GA">
+          <Key>
+            <PropertyRef Name="idEPI_GA" />
+          </Key>
+          <Property Name="idEPI_GA" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idPacienteGA" Type="Int32" />
+          <Property Name="NoExpediente" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Genero" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Sistolica" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Diastolica" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Cardiaca" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Respiratoria" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Temperatura" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Peso" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Estatura" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Cintura" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Cuello" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Grasa" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Glucosa" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Hemoglobina" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Ritmo" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Frecuencia" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Eje" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="PR" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="QT" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="QRS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="OndaP" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="OndaT" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="AVCD" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="AVCI" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="AVID" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="AVII" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="AVLD" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="AVLI" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Lentes" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Estereopsis" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Carta" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="CampoVisual" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="MovOculares" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="RPD" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="RPI" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Nota" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="TestVC" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="MadreVive" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="PadreVive" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="HermanosViven" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="VacCompletas" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="ECivil" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Religion" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Escolaridad" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Hijos" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="ECongenita" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="EspDiag" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Alergia" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Diabetes" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="DiagHipArt" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Alcohol" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Fuma" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Drogas" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="UsaLentes" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="TLentes" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="URegla" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Embarazos" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Abortos" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Parto" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Cesarea" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="IVSexual" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Patologias" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Interpretacion" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="NotaMedica" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="D125" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D250" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D500" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D1000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D2000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D4000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D8000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="D12000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I125" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I250" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I500" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I1000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I2000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I4000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I8000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="I12000" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="PacienteGA" Relationship="DevModel.FK_EPI_GA_PacienteGA" FromRole="EPI_GA" ToRole="PacienteGA" />
+        </EntityType>
+        <EntityType Name="Farmacia">
+          <Key>
+            <PropertyRef Name="idFarmacia" />
+          </Key>
+          <Property Name="idFarmacia" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MedicamentoGeneral" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="idPacienteDS" Type="Int32" />
+          <NavigationProperty Name="PacienteDS" Relationship="DevModel.FK_Farmacia_PacienteDS" FromRole="Farmacia" ToRole="PacienteDS" />
+        </EntityType>
+        <EntityType Name="Fotos">
+          <Key>
+            <PropertyRef Name="idFoto" />
+          </Key>
+          <Property Name="idFoto" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Foto" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="idPacienteESP" Type="Int32" />
+        </EntityType>
+        <EntityType Name="MedicinaInterna">
+          <Key>
+            <PropertyRef Name="idMedicinaInterna" />
+          </Key>
+          <Property Name="idMedicinaInterna" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idPacienteDS" Type="Int32" />
+          <Property Name="CertificadoMedico" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="PlanTratamiento" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Medicamento" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Seguimiento" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="PacienteDS" Relationship="DevModel.FK_MedicinaInterna_PacienteDS" FromRole="MedicinaInterna" ToRole="PacienteDS" />
+        </EntityType>
+        <EntityType Name="Nutriologo">
+          <Key>
+            <PropertyRef Name="idNutriologo" />
+          </Key>
+          <Property Name="idNutriologo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idPacienteDS" Type="Int32" />
+          <Property Name="CertificadoMedico" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="PlanTratamiento" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Medicamento" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Seguimiento" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="PacienteDS" Relationship="DevModel.FK_Nutriologo_PacienteDS" FromRole="Nutriologo" ToRole="PacienteDS" />
+        </EntityType>
+        <EntityType Name="Oftalmologo">
+          <Key>
+            <PropertyRef Name="idOftalmologo" />
+          </Key>
+          <Property Name="idOftalmologo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idPacienteDS" Type="Int32" />
+          <Property Name="CertificadoMedico" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="PlanTratamiento" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Medicamento" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Seguimiento" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="PacienteDS" Relationship="DevModel.FK_Oftalmologo_PacienteDS" FromRole="Oftalmologo" ToRole="PacienteDS" />
+        </EntityType>
+        <EntityType Name="PacienteDS">
+          <Key>
+            <PropertyRef Name="idPacienteDS" />
+          </Key>
+          <Property Name="idPacienteDS" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Telefono" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="HASH" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Direccion" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Colonia" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="CP" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Ciudad" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Nacimiento" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Cardiologo" Relationship="DevModel.FK_Cardiologo_PacienteDS" FromRole="PacienteDS" ToRole="Cardiologo" />
+          <NavigationProperty Name="CitaDS" Relationship="DevModel.FK_CitaDS_PacienteDS" FromRole="PacienteDS" ToRole="CitaDS" />
+          <NavigationProperty Name="Farmacia" Relationship="DevModel.FK_Farmacia_PacienteDS" FromRole="PacienteDS" ToRole="Farmacia" />
+          <NavigationProperty Name="MedicinaInterna" Relationship="DevModel.FK_MedicinaInterna_PacienteDS" FromRole="PacienteDS" ToRole="MedicinaInterna" />
+          <NavigationProperty Name="Nutriologo" Relationship="DevModel.FK_Nutriologo_PacienteDS" FromRole="PacienteDS" ToRole="Nutriologo" />
+          <NavigationProperty Name="Oftalmologo" Relationship="DevModel.FK_Oftalmologo_PacienteDS" FromRole="PacienteDS" ToRole="Oftalmologo" />
+          <NavigationProperty Name="SignosVitalesDS" Relationship="DevModel.FK_SignosVitalesDS_PacienteDS" FromRole="PacienteDS" ToRole="SignosVitalesDS" />
+        </EntityType>
+        <EntityType Name="PacienteGA">
+          <Key>
+            <PropertyRef Name="idPacienteGA" />
+          </Key>
+          <Property Name="idPacienteGA" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="CURP" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Telefono" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Folio" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="HASH" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Genero" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Estatura" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="NoExpediente" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
+          <Property Name="TipoPago" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Recepcionista" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Asistencia" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="CancelaComentario" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Entregado" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="ReferidoPor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCita" Type="DateTime" Precision="3" />
+          <Property Name="Metra" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Solicita" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FechaSolicitud" Type="DateTime" Precision="3" />
+          <Property Name="FechaReferencia" Type="DateTime" Precision="3" />
+          <Property Name="NoOrden" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="EstatusPago" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Referencia" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="idCanal" Type="Int32" />
+          <Property Name="Canal" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CC" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CarruselMedico" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="TipoTramite" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TipoLicencia" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Sucursal" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Doctor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EstatusCaptura" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Capturista" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="InicioCaptura" Type="DateTime" Precision="3" />
+          <Property Name="FinalCaptura" Type="DateTime" Precision="3" />
+          <Property Name="PausaInicio" Type="DateTime" Precision="3" />
+          <Property Name="PausaFinal" Type="DateTime" Precision="3" />
+          <Property Name="Duracion" Type="Int32" />
+          <Property Name="Aptitud" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="ComentarioAptitud" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="FechaVigencia" Type="DateTime" Precision="3" />
+          <Property Name="ALT" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="AudioGA" Relationship="DevModel.FK_AudioGA_PacienteGA" FromRole="PacienteGA" ToRole="AudioGA" />
+          <NavigationProperty Name="EPI_GA" Relationship="DevModel.FK_EPI_GA_PacienteGA" FromRole="PacienteGA" ToRole="EPI_GA" />
+        </EntityType>
+        <EntityType Name="RecepcionistaDS">
+          <Key>
+            <PropertyRef Name="idRecepcionistaDS" />
+          </Key>
+          <Property Name="idRecepcionistaDS" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idUsuario" Type="Int32" />
+          <Property Name="idSucursalDS" Type="Int32" />
+          <NavigationProperty Name="SucursalDS" Relationship="DevModel.FK_RecepcionistaDS_SucursalDS" FromRole="RecepcionistaDS" ToRole="SucursalDS" />
+          <NavigationProperty Name="Usuarios" Relationship="DevModel.FK_RecepcionistaDS_Usuarios" FromRole="RecepcionistaDS" ToRole="Usuarios" />
+        </EntityType>
+        <EntityType Name="SignosVitalesDS">
+          <Key>
+            <PropertyRef Name="idSignosVitalesDS" />
+          </Key>
+          <Property Name="idSignosVitalesDS" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Sistolica" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Diastolica" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Cardiaca" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Respiratoria" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Temperatura" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Peso" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Estatura" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="IMC" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Cintura" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Cuello" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Grasa" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="idPacienteDS" Type="Int32" />
+          <NavigationProperty Name="PacienteDS" Relationship="DevModel.FK_SignosVitalesDS_PacienteDS" FromRole="SignosVitalesDS" ToRole="PacienteDS" />
+        </EntityType>
+        <EntityType Name="SucursalDS">
+          <Key>
+            <PropertyRef Name="idSucursalDS" />
+          </Key>
+          <Property Name="idSucursalDS" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="DoctorModuloDS" Relationship="DevModel.FK_DoctorModuloDS_SucursalDS" FromRole="SucursalDS" ToRole="DoctorModuloDS" />
+          <NavigationProperty Name="RecepcionistaDS" Relationship="DevModel.FK_RecepcionistaDS_SucursalDS" FromRole="SucursalDS" ToRole="RecepcionistaDS" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="CadenaSplit">
+          <Key>
+            <PropertyRef Name="idCadena" />
+          </Key>
+          <Property Name="idCadena" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Cadena" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK_AudioGA_PacienteGA">
+          <End Type="DevModel.PacienteGA" Role="PacienteGA" Multiplicity="0..1" />
+          <End Type="DevModel.AudioGA" Role="AudioGA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteGA">
+              <PropertyRef Name="idPacienteGA" />
+            </Principal>
+            <Dependent Role="AudioGA">
+              <PropertyRef Name="idPacienteGA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cardiologo_PacienteDS">
+          <End Type="DevModel.PacienteDS" Role="PacienteDS" Multiplicity="0..1" />
+          <End Type="DevModel.Cardiologo" Role="Cardiologo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteDS">
+              <PropertyRef Name="idPacienteDS" />
+            </Principal>
+            <Dependent Role="Cardiologo">
+              <PropertyRef Name="idPacienteDS" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CitaDS_PacienteDS">
+          <End Type="DevModel.PacienteDS" Role="PacienteDS" Multiplicity="0..1" />
+          <End Type="DevModel.CitaDS" Role="CitaDS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteDS">
+              <PropertyRef Name="idPacienteDS" />
+            </Principal>
+            <Dependent Role="CitaDS">
+              <PropertyRef Name="idPacienteDS" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DoctorModuloDS_Modulos">
+          <End Type="DevModel.Modulos" Role="Modulos" Multiplicity="0..1" />
+          <End Type="DevModel.DoctorModuloDS" Role="DoctorModuloDS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Modulos">
+              <PropertyRef Name="idModulo" />
+            </Principal>
+            <Dependent Role="DoctorModuloDS">
+              <PropertyRef Name="idModulo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DoctorModuloDS_SucursalDS">
+          <End Type="DevModel.SucursalDS" Role="SucursalDS" Multiplicity="0..1" />
+          <End Type="DevModel.DoctorModuloDS" Role="DoctorModuloDS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SucursalDS">
+              <PropertyRef Name="idSucursalDS" />
+            </Principal>
+            <Dependent Role="DoctorModuloDS">
+              <PropertyRef Name="idSucursalDS" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DoctorModuloDS_Usuarios">
+          <End Type="DevModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+          <End Type="DevModel.DoctorModuloDS" Role="DoctorModuloDS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="idUsuario" />
+            </Principal>
+            <Dependent Role="DoctorModuloDS">
+              <PropertyRef Name="idUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EPI_GA_PacienteGA">
+          <End Type="DevModel.PacienteGA" Role="PacienteGA" Multiplicity="0..1" />
+          <End Type="DevModel.EPI_GA" Role="EPI_GA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteGA">
+              <PropertyRef Name="idPacienteGA" />
+            </Principal>
+            <Dependent Role="EPI_GA">
+              <PropertyRef Name="idPacienteGA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Farmacia_PacienteDS">
+          <End Type="DevModel.PacienteDS" Role="PacienteDS" Multiplicity="0..1" />
+          <End Type="DevModel.Farmacia" Role="Farmacia" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteDS">
+              <PropertyRef Name="idPacienteDS" />
+            </Principal>
+            <Dependent Role="Farmacia">
+              <PropertyRef Name="idPacienteDS" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MedicinaInterna_PacienteDS">
+          <End Type="DevModel.PacienteDS" Role="PacienteDS" Multiplicity="0..1" />
+          <End Type="DevModel.MedicinaInterna" Role="MedicinaInterna" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteDS">
+              <PropertyRef Name="idPacienteDS" />
+            </Principal>
+            <Dependent Role="MedicinaInterna">
+              <PropertyRef Name="idPacienteDS" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Nutriologo_PacienteDS">
+          <End Type="DevModel.PacienteDS" Role="PacienteDS" Multiplicity="0..1" />
+          <End Type="DevModel.Nutriologo" Role="Nutriologo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteDS">
+              <PropertyRef Name="idPacienteDS" />
+            </Principal>
+            <Dependent Role="Nutriologo">
+              <PropertyRef Name="idPacienteDS" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Oftalmologo_PacienteDS">
+          <End Type="DevModel.PacienteDS" Role="PacienteDS" Multiplicity="0..1" />
+          <End Type="DevModel.Oftalmologo" Role="Oftalmologo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteDS">
+              <PropertyRef Name="idPacienteDS" />
+            </Principal>
+            <Dependent Role="Oftalmologo">
+              <PropertyRef Name="idPacienteDS" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SignosVitalesDS_PacienteDS">
+          <End Type="DevModel.PacienteDS" Role="PacienteDS" Multiplicity="0..1" />
+          <End Type="DevModel.SignosVitalesDS" Role="SignosVitalesDS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PacienteDS">
+              <PropertyRef Name="idPacienteDS" />
+            </Principal>
+            <Dependent Role="SignosVitalesDS">
+              <PropertyRef Name="idPacienteDS" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RecepcionistaDS_SucursalDS">
+          <End Type="DevModel.SucursalDS" Role="SucursalDS" Multiplicity="0..1" />
+          <End Type="DevModel.RecepcionistaDS" Role="RecepcionistaDS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SucursalDS">
+              <PropertyRef Name="idSucursalDS" />
+            </Principal>
+            <Dependent Role="RecepcionistaDS">
+              <PropertyRef Name="idSucursalDS" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RecepcionistaDS_Usuarios">
+          <End Type="DevModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+          <End Type="DevModel.RecepcionistaDS" Role="RecepcionistaDS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="idUsuario" />
+            </Principal>
+            <Dependent Role="RecepcionistaDS">
+              <PropertyRef Name="idUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3655,6 +4823,7 @@
           <EntitySetMapping Name="Cita">
             <EntityTypeMapping TypeName="DevModel.Cita">
               <MappingFragment StoreEntitySet="Cita">
+                <ScalarProperty Name="FormaPago" ColumnName="FormaPago" />
                 <ScalarProperty Name="UsarSaldo" ColumnName="UsarSaldo" />
                 <ScalarProperty Name="FechaContable" ColumnName="FechaContable" />
                 <ScalarProperty Name="Conciliado" ColumnName="Conciliado" />
@@ -4215,6 +5384,7 @@
           <EntitySetMapping Name="PacienteESP">
             <EntityTypeMapping TypeName="DevModel.PacienteESP">
               <MappingFragment StoreEntitySet="PacienteESP">
+                <ScalarProperty Name="FormaPago" ColumnName="FormaPago" />
                 <ScalarProperty Name="FechaContable" ColumnName="FechaContable" />
                 <ScalarProperty Name="TipoPago" ColumnName="TipoPago" />
                 <ScalarProperty Name="Conciliado" ColumnName="Conciliado" />
@@ -4513,6 +5683,344 @@
                 <ScalarProperty Name="Fecha" ColumnName="Fecha" />
                 <ScalarProperty Name="Gestor" ColumnName="Gestor" />
                 <ScalarProperty Name="idPagoGestor" ColumnName="idPagoGestor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AudioGA">
+            <EntityTypeMapping TypeName="DevModel.AudioGA">
+              <MappingFragment StoreEntitySet="AudioGA">
+                <ScalarProperty Name="I12000" ColumnName="I12000" />
+                <ScalarProperty Name="I8000" ColumnName="I8000" />
+                <ScalarProperty Name="I4000" ColumnName="I4000" />
+                <ScalarProperty Name="I2000" ColumnName="I2000" />
+                <ScalarProperty Name="I1000" ColumnName="I1000" />
+                <ScalarProperty Name="I500" ColumnName="I500" />
+                <ScalarProperty Name="I250" ColumnName="I250" />
+                <ScalarProperty Name="I125" ColumnName="I125" />
+                <ScalarProperty Name="D12000" ColumnName="D12000" />
+                <ScalarProperty Name="D8000" ColumnName="D8000" />
+                <ScalarProperty Name="D4000" ColumnName="D4000" />
+                <ScalarProperty Name="D2000" ColumnName="D2000" />
+                <ScalarProperty Name="D1000" ColumnName="D1000" />
+                <ScalarProperty Name="D500" ColumnName="D500" />
+                <ScalarProperty Name="D250" ColumnName="D250" />
+                <ScalarProperty Name="D125" ColumnName="D125" />
+                <ScalarProperty Name="NoExpediente" ColumnName="NoExpediente" />
+                <ScalarProperty Name="idPacienteGA" ColumnName="idPacienteGA" />
+                <ScalarProperty Name="idAudioGA" ColumnName="idAudioGA" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Cardiologo">
+            <EntityTypeMapping TypeName="DevModel.Cardiologo">
+              <MappingFragment StoreEntitySet="Cardiologo">
+                <ScalarProperty Name="Seguimiento" ColumnName="Seguimiento" />
+                <ScalarProperty Name="Medicamento" ColumnName="Medicamento" />
+                <ScalarProperty Name="PlanTratamiento" ColumnName="PlanTratamiento" />
+                <ScalarProperty Name="CertificadoMedico" ColumnName="CertificadoMedico" />
+                <ScalarProperty Name="idPacienteDS" ColumnName="idPacienteDS" />
+                <ScalarProperty Name="idCardiologo" ColumnName="idCardiologo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CitaDS">
+            <EntityTypeMapping TypeName="DevModel.CitaDS">
+              <MappingFragment StoreEntitySet="CitaDS">
+                <ScalarProperty Name="ReferidoPor" ColumnName="ReferidoPor" />
+                <ScalarProperty Name="NoMembresia" ColumnName="NoMembresia" />
+                <ScalarProperty Name="Fin_SignosVitales" ColumnName="Fin_SignosVitales" />
+                <ScalarProperty Name="Inicio_SignosVitales" ColumnName="Inicio_SignosVitales" />
+                <ScalarProperty Name="Membresia" ColumnName="Membresia" />
+                <ScalarProperty Name="Fin_Nutricion" ColumnName="Fin_Nutricion" />
+                <ScalarProperty Name="Inicio_Nutriciom" ColumnName="Inicio_Nutriciom" />
+                <ScalarProperty Name="Fin_Cardiologia" ColumnName="Fin_Cardiologia" />
+                <ScalarProperty Name="Inicio_Cardiologia" ColumnName="Inicio_Cardiologia" />
+                <ScalarProperty Name="Fin_MedicinaInterna" ColumnName="Fin_MedicinaInterna" />
+                <ScalarProperty Name="Inicio_MedicinaInterna" ColumnName="Inicio_MedicinaInterna" />
+                <ScalarProperty Name="Fin_Oftalmologia" ColumnName="Fin_Oftalmologia" />
+                <ScalarProperty Name="Inicio_Oftalmologia" ColumnName="Inicio_Oftalmologia" />
+                <ScalarProperty Name="Sucursal" ColumnName="Sucursal" />
+                <ScalarProperty Name="idPacienteDS" ColumnName="idPacienteDS" />
+                <ScalarProperty Name="FechaPago" ColumnName="FechaPago" />
+                <ScalarProperty Name="Recepcionista" ColumnName="Recepcionista" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="EstatusPago" ColumnName="EstatusPago" />
+                <ScalarProperty Name="FechaCita" ColumnName="FechaCita" />
+                <ScalarProperty Name="idCitaDS" ColumnName="idCitaDS" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DoctorModuloDS">
+            <EntityTypeMapping TypeName="DevModel.DoctorModuloDS">
+              <MappingFragment StoreEntitySet="DoctorModuloDS">
+                <ScalarProperty Name="idModulo" ColumnName="idModulo" />
+                <ScalarProperty Name="idSucursalDS" ColumnName="idSucursalDS" />
+                <ScalarProperty Name="idUsuario" ColumnName="idUsuario" />
+                <ScalarProperty Name="idDoctorModuloDS" ColumnName="idDoctorModuloDS" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EPI_GA">
+            <EntityTypeMapping TypeName="DevModel.EPI_GA">
+              <MappingFragment StoreEntitySet="EPI_GA">
+                <ScalarProperty Name="I12000" ColumnName="I12000" />
+                <ScalarProperty Name="I8000" ColumnName="I8000" />
+                <ScalarProperty Name="I4000" ColumnName="I4000" />
+                <ScalarProperty Name="I2000" ColumnName="I2000" />
+                <ScalarProperty Name="I1000" ColumnName="I1000" />
+                <ScalarProperty Name="I500" ColumnName="I500" />
+                <ScalarProperty Name="I250" ColumnName="I250" />
+                <ScalarProperty Name="I125" ColumnName="I125" />
+                <ScalarProperty Name="D12000" ColumnName="D12000" />
+                <ScalarProperty Name="D8000" ColumnName="D8000" />
+                <ScalarProperty Name="D4000" ColumnName="D4000" />
+                <ScalarProperty Name="D2000" ColumnName="D2000" />
+                <ScalarProperty Name="D1000" ColumnName="D1000" />
+                <ScalarProperty Name="D500" ColumnName="D500" />
+                <ScalarProperty Name="D250" ColumnName="D250" />
+                <ScalarProperty Name="D125" ColumnName="D125" />
+                <ScalarProperty Name="NotaMedica" ColumnName="NotaMedica" />
+                <ScalarProperty Name="Interpretacion" ColumnName="Interpretacion" />
+                <ScalarProperty Name="Patologias" ColumnName="Patologias" />
+                <ScalarProperty Name="IVSexual" ColumnName="IVSexual" />
+                <ScalarProperty Name="Cesarea" ColumnName="Cesarea" />
+                <ScalarProperty Name="Parto" ColumnName="Parto" />
+                <ScalarProperty Name="Abortos" ColumnName="Abortos" />
+                <ScalarProperty Name="Embarazos" ColumnName="Embarazos" />
+                <ScalarProperty Name="URegla" ColumnName="URegla" />
+                <ScalarProperty Name="TLentes" ColumnName="TLentes" />
+                <ScalarProperty Name="UsaLentes" ColumnName="UsaLentes" />
+                <ScalarProperty Name="Drogas" ColumnName="Drogas" />
+                <ScalarProperty Name="Fuma" ColumnName="Fuma" />
+                <ScalarProperty Name="Alcohol" ColumnName="Alcohol" />
+                <ScalarProperty Name="DiagHipArt" ColumnName="DiagHipArt" />
+                <ScalarProperty Name="Diabetes" ColumnName="Diabetes" />
+                <ScalarProperty Name="Alergia" ColumnName="Alergia" />
+                <ScalarProperty Name="EspDiag" ColumnName="EspDiag" />
+                <ScalarProperty Name="ECongenita" ColumnName="ECongenita" />
+                <ScalarProperty Name="Hijos" ColumnName="Hijos" />
+                <ScalarProperty Name="Escolaridad" ColumnName="Escolaridad" />
+                <ScalarProperty Name="Religion" ColumnName="Religion" />
+                <ScalarProperty Name="ECivil" ColumnName="ECivil" />
+                <ScalarProperty Name="VacCompletas" ColumnName="VacCompletas" />
+                <ScalarProperty Name="HermanosViven" ColumnName="HermanosViven" />
+                <ScalarProperty Name="PadreVive" ColumnName="PadreVive" />
+                <ScalarProperty Name="MadreVive" ColumnName="MadreVive" />
+                <ScalarProperty Name="TestVC" ColumnName="TestVC" />
+                <ScalarProperty Name="Nota" ColumnName="Nota" />
+                <ScalarProperty Name="RPI" ColumnName="RPI" />
+                <ScalarProperty Name="RPD" ColumnName="RPD" />
+                <ScalarProperty Name="MovOculares" ColumnName="MovOculares" />
+                <ScalarProperty Name="CampoVisual" ColumnName="CampoVisual" />
+                <ScalarProperty Name="Carta" ColumnName="Carta" />
+                <ScalarProperty Name="Estereopsis" ColumnName="Estereopsis" />
+                <ScalarProperty Name="Lentes" ColumnName="Lentes" />
+                <ScalarProperty Name="AVLI" ColumnName="AVLI" />
+                <ScalarProperty Name="AVLD" ColumnName="AVLD" />
+                <ScalarProperty Name="AVII" ColumnName="AVII" />
+                <ScalarProperty Name="AVID" ColumnName="AVID" />
+                <ScalarProperty Name="AVCI" ColumnName="AVCI" />
+                <ScalarProperty Name="AVCD" ColumnName="AVCD" />
+                <ScalarProperty Name="OndaT" ColumnName="OndaT" />
+                <ScalarProperty Name="OndaP" ColumnName="OndaP" />
+                <ScalarProperty Name="QRS" ColumnName="QRS" />
+                <ScalarProperty Name="QT" ColumnName="QT" />
+                <ScalarProperty Name="PR" ColumnName="PR" />
+                <ScalarProperty Name="Eje" ColumnName="Eje" />
+                <ScalarProperty Name="Frecuencia" ColumnName="Frecuencia" />
+                <ScalarProperty Name="Ritmo" ColumnName="Ritmo" />
+                <ScalarProperty Name="Hemoglobina" ColumnName="Hemoglobina" />
+                <ScalarProperty Name="Glucosa" ColumnName="Glucosa" />
+                <ScalarProperty Name="Grasa" ColumnName="Grasa" />
+                <ScalarProperty Name="Cuello" ColumnName="Cuello" />
+                <ScalarProperty Name="Cintura" ColumnName="Cintura" />
+                <ScalarProperty Name="Estatura" ColumnName="Estatura" />
+                <ScalarProperty Name="Peso" ColumnName="Peso" />
+                <ScalarProperty Name="Temperatura" ColumnName="Temperatura" />
+                <ScalarProperty Name="Respiratoria" ColumnName="Respiratoria" />
+                <ScalarProperty Name="Cardiaca" ColumnName="Cardiaca" />
+                <ScalarProperty Name="Diastolica" ColumnName="Diastolica" />
+                <ScalarProperty Name="Sistolica" ColumnName="Sistolica" />
+                <ScalarProperty Name="Genero" ColumnName="Genero" />
+                <ScalarProperty Name="NoExpediente" ColumnName="NoExpediente" />
+                <ScalarProperty Name="idPacienteGA" ColumnName="idPacienteGA" />
+                <ScalarProperty Name="idEPI_GA" ColumnName="idEPI_GA" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Farmacia">
+            <EntityTypeMapping TypeName="DevModel.Farmacia">
+              <MappingFragment StoreEntitySet="Farmacia">
+                <ScalarProperty Name="idPacienteDS" ColumnName="idPacienteDS" />
+                <ScalarProperty Name="MedicamentoGeneral" ColumnName="MedicamentoGeneral" />
+                <ScalarProperty Name="idFarmacia" ColumnName="idFarmacia" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Fotos">
+            <EntityTypeMapping TypeName="DevModel.Fotos">
+              <MappingFragment StoreEntitySet="Fotos">
+                <ScalarProperty Name="idPacienteESP" ColumnName="idPacienteESP" />
+                <ScalarProperty Name="Foto" ColumnName="Foto" />
+                <ScalarProperty Name="idFoto" ColumnName="idFoto" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MedicinaInterna">
+            <EntityTypeMapping TypeName="DevModel.MedicinaInterna">
+              <MappingFragment StoreEntitySet="MedicinaInterna">
+                <ScalarProperty Name="Seguimiento" ColumnName="Seguimiento" />
+                <ScalarProperty Name="Medicamento" ColumnName="Medicamento" />
+                <ScalarProperty Name="PlanTratamiento" ColumnName="PlanTratamiento" />
+                <ScalarProperty Name="CertificadoMedico" ColumnName="CertificadoMedico" />
+                <ScalarProperty Name="idPacienteDS" ColumnName="idPacienteDS" />
+                <ScalarProperty Name="idMedicinaInterna" ColumnName="idMedicinaInterna" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Nutriologo">
+            <EntityTypeMapping TypeName="DevModel.Nutriologo">
+              <MappingFragment StoreEntitySet="Nutriologo">
+                <ScalarProperty Name="Seguimiento" ColumnName="Seguimiento" />
+                <ScalarProperty Name="Medicamento" ColumnName="Medicamento" />
+                <ScalarProperty Name="PlanTratamiento" ColumnName="PlanTratamiento" />
+                <ScalarProperty Name="CertificadoMedico" ColumnName="CertificadoMedico" />
+                <ScalarProperty Name="idPacienteDS" ColumnName="idPacienteDS" />
+                <ScalarProperty Name="idNutriologo" ColumnName="idNutriologo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Oftalmologo">
+            <EntityTypeMapping TypeName="DevModel.Oftalmologo">
+              <MappingFragment StoreEntitySet="Oftalmologo">
+                <ScalarProperty Name="Seguimiento" ColumnName="Seguimiento" />
+                <ScalarProperty Name="Medicamento" ColumnName="Medicamento" />
+                <ScalarProperty Name="PlanTratamiento" ColumnName="PlanTratamiento" />
+                <ScalarProperty Name="CertificadoMedico" ColumnName="CertificadoMedico" />
+                <ScalarProperty Name="idPacienteDS" ColumnName="idPacienteDS" />
+                <ScalarProperty Name="idOftalmologo" ColumnName="idOftalmologo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PacienteDS">
+            <EntityTypeMapping TypeName="DevModel.PacienteDS">
+              <MappingFragment StoreEntitySet="PacienteDS">
+                <ScalarProperty Name="Nacimiento" ColumnName="Nacimiento" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="Ciudad" ColumnName="Ciudad" />
+                <ScalarProperty Name="CP" ColumnName="CP" />
+                <ScalarProperty Name="Colonia" ColumnName="Colonia" />
+                <ScalarProperty Name="Direccion" ColumnName="Direccion" />
+                <ScalarProperty Name="HASH" ColumnName="HASH" />
+                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="idPacienteDS" ColumnName="idPacienteDS" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PacienteGA">
+            <EntityTypeMapping TypeName="DevModel.PacienteGA">
+              <MappingFragment StoreEntitySet="PacienteGA">
+                <ScalarProperty Name="ALT" ColumnName="ALT" />
+                <ScalarProperty Name="FechaVigencia" ColumnName="FechaVigencia" />
+                <ScalarProperty Name="ComentarioAptitud" ColumnName="ComentarioAptitud" />
+                <ScalarProperty Name="Aptitud" ColumnName="Aptitud" />
+                <ScalarProperty Name="Duracion" ColumnName="Duracion" />
+                <ScalarProperty Name="PausaFinal" ColumnName="PausaFinal" />
+                <ScalarProperty Name="PausaInicio" ColumnName="PausaInicio" />
+                <ScalarProperty Name="FinalCaptura" ColumnName="FinalCaptura" />
+                <ScalarProperty Name="InicioCaptura" ColumnName="InicioCaptura" />
+                <ScalarProperty Name="Capturista" ColumnName="Capturista" />
+                <ScalarProperty Name="EstatusCaptura" ColumnName="EstatusCaptura" />
+                <ScalarProperty Name="Doctor" ColumnName="Doctor" />
+                <ScalarProperty Name="Sucursal" ColumnName="Sucursal" />
+                <ScalarProperty Name="TipoLicencia" ColumnName="TipoLicencia" />
+                <ScalarProperty Name="TipoTramite" ColumnName="TipoTramite" />
+                <ScalarProperty Name="CarruselMedico" ColumnName="CarruselMedico" />
+                <ScalarProperty Name="CC" ColumnName="CC" />
+                <ScalarProperty Name="Canal" ColumnName="Canal" />
+                <ScalarProperty Name="idCanal" ColumnName="idCanal" />
+                <ScalarProperty Name="Referencia" ColumnName="Referencia" />
+                <ScalarProperty Name="EstatusPago" ColumnName="EstatusPago" />
+                <ScalarProperty Name="NoOrden" ColumnName="NoOrden" />
+                <ScalarProperty Name="FechaReferencia" ColumnName="FechaReferencia" />
+                <ScalarProperty Name="FechaSolicitud" ColumnName="FechaSolicitud" />
+                <ScalarProperty Name="Solicita" ColumnName="Solicita" />
+                <ScalarProperty Name="Metra" ColumnName="Metra" />
+                <ScalarProperty Name="FechaCita" ColumnName="FechaCita" />
+                <ScalarProperty Name="ReferidoPor" ColumnName="ReferidoPor" />
+                <ScalarProperty Name="Entregado" ColumnName="Entregado" />
+                <ScalarProperty Name="CancelaComentario" ColumnName="CancelaComentario" />
+                <ScalarProperty Name="Asistencia" ColumnName="Asistencia" />
+                <ScalarProperty Name="Recepcionista" ColumnName="Recepcionista" />
+                <ScalarProperty Name="TipoPago" ColumnName="TipoPago" />
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="NoExpediente" ColumnName="NoExpediente" />
+                <ScalarProperty Name="Estatura" ColumnName="Estatura" />
+                <ScalarProperty Name="Genero" ColumnName="Genero" />
+                <ScalarProperty Name="HASH" ColumnName="HASH" />
+                <ScalarProperty Name="Folio" ColumnName="Folio" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+                <ScalarProperty Name="CURP" ColumnName="CURP" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="idPacienteGA" ColumnName="idPacienteGA" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RecepcionistaDS">
+            <EntityTypeMapping TypeName="DevModel.RecepcionistaDS">
+              <MappingFragment StoreEntitySet="RecepcionistaDS">
+                <ScalarProperty Name="idSucursalDS" ColumnName="idSucursalDS" />
+                <ScalarProperty Name="idUsuario" ColumnName="idUsuario" />
+                <ScalarProperty Name="idRecepcionistaDS" ColumnName="idRecepcionistaDS" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SignosVitalesDS">
+            <EntityTypeMapping TypeName="DevModel.SignosVitalesDS">
+              <MappingFragment StoreEntitySet="SignosVitalesDS">
+                <ScalarProperty Name="idPacienteDS" ColumnName="idPacienteDS" />
+                <ScalarProperty Name="Grasa" ColumnName="Grasa" />
+                <ScalarProperty Name="Cuello" ColumnName="Cuello" />
+                <ScalarProperty Name="Cintura" ColumnName="Cintura" />
+                <ScalarProperty Name="IMC" ColumnName="IMC" />
+                <ScalarProperty Name="Estatura" ColumnName="Estatura" />
+                <ScalarProperty Name="Peso" ColumnName="Peso" />
+                <ScalarProperty Name="Temperatura" ColumnName="Temperatura" />
+                <ScalarProperty Name="Respiratoria" ColumnName="Respiratoria" />
+                <ScalarProperty Name="Cardiaca" ColumnName="Cardiaca" />
+                <ScalarProperty Name="Diastolica" ColumnName="Diastolica" />
+                <ScalarProperty Name="Sistolica" ColumnName="Sistolica" />
+                <ScalarProperty Name="idSignosVitalesDS" ColumnName="idSignosVitalesDS" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SucursalDS">
+            <EntityTypeMapping TypeName="DevModel.SucursalDS">
+              <MappingFragment StoreEntitySet="SucursalDS">
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="idSucursalDS" ColumnName="idSucursalDS" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="DevModel.sysdiagrams">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CadenaSplit">
+            <EntityTypeMapping TypeName="DevModel.CadenaSplit">
+              <MappingFragment StoreEntitySet="CadenaSplit">
+                <ScalarProperty Name="Cadena" ColumnName="Cadena" />
+                <ScalarProperty Name="idCadena" ColumnName="idCadena" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

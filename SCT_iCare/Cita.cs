@@ -44,6 +44,7 @@ namespace SCT_iCare
         public string Conciliado { get; set; }
         public Nullable<System.DateTime> FechaContable { get; set; }
         public string UsarSaldo { get; set; }
+        public string FormaPago { get; set; }
     
         public virtual Canal Canal1 { get; set; }
         public virtual Paciente Paciente { get; set; }

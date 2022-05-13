@@ -77,6 +77,10 @@
     int? realizadoTotal = 0;
     int? realizadoTotalMesAnterior = 0;
 
+    int realizadoHoyRevaloracion = 0;
+    int realizadoHoyNoRevaloracion = 0;
+    int realizadoTotalRevaloracion = 0;
+
     int? realizadoTotalCalculo = 0;
     int? realizadoTotalCalculoMesAnterior = 0;
 
@@ -98,37 +102,23 @@
 
     var realizadosTOTAL = db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
 .Where(w => w.M.FinalCaptura != null);
-    var realizadosTOTAL1 = db.PacienteESP.Where(w => w.EstatusCaptura != null && w.EstatusCaptura != "Cancelado");
-    db.Cita.Join(db.Captura, n => n.idPaciente, m => m.idPaciente, (n, m) => new { N = n, M = m })
-            .Where(w => w.M.FinalCaptura != null);
 
+    int? realizadoGENERAL = 0;
 
     foreach (var item in otro)
     {
-        realizadoHoy = realizadosTOTAL.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1 && w.N.ReferidoPor == item.Nombre && w.N.CanalTipo == item.Tipo).Count();
+        realizadoHoy = realizadosTOTAL.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1 && w.N.ReferidoPor == item.Nombre && w.N.CanalTipo == item.Tipo && w.M.TipoTramite != "REVALORACIÓN").Count();
+        realizadoHoyRevaloracion = realizadosTOTAL.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1 && w.N.ReferidoPor == item.Nombre && w.N.CanalTipo == item.Tipo && w.M.TipoTramite == "REVALORACIÓN").Count();
+        realizadoHoyNoRevaloracion = realizadosTOTAL.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1 && w.N.ReferidoPor == item.Nombre && w.N.CanalTipo == item.Tipo).Count();
 
         realizadoTotalCalculo += realizadoHoy;
+        realizadoGENERAL += realizadoHoy;
     }
 
     foreach (var item in otro)
     {
 
         realizadoHoyMesAnterior = realizadosTOTAL.Where(w => w.M.FechaExpdiente >= fecha3 && w.M.FechaExpdiente < fecha4 && w.N.ReferidoPor == item.Nombre && w.N.CanalTipo == item.Tipo).Count();
-
-        realizadoTotalCalculoMesAnterior += realizadoHoyMesAnterior;
-    }
-
-    foreach (var item in otro)
-    {
-        realizadoHoy = realizadosTOTAL1.Where(w => w.FechaCaptura >= fecha && w.FechaCaptura < fecha1 && w.ReferidoPor == item.Nombre && w.CanalTipo == item.Tipo).Count();
-
-        realizadoTotalCalculo += realizadoHoy;
-    }
-
-    foreach (var item in otro)
-    {
-
-        realizadoHoyMesAnterior = realizadosTOTAL1.Where(w => w.FechaCaptura >= fecha3 && w.FechaCaptura < fecha4 && w.ReferidoPor == item.Nombre && w.CanalTipo == item.Tipo).Count();
 
         realizadoTotalCalculoMesAnterior += realizadoHoyMesAnterior;
     }
@@ -315,24 +305,29 @@
                     </td>
 
                     <td style="text-align: center; border-right: none">
-                        @{
-                            realizadoHoy = realizadosTOTAL.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1 && w.N.ReferidoPor == item.Nombre && w.N.CanalTipo == item.Tipo).Count();
+                        <span class="field-tip">
+                            @{
+                                realizadoHoy = realizadosTOTAL.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1 && w.N.ReferidoPor == item.Nombre && w.N.CanalTipo == item.Tipo).Count();
+                                realizadoHoyRevaloracion = realizadosTOTAL.Where(w => w.M.FechaExpdiente >= fecha && w.M.FechaExpdiente < fecha1 && w.N.ReferidoPor == item.Nombre && w.N.CanalTipo == item.Tipo && w.M.TipoTramite == "REVALORACIÓN").Count();
 
-                            realizadoTotal += realizadoHoy;
-                            metaPorcentaje = (Convert.ToDouble(realizadoHoy) * 100) / realizadoTotalCalculo;
-                            metaPorcentajeMesAnteriorDiferencia = metaPorcentaje - metaPorcentajeMesAnterior;
-                            metaPorcentajeMesAnteriorDiferenciaFooter += metaPorcentajeMesAnteriorDiferencia;
+                                realizadoTotal += realizadoHoy;
+                                realizadoTotalRevaloracion += realizadoHoyRevaloracion;
+                                metaPorcentaje = (Convert.ToDouble(realizadoHoy) * 100) / realizadoTotalCalculo;
+                                metaPorcentajeMesAnteriorDiferencia = metaPorcentaje - metaPorcentajeMesAnterior;
+                                metaPorcentajeMesAnteriorDiferenciaFooter += metaPorcentajeMesAnteriorDiferencia;
 
-                            int? planDiferencia = realizadoHoy - Convert.ToInt32((Convert.ToInt32(Meta) / 30) * fechaPlan.Day);
+                                int? planDiferencia = realizadoHoy - Convert.ToInt32((Convert.ToInt32(Meta) / 30) * fechaPlan.Day);
 
-                            planTotalMesAnteriorFooter += planDiferencia;
-
-
-                            <b class="pull-right">@realizadoHoy</b>
-                            @*<span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>*@
-                        }
+                                planTotalMesAnteriorFooter += planDiferencia;
 
 
+                                <b class="pull-right">@realizadoHoy</b>
+                                @*<span class="pull-right" style="font-size:small">@metaPorcentaje.ToString("##.##")%</span>*@
+                            }
+                            <span class="tip-content">
+                                <b class="pull-right">Revaloraciones: @realizadoHoyRevaloracion</b>
+                            </span>
+                        </span>
                     </td>
 
                     <td style="text-align: center; border-right: none; border-left: none">
@@ -563,7 +558,15 @@
             </td>
 
             <td class="bg-info" style="text-align: center; border-right: none">
-                <b class="pull-right">@realizadoTotal</b>@*<span class="pull-right" style="font-size:small">100%</span>*@
+                <span class="field-tip">
+                    <b class="pull-right">@realizadoTotal</b>@*<span class="pull-right" style="font-size:small">100%</span>*@
+                    <span class="tip-content">
+                        @{
+                            var realizadoTotalesRevaloracion = realizadoTotalRevaloracion;
+                        }
+                        <b class="pull-right">Revaloraciones: @realizadoTotalesRevaloracion</b>@*<span class="pull-right" style="font-size:small">100%</span>*@
+                    </span>
+                </span>
             </td>
 
             <td class="bg-info" style="text-align: center; border-right: none; border-left: none">

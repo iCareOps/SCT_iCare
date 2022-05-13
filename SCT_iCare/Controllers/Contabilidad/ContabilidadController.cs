@@ -245,7 +245,7 @@ namespace SCT_iCare.Controllers.Contabilidad
 
 
         public ActionResult CambiarCuenta(int? id, string cuenta, string cuenta2, string comentario, string usuario, string canal, string sucursal, 
-            DateTime? fechaInicio, DateTime? fechaFinal, DateTime? fechaContable, string pago, int? idGestor, string usarSaldo)
+            DateTime? fechaInicio, DateTime? fechaFinal, DateTime? fechaContable, string pago, int? idGestor, string usarSaldo, string FormadePago)
         {
             var cita = db.Cita.Find(id);
 
@@ -255,6 +255,7 @@ namespace SCT_iCare.Controllers.Contabilidad
             cita.Cuenta = cuenta;
             cita.FechaContable = fechaContable == null ? DateTime.Now : fechaContable;
             cita.UsarSaldo = usarSaldo;
+            cita.FormaPago = FormadePago;
 
             if (pago != null || pago != "")
             {
@@ -273,7 +274,7 @@ namespace SCT_iCare.Controllers.Contabilidad
         }
 
         public ActionResult CambiarCuentaALT(int? id, string cuenta, string comentario, string usuario, DateTime? fechaInicio, DateTime? fechaFinal, DateTime? fechaContable, string sucursal,
-            string cuenta2, string canal, string pago, int? idGestor)
+            string cuenta2, string canal, string pago, int? idGestor, string FormadePago)
         {
             var cita = db.PacienteESP.Find(id);
 
@@ -282,6 +283,7 @@ namespace SCT_iCare.Controllers.Contabilidad
             cita.CuentaComentario = historico + comentario + cuentaAnterior + " " + DateTime.Today.ToString("dd-MM-yy") + " POR " + usuario;
             cita.Cuenta = cuenta;
             cita.FechaContable = fechaContable == null ? DateTime.Now : fechaContable;
+            cita.FormaPago = FormadePago;
 
             if(pago != null || pago != "")
             {
@@ -391,8 +393,18 @@ namespace SCT_iCare.Controllers.Contabilidad
             Referido referido = db.Referido.Find(id);
             PagosGestores pagosGestores = new PagosGestores();
 
-            int efectivoActual = Convert.ToInt32(referido.Efectivo);
-            int sumaEfectivos = efectivoActual + efectivo;
+            int sumaEfectivos = 0;
+
+            var pG = (from p in db.PagosGestores where p.idReferido == id select p);
+
+            foreach (var pagosGes in pG)
+            {
+
+                sumaEfectivos += Convert.ToInt32(pagosGes.PagoIngresado);
+
+            }
+
+            sumaEfectivos = sumaEfectivos + efectivo;
 
             referido.Efectivo = Convert.ToString(sumaEfectivos);
 
@@ -413,6 +425,45 @@ namespace SCT_iCare.Controllers.Contabilidad
             }
             
             return RedirectToAction("Pagos", new { fechaInicio = fechaInicio, fechaFinal = fechaFinal});
+        }
+
+
+
+        //METODO PARA CONCILIAR CON EL INGRESO DE PAGOS EN LA VISTA DE PAGOS
+        public ActionResult ConciliarIngresos(int? id, int efectivo, string usuario, DateTime fechaAhora, DateTime? fecha1, DateTime? fecha2)
+        {
+
+            ViewBag.FechaInicio = fecha1 != null ? fecha1 : null;
+            ViewBag.FechaFinal = fecha2 != null ? fecha2 : null;
+
+            DateTime fechaInicio = ViewBag.FechaInicio;
+            DateTime fechaFinal = ViewBag.FechaFinal;
+
+            Referido referido = db.Referido.Find(id);
+            PagosGestores pagosGestores = new PagosGestores();
+
+            int efectivoActual = Convert.ToInt32(referido.Efectivo);
+            int sumaEfectivos = efectivoActual + efectivo;
+
+            referido.Efectivo = Convert.ToString(sumaEfectivos);
+
+            pagosGestores.Gestor = referido.Nombre;
+            pagosGestores.idReferido = referido.idReferido;
+            pagosGestores.PagoIngresado = Convert.ToString(efectivo);
+            pagosGestores.Fecha = fechaAhora;
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(referido).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            if (ModelState.IsValid)
+            {
+                db.PagosGestores.Add(pagosGestores);
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("Pagos", new { fechaInicio = fechaInicio, fechaFinal = fechaFinal });
         }
 
     }

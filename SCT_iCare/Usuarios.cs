@@ -20,6 +20,8 @@ namespace SCT_iCare
             this.Recepcionista = new HashSet<Recepcionista>();
             this.log_InicioGestor = new HashSet<log_InicioGestor>();
             this.DoctorModulo = new HashSet<DoctorModulo>();
+            this.DoctorModuloDS = new HashSet<DoctorModuloDS>();
+            this.RecepcionistaDS = new HashSet<RecepcionistaDS>();
         }
     
         public int idUsuario { get; set; }
@@ -35,5 +37,9 @@ namespace SCT_iCare
         public virtual ICollection<log_InicioGestor> log_InicioGestor { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DoctorModulo> DoctorModulo { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DoctorModuloDS> DoctorModuloDS { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RecepcionistaDS> RecepcionistaDS { get; set; }
     }
 }

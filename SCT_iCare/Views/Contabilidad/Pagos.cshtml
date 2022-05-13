@@ -39,6 +39,8 @@
     int pagoTotal1 = 0;
     string referido = "";
     string tipoReferido = "";
+    int ingresoActual = 0;
+    int ingresoActualAlt = 0;
 
 
     if (ViewBag.FechaInicio != null)
@@ -106,7 +108,7 @@
 Join(db.Captura, a => a.M.idPaciente, b => b.idPaciente, (a, b) => new { A = a, B = b }).
 Where(s => s.B.EstatusCaptura == "Terminado" && s.A.M.Asistencia == null && s.A.M.CanalTipo.Contains(tipoReferido) && s.A.M.ReferidoPor.Contains(referido) && s.A.M.TipoTramite != "REVALORACIÓN").OrderBy(o => o.A.M.Cuenta);
 
-
+    var pGestor = db.PagosGestores;
 
     //INGRESO DE PAGOS
     var ingresoNormales = db.PagosGestores.
@@ -371,8 +373,11 @@ Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido
                         </td>
 
                         @{
-                            //NUMERO DE EPIS NO AEREOS DENTRO DEL RANGO DE FECHA
+                            //NUMERO DE EPIS NO AEREOS DENTRO DEL RANGO DE FECHA CON IVA
                             int deudaGestor = (from i in modelo1 where i.CanalTipo == itemd.Tipo && i.ReferidoPor == itemd.Nombre && i.EstatusCaptura == "Terminado" && i.TipoLicencia != "AEREO" && i.FechaCita >= fechaInicio && i.FechaCita < fechaFinal select i).Count();
+
+                            //NUMERO DE EPIS NO AEREOS DENTRO DEL RANGO DE FECHA SIN IVA
+                            int deudaGestorSIVA = (from i in modelo1 where i.CanalTipo == itemd.Tipo && i.ReferidoPor == itemd.Nombre && i.EstatusCaptura == "Terminado" && i.TipoLicencia != "AEREO" && i.FechaCita >= fechaInicio && i.FechaCita < fechaFinal select i).Count();
 
                             //NUMERO DE EPIS AEREOS DENTRO DEL RANGO DE FECHA
                             int deudaGestorAereo = (from i in modelo1 where i.CanalTipo == itemd.Tipo && i.ReferidoPor == itemd.Nombre && i.EstatusCaptura == "Terminado" && i.TipoLicencia == "AEREO" && i.FechaCita >= fechaInicio && i.FechaCita < fechaFinal select i).Count();
@@ -600,16 +605,33 @@ Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido
                             }
                         </td>
 
+                        @*INGRESO DEL MES*@
+                        <td>
+                            @{
 
+                                var pG = (from i in db.PagosGestores where i.idReferido == itemd.idReferido && i.Fecha >= fechaInicio && i.Fecha < fechaFinal select i);
+
+                                foreach (var pagosGes in pG)
+                                {
+
+                                    ingresoActualAlt += Convert.ToInt32(pagosGes.PagoIngresado);
+
+                                }
+
+                                <span>$@ingresoActualAlt.ToString("###,###,###,###")</span>
+
+                             }
+                        </td>
+
+                        @*SALDO DEL MES*@
                         <td>
                         </td>
 
+                        @*INGRESOS TOTALES*@
                         <td>
                         </td>
 
-                        <td>
-                        </td>
-
+                        @*SALDO TOTAL*@
                         <td>
                         </td>
                                                 
@@ -617,7 +639,7 @@ Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido
                         <td>
 
                             @{
-                                saldo = pagoTotal - deudaTotal;
+                                saldo = pagoTotal + ingresoActualAlt - deudaTotal;
 
                                 if (itemd.Tipo == "MEDIOS DIGITALES" || itemd.Tipo == "CALL CENTER" || itemd.Tipo == "OTRO")
                                 {
@@ -644,6 +666,9 @@ Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido
                                     }
 
                                 }
+
+                                ingresoActualAlt = 0;
+
                             }
 
                         </td>
@@ -687,9 +712,11 @@ Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido
                                 </button>
 
                                 <div class="dropdown-menu" style="padding:10px">
-                                    <a href="#" data-toggle="modal" data-target="#Deuda_@itemd.idReferido"><b>Ingresar Deuda</b></a>
-                                    <div class="dropdown-divider"></div>
+                                    @*<a href="#" data-toggle="modal" data-target="#Deuda_@itemd.idReferido"><b>Ingresar Deuda</b></a>
+            <div class="dropdown-divider"></div>*@
                                     <a href="#" data-toggle="modal" data-target="#Efectivo_@itemd.idReferido"><b>Ingresar Pago</b></a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="#" data-toggle="modal" data-target="#Conciliar_@itemd.idReferido"><b>Conciliar con Ingresos</b></a>
                                     <div class="dropdown-divider"></div>
                                 </div>
 
@@ -736,6 +763,44 @@ Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido
                                 <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/EditarEfectivo")">
                                     @Html.AntiForgeryToken()
                                     <div class="modal fade" id="Efectivo_@itemd.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea ingresar PAGO a @itemd.Nombre?</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="col-form-label">Gestor/Canal:</label>
+                                                        <b>@itemd.Nombre</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Fecha Cita:</label>
+                                                        <b>@Convert.ToDateTime(fechaInicio).ToString("dd-MMMM-yyyy")</b><br />
+
+                                                        <label for="recipient-name" class="col-form-label">Precio de EPIs:</label>
+                                                        <b>$@itemd.PrecioNormal</b><br />
+                                                        <label for="recipient-name" class="col-form-label"> Pagos del Gestor:</label>
+                                                        <b>$@pago</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Cantidad:</label>
+                                                        <input type="tel" class="form-control" name="efectivo" />
+                                                        <input type="hidden" value="@itemd.idReferido" class="form-control" name="id" />
+                                                        <input type="hidden" value="@fechaInicio" class="form-control" name="fecha1" />
+                                                        <input type="hidden" value="@FECHAFS" class="form-control" name="fecha2" />
+                                                        <input type="hidden" value="@FechaAhora" class="form-control" name="fechaAhora" />
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
+
+                                @*ALERT PARA CONCILIAR CON INGRESOS*@
+                                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/ConciliarIngresos")">
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal fade" id="Conciliar_@itemd.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog" role="document">
                                             <div class="modal-content">
                                                 <div class="modal-header">
@@ -901,50 +966,50 @@ Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido
                                 </td>
                                 <td><span> $@deudaTotal.ToString("###,###,###,###")</span></td>
 
-                                                }
+                            }
 
                                                 else
                                                 {
 
-                                <td>
-                                    <span class="field-tip">
-                                        <b>@deudaGestorTotal</b>
-                                        <span class="tip-content">
-                                            <span><b>No. Epis: @deudaGestor</b></span><br />
-                                            @{
-                                                if (item.PrecioNormalconIVA != "0" && item.PrecioNormalconIVA != null)
-                                                {
-                                                    <span>Precio de epi con IVA: $@item.PrecioNormalconIVA</span><br />
-                                                }
+                                                    <td>
+                                                        <span class="field-tip">
+                                                            <b>@deudaGestorTotal</b>
+                                                            <span class="tip-content">
+                                                                <span><b>No. Epis: @deudaGestor</b></span><br />
+                                                                @{
+                                                                    if (item.PrecioNormalconIVA != "0" && item.PrecioNormalconIVA != null)
+                                                                    {
+                                                                        <span>Precio de epi con IVA: $@item.PrecioNormalconIVA</span><br />
+                                                                    }
 
-                                                else
-                                                {
-                                                    <span>Precio de epi sin IVA: $@item.PrecioNormal</span><br />
-                                                }
-                                            }
-                                            @{
-                                                if (deudaGestorAereo != 0)
-                                                {
+                                                                    else
+                                                                    {
+                                                                        <span>Precio de epi sin IVA: $@item.PrecioNormal</span><br />
+                                                                    }
+                                                                }
+                                                                @{
+                                                                    if (deudaGestorAereo != 0)
+                                                                    {
 
-                                                    if (item.PrecioAereo == null || item.PrecioAereo == "0")
-                                                    {
-                                                        <span><b>No. Epis AEREOS: @deudaGestorAereo</b></span><br />
-                                                        <span>Precio de epi: $3480</span><br />
-                                                    }
+                                                                        if (item.PrecioAereo == null || item.PrecioAereo == "0")
+                                                                        {
+                                                                            <span><b>No. Epis AEREOS: @deudaGestorAereo</b></span><br />
+                                                                            <span>Precio de epi: $3480</span><br />
+                                                                        }
 
-                                                    else
-                                                    {
-                                                        <span><b>No. Epis AEREOS: @deudaGestorAereo</b></span><br />
-                                                        <span>Precio de epi: $@item.PrecioAereo</span><br />
-                                                    }
+                                                                        else
+                                                                        {
+                                                                            <span><b>No. Epis AEREOS: @deudaGestorAereo</b></span><br />
+                                                                            <span>Precio de epi: $@item.PrecioAereo</span><br />
+                                                                        }
 
-                                                }
+                                                                    }
 
-                                            }
-                                        </span>
-                                    </span>
-                                </td>
-                                <td><span> $@deudaTotal.ToString("###,###,###,###")</span></td>
+                                                                }
+                                                            </span>
+                                                        </span>
+                                                    </td>
+                                                    <td><span> $@deudaTotal.ToString("###,###,###,###")</span></td>
 
                                                 }
 
@@ -1039,9 +1104,22 @@ Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido
                                 }*@
 
                         </td>
+                        
                         <td>
+                            @{
 
+                                var pG = (from i in db.PagosGestores where i.idReferido == item.idReferido && i.Fecha >= fechaInicio && i.Fecha < fechaFinal select i);
 
+                                foreach (var pagosGes in pG)
+                                {
+
+                                    ingresoActual += Convert.ToInt32(pagosGes.PagoIngresado);
+
+                                }
+
+                                <span>$@ingresoActual.ToString("###,###,###,###")</span>
+
+                            }
                         </td>
 
                         <td>
@@ -1058,7 +1136,7 @@ Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido
                         <td>
 
                             @{
-                                saldo = pagoTotal - deudaTotal;
+                                saldo = pagoTotal + ingresoActual - deudaTotal;
 
                                 if (item.Tipo == "MEDIOS DIGITALES" || item.Tipo == "CALL CENTER" || item.Tipo == "OTRO")
                                 {
@@ -1086,6 +1164,7 @@ Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido
 
                                 }
 
+                                ingresoActual = 0;
 
                             }
 
@@ -1165,9 +1244,11 @@ Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido
                                 </button>
 
                                 <div class="dropdown-menu" style="padding:10px">
-                                    <a href="#" data-toggle="modal" data-target="#Deuda_@item.idReferido"><b>Ingresar Deuda</b></a>
-                                    <div class="dropdown-divider"></div>
+                                    @*<a href="#" data-toggle="modal" data-target="#Deuda_@item.idReferido"><b>Ingresar Deuda</b></a>
+                                    <div class="dropdown-divider"></div>*@
                                     <a href="#" data-toggle="modal" data-target="#Efectivo_@item.idReferido"><b>Ingresar Pago</b></a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="#" data-toggle="modal" data-target="#Conciliar_@item.idReferido"><b>Conciliar con Ingresos</b></a>
                                     <div class="dropdown-divider"></div>
                                 </div>
 
@@ -1176,38 +1257,38 @@ Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido
                                 @*ALERT INGRESAR DEUDA*@
 
                                 @*<form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/Deuda")">
-                                    @Html.AntiForgeryToken()
-                                    <div class="modal fade" id="Deuda_@item.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea agregar una cantidad de DEUDA a @item.Nombre?</b></h4>
+                                @Html.AntiForgeryToken()
+                                <div class="modal fade" id="Deuda_@item.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea agregar una cantidad de DEUDA a @item.Nombre?</b></h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group" style="width:60%; min-width:320px">
+                                                    <label for="recipient-name" class="col-form-label">Gestor/Canal:</label>
+                                                    <b>@item.Nombre</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha Cita:</label>
+                                                    <b>@Convert.ToDateTime(fechaInicio).ToString("dd-MMMM-yyyy")</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Fecha Ingreso Pago:</label>
+                                                    <b>@Convert.ToDateTime(fechaFinal).ToString("dd-MMMM-yyyy")</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Precio EPIs:</label>
+                                                    <b>@item.PrecioNormal</b><br />
+                                                    <label for="recipient-name" class="col-form-label"> Numero de Pagos del Gestor:</label>
+                                                    <b>@Convert.ToInt32(pago)</b><br />
+                                                    <label for="recipient-name" class="col-form-label">Cantidad:</label>
+                                                    <input type="tel" class="form-control" name="deuda" />
+                                                    <input type="hidden" value="@item.idReferido" class="form-control" name="id" />
                                                 </div>
-                                                <div class="modal-body">
-                                                    <div class="form-group" style="width:60%; min-width:320px">
-                                                        <label for="recipient-name" class="col-form-label">Gestor/Canal:</label>
-                                                        <b>@item.Nombre</b><br />
-                                                        <label for="recipient-name" class="col-form-label">Fecha Cita:</label>
-                                                        <b>@Convert.ToDateTime(fechaInicio).ToString("dd-MMMM-yyyy")</b><br />
-                                                        <label for="recipient-name" class="col-form-label">Fecha Ingreso Pago:</label>
-                                                        <b>@Convert.ToDateTime(fechaFinal).ToString("dd-MMMM-yyyy")</b><br />
-                                                        <label for="recipient-name" class="col-form-label">Precio EPIs:</label>
-                                                        <b>@item.PrecioNormal</b><br />
-                                                        <label for="recipient-name" class="col-form-label"> Numero de Pagos del Gestor:</label>
-                                                        <b>@Convert.ToInt32(pago)</b><br />
-                                                        <label for="recipient-name" class="col-form-label">Cantidad:</label>
-                                                        <input type="tel" class="form-control" name="deuda" />
-                                                        <input type="hidden" value="@item.idReferido" class="form-control" name="id" />
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
-                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                <input type="submit" value="Guardar" class="btn btn-primary" />
                                             </div>
                                         </div>
                                     </div>
-                                </form>*@
+                                </div>
+                            </form>*@
 
 
 
@@ -1249,9 +1330,46 @@ Where(s => s.ReferidoPor.Contains(referido) && s.CanalTipo.Contains(tipoReferido
                                         </div>
                                     </div>
                                 </form>
+
+
+
+                                @*ALERT PARA CONCILIAR CON INGRESOS*@
+                                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/Contabilidad/ConciliarIngresos")">
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal fade" id="Conciliar_@item.idReferido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea ingresar PAGO a @item.Nombre?</b></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                        <label for="recipient-name" class="col-form-label">Gestor/Canal:</label>
+                                                        <b>@item.Nombre</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Fecha Cita:</label>
+                                                        <b>@Convert.ToDateTime(fechaInicio).ToString("dd-MMMM-yyyy")</b><br />
+
+                                                        <label for="recipient-name" class="col-form-label">Precio de EPIs:</label>
+                                                        <b>$@item.PrecioNormal</b><br />
+                                                        <label for="recipient-name" class="col-form-label"> Pagos del Gestor:</label>
+                                                        <b>$@pago</b><br />
+                                                        <label for="recipient-name" class="col-form-label">Cantidad:</label>
+                                                        <input type="tel" class="form-control" name="efectivo" />
+                                                        <input type="hidden" value="@item.idReferido" class="form-control" name="id" />
+                                                        <input type="hidden" value="@fechaInicio" class="form-control" name="fecha1" />
+                                                        <input type="hidden" value="@FECHAFS" class="form-control" name="fecha2" />
+                                                        <input type="hidden" value="@FechaAhora" class="form-control" name="fechaAhora" />
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
-
-
                         </td>
                     </tr>
 

@@ -88,5 +88,22 @@ namespace SCT_iCare
         public virtual DbSet<Doctores2> Doctores2 { get; set; }
         public virtual DbSet<Tickets> Tickets { get; set; }
         public virtual DbSet<PagosGestores> PagosGestores { get; set; }
+        public virtual DbSet<AudioGA> AudioGA { get; set; }
+        public virtual DbSet<Cardiologo> Cardiologo { get; set; }
+        public virtual DbSet<CitaDS> CitaDS { get; set; }
+        public virtual DbSet<DoctorModuloDS> DoctorModuloDS { get; set; }
+        public virtual DbSet<EPI_GA> EPI_GA { get; set; }
+        public virtual DbSet<Farmacia> Farmacia { get; set; }
+        public virtual DbSet<Fotos> Fotos { get; set; }
+        public virtual DbSet<MedicinaInterna> MedicinaInterna { get; set; }
+        public virtual DbSet<Nutriologo> Nutriologo { get; set; }
+        public virtual DbSet<Oftalmologo> Oftalmologo { get; set; }
+        public virtual DbSet<PacienteDS> PacienteDS { get; set; }
+        public virtual DbSet<PacienteGA> PacienteGA { get; set; }
+        public virtual DbSet<RecepcionistaDS> RecepcionistaDS { get; set; }
+        public virtual DbSet<SignosVitalesDS> SignosVitalesDS { get; set; }
+        public virtual DbSet<SucursalDS> SucursalDS { get; set; }
+        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
+        public virtual DbSet<CadenaSplit> CadenaSplit { get; set; }
     }
 }

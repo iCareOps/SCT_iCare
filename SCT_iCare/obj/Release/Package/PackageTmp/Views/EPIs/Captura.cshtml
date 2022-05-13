@@ -744,260 +744,294 @@
                             fila = "white";
                         }
 
-
-            <tr tr style="background-color:@fila">
-                <td>
-                    @flag
-                </td>
-                <td>
-                    @{
-                        if (item.CarruselMedico == null)
-                        {
-                            if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 2 && idUser != 3 && idUser != 13 && idUser != 25 && nombreUsuario == "Viridiana España"))
-                            {
-                                @Html.DisplayFor(modelItem => item.NombrePaciente)
-                            }
-                            else
-                            {
-                                <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_EC", new { id = item.idCaptura }, new { style = "color: black; text-decoration: none" })</b>
-                            }
-                        }
-                        else
-                        {
-                            var revisionEKG = (from i in db.Archivos where i.idPaciente == item.idPaciente select i).FirstOrDefault();
-
-                            if (revisionEKG.ElectroCardiograma != null)
-                            {
-                                <b>@Html.ActionLink(item.NombrePaciente, "PreDictamen", new { id = item.idPaciente }, new { style = "color: black; text-decoration: none" })</b>
-                            }
-
-
-                        }
-                    }
-                </td>
-
-                <td>
-                    @Html.DisplayFor(modelItem => item.NoExpediente)
-                </td>
-                <td>
-                    @*@Html.DisplayFor(modelItem => item.TipoTramite)*@
-                    @{
-                        var licencia = (from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault();
-                    }
-                    @item.TipoTramite (<b>@licencia</b>)
-                </td>
-                <td>
-                    @{
-                        if (item.EstatusCaptura == "Pausado")
-                        {
-                            var comentario = (from c in db.CapturaIncidencia where c.idCaptura == item.idCaptura orderby c.idCapturaIncidencia descending select c.Comentario).FirstOrDefault();
-
-                            <span class="field-tip">
-                                <h6>
-                                    <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
-                                    <span class="tip-content">@comentario</span>
-                                </h6>
-                            </span>
-                        }
-                        else if (item.EstatusCaptura == "Pendiente")
-                        {
-                            var comentario = (from c in db.IncidenciaDictamen where c.idCaptura == item.idCaptura orderby c.idIncidencia descending select c.Incidencia).FirstOrDefault();
-
-                            <span class="field-tip">
-                                <h6>
-                                    <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
-                                    <span class="tip-content">@comentario</span>
-                                </h6>
-                            </span>
-                        }
-                        else
-                        {
-                            <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
-                        }
-                    }
-
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.InicioCaptura)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FinalCaptura)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Doctor)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Sucursal)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Capturista)
-                </td>
-                <td>
-                    @{
-                        if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico == null)
-                        {
-                            using (Html.BeginForm("EditExpediente", "EPIs"))
-                            {
-                                var idCita = (from t in db.Cita where t.idPaciente == item.idPaciente select t).FirstOrDefault();
-                                var findPrecio = (from q in db.Referido where q.Nombre == idCita.ReferidoPor && q.Tipo == idCita.CC select q).FirstOrDefault();
-                                var precioEncontradoCI = findPrecio.PrecioNormalconIVA;
-                                var precioEncontradoSI = findPrecio.PrecioNormal;
-                                var precioEncontradoA = findPrecio.PrecioAereo;
-
-                                var precioFinal = "0";
-
-                                if (idCita.TipoLicencia == "AEREO")
-
-                                {
-                                    if (findPrecio.PrecioAereo == null)
-                                    {
-
-                                        precioFinal = "3480";
-
-                                    }
-
-                                    else
-                                    {
-
-                                        precioFinal = precioEncontradoA;
-
-                                    }
-
-                                }
-
-                                else
-                                {
-                                    if (findPrecio.PrecioNormalconIVA == null)
-                                    {
-
-                                        precioFinal = precioEncontradoSI;
-
-                                    }
-
-                                    else
-                                    {
-
-                                        precioFinal = precioEncontradoCI;
-
-                                    }
-
-                                }
-
-                                @Html.AntiForgeryToken()
-                                <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario, precioEpis = precioFinal }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
-                            }
-                        }
-                        else if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico != null)
-                        {
-                            <a href=@Url.Action("PreDictamen", "EPIs", new { id = item.idPaciente, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
-                        }
-                        else if (item.EstatusCaptura == "En captura..." || item.EstatusCaptura == "Pausado" || item.EstatusCaptura == "Pendiente")
-                        {
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
-                                </button>
-
-                                <div class="dropdown-menu" style="padding:10px">
-                                    @if (oUser.idRol == 2)
-                                    {
-                                        <a href="#" data-toggle="modal" data-target="#Cancelar_@item.idCaptura"><b> Cancelar EPI</b></a>
-                                        <div class="dropdown-divider"></div>
-                                    }
-                                    @if (item.EstatusCaptura != "Pausado")
-                                    {
+                            <tr tr style="background-color:@fila">
+                                <td>
+                                    @flag
+                                </td>
+                                <td>
+                                    @{
                                         if (item.CarruselMedico == null)
                                         {
-                                            <b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = item.idCaptura })</b>
-                                            <div class="dropdown-divider"></div>
+                                            if ((item.EstatusCaptura != "En captura..." && item.EstatusCaptura != "Terminado") && (idUser != 2 && idUser != 3 && idUser != 13 && idUser != 25 && nombreUsuario == "Viridiana España"))
+                                            {
+                                                @Html.DisplayFor(modelItem => item.NombrePaciente)
+                                            }
+                                            else
+                                            {
+                                                <b>@Html.ActionLink(item.NombrePaciente, "AbrirEPI_EC", new { id = item.idCaptura }, new { style = "color: black; text-decoration: none" })</b>
+                                            }
                                         }
                                         else
                                         {
-                                            <b>@Html.ActionLink("Abrir EPI", "Predictamen", new { id = item.idPaciente })</b>
-                                            <div class="dropdown-divider"></div>
-                                        }
-                                        <b>@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = item.idCaptura })</b>
-                                        <div class="dropdown-divider"></div>
-                                    }
+                                            var revisionEKG = (from i in db.Archivos where i.idPaciente == item.idPaciente select i).FirstOrDefault();
 
+                                            if (revisionEKG.ElectroCardiograma != null)
+                                            {
+                                                <b>@Html.ActionLink(item.NombrePaciente, "PreDictamen", new { id = item.idPaciente }, new { style = "color: black; text-decoration: none" })</b>
+                                            }
+
+
+                                        }
+                                    }
+                                </td>
+
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.NoExpediente)
+                                </td>
+                                <td>
+                                    @*@Html.DisplayFor(modelItem => item.TipoTramite)*@
                                     @{
-                                        if ((nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Jesús Zenteno" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España") && item.EstatusCaptura != "Pausado" && item.EstatusCaptura != "Pendiente")
+                                        var licencia = (from i in db.Cita where i.idPaciente == item.idPaciente select i.TipoLicencia).FirstOrDefault();
+                                    }
+                                    @item.TipoTramite (<b>@licencia</b>)
+                                </td>
+                                <td>
+                                    @{
+                                        if (item.EstatusCaptura == "Pausado")
                                         {
-                                            <a href="#" data-toggle="modal" data-target="#Pausa_@item.idCaptura"><span class="glyphicon glyphicon-pause text-warning"></span><b> Pausa</b></a>
-                                            <div class="dropdown-divider"></div>
-                                        }
-                                        if ((nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Jesús Zenteno" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España") && item.EstatusCaptura == "Pausado" && item.EstatusCaptura != "Pendiente")
-                                        {
+                                            var comentario = (from c in db.CapturaIncidencia where c.idCaptura == item.idCaptura orderby c.idCapturaIncidencia descending select c.Comentario).FirstOrDefault();
 
-                                            //using (Html.BeginForm("Reanudar", "EPIs"))
-                                            //{
-                                            <span class="glyphicon glyphicon-play text-success"></span><b>@Html.ActionLink("Reanudar", "Reanudar", new { idCaptura = item.idCaptura })</b>
-                                            <div class="dropdown-divider"></div>
-                                            //}
+                                            <span class="field-tip">
+                                                <h6>
+                                                    <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                                    <span class="tip-content">@comentario</span>
+                                                </h6>
+                                            </span>
+                                        }
+                                        else if (item.EstatusCaptura == "Pendiente")
+                                        {
+                                            var comentario = (from c in db.IncidenciaDictamen where c.idCaptura == item.idCaptura orderby c.idIncidencia descending select c.Incidencia).FirstOrDefault();
+
+                                            <span class="field-tip">
+                                                <h6>
+                                                    <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
+                                                    <span class="tip-content">@comentario</span>
+                                                </h6>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <b><i>@Html.DisplayFor(modelItem => item.EstatusCaptura)</i></b>
                                         }
                                     }
-                                </div>
 
-                                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Pausa")">
-                                    @Html.AntiForgeryToken()
-                                    <div class="modal fade" id="Pausa_@item.idCaptura" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title" id="exampleModalLabel"><b>Describa el motivo de la pausa</b></h4>
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.InicioCaptura)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FinalCaptura)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Doctor)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Sucursal)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Capturista)
+                                </td>
+                                <td>
+                                    @{
+                                        if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico == null)
+                                        {
+                                            using (Html.BeginForm("EditExpediente", "EPIs"))
+                                            {
+                                                var idCita = (from t in db.Cita where t.idPaciente == item.idPaciente select t).FirstOrDefault();
+                                                var findPrecio = (from q in db.Referido where q.Nombre == idCita.ReferidoPor && q.Tipo == idCita.CC select q).FirstOrDefault();
+                                                var precioEncontradoCI = findPrecio.PrecioNormalconIVA;
+                                                var precioEncontradoSI = findPrecio.PrecioNormal;
+                                                var precioEncontradoA = findPrecio.PrecioAereo;
+
+                                                var precioFinal = "0";
+
+                                                if(idCita.TipoPago == "Referencía BanBajío" || idCita.TipoPago == "Transferencia vía BanBajío" || idCita.TipoPago == "Referencia BanBajío" || idCita.TipoPago == "Banorte"
+                                                    || idCita.TipoPago == "REFERENCIA OXXO" || idCita.TipoPago == "Referencia OXXO" || idCita.TipoPago == "Pago con Tarjeta")
+                                                {
+
+                                                    if (idCita.TipoLicencia == "AEREO")
+
+                                                    {
+                                                        if (findPrecio.PrecioAereo == null)
+                                                        {
+
+                                                            precioFinal = "3480";
+
+                                                        }
+
+                                                        else
+                                                        {
+
+                                                            precioFinal = precioEncontradoA;
+
+                                                        }
+
+                                                    }
+
+                                                    else
+                                                    {
+                                                        if (findPrecio.PrecioNormalconIVA == null || findPrecio.PrecioNormalconIVA == "0")
+                                                        {
+
+                                                            precioFinal = precioEncontradoSI;
+
+                                                        }
+
+                                                        else
+                                                        {
+
+                                                            precioFinal = precioEncontradoCI;
+
+                                                        }
+
+                                                    }
+                                                }
+
+                                                else
+                                                {
+
+                                                    if (idCita.TipoLicencia == "AEREO")
+
+                                                    {
+                                                        if (findPrecio.PrecioAereo == null)
+                                                        {
+
+                                                            precioFinal = "3480";
+
+                                                        }
+
+                                                        else
+                                                        {
+
+                                                            precioFinal = precioEncontradoA;
+
+                                                        }
+
+                                                    }
+
+                                                    else
+                                                    {
+                                                        
+                                                            precioFinal = precioEncontradoSI;                                                        
+
+                                                    }
+                                                }
+
+                                                @Html.AntiForgeryToken()
+                                                <a href=@Url.Action("EditExpedienteEC", "EPIs", new { id = item.idCaptura, usuario = nombreUsuario, precioEpis = precioFinal }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                            }
+                                        }
+                                        else if (item.EstatusCaptura == "No iniciado" && item.CarruselMedico != null)
+                                        {
+                                            <a href=@Url.Action("PreDictamen", "EPIs", new { id = item.idPaciente, usuario = nombreUsuario }) @*target="_blank" onclick="location.href = 'capturaSucursal?sucursal=@Sucursal';"*@ @*onclick="window.location.reload();"*@ @*onsubmit="location.reload()"*@><button type="button" class="btn btn-info">Capturar</button></a>
+                                        }
+                                        else if (item.EstatusCaptura == "En captura..." || item.EstatusCaptura == "Pausado" || item.EstatusCaptura == "Pendiente")
+                                        {
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    Acciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                                                </button>
+
+                                                <div class="dropdown-menu" style="padding:10px">
+                                                    @if (oUser.idRol == 2)
+                                                    {
+                                                        <a href="#" data-toggle="modal" data-target="#Cancelar_@item.idCaptura"><b> Cancelar EPI</b></a>
+                                                        <div class="dropdown-divider"></div>
+                                                    }
+                                                    @if (item.EstatusCaptura != "Pausado")
+                                                    {
+                                                        if (item.CarruselMedico == null)
+                                                        {
+                                                            <b>@Html.ActionLink("Abrir EPI", "AbrirEPI_EC", new { id = item.idCaptura })</b>
+                                                            <div class="dropdown-divider"></div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <b>@Html.ActionLink("Abrir EPI", "Predictamen", new { id = item.idPaciente })</b>
+                                                            <div class="dropdown-divider"></div>
+                                                        }
+                                                        <b>@Html.ActionLink("Dictaminar", "SubirDictamen", new { id = item.idCaptura })</b>
+                                                        <div class="dropdown-divider"></div>
+                                                    }
+
+                                                    @{
+                                                        if ((nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Jesús Zenteno" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España") && item.EstatusCaptura != "Pausado" && item.EstatusCaptura != "Pendiente")
+                                                        {
+                                                            <a href="#" data-toggle="modal" data-target="#Pausa_@item.idCaptura"><span class="glyphicon glyphicon-pause text-warning"></span><b> Pausa</b></a>
+                                                            <div class="dropdown-divider"></div>
+                                                        }
+                                                        if ((nombreUsuario == "Daniela Fabila Navarro" || nombreUsuario == "Jesús Zenteno" || nombreUsuario == "Captura" || nombreUsuario == "Viridiana España") && item.EstatusCaptura == "Pausado" && item.EstatusCaptura != "Pendiente")
+                                                        {
+
+                                                            //using (Html.BeginForm("Reanudar", "EPIs"))
+                                                            //{
+                                                            <span class="glyphicon glyphicon-play text-success"></span><b>@Html.ActionLink("Reanudar", "Reanudar", new { idCaptura = item.idCaptura })</b>
+                                                            <div class="dropdown-divider"></div>
+                                                            //}
+                                                        }
+                                                    }
                                                 </div>
-                                                <div class="modal-body">
-                                                    <div class="form-group" style="width:60%; min-width:320px">
-                                                        <label for="recipient-name" class="col-form-label">Motivo:</label>
-                                                        <input type="text" class="form-control" id="motivo" name="motivo" required>
-                                                        <input type="hidden" class="form-control" id="idCaptura" name="idCaptura" value="@item.idCaptura">
+
+                                                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/Pausa")">
+                                                    @Html.AntiForgeryToken()
+                                                    <div class="modal fade" id="Pausa_@item.idCaptura" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h4 class="modal-title" id="exampleModalLabel"><b>Describa el motivo de la pausa</b></h4>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                                        <label for="recipient-name" class="col-form-label">Motivo:</label>
+                                                                        <input type="text" class="form-control" id="motivo" name="motivo" required>
+                                                                        <input type="hidden" class="form-control" id="idCaptura" name="idCaptura" value="@item.idCaptura">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
+                                                </form>
 
-                                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/CancelarCita")">
-                                    @Html.AntiForgeryToken()
-                                    <div class="modal fade" id="Cancelar_@item.idCaptura" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea cancelar el epi de @item.NombrePaciente?</b></h4>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="form-group" style="width:60%; min-width:320px">
-                                                        <label for="recipient-name" class="col-form-label">Motivo:</label>
-                                                        <input type="text" class="form-control" id="motivo" name="motivo" required>
-                                                        <input type="hidden" class="form-control" id="idCaptura" name="idCaptura" value="@item.idCaptura">
-                                                        <input type="hidden" class="form-control" id="usuario" name="usuario" value="@nombreUsuario">
+                                                <form method="post" enctype="multipart/form-data" action="@Url.Content("~/EPIs/CancelarCita")">
+                                                    @Html.AntiForgeryToken()
+                                                    <div class="modal fade" id="Cancelar_@item.idCaptura" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h4 class="modal-title" id="exampleModalLabel"><b>¿Desea cancelar el epi de @item.NombrePaciente?</b></h4>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <div class="form-group" style="width:60%; min-width:320px">
+                                                                        <label for="recipient-name" class="col-form-label">Motivo:</label>
+                                                                        <input type="text" class="form-control" id="motivo" name="motivo" required>
+                                                                        <input type="hidden" class="form-control" id="idCaptura" name="idCaptura" value="@item.idCaptura">
+                                                                        <input type="hidden" class="form-control" id="usuario" name="usuario" value="@nombreUsuario">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                                    <input type="submit" value="Guardar" class="btn btn-primary" />
-                                                </div>
+                                                </form>
                                             </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
 
-                        }
-                        else if (item.EstatusCaptura == "Terminado")
-                        {
-                            <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
-                        }
+                                        }
+                                        else if (item.EstatusCaptura == "Terminado")
+                                        {
+                                            <a href=@Url.Action("DescargarPDF", "EPIs", new { id = item.idCaptura })><button type="button" class="btn btn-danger">Descargar</button></a>
+                                        }
 
 
-                    }
-                    </td>
-                </tr>
+                                    }
+                                </td>
+                            </tr>
                         flag++;
                     }
                 }

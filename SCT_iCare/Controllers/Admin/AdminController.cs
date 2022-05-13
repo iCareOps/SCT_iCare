@@ -109,8 +109,12 @@ namespace SCT_iCare.Controllers.Admin
             return View();
         }
 
-        public ActionResult TablaDinamica(string gestor)
+        public ActionResult TablaDinamica(string gestor, DateTime? fechaInicio, DateTime? fechaFinal)
         {
+
+            ViewBag.FechaInicio = fechaInicio != null ? fechaInicio : null;
+            ViewBag.FechaFinal = fechaFinal != null ? fechaFinal : null;
+
             if (gestor == "Diarias")
             {
                 return Redirect("TablaMetasDiarias");
